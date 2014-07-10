@@ -5,7 +5,7 @@ import operator
 #import pybedtools
 import logging
 import pickle
-
+import shutil
 from libs.tool import *
 
 
@@ -53,10 +53,10 @@ def _create_html(args,clus_red,con,log):
     os.makedirs(os.path.join(args.dir_out,"html"))
     os.makedirs(os.path.join(args.dir_out,"html","clusters"))
 
-    pathscript=os.path.abspath(__file__).replace("seqcluster.py","")
-    cmdcp="rsync -a -u --exclude='- *.' "+pathscript+"js "+pathscript+"css "+pathscript+"images "+dir_out+"/html/."
-    #print bcolors.OKBLUE+cmdcp+bcolors.ENDC 
-    os.system(cmdcp)
+    pathscript=os.path.dirname(__file__)
+    shutil.copytree(os.path.join(pathscript,"misc","js"),os.path.join(args.dir_out,"html"))
+    shutil.copytree(os.path.join(pathscript,"misc","css"),os.path.join(args.dir_out,"html"))
+    shutil.copytree(os.path.join(pathscript,"misc","images"),os.path.join(args.dir_out,"html"))
 
     chtml = open(os.path.join(args.dir_out,"html","clus.html"), 'w')
     dbhtml = open(os.path.join(args.dir_out,"html","annotation.html"), 'w')
@@ -229,6 +229,7 @@ def _annotate(args,setclus,con,log):
             c=a.intersect(b, wo=True)
             setclus=anncluster(c,setclus,db,args.type_ann) 
     return setclus
+    
 def _create_clusters(args,con,log):
     clus_obj = []
     if not os.path.exists(args.out+'/list_obj.pk'):

@@ -4,7 +4,7 @@ def readme():
     with open('README.rst.example') as f:
         return f.read()
 
-setup(name='funniest',
+setup(name='seqcluster',
       version='0.99',
       description='Small RNA-seq analysis',
       long_description=readme(),
