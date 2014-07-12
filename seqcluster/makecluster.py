@@ -7,16 +7,12 @@ import logging
 import pickle
 import shutil
 from libs.tool import *
-
+from libs.classes import *
 
 def  cluster(args,con,log):
 
     args = _check_args(args,con,log)
-
-    MIN_SEQ=10
-    db4js={}
-       
-
+    MIN_SEQ=10       
     # ############read input files##################################
     con.info("Parsing matrix file")
     seq_l=parse_ma_file(args.ffile)
@@ -39,17 +35,18 @@ def  cluster(args,con,log):
     con.info("Finished")
 
 def _create_html(args,clus_red,con,log):
+    #db4js={}
+
     filtered=clus_red.clus
     clus_locit=clus_red.loci
+    seq = clus_red.seq
 
-    f=open(args.ffile) 
-    line=f.readline()
-    line=line.strip()
-    cols=line.split("\t")
-    samples_list=cols[2:]
-    f.close
+    with open(args.ffile) as f:
+        cols=f.readline().strip().split("\t")
+        samples_list=cols[2:]
 
     # #####################creating html####################
+    con.info("Creating misc for nice html style")
     os.makedirs(os.path.join(args.dir_out,"html"))
     os.makedirs(os.path.join(args.dir_out,"html","clusters"))
 
@@ -58,161 +55,172 @@ def _create_html(args,clus_red,con,log):
     shutil.copytree(os.path.join(pathscript,"misc","css"),os.path.join(args.dir_out,"html"))
     shutil.copytree(os.path.join(pathscript,"misc","images"),os.path.join(args.dir_out,"html"))
 
-    chtml = open(os.path.join(args.dir_out,"html","clus.html"), 'w')
-    dbhtml = open(os.path.join(args.dir_out,"html","annotation.html"), 'w')
-    ccont=table.make_header("".join(map(table.make_cell_header,["id","DB"]+samples_list)))
-    icont=""
+    with  open(os.path.join(args.dir_out,"html","clus.html"), 'w') as chtml:
+        with  open(os.path.join(args.dir_out,"html","annotation.html"), 'w') as dbhtml:
+            ccont=table.make_header("".join(map(table.make_cell_header,["id","DB"]+samples_list)))
+            icont=""
+            con.info("Creating outputs")
+            #####################creating plain text and html files#####################
+            with open(os.path.join(args.dir_out,"clus.json"), 'w') as out:
+                with open(os.path.join(args.dir_out,"ann.tab"), 'w') as outann:
+                    outann.write("\t".join(["id","ann","manyloci"]+samples_list))
+                    outann.write("\n")
+                    #outbed=os.path.join(dir_out,"clus.bed")
+                    db4js["None"]=[0,0,0]
+                    for id in filtered.keys():
+                        dbsummary=""
+                        #if (int(id)!=0):
+                        clus=filtered[id]
+                        # "id %s" % (id)
+                        if (len(clus.loci2seq)>0):
+                            with open(os.path.join(args.dir_out,"html","clusters",str(id)+".html"), 'w') as icluster_html:
+                                ccell=table.make_cell_link("C:%sclusters/%s.html" % (id,id))
+                                ccont+=table.make_line(ccell)
+                                tmp_cont, outannD, outD = _create_cluster_out(id,clus,seq,args,con,log)
+                                icluster_html.write(tmp_cont)
+                                out.write(outD)
+                                outann.write(outannD)
 
-    con.info("Creating outputs")
-    #####################creating plain text and html files#####################
-    out = open(os.path.join(args.dir_out,"clus.parse.txt"), 'w')
-    outann = open(os.path.join(args.dir_out,"ann.tab"), 'w')
-    outann.write("\t".join(["id","ann","manyloci"]+samples_list))
-    outann.write("\n")
-    outbed=os.path.join(dir_out,"clus.bed")
+                    listbar=[]
+                    for db in db4js.keys():
+                        listbar.append({"args":db,"unique":db4js[db][0],"multiple":db4js[db][1],"unconsistently":db4js[db][2]})
+                    listkeys=["unique","multiple","unconsistently"]
+                    dbhtml.write(barchart.createhtml(listbar,listkeys))
 
-    db4js["None"]=[0,0,0]
-    for id in filtered.keys():
-        dbsummary=""
-        #if (int(id)!=0):
-        clus=filtered[id]
-        # "id %s" % (id)
-        if (len(clus.loci2seq)>0):
-            icluster_html = open(os.path.join(dir_out,"html","clusters",str(id)+".html"), 'w')
-            cluster_id="C:%s" % id
-            outann.write("%s\t" % cluster_id)
-            ccell=table.make_cell_link(cluster_id,"clusters/%s.html" % id)
-            contentDivC=table.make_div(table.make_a("<b>"+cluster_id+"</b>",cluster_id),"clus","css_id")
-            out.write("C %s\n" % id)
-            numloci=0
-            numlocidb=init_numlocidb(beds)
+                    ccont=table.make_table(ccont,args.samplename)
+                    ccont=table.make_jshtml(ccont,args.samplename)         
+                    chtml.write(ccont)
+
+def _create_clusters_out(id,clus,seq,args,con,log):
+    cluster_id="C:%s" % id
+    outann=("%s\t" % cluster_id)
+    ccell=table.make_cell_link(cluster_id,"clusters/%s.html" % id)
+    contentDivC=table.make_div(table.make_a("<b>"+cluster_id+"</b>",cluster_id),"clus","css_id")
+    out = ("C %s\n" % id)
+    numloci=0
+    numlocidb=init_numlocidb(beds)
+    
+    temp_cont,seqListTemp = _create_loci_out()
+    contentDivC+=table.make_div(table.make_table(temp_cont,"loci"),"loci","css_loci")
+    #contentDivC+=table.make_div(table.make_hs_link("plainseqs"),"linkshowhide","css_seqs_link")
+    contentDivC+=table.make_div(expchart.getExpDiv(),"expseqs","css_exp")
+    contentDivC+=table.make_div("<pre>"+clus.showseq_plain+"</pre>","plainseqs","css_seqs")            
+    #contentDivC+=seqviz.CANVAS
+    tmp_cont, allData, exp = _create_sequences_out(seqListTemp,seq)
+    contentDivC+=table.make_div("<pre>"+table.make_table(tmp_cont,"seqs")+"</pre>","seqs","css_table")
+    
+    #dbsummary = _create_db_out()
+    #ccell+=table.make_cell(dbsummary)
+    icont=table.make_div(contentDivC,cluster_id,"css_clus")
+    icont=table.make_html(icont,expchart.addgraph(allData),args.samplename)# change         
+    #idiv=make_div(clus,clus,"cluster")
+    return icont, out, outann 
+
+def _create_loci_out(clus):
+    seqListTemp=()
+    contentDivL = ""
+    contentDivL=table.make_header("".join(map(table.make_cell_header,table.HEADER_L)))
+    for idl in clus.loci2seq.keys():
+        # "idl %s" % (idl)
+        seqListTemp=list(set(seqListTemp).union(filtered[id].loci2seq[idl]))
+        tpos=clus_locit[idl]
+        numloci+=1
+        out = ("%sL %s %s %s %s %s\n" % (out,tpos.idl,tpos.chr,tpos.start,tpos.end,tpos.strand))
+        #outtemp.write("%s\t%s\t%s\t%s\t%s\t%s\n" %  (tpos.chr,tpos.start,tpos.end,id,0,tpos.strand))
+        idl=int(tpos.idl)
+        contentA=""
+        hits={}
+        for db in clus.dbann.keys():
+            # "DBA %s" % (db)
+            tdb=clus.dbann[db]
+            if not hits.has_key(db):
+                hits[db]=""
+            if (tdb.ann.has_key(idl)):
+                ann=tdb.ann[idl]
+                numlocidb[db]+=1
+                contentA+="%s(%s %s)-(%s,%s);" % (ann.db,ann.name,ann.strand,ann.to5,ann.to3);
+                out.write("A %s %s %s %s %s\n" % (ann.db,ann.name,ann.strand,ann.to5,ann.to3))
+                hits[db]+=ann.name+","
+                # "%s %s => %s" % (db,ann.name,hits[db])
+                #print result for consistent DB
+        pos="%s:%s-%s %s" % (tpos.chr,tpos.start,tpos.end,tpos.strand)
+        contentDivL+=table.make_line("".join(map(table.make_cell,[pos,contentA])))
+    return contentDivL,seqListTemp
+
+def _create_db_out():
+    cons=0
+    ann=0
+    tmp_db4js={}
+    for filebed in args.list_files:
+        db=os.path.basename(filebed)
+        ratio=1.0*numlocidb[db]/numloci
+
+        out = ("%sDBstat %s %s %s %s \n" % (out,db,numloci,numlocidb[db],ratio))
+        
+        if (numlocidb[db]>0):
             
-            contentDivL=table.make_header("".join(map(table.make_cell_header,table.HEADER_L)))
-            seqListTemp=()
-
-            for idl in clus.loci2seq.keys():
-                # "idl %s" % (idl)
-                seqListTemp=list(set(seqListTemp).union(filtered[id].loci2seq[idl]))
-                tpos=clus_locit[idl]
-                numloci+=1
-                out.write("L %s %s %s %s %s\n" % (tpos.idl,tpos.chr,tpos.start,tpos.end,tpos.strand))
-                #outtemp.write("%s\t%s\t%s\t%s\t%s\t%s\n" %  (tpos.chr,tpos.start,tpos.end,id,0,tpos.strand))
-                idl=int(tpos.idl)
-                contentA=""
-                hits={}
-                for db in clus.dbann.keys():
-                    # "DBA %s" % (db)
-                    tdb=clus.dbann[db]
-                    if not hits.has_key(db):
-                        hits[db]=""
-                    if (tdb.ann.has_key(idl)):
-                        ann=tdb.ann[idl]
-                        numlocidb[db]+=1
-                        contentA+="%s(%s %s)-(%s,%s);" % (ann.db,ann.name,ann.strand,ann.to5,ann.to3);
-                        out.write("A %s %s %s %s %s\n" % (ann.db,ann.name,ann.strand,ann.to5,ann.to3))
-                        hits[db]+=ann.name+","
-                        # "%s %s => %s" % (db,ann.name,hits[db])
-                        #print result for consistent DB
-                pos="%s:%s-%s %s" % (tpos.chr,tpos.start,tpos.end,tpos.strand)
-                contentDivL+=table.make_line("".join(map(table.make_cell,[pos,contentA])))
-
-            contentDivC+=table.make_div(table.make_table(contentDivL,"loci"),"loci","css_loci")
-            #contentDivC+=table.make_div(table.make_hs_link("plainseqs"),"linkshowhide","css_seqs_link")
-            contentDivC+=table.make_div(expchart.getExpDiv(),"expseqs","css_exp")
-            contentDivC+=table.make_div("<pre>"+clus.showseq_plain+"</pre>","plainseqs","css_seqs")
-            
-            #contentDivC+=seqviz.CANVAS
-            ##print seq_header
-            exp=0
-            seq_header="".join(map(table.make_cell_header,table.HEADER_SEQ+samples_list)) 
-            contentDivS=table.make_header(seq_header)
-            freq={}
-            showseq=""
-            allData="var allData = [{"
-            for s in seqListTemp:
-                allData+='"%s":[' % s
-                seq=clus_red.seq[s]
-                out.write("S %s %s\n" % (seq.seq,seq.len))
-                #showseq+="S %s %s " % (seq.seq,seq.len)
-                colseqs=[seq.seq,seq.len]
-                for sample in samples_list:
-                    allData+='{"sample":"%s","reads":"%s","color":"#FF6600"},' % (sample,int(clus_red.seq[s].freq[sample]))
-                    colseqs.append(int(clus_red.seq[s].freq[sample]))
-                    exp+=int(clus_red.seq[s].freq[sample])
-                    if (not freq.has_key(sample)):
-                        freq[sample]=0
-                    freq[sample]+=int(clus_red.seq[s].freq[sample])
-                allData=allData[:-1]+"],"
-                contentDivS+=table.make_line("".join(map(table.make_cell,colseqs)))
-            
-            allData=allData[:-1]+"}];"
-
-            contentDivC+=table.make_div("<pre>"+table.make_table(contentDivS,"seqs")+"</pre>","seqs","css_table")
-            cons=0
-            ann=0
-            tmp_db4js={}
-            for filebed in beds:
-                db= os.path.basename(filebed)
-                ratio=1.0*numlocidb[db]/numloci
-
-                out.write("DBstat %s %s %s %s \n" % (db,numloci,numlocidb[db],ratio))
+            ann=1
+            tmp_db4js[db]=1
+            if(ratio>=0.33):
+                out.write("DB %s %s %s consistent\n" % (db,numloci,numlocidb[db]))
+                dbsummary+="DB(%s) %s/%s consistent;" % (db,numlocidb[db],numloci)
+                cons+=1
+                outann=("%s%s:%s;" % (outann,db,hits[db]))
                 
-                if (numlocidb[db]>0):
-                    
-                    ann=1
-                    tmp_db4js[db]=1
-                    if(ratio>=0.33):
-                        out.write("DB %s %s %s consistent\n" % (db,numloci,numlocidb[db]))
-                        dbsummary+="DB(%s) %s/%s consistent;" % (db,numlocidb[db],numloci)
-                        cons+=1
-                        outann.write("%s:%s;" % (db,hits[db]))
-                        
-                    elif (ratio<0.33):
-                       
-                        out.write("DB %s %s %s no-consistent\n" % (db,numloci,numlocidb[db]))
-                        dbsummary+="DB(%s) %s/%s consistent;" % (db,numlocidb[db],numloci)
+            elif (ratio<0.33):
+               
+                out.write("DB %s %s %s no-consistent\n" % (db,numloci,numlocidb[db]))
+                dbsummary+="DB(%s) %s/%s consistent;" % (db,numlocidb[db],numloci)
 
-            for db in tmp_db4js:
-                if cons==0: 
-                    db4js[db][2]+=exp
-                if cons>1: 
-                    db4js[db][1]+=exp
-                if cons==1: 
-                    db4js[db][0]+=exp
+    for db in tmp_db4js:
+        if cons==0: 
+            db4js[db][2]+=exp
+        if cons>1: 
+            db4js[db][1]+=exp
+        if cons==1: 
+            db4js[db][0]+=exp
 
-            if (ann==0): 
-                db4js["None"][0]+=exp
+    if (ann==0): 
+        db4js["None"][0]+=exp
 
+    return dbsummary
 
-            ccell+=table.make_cell(dbsummary)
-            colseqs=[]
-            outann.write("\t%s\t" % clus.toomany)
-            for sample in samples_list:
-                colseqs.append(freq[sample])
-                outann.write("%s\t" % freq[sample])
+def _create_sequences_out(seqListTemp,clus):
+    seq_header="".join(map(table.make_cell_header,table.HEADER_SEQ+samples_list)) 
+    contentDivS=table.make_header(seq_header)
+    exp=0
+    freq={}
+    showseq=""
+    allData="var allData = [{"
+    for s in seqListTemp:
+        allData+='"%s":[' % s
+        seq=clus.seq[s]
+        out.write("S %s %s\n" % (seq.seq,seq.len))
+        #showseq+="S %s %s " % (seq.seq,seq.len)
+        colseqs=[seq.seq,seq.len]
+        for sample in samples_list:
+            allData+='{"sample":"%s","reads":"%s","color":"#FF6600"},' % (sample,int(clus.seq[s].freq[sample]))
+            colseqs.append(int(clus.seq[s].freq[sample]))
+            exp+=int(clus.seq[s].freq[sample])
+            if (not freq.has_key(sample)):
+                freq[sample]=0
+            freq[sample]+=int(clus.seq[s].freq[sample])
+        allData=allData[:-1]+"],"
+        contentDivS+=table.make_line("".join(map(table.make_cell,colseqs)))
+    
+    allData=allData[:-1]+"}];"
 
-            outann.write("\n")
-            ccell+="".join(map(table.make_cell,colseqs))
-            ccont+=table.make_line(ccell)
-            icont=table.make_div(contentDivC,cluster_id,"css_clus")
-            #idiv=make_div(clus,clus,"cluster")
-        icont=table.make_html(icont,expchart.addgraph(allData),samplename)         
-        icluster_html.write(icont)
-        icluster_html.close()
+    colseqs=[]
+    outann="%s\t%s\t" % (outann,clus.toomany)
+    for sample in samples_list:
+        colseqs.append(freq[sample])
+        outann.write("%s\t" % freq[sample])
 
-    listbar=[]
-    for db in db4js.keys():
-        listbar.append({"args":db,"unique":db4js[db][0],"multiple":db4js[db][1],"unconsistently":db4js[db][2]})
-    listkeys=["unique","multiple","unconsistently"]
+    outann=("%s\n" % outann)
+    ccell+="".join(map(table.make_cell,colseqs))
+    ccont+=table.make_line(ccell)
 
-    dbhtml.write(barchart.createhtml(listbar,listkeys))
-    dbhtml.close()
-    ccont=table.make_table(ccont,samplename)
-    ccont=table.make_jshtml(ccont,samplename)         
-    chtml.write(ccont)
-    chtml.close()
-    out.close()
-    outann.close()
+    return contentDivS,allData,exp
 
 def _annotate(args,setclus,con,log):
     con.info("Creating bed file")
@@ -255,7 +263,7 @@ def _create_clusters(args,con,log):
 def _check_args(args,con,log):
     ########################################################
     args.dir_out = args.out
-    samplename="pro"
+    args.samplename="pro"
 
     if not os.path.isdir(args.out):
         print bcolors.FAIL + "the output folder doens't exists" + bcolors.ENDC
@@ -285,7 +293,7 @@ def _check_args(args,con,log):
         f.close()
         f=open(args.afile,'r')
         f.close()
-        beds=list_files.split(",")
+        beds=args.list_files.split(",")
         for filebed in beds:
             f=open(filebed,'r')
             f.close()

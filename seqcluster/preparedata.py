@@ -3,6 +3,7 @@ import os
 from os import listdir
 from os.path import isfile, join
 import re
+import logging
 
 
 #define class object to store seq info
@@ -21,13 +22,15 @@ def prepare(args, con, log):
 		out = open(os.path.join(args.out,"seqs.fa"), 'w')
 		maout = open(os.path.join(args.out,"seqs.ma"), 'w')
 	except IOError as e:
-	    print "I/O error({0}): {1}".format(e.errno, e.strerror)
+	    con.error("I/O error({0}): {1}".format(e.errno, e.strerror))
 
 	name=""
 	#read file with list of fasta files
+	con.info("reading sequeces")
 	seq_l, list_s = _read_fasta_files(f)
 	#create matrix of counts for each seq in each sample
 	#create reduced fasta files, with only unique sequences
+	con.info("creating matrix with unique sequences")
 	_create_matrix_uniq_seq()
 
 def _read_fasta_files(f):
