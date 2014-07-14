@@ -21,7 +21,7 @@ setup(name='seqcluster',
       license='MIT',
       packages=['seqcluster'],
       install_requires=[
-          'markdown',
+          'pybedtools',
       ],
       test_suite='nose.collector',
       tests_require=['nose', 'nose-cover3'],
