@@ -25,7 +25,7 @@ def add_subparser_prepare(subparsers):
 	return parser
 
 def add_subparser_cluster(subparsers):
-	parser = subparsers.add_parser("prepare", help="prepare data")
+	parser = subparsers.add_parser("cluster", help="cluster data")
 	parser.add_argument("-a", "--afile", dest="afile",required=1,
 	                  help="aligned file in bed/sam format")
 	parser.add_argument("-m", "--ma", dest="ffile",required=1,

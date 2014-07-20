@@ -5,6 +5,7 @@ import pybedtools
 import pickle
 import shutil
 import logging
+import json
 from libs.tool import parse_ma_file, reduceloci, show_seq, what_is, \
     parse_merge_file, parse_align_file, generate_position_bed, anncluster
 from libs.classes import *
@@ -12,7 +13,7 @@ from libs.classes import *
 
 def cluster(args, con, log):
     args = _check_args(args, con, log)
-    args.MIN_SEQ = 10
+    args.MIN_SEQ = 2
     # ############read input files##################################
     con.info("Parsing matrix file")
     seqL = parse_ma_file(args.ffile)
@@ -29,14 +30,35 @@ def cluster(args, con, log):
     # #####################overlap with features#################################
     clusred = _annotate(args, clusred, con, log)
     # #############################################################
-    outfile = _create_json(clusred args, con, log)
-    con.info("output file as: " % outfile)
+    con.info("creating json and count matrix")
+    outfile = _create_json(clusred,args, con, log)
+    con.info("output file as: %s" % args.dir_out)
     con.info("Finished")
 
 def _create_json(clusL, args, con, log):
-    for cid in clusL.keys():
-        print cid
-    return 0
+    clus = clusL.clus
+    seqs = clusL.seq
+    loci = clusL.loci
+    data_clus = {}
+    for cid in clus.keys():
+        seqList = []
+        c = clus[cid]
+        data_loci = map(lambda (x): [loci[x].chr,loci[x].start,loci[x].end], c.loci2seq.keys())
+        data_ann_temp = {}
+        for lid in c.loci2seq:
+            loci[lid].chr
+            seqList = list(set(seqList).union(c.loci2seq[lid]))
+            for dbi in loci[lid].dbann.keys():
+                data_ann_temp[dbi] = {dbi : map(lambda (x): loci[lid].dbann[dbi].ann[x].name,loci[lid].dbann[dbi].ann.keys())}
+            data_ann = map(lambda (x): data_ann_temp[x], data_ann_temp.keys())
+        data_seqs = map(lambda (x): seqs[x].seq,seqList)
+        data_freq = map(lambda (x): seqs[x].freq,seqList)
+        data_string = {'seqs':data_seqs,'freq':data_freq,
+            'loci':data_loci,'ann':data_ann}
+        data_clus[cid] = data_string
+    with open(os.path.join(args.dir_out,"seqcluster.json"),'w') as handle_out:
+        handle_out.write(json.dumps([data_clus],skipkeys=True,indent=2))
+
 
 def _annotate(args, setclus, con, log):
     con.info("Creating bed file")
@@ -62,9 +84,10 @@ def _create_clusters(seqL, args, con, log):
         #positions on the genome.
         #assumption: minimun number of common loci
         con.info("Parsing aligned file")
-        bed_obj = parse_align_file(args.afile, format)
+        bed_obj = parse_align_file(args.afile, args.format)
+        con.info("Merging position")
         a = pybedtools.BedTool(bed_obj, from_string=True)
-        c = a.merge(nms=True, d=20, s=True, scores="collapse")
+        c = a.merge(o="distinct",c="4,5,6",s=True, d=20)
         con.info("Creating clusters")
         clus_obj = parse_merge_file(c, seqL, args.MIN_SEQ)
         with open(args.out + '/list_obj.pk', 'wb') as output:
@@ -78,8 +101,9 @@ def _create_clusters(seqL, args, con, log):
     return clus_obj
 
 
-def _check_args(args, con):
+def _check_args(args, con,log):
     ########################################################
+    con.info("Checking parameters and files")
     args.dir_out = args.out
     args.samplename = "pro"
 
@@ -119,8 +143,9 @@ def _check_args(args, con):
         con.error("I/O error({0}): {1}".format(e.errno, e.strerror))
 
     #####################read aligned sequences#####################
-    format = what_is(args.afile)
-    if not format:
+    args.format = what_is(args.afile)
+    con.info("aligned file is in: %s" % format )
+    if not args.format:
         logging.error("Format of aligned reads not in sam or bed")
         raise "Format of aligned reads not in sam or bed"
 

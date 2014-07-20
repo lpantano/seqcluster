@@ -8,8 +8,8 @@ Copyright (c) 2009 Aaron R. Quinlan. All rights reserved.
 """
 
 import sys
-import getopt
 import re
+from classes import bedaligned
 
 
 
@@ -26,15 +26,15 @@ def processSAM(line):
                                        
 def makeBED(samFields):
        
-        samFlag = int(samFields[1])
+        samFlag = int(samFields.flag)
        
         # Only create a BED entry if the read was aligned
         if (not (samFlag & 0x0004)):
                
-                chrom = samFields[2]
-                start = str(int(samFields[3])-1)
-                end = str(int(samFields[3]) + len(samFields[9]) - 1)
-                name = samFields[0]    
+                chrom = samFields.rname
+                start = str(int(samFields.pos)-1)
+                end = str(int(samFields.pos) + len(samFields.seq) - 1)
+                name = samFields.qname    
                 strand = getStrand(samFlag)
 
                 # Let's use the edit distance as the BED score.
@@ -43,8 +43,9 @@ def makeBED(samFields):
                 #editDistance = editPattern.findall(samFields[12])
 
                 # Write out the BED entry
-                return chrom + "\t" + start + "\t" + end + "\t" + name + "\t"+samFields[12]+"\t" + strand
-               
+                return bedaligned("%s\t%s\t%s\t%s\t.\t%s\n" %  (chrom,start,end,name,strand))
+        else:
+                return False    
                
 def splitLine(line, delim="\t"):
         splitline = line.split(delim)

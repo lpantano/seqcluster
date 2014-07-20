@@ -19,8 +19,8 @@ class seq_obj:
 def prepare(args, con, log):
 	try:
 		f = open(args.dir, 'r')
-		out = open(os.path.join(args.out,"seqs.fa"), 'w')
-		maout = open(os.path.join(args.out,"seqs.ma"), 'w')
+		seq_out = open(os.path.join(args.out,"seqs.fa"), 'w')
+		ma_out = open(os.path.join(args.out,"seqs.ma"), 'w')
 	except IOError as e:
 	    con.error("I/O error({0}): {1}".format(e.errno, e.strerror))
 
@@ -31,7 +31,8 @@ def prepare(args, con, log):
 	#create matrix of counts for each seq in each sample
 	#create reduced fasta files, with only unique sequences
 	con.info("creating matrix with unique sequences")
-	_create_matrix_uniq_seq()
+	_create_matrix_uniq_seq(list_s,seq_l,ma_out,seq_out)
+	con.info("Finish preprocessing. Get an SAM file of seqs.fa and run seqcluster cluster.")
 
 def _read_fasta_files(f):
 	seq_l={}

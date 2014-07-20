@@ -7,6 +7,7 @@ import argparse
 
 
 def main(**kwargs):
+	kwargs = parse_cl(sys.argv[1:])
 	# set up logging to file - see previous section for more details
 	logging.basicConfig(level=logging.DEBUG,
 	    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
@@ -31,14 +32,9 @@ def main(**kwargs):
 	if "prepare" in kwargs:
 		print "run prepare"
 		print kwargs["args"]
-		#run.prepare(kwargs["args"],con,log)
+		prepare(kwargs["args"],con,log)
 	if "cluster" in kwargs:
 		print "run cluster"
-		#run.cluster(kwargs["args"],con,log)
+		cluster(kwargs["args"],con,log)
 
-
-if __name__ == "__main__":
-	kwargs = parse_cl(sys.argv[1:])
-	main(**kwargs)
-	
 

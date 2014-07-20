@@ -2,12 +2,13 @@ from collections import OrderedDict
 import operator
 import os
 import copy
-from libs.sam2bed import *
-from libs import table,barchart,seqviz,expchart
+from sam2bed import makeBED
+from . import table,barchart,seqviz,expchart
 import time
 import math
+import pysam
 import logging
-
+from classes import *
 
 # def mergeclus(cur_clus_obj,clus_obj):
 #     for idc in cur_clus_obj.keys():
@@ -53,13 +54,15 @@ def readbowtie():
     return dict
 
 def what_is(file):
-    f = open(file,'r')
-    cols= f.readline().split("\t")
-    f.close()
-    if (cols[5]=="+" or cols[5]=="-"):
-        return "bed"
-    else:
-        return "sam"
+    with open(file,'r') as handle_in:
+        for line in handle_in:
+            if not line.startswith("@"):
+                cols= line.split("\t")
+                if (cols[5]=="+" or cols[5]=="-"):
+                    return "bed"
+                else:
+                    return "sam"
+                break
 
 def init_numlocidb(beds):
     dict={}
@@ -161,7 +164,7 @@ def anncluster(c,clus_obj,db,type_ann):
         id_sta=5
         id_stb=12
         id_tag=8
-    else:
+    elif type_ann=="bed":
         id_sa=1
         id_ea=2
         id_sb=7
@@ -172,7 +175,9 @@ def anncluster(c,clus_obj,db,type_ann):
         id_stb=11
         id_tag=9
 
+    ida = 0
     clus_id=clus_obj.clus
+    loci_id=clus_obj.loci
     for cols in c.features():
         id=int(cols[id_id])
         idl=int(cols[id_idl])
@@ -201,39 +206,50 @@ def anncluster(c,clus_obj,db,type_ann):
                 lento5=sa-sb+1
                 lento3=ea-eb+1
             #"EXISTS clus %s with db DBA %s" % (cols[9],db)
-            if (clus.dbann.has_key(db)):
+            ida += 1
+            if (loci_id[idl].dbann.has_key(db)):
                 # "NEW clus %s with db DBA %s" % (cols[9],db)
                 ann=annotation(db,cols[id_tag],strd,lento5,lento3)
-                tdb=clus.dbann[db]
-                tdb.adddbann(idl,ann)
-                clus.adddb(db,tdb)
+                tdb=loci_id[idl].dbann[db]
+                tdb.adddbann(ida,ann)
+                loci_id[idl].adddb(db,tdb)
+                #clus.adddb(db,tdb)
             else:
                 # "UPDATE clus %s with db DBA %s" % (cols[9],db)
                 ann=annotation(db,cols[id_tag],strd,lento5,lento3)
                 tdb=dbannotation(1)
-                tdb.adddbann(idl,ann)
-                clus.adddb(db,tdb)
+                tdb.adddbann(ida,ann)
+                loci_id[idl].adddb(db,tdb)
+                #clus.adddb(db,tdb)
            
             clus_id[id]=clus
     clus_obj.clus=clus_id
+    clus_obj.loci=loci_id
     return clus_obj
 
-def parse_align_file(file,format):
+def parse_align_file(file_in,format):
     #parse sam files with aligned sequences
-    f = open(file, 'r')
+    
     loc_id=1
     clus_obj={}
     bedfile_clusters=""
-    for line in f:
-        loc_id+=1
-        if format=="sam":
-            line=processSAM(line)
-        if line:
+    if format=="sam":
+        samfile = pysam.Samfile( file_in, "r" )
+        for a in samfile.fetch():
+            loc_id+=1    
+            a = makeBED(a)
+            if a:
+                bedfile_clusters+="%s\t%s\t%s\t%s\t%s\t%s\n" % (samfile.getrname(int(a.chr)),a.start,a.end,a.name,loc_id,a.strand)       
+        samfile.close()
+    elif line=="bed":
+        f = open(file_in, 'r')
+        for line in f:
+            loc_id+=1       
+            #line=processSAM(line)        
             a=bedaligned(line)
             #print "%s\t%s\t%s\t%s\t%s\t%s\n" % (a.chr,a.start,a.end,a.name,loc_id,a.strand)
-            bedfile_clusters+="%s\t%s\t%s\t%s\t%s\t%s\n" % (a.chr,a.start,a.end,a.name,loc_id,a.strand)
-       
-    f.close()
+            bedfile_clusters+="%s\t%s\t%s\t%s\t%s\t%s\n" % (a.chr,a.start,a.end,a.name,loc_id,a.strand)       
+        f.close()
     return bedfile_clusters
 
 def parse_merge_file(c,seq_l_in,MIN_SEQ):
@@ -247,6 +263,7 @@ def parse_merge_file(c,seq_l_in,MIN_SEQ):
     eindex=0
 
     for line in c.features():
+        print line
         a=mergealigned(line)
         #only keep locus with 10 or more secuences
         if (len(a.names)>=MIN_SEQ):

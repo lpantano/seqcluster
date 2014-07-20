@@ -1,6 +1,4 @@
 
-
-
 class cluster_info_obj:
     def __init__(self,clus_obj,clus_id,loci_obj,seq_obj):
         self.clus=clus_obj
@@ -34,6 +32,10 @@ class position:
         self.start=int(start)
         self.end=int(end)
         self.strand=strand
+        self.dbann={}
+    def adddb(self,db,ndb):
+        self.dbann[db]=ndb
+
 
 class annotation:
     def __init__(self,db,name,strand,to5,to3):
@@ -46,8 +48,8 @@ class annotation:
 class dbannotation:
     def __init__(self,na):
         self.ann={}
-    def adddbann(self,idl,ndba):
-        self.ann[idl]=ndba
+    def adddbann(self,ida,ndba):
+        self.ann[ida]=ndba
       
 class cluster:
     def __init__(self, id):
@@ -55,9 +57,7 @@ class cluster:
         self.loci={}
         self.locimax=0
         self.locilen={}
-        self.dbann={}
         self.loci2seq={}
-        self.idmembers={}
         self.pairs={}
         self.dist_pair={}
         self.ref=0
@@ -67,14 +67,12 @@ class cluster:
         self.toomany=0
     def set_ref(self,r):
         self.ref=r
-
     def addpair(self,p1,p2,d,s):
                 if not (self.pairs.has_key(p1)):
                         self.pairs[p1]=pairs()
                         self.dist_pair[p1]=1
                 self.pairs[p1].set_dist(p2,d,s)
-                self.dist_pair[p1]+=1
-   
+                self.dist_pair[p1]+=1   
     def addidmember(self,ids,idl):
         lenid=len(ids)
         self.locilen[idl]=lenid
@@ -85,17 +83,10 @@ class cluster:
             self.loci2seq[idl].append(s)
         if (lenid>self.locimax):
             self.locimax=lenid
-
     def addloci(self,idl,np):
         self.loci[idl]=1
-       
-   
-    def addmember(self,ns):
-        self.members.append(ns)
-       
+     
 
-    def adddb(self,db,ndb):
-        self.dbann[db]=ndb
 
 class bcolors:
     HEADER = '\033[95m'
