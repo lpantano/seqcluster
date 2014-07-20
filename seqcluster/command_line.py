@@ -31,7 +31,6 @@ def main(**kwargs):
 
 	if "prepare" in kwargs:
 		print "run prepare"
-		print kwargs["args"]
 		prepare(kwargs["args"],con,log)
 	if "cluster" in kwargs:
 		print "run cluster"

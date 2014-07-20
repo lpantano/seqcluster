@@ -22,6 +22,8 @@ setup(name='seqcluster',
       packages=['seqcluster'],
       install_requires=[
           'pybedtools',
+          'pysam',
+          'pickle'
       ],
       test_suite='nose.collector',
       tests_require=['nose', 'nose-cover3'],
