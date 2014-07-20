@@ -21,10 +21,11 @@ before_install:
   - "cd ../ \
 	&& wget http://downloads.sourceforge.net/samtools/samtools/0.1.19/samtools-0.1.19.tar.bz2 \
 	&& tar -xjvf samtools-0.1.19.tar.bz2 \
-	&& cd samtools \
+	&& cd samtools-0.1.19 \
 	&& make \
 	&& P=`pwd` \
-        && export PATH=${P}/bin:$PATH"
+        && export PATH=${P}/bin:$PATH \
+	&& cd .."
   - "echo $PATH"
 install:
     - "pip install -r requirements.txt --use-mirrors"
