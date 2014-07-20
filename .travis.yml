@@ -10,6 +10,7 @@ notifications:
 
 before_install:
   - "sh -e /etc/init.d/xvfb start"
+  - "echo `pwd`"
   - "echo $PATH"
   - "mkdir -p src && cd src \
         && git clone  https://github.com/arq5x/bedtools2 \
@@ -17,8 +18,7 @@ before_install:
         && make \
 	&& P=`pwd` \
         && export PATH=${P}/bin:$PATH"
-  - "cd \
-	&& cd src \
+  - "cd ../ \
 	&& wget http://downloads.sourceforge.net/samtools/samtools/0.1.19/samtools-0.1.19.tar.bz2 \
 	&& tar -xjvf samtools-0.1.19.tar.bz2 \
 	&& cd samtools \
