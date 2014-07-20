@@ -9,6 +9,8 @@ notifications:
         on_failure: always
 
 before_install:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
   - "mkdir -p src && cd src \
         && git clone  https://github.com/arq5x/bedtools2 \
         && cd bedtools2  \
@@ -17,7 +19,8 @@ before_install:
         && export PATH=${P}/bin:$PATH"
   - "cd \
 	&& cd src \
-	&& wget http://sourceforge.net/settings/mirror_choices?projectname=samtools\&filename=samtools/0.1.19/samtools-0.1.19.tar.bz2 \
+	&& wget http://downloads.sourceforge.net/samtools/samtools/0.1.19/samtools-0.1.19.tar.bz2 \
+	&& tar -xjvf samtools-0.1.19.tar.bz2 \
 	&& cd samtools \
 	&& make \
 	&& P = `pwd` \
