@@ -25,7 +25,7 @@ before_install:
 	&& make \
 	&& P=`pwd` \
         && export PATH=${P}/bin:$PATH \
-	&& cd .."
+	&& cd ../.."
   - "echo $PATH"
 install:
     - "python setup.py develop"
