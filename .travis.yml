@@ -27,6 +27,7 @@ before_install:
         && export PATH=${P}/bin:$PATH \
 	&& cd ../.."
   - "echo $PATH"
+  - " pip install -U cython"
 install:
     - "python setup.py develop"
 
