@@ -5,31 +5,30 @@ notifications:
     email:
         recipients:
             - lorena.pantano@gmail.com
-        on_success: always
         on_failure: always
 
 before_install:
   - "sh -e /etc/init.d/xvfb start"
   - "echo `pwd`"
   - "echo $PATH"
-  - "mkdir -p src && cd src \
+  - "mkdir -p deps && cd deps \
         && git clone  https://github.com/arq5x/bedtools2 \
         && cd bedtools2  \
         && make \
 	&& P=`pwd` \
-        && export PATH=${P}/bin:$PATH"
+ 	&& export PATH=${P}/bin:$PATH"
   - "cd ../ \
 	&& wget http://downloads.sourceforge.net/samtools/samtools/0.1.19/samtools-0.1.19.tar.bz2 \
 	&& tar -xjvf samtools-0.1.19.tar.bz2 \
 	&& cd samtools-0.1.19 \
 	&& make \
 	&& P=`pwd` \
-        && export PATH=${P}/bin:$PATH \
+	&& export PATH=${P}/bin:$PATH \
 	&& cd ../.."
   - "echo $PATH"
-  - " pip install -U cython"
+  - "pip install -U cython"
 install:
-    - "python setup.py develop"
+    - "python setup.py install"
 
 script: nosetests
 
