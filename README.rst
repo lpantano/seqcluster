@@ -3,4 +3,5 @@ seqcluster
 
 small RNA analysis from NGS data
 
-https://secure.travis-ci.org/lpantano/seqcluster.png
+.. image:: https://travis-ci.org/lpantano/seqcluster.png?branch=master
+    :target: https://travis-ci.org/lpantano/seqcluster.png?branch=master
