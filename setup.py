@@ -1,7 +1,7 @@
 from setuptools import setup
 
 def readme():
-    with open('README.md') as f:
+    with open('README.rst') as f:
         return f.read()
 
 setup(name='seqcluster',
@@ -22,11 +22,9 @@ setup(name='seqcluster',
       packages=['seqcluster'],
       install_requires=[
           'pybedtools',
-          'pysam',
-          'pickle'
+          'pysam'
       ],
-      test_suite='nose.collector',
-      tests_require=['nose', 'nose-cover3'],
+      test_suite='nose',
       entry_points={
           'console_scripts': ['seqcluster=seqcluster.command_line:main'],
       },
