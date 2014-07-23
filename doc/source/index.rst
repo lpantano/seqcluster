@@ -11,7 +11,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   getting_started.rst
+	getting_started.rst
+
+.. automodule:: seqcluster
+
+   
 
 
 Indices and tables
