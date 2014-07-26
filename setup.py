@@ -20,11 +20,6 @@ setup(name='seqcluster',
       author_email='lpantano@iscb.org',
       license='MIT',
       packages=['seqcluster'],
-      install_requires=[
-	  'cython',    
-          'pybedtools',
-          'pysam'
-      ],
       test_suite='nose',
       entry_points={
           'console_scripts': ['seqcluster=seqcluster.command_line:main'],
