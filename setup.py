@@ -21,6 +21,7 @@ setup(name='seqcluster',
       license='MIT',
       packages=['seqcluster'],
       install_requires=[
+	  'cython',    
           'pybedtools',
           'pysam'
       ],
