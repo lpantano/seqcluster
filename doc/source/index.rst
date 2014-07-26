@@ -11,11 +11,12 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-	getting_started.rst
+   getting_started.rst
 
-.. automodule:: seqcluster
+   documentation.rst
 
-   
+
+I am in the process to document all classes and methods
 
 
 Indices and tables

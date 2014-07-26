@@ -17,6 +17,11 @@ class seq_obj:
 
 
 def prepare(args, con, log):
+	"""
+	Read all seq.fa files and create a matrix and unique fasta files
+	
+	:param args: options parsed from command line
+	"""
 	try:
 		f = open(args.dir, 'r')
 		seq_out = open(os.path.join(args.out,"seqs.fa"), 'w')
