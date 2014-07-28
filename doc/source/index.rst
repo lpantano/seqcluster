@@ -15,6 +15,7 @@ Contents:
 
    documentation.rst
 
+   classes.rst
 
 I am in the process to document all classes and methods
 
