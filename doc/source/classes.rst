@@ -4,7 +4,7 @@
 Classes
 ***************
 
-.. autoclass:: seqcluster.libs.classes.seq_obj
+.. autoclass:: seqcluster.libs.classes.sequence_unique
    :members: 
    :undoc-members:
 
@@ -12,31 +12,31 @@ Classes
    :members: 
    :undoc-members:
 
-.. autoclass:: sequence
+.. autoclass:: seqcluster.libs.classes.sequence
    :members: 
    :undoc-members:
 
-.. autoclass:: position
+.. autoclass:: seqcluster.libs.classes.position
    :members: 
    :undoc-members:
 
-.. autoclass:: annotation
+.. autoclass:: seqcluster.libs.classes.annotation
    :members: 
    :undoc-members:
 
-.. autoclass:: dbannotation
+.. autoclass:: seqcluster.libs.classes.dbannotation
    :members: 
    :undoc-members:
 
-.. autoclass:: cluster
+.. autoclass:: seqcluster.libs.classes.cluster
    :members: 
    :undoc-members:
 
-.. autoclass:: bedaligned
+.. autoclass:: seqcluster.libs.classes.bedaligned
    :members: 
    :undoc-members:
 
-.. autoclass:: mergealigned
+.. autoclass:: seqcluster.libs.classes.mergealigned
    :members: 
    :undoc-members:
 
