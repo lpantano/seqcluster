@@ -27,6 +27,8 @@ before_install:
 	&& cd ../.."
   - "echo $PATH"
   - "pip install -U cython"
+  - "pip install pybedtools"
+  - "pip install pysam"
 install:
     - "python setup.py install"
 
