@@ -8,8 +8,10 @@ class TestPreparedata(TestCase):
     def test_preparedata(self):
     	mod_dir = os.path.dirname(inspect.getfile(seqcluster)).replace("seqcluster/","")
     	os.chdir(os.path.join(mod_dir,"data"))
-    	os.remove("pre/seqs.ma")
-    	os.remove("pre/seqs.fa")
+    	if os.path.exists("pre/seqs.ma"):
+            os.remove("pre/seqs.ma")
+        if os.path.exists("pre/seqs.fa"):
+    	    os.remove("pre/seqs.fa")
         seq_l, list_s = _read_fasta_files(f=open("config"))
         ma_out = open("pre/seqs.ma",'w')
         seq_out = open("pre/seqs.fa",'w')

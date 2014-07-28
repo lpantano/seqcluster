@@ -18,20 +18,20 @@ def cluster(args, con, log):
     con.info("Parsing matrix file")
     seqL = parse_ma_file(args.ffile)
     # ###############################################################
-    clusobj = _create_clusters(seqL, args, con, log)
+    clusL = _create_clusters(seqL, args, con, log)
     # #####################reduce loci when possible#############################
     con.info("Solving multi-mapping events in the network of clusters")
-    clusred = reduceloci(clusobj, args.MIN_SEQ, args.dir_out, log)
-    con.info("Clusters up to %s" % (len(clusred.clus.keys())))
+    clusLred = reduceloci(clusL, args.MIN_SEQ, args.dir_out, log)
+    con.info("Clusters up to %s" % (len(clusLred.clus.keys())))
     # #####################create sequences overview ############################
     if args.show:
         con.info("Creating sequences alignment to precursor")
-        clusred = show_seq(clusred, args.index)
+        clusLred = show_seq(clusLred, args.index)
     # #####################overlap with features#################################
-    clusred = _annotate(args, clusred, con, log)
+    clusLred = _annotate(args, clusLred, con, log)
     # #############################################################
     con.info("creating json and count matrix")
-    outfile = _create_json(clusred,args, con, log)
+    _create_json(clusLred,args, con, log)
     con.info("output file as: %s" % args.dir_out)
     con.info("Finished")
 
@@ -48,8 +48,8 @@ def _create_json(clusL, args, con, log):
         for lid in c.loci2seq:
             loci[lid].chr
             seqList = list(set(seqList).union(c.loci2seq[lid]))
-            for dbi in loci[lid].dbann.keys():
-                data_ann_temp[dbi] = {dbi : map(lambda (x): loci[lid].dbann[dbi].ann[x].name,loci[lid].dbann[dbi].ann.keys())}
+            for dbi in loci[lid].db_ann.keys():
+                data_ann_temp[dbi] = {dbi : map(lambda (x): loci[lid].db_ann[dbi].ann[x].name,loci[lid].db_ann[dbi].ann.keys())}
             data_ann = map(lambda (x): data_ann_temp[x], data_ann_temp.keys())
         data_seqs = map(lambda (x): seqs[x].seq,seqList)
         data_freq = map(lambda (x): seqs[x].freq,seqList)
@@ -87,7 +87,7 @@ def _create_clusters(seqL, args, con, log):
         bed_obj = parse_align_file(args.afile, args.format)
         con.info("Merging position")
         a = pybedtools.BedTool(bed_obj, from_string=True)
-        c = a.merge(o="distinct",c="4,5,6",s=True, d=20)
+        c = a.merge(o="distinct", c="4,5,6", s=True, d=20)
         con.info("Creating clusters")
         clus_obj = parse_merge_file(c, seqL, args.MIN_SEQ)
         with open(args.out + '/list_obj.pk', 'wb') as output:
@@ -96,39 +96,31 @@ def _create_clusters(seqL, args, con, log):
         con.info("Loading previous clusters")
         with open(args.out + '/list_obj.pk', 'rb') as input:
             clus_obj = pickle.load(input)
-
     con.info("%s clusters found" % (len(clus_obj.clus.keys())))
     return clus_obj
 
 
-def _check_args(args, con,log):
+def _check_args(args, con, log):
     ########################################################
     con.info("Checking parameters and files")
     args.dir_out = args.out
     args.samplename = "pro"
-
     if not os.path.isdir(args.out):
         print bcolors.FAIL + "the output folder doens't exists" + bcolors.ENDC
         sys.exit(1)
     if args.bed and args.gtf:
         print bcolors.FAIL + "cannot provide -b and -g at the same time" + bcolors.ENDC
         sys.exit(1)
-
-
     #####################define variables####################
-
     if args.debug:
         con.info("DEBUG messages will be showed in file.")
-
     if args.bed:
         args.list_files = args.bed
         args.type_ann = "bed"
     if args.gtf:
         args.list_files = args.gtf
         args.type_ann = "gtf"
-
     con.info("Output dir will be: %s" % args.dir_out)
-
     # #try to open all files to avoid future I/O errors
     try:
         f = open(args.ffile, 'r')
