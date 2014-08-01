@@ -11,31 +11,34 @@ from libs.tool import parse_ma_file, reduceloci, show_seq, what_is, \
 from libs.classes import *
 
 
-def cluster(args, con, log):
-    args = _check_args(args, con, log)
+logger = logging.getLogger(__name__)
+
+
+def cluster(args):
+    args = _check_args(args)
     args.MIN_SEQ = 2
     # ############read input files##################################
-    con.info("Parsing matrix file")
+    logger.info("Parsing matrix file")
     seqL = parse_ma_file(args.ffile)
     # ###############################################################
-    clusL = _create_clusters(seqL, args, con, log)
+    clusL = _create_clusters(seqL, args)
     # #####################reduce loci when possible#############################
-    con.info("Solving multi-mapping events in the network of clusters")
-    clusLred = reduceloci(clusL, args.MIN_SEQ, args.dir_out, log)
-    con.info("Clusters up to %s" % (len(clusLred.clus.keys())))
+    logger.info("Solving multi-mapping events in the network of clusters")
+    clusLred = reduceloci(clusL, args.MIN_SEQ, args.dir_out)
+    logger.info("Clusters up to %s" % (len(clusLred.clus.keys())))
     # #####################create sequences overview ############################
     if args.show:
-        con.info("Creating sequences alignment to precursor")
+        logger.info("Creating sequences alignment to precursor")
         clusLred = show_seq(clusLred, args.index)
     # #####################overlap with features#################################
-    clusLred = _annotate(args, clusLred, con, log)
+    clusLred = _annotate(args, clusLred,)
     # #############################################################
-    con.info("creating json and count matrix")
-    _create_json(clusLred,args, con, log)
-    con.info("output file as: %s" % args.dir_out)
-    con.info("Finished")
+    logger.info("creating json and count matrix")
+    _create_json(clusLred,args)
+    logger.info("output file as: %s" % args.dir_out)
+    logger.info("Finished")
 
-def _create_json(clusL, args, con, log):
+def _create_json(clusL, args):
     clus = clusL.clus
     seqs = clusL.seq
     loci = clusL.loci
@@ -60,12 +63,12 @@ def _create_json(clusL, args, con, log):
         handle_out.write(json.dumps([data_clus],skipkeys=True,indent=2))
 
 
-def _annotate(args, setclus, con, log):
-    con.info("Creating bed file")
+def _annotate(args, setclus):
+    logger.info("Creating bed file")
     bedfile = generate_position_bed(setclus)
     a = pybedtools.BedTool(bedfile, from_string=True)
     beds = []
-    con.info("Annotating clusters")
+    logger.info("Annotating clusters")
     if args.list_files:
         beds = args.list_files.split(",")
         for filebed in beds:
@@ -77,32 +80,32 @@ def _annotate(args, setclus, con, log):
     return setclus
 
 
-def _create_clusters(seqL, args, con, log):
+def _create_clusters(seqL, args):
     clus_obj = []
     if not os.path.exists(args.out + '/list_obj.pk'):
         #merge positions to create clusters: everything connected by
         #positions on the genome.
         #assumption: minimun number of common loci
-        con.info("Parsing aligned file")
+        logger.info("Parsing aligned file")
         bed_obj = parse_align_file(args.afile, args.format)
-        con.info("Merging position")
+        logger.info("Merging position")
         a = pybedtools.BedTool(bed_obj, from_string=True)
         c = a.merge(o="distinct", c="4,5,6", s=True, d=20)
-        con.info("Creating clusters")
+        logger.info("Creating clusters")
         clus_obj = parse_merge_file(c, seqL, args.MIN_SEQ)
         with open(args.out + '/list_obj.pk', 'wb') as output:
             pickle.dump(clus_obj, output, pickle.HIGHEST_PROTOCOL)
     else:
-        con.info("Loading previous clusters")
+        logger.info("Loading previous clusters")
         with open(args.out + '/list_obj.pk', 'rb') as input:
             clus_obj = pickle.load(input)
-    con.info("%s clusters found" % (len(clus_obj.clus.keys())))
+    logger.info("%s clusters found" % (len(clus_obj.clus.keys())))
     return clus_obj
 
 
-def _check_args(args, con, log):
+def _check_args(args):
     ########################################################
-    con.info("Checking parameters and files")
+    logger.info("Checking parameters and files")
     args.dir_out = args.out
     args.samplename = "pro"
     if not os.path.isdir(args.out):
@@ -113,14 +116,14 @@ def _check_args(args, con, log):
         sys.exit(1)
     #####################define variables####################
     if args.debug:
-        con.info("DEBUG messages will be showed in file.")
+        logger.info("DEBUG messages will be showed in file.")
     if args.bed:
         args.list_files = args.bed
         args.type_ann = "bed"
     if args.gtf:
         args.list_files = args.gtf
         args.type_ann = "gtf"
-    con.info("Output dir will be: %s" % args.dir_out)
+    logger.info("Output dir will be: %s" % args.dir_out)
     # #try to open all files to avoid future I/O errors
     try:
         f = open(args.ffile, 'r')
@@ -132,11 +135,11 @@ def _check_args(args, con, log):
             f = open(filebed, 'r')
             f.close()
     except IOError as e:
-        con.error("I/O error({0}): {1}".format(e.errno, e.strerror))
+        logger.error("I/O error({0}): {1}".format(e.errno, e.strerror))
 
     #####################read aligned sequences#####################
     args.format = what_is(args.afile)
-    con.info("aligned file is in: %s" % format )
+    logger.info("aligned file is in: %s" % format )
     if not args.format:
         logging.error("Format of aligned reads not in sam or bed")
         raise "Format of aligned reads not in sam or bed"

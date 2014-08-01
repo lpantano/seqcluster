@@ -20,7 +20,7 @@ def add_subparser_prepare(subparsers):
 	parser = subparsers.add_parser("prepare", help="prepare data")
 	parser.add_argument("-c", "--conf", dest="dir",required=1,
                   help="file with fasta format paths:1st column:path 2nd column:name")
-	parser.add_argument("-o", "--output", dest="out",required=1,
+	parser.add_argument("-o", "--out", dest="out",required=1,
                   help="dir of output files")
 	return parser
 

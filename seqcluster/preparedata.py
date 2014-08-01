@@ -3,11 +3,14 @@ import os
 #from os import listdir
 #from os.path import isfile, join
 import re
-#import logging
+import logging
 from libs.classes import sequence_unique
 
 
-def prepare(args, con, log):
+logger = logging.getLogger('seqbuster')
+
+
+def prepare(args):
     """
 	Read all seq.fa files and create a matrix and unique fasta files.
 	The information is 
@@ -24,14 +27,13 @@ def prepare(args, con, log):
         seq_out = open(os.path.join(args.out, "seqs.fa"), 'w')
         ma_out = open(os.path.join(args.out, "seqs.ma"), 'w')
     except IOError as e:
-        con.error("I/O error({0}): {1}".format(e.errno, e.strerror))
-
+        logger.error("I/O error({0}): {1}".format(e.errno, e.strerror))
     #name = ""
-    con.info("reading sequeces")
+    logger.info("reading sequeces")
     seq_l, sample_l = _read_fasta_files(f)
-    con.info("creating matrix with unique sequences")
+    logger.info("creating matrix with unique sequences")
     _create_matrix_uniq_seq(sample_l, seq_l, ma_out, seq_out)
-    con.info("Finish preprocessing. Get an SAM file of seqs.fa and run seqcluster cluster.")
+    logger.info("Finish preprocessing. Get an SAM file of seqs.fa and run seqcluster cluster.")
 
 
 def _read_fasta_files(f):

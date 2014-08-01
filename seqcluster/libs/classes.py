@@ -94,12 +94,9 @@ class cluster:
     def __init__(self, id):
         self.id = id
         self.idmembers = {}
-        #self.loci = {}
         self.locimax = 0
         self.locilen = {}
         self.loci2seq = {}
-        #self.pairs = {}
-        #self.dist_pair = {}
         self.ref = 0
         self.score = 0
         self.showseq = ""
@@ -107,25 +104,17 @@ class cluster:
         self.toomany = 0
     def set_ref(self,r):
         self.ref = r
-    #def addpair(self,p1,p2,d,s):
-    #            if not (self.pairs.has_key(p1)):
-    #                    self.pairs[p1] = pairs()
-    #                    self.dist_pair[p1] = 1
-    #            self.pairs[p1].set_dist(p2,d,s)
-    #            self.dist_pair[p1]+= 1
     def add_id_member(self, ids, idl):
-        lenid = len(ids)
-        self.locilen[idl] = lenid
         for s in ids:
             self.idmembers[s] = 0
             if not idl in self.loci2seq:
                 self.loci2seq[idl] = []
             self.loci2seq[idl].append(s)
+        self.loci2seq[idl] = list(set(self.loci2seq[idl]))
+        lenid = len(self.loci2seq[idl])
+        self.locilen[idl] = lenid
         if lenid > self.locimax:
             self.locimax = lenid
-    #def addloci(self,idl,np):
-    #    self.loci[idl] = 1
-     
 
 
 class bcolors:
@@ -137,21 +126,27 @@ class bcolors:
     ENDC  =  '\033[0m'
 
 class bedaligned:
-        def __init__(self,l):
-            l = l.strip()
-            cols = l.split("\t")
-            self.chr = cols[0]
-            self.start = cols[1]
-            self.end = cols[2]
-            self.name = cols[3]
-            self.att = cols[4]
-            self.strand = cols[5]
+    """
+    Object that has the bed format attributes
+    """
+    def __init__(self,l):
+        l = l.strip()
+        cols = l.split("\t")
+        self.chr = cols[0]
+        self.start = cols[1]
+        self.end = cols[2]
+        self.name = cols[3]
+        self.att = cols[4]
+        self.strand = cols[5]
 
 class mergealigned:
-        def __init__(self,l):
-                self.chr = l[0]
-                self.strand = l.strand
-                self.start = l.start
-                self.end = l.end
-                self.names = list(l.name.split(","))
-                self.loci = l.score.split(",")
+    """
+    Object that has bed format after merge sequence positions
+    """
+    def __init__(self,l):
+            self.chr = l[0]
+            self.strand = l.strand
+            self.start = l.start
+            self.end = l.end
+            self.names = list(l.name.split(","))
+            self.loci = l.score.split(",")

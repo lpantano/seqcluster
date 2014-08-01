@@ -4,6 +4,7 @@
 Classes
 ***************
 
+
 .. autoclass:: seqcluster.libs.classes.sequence_unique
    :members: 
    :undoc-members:
