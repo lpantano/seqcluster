@@ -4,6 +4,7 @@ import operator
 import pybedtools
 import pickle
 import shutil
+import numpy as np
 import logging
 import json
 from libs.tool import parse_ma_file, reduceloci, show_seq, what_is, \
@@ -16,23 +17,17 @@ logger = logging.getLogger(__name__)
 
 def cluster(args):
     args = _check_args(args)
-    args.MIN_SEQ = 2
-    # ############read input files##################################
+    args.MIN_SEQ = 10
     logger.info("Parsing matrix file")
     seqL = parse_ma_file(args.ffile)
-    # ###############################################################
     clusL = _create_clusters(seqL, args)
-    # #####################reduce loci when possible#############################
     logger.info("Solving multi-mapping events in the network of clusters")
     clusLred = reduceloci(clusL, args.MIN_SEQ, args.dir_out)
     logger.info("Clusters up to %s" % (len(clusLred.clus.keys())))
-    # #####################create sequences overview ############################
     if args.show:
         logger.info("Creating sequences alignment to precursor")
         clusLred = show_seq(clusLred, args.index)
-    # #####################overlap with features#################################
-    clusLred = _annotate(args, clusLred,)
-    # #############################################################
+    clusLred = _annotate(args, clusLred)
     logger.info("creating json and count matrix")
     _create_json(clusLred,args)
     logger.info("output file as: %s" % args.dir_out)
@@ -43,24 +38,37 @@ def _create_json(clusL, args):
     seqs = clusL.seq
     loci = clusL.loci
     data_clus = {}
-    for cid in clus.keys():
-        seqList = []
-        c = clus[cid]
-        data_loci = map(lambda (x): [loci[x].chr,loci[x].start,loci[x].end], c.loci2seq.keys())
-        data_ann_temp = {}
-        for lid in c.loci2seq:
-            loci[lid].chr
-            seqList = list(set(seqList).union(c.loci2seq[lid]))
-            for dbi in loci[lid].db_ann.keys():
-                data_ann_temp[dbi] = {dbi : map(lambda (x): loci[lid].db_ann[dbi].ann[x].name,loci[lid].db_ann[dbi].ann.keys())}
-            data_ann = map(lambda (x): data_ann_temp[x], data_ann_temp.keys())
-        data_seqs = map(lambda (x): seqs[x].seq,seqList)
-        data_freq = map(lambda (x): seqs[x].freq,seqList)
-        data_string = {'seqs':data_seqs,'freq':data_freq,
-            'loci':data_loci,'ann':data_ann}
-        data_clus[cid] = data_string
-    with open(os.path.join(args.dir_out,"seqcluster.json"),'w') as handle_out:
-        handle_out.write(json.dumps([data_clus],skipkeys=True,indent=2))
+    with open(os.path.join(args.dir_out, "counts.tsv"),'w') as matrix:
+        for cid in clus.keys():
+            seqList = []
+            c = clus[cid]
+            data_loci = map(lambda (x): [loci[x].chr, loci[x].start, loci[x].end], c.loci2seq.keys())
+            data_ann_temp = {}
+            data_ann= []
+            for lid in c.loci2seq:
+                loci[lid].chr
+                seqList = list(set(seqList).union(c.loci2seq[lid]))
+                for dbi in loci[lid].db_ann.keys():
+                    data_ann_temp[dbi] = {dbi: map(lambda (x): loci[lid].db_ann[dbi].ann[x].name, loci[lid].db_ann[dbi].ann.keys())}
+                data_ann = data_ann + map(lambda (x): data_ann_temp[x], data_ann_temp.keys())
+            data_seqs = map(lambda (x): seqs[x].seq, seqList)
+            data_freq = map(lambda (x): seqs[x].freq, seqList)
+            data_freq_values = map(lambda (x): map(int, seqs[x].freq.values()), seqList)
+            sum_freq = _sum_by_samples(data_freq_values)
+            data_ann_str = [k.keys() for k in data_ann]
+            matrix.write("%s\t%s\t%s\n" % (cid, ";".join([ ";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
+            data_string = {'seqs': data_seqs, 'freq': data_freq,
+                'loci': data_loci, 'ann': data_ann}
+            data_clus[cid] = data_string
+        with open(os.path.join(args.dir_out, "seqcluster.json"), 'w') as handle_out:
+            handle_out.write(json.dumps([data_clus], skipkeys=True, indent=2))
+
+
+def _sum_by_samples(seqs_freq):
+    y = np.array(seqs_freq[0]) * 0
+    for x in seqs_freq:
+        y = list(np.array(x) + y) 
+    return y
 
 
 def _annotate(args, setclus):
@@ -69,9 +77,10 @@ def _annotate(args, setclus):
     a = pybedtools.BedTool(bedfile, from_string=True)
     beds = []
     logger.info("Annotating clusters")
-    if args.list_files:
+    if hasattr(args, 'list_files'):
         beds = args.list_files.split(",")
         for filebed in beds:
+            logger.info("Using %s " % filebed)
             db = os.path.basename(filebed)
             #db4js[db] = [0, 0, 0]
             b = pybedtools.BedTool(filebed)
@@ -125,18 +134,18 @@ def _check_args(args):
         args.type_ann = "gtf"
     logger.info("Output dir will be: %s" % args.dir_out)
     # #try to open all files to avoid future I/O errors
-    try:
-        f = open(args.ffile, 'r')
-        f.close()
-        f = open(args.afile, 'r')
-        f.close()
-        beds = args.list_files.split(",")
-        for filebed in beds:
-            f = open(filebed, 'r')
+    if hasattr(args,'list_files'):
+        try:
+            f = open(args.ffile, 'r')
             f.close()
-    except IOError as e:
-        logger.error("I/O error({0}): {1}".format(e.errno, e.strerror))
-
+            f = open(args.afile, 'r')
+            f.close()
+            beds = args.list_files.split(",")
+            for filebed in beds:
+                f = open(filebed, 'r')
+                f.close()
+        except IOError as e:
+            logger.error("I/O error({0}): {1}".format(e.errno, e.strerror))
     #####################read aligned sequences#####################
     args.format = what_is(args.afile)
     logger.info("aligned file is in: %s" % format )

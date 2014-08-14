@@ -331,123 +331,142 @@ def _get_seqs_from_cluster(seqs, clus_id):
     return list(already_in), not_in
 
 
-def reduceloci(clus_obj,min_seq,path):
-    ##reduce number of loci a cluster has
+def reduceloci(clus_obj, min_seq, path):
+    """reduce number of loci a cluster has"""
     filtered = {}
-    idcNew = 0
+    n_cluster = 0
     current = clus_obj.clus
-    clus_idt = clus_obj.clusid
-    clus_locit = clus_obj.loci
-    clus_seqt = clus_obj.seq
-    #saved = list()
-    #nodes = ""
-    #nodesInfo = ""
-    for idc in current.keys():
+    for idc in current:
         logger.debug("Cluster analized: %s " % idc)
-        clus1 = copy.deepcopy(current[idc])
-        nElements = len(clus1.loci2seq)
-        logger.debug("Number of elements: %s " % nElements)
-        currentElements = nElements+1
-        removeSeqs = list()
-        cicle = 0
-        seqfound = 0
-        if nElements < 1000:
-            while nElements<currentElements and nElements != 0:
-                cicle += 1
-                if (cicle % 10) == 0:
-                    logger.debug("Number of cicle: %s with nElements %s" % (cicle,nElements))
-                ##get loci with more number of sequences
-                locilen_sorted = sorted(clus1.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
-                ##get gigest loci
-                maxseq = locilen_sorted[0][1]*1.0
-                if maxseq > min_seq:
-                    clus1, removeSeqs, filtered, idcNew = _solve_loci(clus1, locilen_sorted, removeSeqs, filtered, maxseq, idcNew)
-                else:
-                    ##if number of sequences < 10, just remove it
-                    for (idl, lenl) in locilen_sorted:
-                        clus1.loci2seq.pop(idl, "None")
-                        clus1.locilen.pop(idl, "None")
-                nElements = len(clus1.loci2seq)
+        c = copy.deepcopy(current[idc])
+        n_loci = len(c.loci2seq)
+        logger.debug("Number of elements: %s " % n_loci)
+        if n_loci < 1000:
+            filtered, n_cluster = _iter_loci(c, filtered, n_cluster, min_seq)
         else:
-            idcNew += 1 ##creating new cluster id
-            logger.debug("Not resolving cluster %s, too many loci. New id %s" % (idc, idcNew))
-            locilen_sorted = sorted(clus1.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
-            maxidl = locilen_sorted[0][0]
-            #filtered[idcNew] = copy.deepcopy(clus1)
-            filtered[idcNew] = cluster(idcNew)
-            filtered[idcNew].add_id_member(clus1.loci2seq[maxidl], maxidl)
-            filtered[idcNew].id = idcNew
-            filtered[idcNew].toomany = nElements
+            n_cluster +=1
+            filtered[n_cluster] = _add_complete_cluster(n_cluster, c)
     clus_obj.clus = filtered
-    #nodesFiles = open(path+"/nodes.txt",'w')
-    #nodesFiles.write(nodes)
-    #nodesFiles.close()
-    #nodesFiles = open(path+"/nodesInfo.txt",'w')
-    #nodesFiles.write(nodesInfo)
-    #nodesFiles.close()
     return clus_obj
 
 
-def _solve_loci(clus1, locilen_sorted, removeSeqs, filtered, maxseq, idcNew):
+def _add_complete_cluster(idx, clus1):
+    logger.debug("Not resolving cluster %s, too many loci. New id %s" % (idc, idcNew))
+    locilen_sorted = sorted(clus1.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
+    maxidl = locilen_sorted[0][0]
+    c = cluster(idx)
+    c.add_id_member(clus1.loci2seq[maxidl], maxidl)
+    c.id = idx
+    c.toomany = nElements
+    return c
+
+
+def _iter_loci(c, filtered, n_cluster, min_seq):
+    n_loci = len(c.loci2seq)
+    n_loci_prev = n_loci + 1
+    total_seqs = list()
+    cicle = 0
+    while n_loci<n_loci_prev and n_loci != 0:
+        n_loci_prev = n_loci
+        cicle += 1
+        if (cicle % 1) == 0:
+            logger.debug("_iter_loci:number of cicle: %s with n_loci %s" % (cicle, n_loci))
+            locilen_sorted = sorted(c.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
+            maxseq = locilen_sorted[0][1]*1.0
+            if maxseq > min_seq:
+                logger.debug("_iter_loci:maxseq: %s" % maxseq)
+                c, total_seqs, filtered, n_cluster = _solve_loci(c, locilen_sorted, total_seqs, filtered, maxseq, n_cluster)
+            else:
+                for (idl, lenl) in locilen_sorted:
+                    logger.debug("_iter_loci:remove locus %s with len %s:" % (idl, lenl))
+                    c.loci2seq.pop(idl, "None")
+                    c.locilen.pop(idl, "None")
+            n_loci = len(c.loci2seq)
+    return filtered, n_cluster
+
+
+def _solve_loci(c, locilen_sorted, seen_seqs, filtered, maxseq, n_cluster):
+    """internal function to reduce loci complexity
+
+    The function will read the all loci in a cluster of
+    sequences and will determine if all loci are part
+    of the same transcriptional unit(TU) by most-vote locus
+    or by exclusion of common sequence that are the
+    minority of two loci.
+
+    :param c: class cluster
+    :param locilen_sorted: list of loci sorted by size
+    :param seem_seqs: list of seen sequences
+    :param filtered: final TU list
+    :param maxseq: bigger locus
+    "param n_cluster: integer with index of different TU"
+
+    :return
+     c: updated class cluster
+     seen_seqs: updated list of sequences
+     filtered: updated dict of TUs
+     n_cluster: updated int with current index of TUs
+    """
     first_run = 0
-    seqListTemp = list()
-    for (idl,lenl) in locilen_sorted:
-        print clus1.loci2seq.keys()
-        #nodesInfo += "o%s\tblue\n" % (idl)
-        tempList = clus1.loci2seq[idl]
-        ##this should be remove to merge more clusters
-        #tempList = list(set(sorted(tempList)).difference(sorted(removeSeqs)))
+    seen_seqs = list()
+    n_cluster += 1
+    logger.debug("_solve_loci:new cluster %s" % n_cluster)
+    new_c = cluster(n_cluster)
+    for idl, lenl in locilen_sorted:
+        locus_seqs = c.loci2seq[idl]
         if first_run == 0:
-            seqListTemp = tempList
-        intersect = list(set(seqListTemp).intersection(tempList))
+            seen_seqs = locus_seqs
+            first_run = 1
+            first_idl = idl
+        intersect = list(set(seen_seqs).intersection(locus_seqs))
         common = 0
         if intersect:
-            ##this could be change to min to merge more clusters
-            common = len(intersect)*1.0/min(len(seqListTemp), len(tempList))
-        ##check if number of common sequences is 60% or greater than maxseq
-        print "%s %s %s %s %s " % (clus1.id, idl, lenl, maxseq, common)
-        if (first_run == 0 and lenl*1.0>0) or (first_run !=0 and lenl*1.0 >= 0.6*maxseq and common*1.0 >= 0.6):
-            if first_run == 0:
-                idcNew += 1 ##creating new cluster id
-                #nodesInfo += "n%s\tyellow\n" % (idcNew)
-            if not idcNew in filtered:
-                filtered[idcNew] = cluster(idcNew)
-            clus1, removeSeqs = _merge_loci_in_cluster(clus1, idl, removeSeqs, filtered[idcNew])
-            #nodes += "o%s\tn%s\t-1\t%s\n" % (idl,idcNew, len(removeSeqs))
+            common = len(intersect)*1.0/min(len(seen_seqs), len(locus_seqs))
+        logger.debug("_sole_loci:id %s idl %s len %s max %s seen %s inter %s common %s " % (c.id, idl, lenl, maxseq, len(seen_seqs), len(intersect), common))
+        if common*1.0 >= 0.6:
+            if lenl*1.0 >= 0.6*maxseq:
+                c, new_c, seen_seqs = _merge_loci_in_cluster(c, new_c, idl, seen_seqs)
+            else:
+                c, new_c, seen_seqs = _merge_with_first_loci(c, new_c, first_idl, idl, seen_seqs)
         else:
-            clus1 = _remove_seqs_from_loci(clus1, idl, removeSeqs)
-        first_run = 1
-    return clus1, removeSeqs, filtered, idcNew
-
-def _merge_loci_in_cluster(clus1, idl, current_seqs, new_clus):
-    ##remove sequences from cluster
-    tempList = clus1.loci2seq[idl]
-    removeSeqs = list(set(tempList).union(current_seqs))
-    ##adding sequences to new cluster
-    new_clus.add_id_member(list(tempList), idl)
-    ##remove locus from cluster
-    clus1.loci2seq.pop(idl, "None")
-    clus1.locilen.pop(idl, "None")
-    return clus1, removeSeqs
+            c = _remove_seqs_from_loci(c, idl, seen_seqs)
+    filtered[n_cluster] = new_c
+    return c, seen_seqs, filtered, n_cluster
 
 
-def _remove_seqs_from_loci(clus1, idl, current_seqs):
-    ##remove all sequences in the other cluster
-    tempList = clus1.loci2seq[idl]
-    removeSeqs = list(set(tempList).union(current_seqs))
-    newList = list(set(sorted(tempList)).difference(sorted(removeSeqs)))
-    ##update sequences in this locus
-    #seqsGiven = lenl-len(newList)
-    #if len(newList) != lenl and len(newList)>0:
-        #nodes += "o%s\tn%s\t%s\t%s\n" % (idl,idcNew,seqsGiven,len(removeSeqs))
-    clus1.locilen[idl] = len(newList)
-    clus1.loci2seq[idl] = newList
-    #if no more sequence in cluster, remove it
-    if clus1.locilen[idl] == 0:
-        #nodes += "o%s\tn%s\t%s\t%s\n" % (idl,idcNew,lenl,len(removeSeqs))
-        clus1.loci2seq.pop(idl,"None")
-        clus1.locilen.pop(idl,"None")
-    return clus1
+def _merge_loci_in_cluster(c, new_c, idl, current_seqs):
+    logger.debug("_merge_loci_in_cluster:join")
+    locus_seqs = c.loci2seq[idl]
+    seen = list(set(locus_seqs).union(current_seqs))
+    new_c.add_id_member(list(locus_seqs), idl)
+    c.loci2seq.pop(idl, "None")
+    c.locilen.pop(idl, "None")
+    return c, new_c, seen
+
+
+def _merge_with_first_loci(c, new_c, first_idl, idl, current_seqs):
+    logger.debug("_merge_with_first_loci:join first")
+    locus_seqs = c.loci2seq[idl]
+    seen = list(set(locus_seqs).union(current_seqs))
+    new_c.add_id_member(list(locus_seqs), first_idl)
+    c.loci2seq.pop(idl, "None")
+    c.locilen.pop(idl, "None")
+    return c, new_c, seen
+
+
+def _remove_seqs_from_loci(c, idl, current_seqs):
+    current = c.loci2seq[idl]
+    seen = list(set(current).intersection(current_seqs))
+    unseen = list(set(sorted(current)).difference(sorted(seen)))
+    logger.debug("_remove_seqs_from_loci:seen %s unseen %s" % (len(seen), len(unseen)))
+    c.locilen[idl] = len(unseen)
+    c.loci2seq[idl] = unseen
+    logger.debug("_remove_seqs_from_loci:remove; new len %s" % len(unseen))
+    if c.locilen[idl] == 0:
+        c.loci2seq.pop(idl, "None")
+        c.locilen.pop(idl, "None")
+    return c
+
 
 def generate_position_bed(clus_obj):
     ##generate file with positions in bed format
@@ -458,7 +477,6 @@ def generate_position_bed(clus_obj):
         for idl in clus.loci2seq.keys():
             pos = clus_obj.loci[idl]
             bedaligned +=  "%s\t%s\t%s\t%s\t%s\t%s\n" % (pos.chr,pos.start,pos.end,idc,idl,pos.strand)
-
     return bedaligned
 
 
