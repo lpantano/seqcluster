@@ -29,6 +29,7 @@ before_install:
   - "pip install -U cython"
   - "pip install pybedtools"
   - "pip install pysam"
+  - "pip install colorlog"
 install:
     - "python setup.py install"
 
