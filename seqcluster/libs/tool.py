@@ -7,10 +7,10 @@ from sam2bed import makeBED
 import time
 import math
 import pysam
-import logging
+import logger as mylog
 from classes import *
 
-logger = logging.getLogger(__name__)
+logger = mylog.getLogger(__name__)
 
 
 def get_distance(p1, p2):
@@ -229,9 +229,8 @@ def anncluster(c,clus_obj,db,type_ann):
 
 
 def parse_align_file(file_in, format):
-    #parse sam files with aligned sequences
+    """parse sam files with aligned sequences"""
     loc_id = 1
-    #clus_obj = {}
     bedfile_clusters = ""
     if format == "sam":
         samfile = pysam.Samfile( file_in, "r" )
@@ -246,7 +245,6 @@ def parse_align_file(file_in, format):
         f = open(file_in, 'r')
         for line in f:
             loc_id += 1
-            #line = processSAM(line)
             a = bedaligned(line)
             #print "%s\t%s\t%s\t%s\t%s\t%s\n" % (a.chr,a.start,a.end,a.name,loc_id,a.strand)
             bedfile_clusters += "%s\t%s\t%s\t%s\t%s\t%s\n" % \
@@ -279,7 +277,6 @@ def parse_merge_file(c, current_seq, MIN_SEQ):
     eindex = 0
     for line in c.features():
         a = mergealigned(line)
-        #only keep locus with 10 or more sequences
         if len(a.names) >= MIN_SEQ:
             lindex += 1
             already_in, not_in = _get_seqs_from_cluster(a.names, clus_id)
@@ -336,11 +333,12 @@ def reduceloci(clus_obj, min_seq, path):
     filtered = {}
     n_cluster = 0
     current = clus_obj.clus
+    logger.info("Number of loci: %s" % len(clus_obj.loci.keys()))
     for idc in current:
-        logger.debug("Cluster analized: %s " % idc)
+        #logger.note("Cluster analized: %s " % idc)
         c = copy.deepcopy(current[idc])
         n_loci = len(c.loci2seq)
-        logger.debug("Number of elements: %s " % n_loci)
+        #logger.note("Number of elements: %s " % n_loci)
         if n_loci < 1000:
             filtered, n_cluster = _iter_loci(c, filtered, n_cluster, min_seq)
         else:
@@ -437,6 +435,8 @@ def _solve_loci(c, locilen_sorted, seen_seqs, filtered, maxseq, n_cluster):
 def _merge_loci_in_cluster(c, new_c, idl, current_seqs):
     logger.debug("_merge_loci_in_cluster:join")
     locus_seqs = c.loci2seq[idl]
+    common = len(set(locus_seqs).intersection(current_seqs))
+    logger.note("%s %s %s %s %s" % (c.id, new_c.id, idl, idl, common))
     seen = list(set(locus_seqs).union(current_seqs))
     new_c.add_id_member(list(locus_seqs), idl)
     c.loci2seq.pop(idl, "None")
@@ -447,6 +447,8 @@ def _merge_loci_in_cluster(c, new_c, idl, current_seqs):
 def _merge_with_first_loci(c, new_c, first_idl, idl, current_seqs):
     logger.debug("_merge_with_first_loci:join first")
     locus_seqs = c.loci2seq[idl]
+    common = len(set(locus_seqs).intersection(current_seqs))
+    logger.note("%s %s %s %s %s" % (c.id, new_c.id, idl, first_idl, common))
     seen = list(set(locus_seqs).union(current_seqs))
     new_c.add_id_member(list(locus_seqs), first_idl)
     c.loci2seq.pop(idl, "None")
@@ -456,6 +458,8 @@ def _merge_with_first_loci(c, new_c, first_idl, idl, current_seqs):
 
 def _remove_seqs_from_loci(c, idl, current_seqs):
     current = c.loci2seq[idl]
+    common = len(set(current).intersection(current_seqs))
+    logger.note("%s %s %s %s %s" % (c.id, "NA", idl, "NA", common))
     seen = list(set(current).intersection(current_seqs))
     unseen = list(set(sorted(current)).difference(sorted(seen)))
     logger.debug("_remove_seqs_from_loci:seen %s unseen %s" % (len(seen), len(unseen)))
@@ -481,7 +485,7 @@ def generate_position_bed(clus_obj):
 
 
 def parse_ma_file(file):
-    f  =  open(file, 'r')
+    f = open(file, 'r')
     name = ""
     seq_l = {}
     index = 1
@@ -494,11 +498,11 @@ def parse_ma_file(file):
         cols = line.split("\t")
         exp = {}
         for i in range(len(samples)):
-            exp[samples[i]] = cols[i+2] 
-        name = cols[0].replace(">","")
+            exp[samples[i]] = cols[i+2]
+        name = cols[0].replace(">", "")
         index = index+1
-        seq = cols[1]      
-        new_s = sequence(seq,exp,index)
-        seq_l[name] = new_s      
+        seq = cols[1]
+        new_s = sequence(seq, exp,index)
+        seq_l[name] = new_s
     f.close()
     return seq_l

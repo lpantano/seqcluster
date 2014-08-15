@@ -5,14 +5,14 @@ import pybedtools
 import pickle
 import shutil
 import numpy as np
-import logging
+import libs.logger as mylog
 import json
 from libs.tool import parse_ma_file, reduceloci, show_seq, what_is, \
     parse_merge_file, parse_align_file, generate_position_bed, anncluster
 from libs.classes import *
 
 
-logger = logging.getLogger(__name__)
+logger = mylog.getLogger(__name__)
 
 
 def cluster(args):
@@ -28,9 +28,9 @@ def cluster(args):
         logger.info("Creating sequences alignment to precursor")
         clusLred = show_seq(clusLred, args.index)
     clusLred = _annotate(args, clusLred)
-    logger.info("creating json and count matrix")
-    _create_json(clusLred,args)
-    logger.info("output file as: %s" % args.dir_out)
+    logger.info("Creating json and count matrix")
+    _create_json(clusLred, args)
+    logger.info("Output file in: %s" % args.dir_out)
     logger.info("Finished")
 
 def _create_json(clusL, args):
@@ -39,6 +39,7 @@ def _create_json(clusL, args):
     loci = clusL.loci
     data_clus = {}
     with open(os.path.join(args.dir_out, "counts.tsv"),'w') as matrix:
+        matrix.write( "id\tann\t%s\n" % "\t".join(list(seqs[seqs.keys()[1]].freq.keys())))
         for cid in clus.keys():
             seqList = []
             c = clus[cid]
@@ -60,8 +61,8 @@ def _create_json(clusL, args):
             data_string = {'seqs': data_seqs, 'freq': data_freq,
                 'loci': data_loci, 'ann': data_ann}
             data_clus[cid] = data_string
-        with open(os.path.join(args.dir_out, "seqcluster.json"), 'w') as handle_out:
-            handle_out.write(json.dumps([data_clus], skipkeys=True, indent=2))
+    with open(os.path.join(args.dir_out, "seqcluster.json"), 'w') as handle_out:
+        handle_out.write(json.dumps([data_clus], skipkeys=True, indent=2))
 
 
 def _sum_by_samples(seqs_freq):
@@ -113,17 +114,15 @@ def _create_clusters(seqL, args):
 
 
 def _check_args(args):
-    ########################################################
     logger.info("Checking parameters and files")
     args.dir_out = args.out
     args.samplename = "pro"
     if not os.path.isdir(args.out):
-        print bcolors.FAIL + "the output folder doens't exists" + bcolors.ENDC
-        sys.exit(1)
+        logger.warning("the output folder doens't exists")
+        os.mkdirs(args.out)
     if args.bed and args.gtf:
-        print bcolors.FAIL + "cannot provide -b and -g at the same time" + bcolors.ENDC
-        sys.exit(1)
-    #####################define variables####################
+        logger.error("cannot provide -b and -g at the same time")
+        raise SyntaxError
     if args.debug:
         logger.info("DEBUG messages will be showed in file.")
     if args.bed:
@@ -133,8 +132,7 @@ def _check_args(args):
         args.list_files = args.gtf
         args.type_ann = "gtf"
     logger.info("Output dir will be: %s" % args.dir_out)
-    # #try to open all files to avoid future I/O errors
-    if hasattr(args,'list_files'):
+    if hasattr(args, 'list_files'):
         try:
             f = open(args.ffile, 'r')
             f.close()
@@ -146,9 +144,8 @@ def _check_args(args):
                 f.close()
         except IOError as e:
             logger.error("I/O error({0}): {1}".format(e.errno, e.strerror))
-    #####################read aligned sequences#####################
     args.format = what_is(args.afile)
-    logger.info("aligned file is in: %s" % format )
+    logger.info("Aligned file is in: %s" % args.format)
     if not args.format:
         logging.error("Format of aligned reads not in sam or bed")
         raise "Format of aligned reads not in sam or bed"
