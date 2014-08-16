@@ -348,6 +348,20 @@ def reduceloci(clus_obj, min_seq, path):
     return clus_obj
 
 
+def _calculate_similarity(c):
+    """Get a similarity matrix of % of shared sequence
+
+    :param c: cluster object
+
+    :return ma: similarity matrix
+    """
+    ma = {}
+    for idl in c.loci2seq:
+        set1 = c.loci2seq[idl]
+        ma[(idl1, idl2)] = [set(set1).intersection(c.loci2seq[idl2]) for idl2 in c.loci2seq]
+    return ma
+
+
 def _add_complete_cluster(idx, clus1):
     logger.debug("Not resolving cluster %s, too many loci. New id %s" % (idc, idcNew))
     locilen_sorted = sorted(clus1.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
@@ -360,6 +374,8 @@ def _add_complete_cluster(idx, clus1):
 
 
 def _iter_loci(c, filtered, n_cluster, min_seq):
+    """Go through all locus and decide if they are part
+    of the same TU or not"""
     n_loci = len(c.loci2seq)
     n_loci_prev = n_loci + 1
     total_seqs = list()
