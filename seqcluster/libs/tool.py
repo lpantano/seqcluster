@@ -375,12 +375,22 @@ def _add_complete_cluster(idx, clus1):
 
 def _iter_loci(c, filtered, n_cluster, min_seq):
     """Go through all locus and decide if they are part
-    of the same TU or not"""
+    of the same TU or not.
+
+    :param idx: int cluster id
+    :param filtered: dict with clusters object
+    :param n_cluster: int cluster id
+    :param min_seq: int min number of sequences inside
+    cluster
+
+    :return:
+        * filtered: dict of cluster objects
+        * n_cluster: int cluster id"""
     n_loci = len(c.loci2seq)
     n_loci_prev = n_loci + 1
     total_seqs = list()
     cicle = 0
-    while n_loci<n_loci_prev and n_loci != 0:
+    while n_loci < n_loci_prev and n_loci != 0:
         n_loci_prev = n_loci
         cicle += 1
         if (cicle % 1) == 0:
