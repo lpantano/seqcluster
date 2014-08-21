@@ -348,20 +348,6 @@ def reduceloci(clus_obj, min_seq, path):
     return clus_obj
 
 
-def _calculate_similarity(c):
-    """Get a similarity matrix of % of shared sequence
-
-    :param c: cluster object
-
-    :return ma: similarity matrix
-    """
-    ma = {}
-    for idl in c.loci2seq:
-        set1 = c.loci2seq[idl]
-        ma[(idl1, idl2)] = [set(set1).intersection(c.loci2seq[idl2]) for idl2 in c.loci2seq]
-    return ma
-
-
 def _add_complete_cluster(idx, clus1):
     logger.debug("Not resolving cluster %s, too many loci. New id %s" % (idc, idcNew))
     locilen_sorted = sorted(clus1.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
@@ -373,7 +359,7 @@ def _add_complete_cluster(idx, clus1):
     return c
 
 
-def _iter_loci(c, filtered, n_cluster, min_seq):
+def _iter_loci_deprecated(c, filtered, n_cluster, min_seq):
     """Go through all locus and decide if they are part
     of the same TU or not.
 
@@ -393,23 +379,168 @@ def _iter_loci(c, filtered, n_cluster, min_seq):
     while n_loci < n_loci_prev and n_loci != 0:
         n_loci_prev = n_loci
         cicle += 1
+        ma = _calculate_similarity(c)
         if (cicle % 1) == 0:
             logger.debug("_iter_loci:number of cicle: %s with n_loci %s" % (cicle, n_loci))
-            locilen_sorted = sorted(c.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
-            maxseq = locilen_sorted[0][1]*1.0
-            if maxseq > min_seq:
-                logger.debug("_iter_loci:maxseq: %s" % maxseq)
-                c, total_seqs, filtered, n_cluster = _solve_loci(c, locilen_sorted, total_seqs, filtered, maxseq, n_cluster)
-            else:
-                for (idl, lenl) in locilen_sorted:
-                    logger.debug("_iter_loci:remove locus %s with len %s:" % (idl, lenl))
-                    c.loci2seq.pop(idl, "None")
-                    c.locilen.pop(idl, "None")
-            n_loci = len(c.loci2seq)
+        locilen_sorted = sorted(c.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
+        maxseq = locilen_sorted[0][1]*1.0
+        if maxseq > min_seq:
+            logger.debug("_iter_loci:maxseq: %s" % maxseq)
+            c, total_seqs, filtered, n_cluster = _solve_loci(c, locilen_sorted, total_seqs, filtered, maxseq, n_cluster)
+        else:
+            for (idl, lenl) in locilen_sorted:
+                logger.debug("_iter_loci:remove locus %s with len %s:" % (idl, lenl))
+                c.loci2seq.pop(idl, "None")
+                c.locilen.pop(idl, "None")
+        n_loci = len(c.loci2seq)
+    return filtered, n_cluster
+
+def _iter_loci(c, filtered, n_cluster, min_seq):
+    """Go through all locus and decide if they are part
+    of the same TU or not.
+
+    :param idx: int cluster id
+    :param filtered: dict with clusters object
+    :param n_cluster: int cluster id
+    :param min_seq: int min number of sequences inside
+    cluster
+
+    :return:
+        * filtered: dict of cluster objects
+        * n_cluster: int cluster id"""
+    n_loci = len(c.loci2seq)
+    n_loci_prev = n_loci + 1
+    cicle = 0
+    internal_cluster = {}
+    loci = _convert_to_clusters(c)
+    while n_loci < n_loci_prev and n_loci != 1:
+        n_loci_prev = n_loci
+        cicle += 1
+        if (cicle % 1) == 0:
+            logger.debug("_iter_loci:number of cicle: %s with n_loci %s" % (cicle, n_loci))
+        loci_similarity = _calculate_similarity(loci, c)
+        loci_similarity = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
+        internal_cluster = _merge_similar(loci, loci_similarity)
+        n_loci = len(internal_cluster)
+        loci = internal_cluster
+        logger.debug("_iter_loci: n_loci %s" % n_loci)
+    for idc in internal_cluster:
+        n_cluster += 1
+        filtered[n_cluster] = internal_cluster[idc]
     return filtered, n_cluster
 
 
-def _solve_loci(c, locilen_sorted, seen_seqs, filtered, maxseq, n_cluster):
+def _remove_loci(ci, idl):
+    for (idl, lenl) in locilen_sorted:
+        logger.debug("_remove_loci:remove locus %s with len %s:" % (idl, lenl))
+        c.loci2seq.pop(idl, "None")
+        c.locilen.pop(idl, "None")
+
+
+def _convert_to_clusters(c):
+    """Return 1 cluster per loci"""
+    new_dict = {}
+    n_cluster = 0
+    for idl in c.loci2seq:
+        n_cluster += 1
+        new_c = cluster(n_cluster)
+        #new_c.id_prev = c.id
+        new_c.loci2seq[idl] = c.loci2seq[idl]
+        new_dict[n_cluster] = new_c
+    logger.debug("_convert_to_cluster: %s" % new_dict.keys())
+    return new_dict
+
+
+def _calculate_similarity(c, origin_c):
+    """Get a similarity matrix of % of shared sequence
+
+    :param c: cluster object
+
+    :return ma: similarity matrix
+    """
+    ma = {}
+    for idc in c:
+        set1 = _get_seqs(c[idc].loci2seq, origin_c)
+        [ma.update({(idc, idc2): _common(set1, _get_seqs(c[idc2].loci2seq, origin_c))}) for idc2 in c if idc != idc2 and (idc2,idc) not in ma]
+    logger.debug("_calculate_similarity_ %s" % ma)
+    return ma
+
+
+def _get_seqs(list_idl, c):
+    """get all sequences in a cluster knowing loci"""
+    seqs = set()
+    for idl in list_idl:
+        [seqs.add(s) for s in c.loci2seq[idl]]
+    return seqs
+
+
+def _common(s1, s2):
+    """calculate the common % percentage of sequences"""
+    c = len(set(s1).intersection(s2))
+    t = min(len(s1), len(s2))
+    return 1.0 * c / t
+
+
+def _merge_similar(loci, locilen_sorted):
+    """internal function to reduce loci complexity
+
+    :param c: class cluster
+    :param locilen_sorted: list of loci sorted by size
+
+    :return
+     c: updated class cluster
+    """
+    n_cluster = 0
+    internal_cluster = {}
+    clus_seen = {}
+    for pairs, common in locilen_sorted:
+        n_cluster += 1
+        logger.debug("_merge_similar:new cluster %s" % n_cluster)
+        new_c = cluster(n_cluster)
+        logger.debug("_merge_similar:id %s  common %s" % (pairs, common))
+        p_seen, p_unseen = [], []
+        if common >= 0.8:
+            if pairs[0] in clus_seen:
+                p_seen.append(pairs[0])
+                p_unseen.append(pairs[1])
+            elif pairs[1] in clus_seen:
+                p_seen.append(pairs[1])
+                p_unseen.append(pairs[0])
+            else:
+                new_c = _merge_cluster(loci[pairs[0]], new_c)
+                new_c = _merge_cluster(loci[pairs[1]], new_c)
+                [clus_seen.update({p: n_cluster}) for p in pairs]
+                internal_cluster[n_cluster] = new_c
+            if len(p_seen) == 1:
+                idc_seen = clus_seen[p_seen[0]]
+                internal_cluster[idc_seen] = _merge_cluster(loci[p_unseen[0]], internal_cluster[idc_seen])
+                clus_seen[p_unseen[0]] = idc_seen
+        else:
+            continue
+    internal_cluster.update(_add_unseen(loci, clus_seen, n_cluster))
+    logger.debug("_merge_similar: total clus %s" %
+                 len(internal_cluster.keys()))
+    return internal_cluster
+
+
+def _merge_cluster(old, new):
+    """merge one cluster to another"""
+    logger.debug("_merge_cluster: %s to %s" % (old.id, new.id))
+    for idl in old.loci2seq:
+        new.loci2seq[idl] = old.loci2seq
+    return new
+
+
+def _add_unseen(loci, clus_seen, n_cluster):
+    unseen = {}
+    for idc in loci:
+        if not idc in clus_seen:
+            n_cluster += 1
+            unseen[n_cluster] = loci[idc]
+    return unseen
+
+
+def _solve_loci_deprecated(c, locilen_sorted, seen_seqs, filtered, maxseq, n_cluster):
     """internal function to reduce loci complexity
 
     The function will read the all loci in a cluster of
@@ -424,7 +555,6 @@ def _solve_loci(c, locilen_sorted, seen_seqs, filtered, maxseq, n_cluster):
     :param filtered: final TU list
     :param maxseq: bigger locus
     "param n_cluster: integer with index of different TU"
-
     :return
      c: updated class cluster
      seen_seqs: updated list of sequences
