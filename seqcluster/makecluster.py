@@ -33,6 +33,7 @@ def cluster(args):
     logger.info("Output file in: %s" % args.dir_out)
     logger.info("Finished")
 
+
 def _create_json(clusL, args):
     clus = clusL.clus
     seqs = clusL.seq
@@ -49,6 +50,7 @@ def _create_json(clusL, args):
             for lid in c.loci2seq:
                 loci[lid].chr
                 seqList = list(set(seqList).union(c.loci2seq[lid]))
+                logger.debug("_json_: %s" % seqList)
                 for dbi in loci[lid].db_ann.keys():
                     data_ann_temp[dbi] = {dbi: map(lambda (x): loci[lid].db_ann[dbi].ann[x].name, loci[lid].db_ann[dbi].ann.keys())}
                 data_ann = data_ann + map(lambda (x): data_ann_temp[x], data_ann_temp.keys())

@@ -3,7 +3,6 @@ import operator
 import os
 import copy
 from sam2bed import makeBED
-#from . import table,barchart,seqviz,expchart
 import time
 import math
 import pysam
@@ -91,8 +90,9 @@ def calculate_size(vector):
     return (counts*((total-zeros)/total))
 
 
-def show_seq(clus_obj,index):
-    ##create vizualization of sequence along precursor for the results
+def show_seq(clus_obj, index):
+    """Get the precursor and map sequences to it.
+       this way we create a positional map."""
     current = clus_obj.clus
     clus_seqt = clus_obj.seq
     clus_locit = clus_obj.loci
@@ -335,14 +335,13 @@ def reduceloci(clus_obj, min_seq, path):
     current = clus_obj.clus
     logger.info("Number of loci: %s" % len(clus_obj.loci.keys()))
     for idc in current:
-        #logger.note("Cluster analized: %s " % idc)
+        logger.debug("_reduceloci: cluster %s" % idc)
         c = copy.deepcopy(current[idc])
         n_loci = len(c.loci2seq)
-        #logger.note("Number of elements: %s " % n_loci)
         if n_loci < 1000:
             filtered, n_cluster = _iter_loci(c, filtered, n_cluster, min_seq)
         else:
-            n_cluster +=1
+            n_cluster += 1
             filtered[n_cluster] = _add_complete_cluster(n_cluster, c)
     clus_obj.clus = filtered
     return clus_obj
@@ -395,6 +394,7 @@ def _iter_loci_deprecated(c, filtered, n_cluster, min_seq):
         n_loci = len(c.loci2seq)
     return filtered, n_cluster
 
+
 def _iter_loci(c, filtered, n_cluster, min_seq):
     """Go through all locus and decide if they are part
     of the same TU or not.
@@ -413,6 +413,9 @@ def _iter_loci(c, filtered, n_cluster, min_seq):
     cicle = 0
     internal_cluster = {}
     loci = _convert_to_clusters(c)
+    if n_loci == 1:
+        n_cluster += 1
+        internal_cluster[n_cluster] = c
     while n_loci < n_loci_prev and n_loci != 1:
         n_loci_prev = n_loci
         cicle += 1
@@ -427,6 +430,7 @@ def _iter_loci(c, filtered, n_cluster, min_seq):
     for idc in internal_cluster:
         n_cluster += 1
         filtered[n_cluster] = internal_cluster[idc]
+    logger.debug("_iter_loci: filtered %s" % filtered.keys())
     return filtered, n_cluster
 
 
@@ -441,13 +445,14 @@ def _convert_to_clusters(c):
     """Return 1 cluster per loci"""
     new_dict = {}
     n_cluster = 0
+    logger.debug("_convert_to_cluster: loci %s" % c.loci2seq.keys())
     for idl in c.loci2seq:
         n_cluster += 1
         new_c = cluster(n_cluster)
         #new_c.id_prev = c.id
         new_c.loci2seq[idl] = c.loci2seq[idl]
         new_dict[n_cluster] = new_c
-    logger.debug("_convert_to_cluster: %s" % new_dict.keys())
+    logger.debug("_convert_to_cluster: new ids %s" % new_dict.keys())
     return new_dict
 
 
@@ -461,7 +466,7 @@ def _calculate_similarity(c, origin_c):
     ma = {}
     for idc in c:
         set1 = _get_seqs(c[idc].loci2seq, origin_c)
-        [ma.update({(idc, idc2): _common(set1, _get_seqs(c[idc2].loci2seq, origin_c))}) for idc2 in c if idc != idc2 and (idc2,idc) not in ma]
+        [ma.update({(idc, idc2): _common(set1, _get_seqs(c[idc2].loci2seq, origin_c))}) for idc2 in c if idc != idc2 and (idc2, idc) not in ma]
     logger.debug("_calculate_similarity_ %s" % ma)
     return ma
 
@@ -470,7 +475,9 @@ def _get_seqs(list_idl, c):
     """get all sequences in a cluster knowing loci"""
     seqs = set()
     for idl in list_idl:
+        logger.debug("_get_seqs_: loci %s" % idl)
         [seqs.add(s) for s in c.loci2seq[idl]]
+    logger.debug("_get_seqs_: %s" % len(seqs))
     return seqs
 
 
@@ -495,7 +502,7 @@ def _merge_similar(loci, locilen_sorted):
     clus_seen = {}
     for pairs, common in locilen_sorted:
         n_cluster += 1
-        logger.debug("_merge_similar:new cluster %s" % n_cluster)
+        logger.debug("_merge_similar:try new cluster %s" % n_cluster)
         new_c = cluster(n_cluster)
         logger.debug("_merge_similar:id %s  common %s" % (pairs, common))
         p_seen, p_unseen = [], []
@@ -503,10 +510,10 @@ def _merge_similar(loci, locilen_sorted):
             if pairs[0] in clus_seen:
                 p_seen.append(pairs[0])
                 p_unseen.append(pairs[1])
-            elif pairs[1] in clus_seen:
+            if pairs[1] in clus_seen:
                 p_seen.append(pairs[1])
                 p_unseen.append(pairs[0])
-            else:
+            if len(p_seen) == 0:
                 new_c = _merge_cluster(loci[pairs[0]], new_c)
                 new_c = _merge_cluster(loci[pairs[1]], new_c)
                 [clus_seen.update({p: n_cluster}) for p in pairs]
@@ -527,16 +534,19 @@ def _merge_cluster(old, new):
     """merge one cluster to another"""
     logger.debug("_merge_cluster: %s to %s" % (old.id, new.id))
     for idl in old.loci2seq:
-        new.loci2seq[idl] = old.loci2seq
+        logger.debug("_merge_cluster: add idl %s" % idl)
+        new.loci2seq[idl] = old.loci2seq[idl]
     return new
 
 
 def _add_unseen(loci, clus_seen, n_cluster):
     unseen = {}
     for idc in loci:
-        if not idc in clus_seen:
+        if idc not in clus_seen:
             n_cluster += 1
             unseen[n_cluster] = loci[idc]
+            logger.debug("_add_unseen: add  %s as new %s" %
+                         (idc, n_cluster))
     return unseen
 
 
