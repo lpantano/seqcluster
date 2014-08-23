@@ -550,6 +550,15 @@ def _add_unseen(loci, clus_seen, n_cluster):
     return unseen
 
 
+def _calculate_size_enrichment(c):
+    """calculate whether there is a size
+    enrichment in the cluster
+
+    :param c: cluster object
+    """
+    seqs = _get_sequences(c)
+    return True
+
 def _solve_loci_deprecated(c, locilen_sorted, seen_seqs, filtered, maxseq, n_cluster):
     """internal function to reduce loci complexity
 
