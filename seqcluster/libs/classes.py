@@ -39,9 +39,10 @@ class sequence:
     """
     Object with information about sequences, counts, size, position, id and score
     """
-    def __init__(self, seq,freq,seq_id):
+    def __init__(self, seq, freq, seq_id):
         self.seq = seq
         self.freq = freq
+        self.norm_freq = freq
         self.len = len(seq)
         self.pos = []
         self.id = seq_id

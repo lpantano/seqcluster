@@ -1,10 +1,11 @@
-from collections import OrderedDict
+from collections import defaultdict, Counter
 import operator
 import os
 import copy
 from sam2bed import makeBED
 import time
 import math
+import numpy as np
 import pysam
 import logger as mylog
 from classes import *
@@ -559,6 +560,7 @@ def _calculate_size_enrichment(c):
     seqs = _get_sequences(c)
     return True
 
+
 def _solve_loci_deprecated(c, locilen_sorted, seen_seqs, filtered, maxseq, n_cluster):
     """internal function to reduce loci complexity
 
@@ -659,25 +661,37 @@ def generate_position_bed(clus_obj):
     return bedaligned
 
 
-def parse_ma_file(file):
-    f = open(file, 'r')
+def parse_ma_file(in_file):
+    """read seqs.ma file and create dict with
+    sequence object"""
     name = ""
     seq_l = {}
     index = 1
-    line = f.readline()
-    line = line.strip()
-    cols = line.split("\t")
-    samples = cols[2:]
-    for line in f:
-        line = line.strip()
+    total = defaultdict(int) 
+    with open(in_file) as handle_in:
+        line = handle_in.readline().strip()
         cols = line.split("\t")
-        exp = {}
-        for i in range(len(samples)):
-            exp[samples[i]] = cols[i+2]
-        name = cols[0].replace(">", "")
-        index = index+1
-        seq = cols[1]
-        new_s = sequence(seq, exp,index)
-        seq_l[name] = new_s
-    f.close()
+        samples = cols[2:]
+        for line in handle_in:
+            line = line.strip()
+            cols = line.split("\t")
+            exp = {}
+            for i in range(len(samples)):
+                exp[samples[i]] = int(cols[i+2])
+                total[samples[i]] += int(cols[i+2])
+            name = cols[0].replace(">", "")
+            index = index+1
+            seq = cols[1]
+            new_s = sequence(seq, exp, index)
+            seq_l[name] = new_s
+    seq_l = _normalize_seqs(seq_l, total)
     return seq_l
+
+
+def _normalize_seqs(s, t):
+    """Normalize to RPM"""
+    for ids in s:
+        obj = s[ids]
+        [obj.norm_freq.update({sample: 1.0 * obj.freq[sample] / t[sample] * 1000000}) for sample in obj.norm_freq]
+        s[ids] = obj
+    return s
