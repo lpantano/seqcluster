@@ -416,21 +416,28 @@ def _iter_loci(c, filtered, n_cluster, min_seq):
     loci = _convert_to_clusters(c)
     if n_loci == 1:
         n_cluster += 1
-        internal_cluster[n_cluster] = c
+        c.id = n_loci
+        filtered[n_cluster] = c
     while n_loci < n_loci_prev and n_loci != 1:
         n_loci_prev = n_loci
         cicle += 1
         if (cicle % 1) == 0:
             logger.debug("_iter_loci:number of cicle: %s with n_loci %s" % (cicle, n_loci))
-        loci_similarity = _calculate_similarity(loci, c)
+        loci_similarity = _calculate_similarity(loci)
         loci_similarity = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
         internal_cluster = _merge_similar(loci, loci_similarity)
         n_loci = len(internal_cluster)
         loci = internal_cluster
         logger.debug("_iter_loci: n_loci %s" % n_loci)
+    if n_loci > 1:
+        n_internal_cluster = sorted(internal_cluster.keys(), reverse=True)[0]
+        internal_cluster = _solve_conflict(internal_cluster, n_internal_cluster)
+    internal_cluster = _clean_cluster(internal_cluster)
     for idc in internal_cluster:
         n_cluster += 1
+        logger.debug("_iter_loci: add to filtered %s" % n_cluster)
         filtered[n_cluster] = internal_cluster[idc]
+        filtered[n_cluster].id = n_cluster
     logger.debug("_iter_loci: filtered %s" % filtered.keys())
     return filtered, n_cluster
 
@@ -457,7 +464,7 @@ def _convert_to_clusters(c):
     return new_dict
 
 
-def _calculate_similarity(c, origin_c):
+def _calculate_similarity(c):
     """Get a similarity matrix of % of shared sequence
 
     :param c: cluster object
@@ -466,18 +473,18 @@ def _calculate_similarity(c, origin_c):
     """
     ma = {}
     for idc in c:
-        set1 = _get_seqs(c[idc].loci2seq, origin_c)
-        [ma.update({(idc, idc2): _common(set1, _get_seqs(c[idc2].loci2seq, origin_c))}) for idc2 in c if idc != idc2 and (idc2, idc) not in ma]
+        set1 = _get_seqs(c[idc])
+        [ma.update({(idc, idc2): _common(set1, _get_seqs(c[idc2]))}) for idc2 in c if idc != idc2 and (idc2, idc) not in ma]
     logger.debug("_calculate_similarity_ %s" % ma)
     return ma
 
 
-def _get_seqs(list_idl, c):
+def _get_seqs(list_idl):
     """get all sequences in a cluster knowing loci"""
     seqs = set()
-    for idl in list_idl:
+    for idl in list_idl.loci2seq:
         logger.debug("_get_seqs_: loci %s" % idl)
-        [seqs.add(s) for s in c.loci2seq[idl]]
+        [seqs.add(s) for s in list_idl.loci2seq[idl]]
     logger.debug("_get_seqs_: %s" % len(seqs))
     return seqs
 
@@ -540,15 +547,104 @@ def _merge_cluster(old, new):
     return new
 
 
+def _solve_conflict(list_c, n_cluster):
+    """make sure sequences are counts once.
+    Resolve by most-vote or exclussion"""
+    logger.debug("_solve_conflict: count once")
+    loci_similarity = _calculate_similarity(list_c)
+    loci_similarity = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
+    common = sum([score for p, score in loci_similarity])
+    while common:
+        n_cluster += 1
+        logger.debug("_solve_conflict: ma %s" % loci_similarity)
+        logger.debug("_solve_conflict: common %s, new %s" % (common, n_cluster))
+        pairs = loci_similarity[0][0]
+        #list_c = _split_cluster(list_c, pairs, n_cluster)
+        list_c = _split_cluster_by_most_vote(list_c, pairs)
+        list_c = {k: v for k, v in list_c.iteritems() if len(v.loci2seq) > 0}
+        loci_similarity = _calculate_similarity(list_c)
+        loci_similarity = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
+        common = sum([score for p, score in loci_similarity])
+        logger.debug("_solve_conflict: solved clusters %s" % len(list_c.keys()))
+    return list_c
+
+
+def _split_cluster(c , pairs, n):
+    """split cluster by exclussion"""
+    old = c[p[0]]
+    new = c[p[1]]
+    new_c = cluster(n)
+    common = set(_get_seqs(old)).intersection(_get_seqs(new))
+    for idl in old.loci2seq:
+        in_common = list(set(common).intersection(old.loci2seq[idl]))
+        if len(in_common) > 0:
+            logger.debug("_split_cluster: in_common %s with pair 1" % (len(in_common)))
+            new_c.loci2seq[idl] = in_common
+            old.loci2seq[idl] = list(set(old.loci2seq[idl]) - set(common))
+            logger.debug("_split_cluster: len old %s with pair 1" % (len(old.loci2seq)))
+    for idl in new.loci2seq:
+        in_common = list(set(common).intersection(new.loci2seq[idl]))
+        if len(in_common) > 0:
+            logger.debug("_split_cluster: in_common %s with pair 2" % (len(in_common)))
+            new_c.loci2seq[idl] = in_common
+            new.loci2seq[idl] = list(set(new.loci2seq[idl]) - set(common))
+            logger.debug("_split_cluster: len old %s with pair 2" % (len(new.loci2seq)))
+    old.loci2seq = {k: v for k, v in old.loci2seq.iteritems() if len(v) > 0}
+    new.loci2seq = {k: v for k, v in new.loci2seq.iteritems() if len(v) > 0}
+    c[n] = new
+    c[p[0]] = old
+    c[p[1]] = new
+    return c
+
+
+def _split_cluster_by_most_vote(c, p):
+    """split cluster by most-vote strategy"""
+    old, new = c[p[0]], c[p[1]]
+    old_size = _get_seqs(old)
+    new_size = _get_seqs(new)
+    logger.debug("_most_vote: size of %s %s - %s %s" % (old.id, len(old_size), new.id, len(new_size)))
+    if len(old_size) > len(new_size):
+        keep, remove = old, new
+    else:
+        keep, remove = new, old
+    logger.debug("_most_vote: keep %s remove  %s" % (keep.id, remove.id))
+    common = list(set(old_size).intersection(new_size))
+    for idl in remove.loci2seq:
+        if len(common) > 0:
+            remove.loci2seq[idl] = list(set(remove.loci2seq[idl]) - set(common))
+    keep.loci2seq = {k: v for k, v in keep.loci2seq.iteritems() if len(v) > 0}
+    remove.loci2seq = {k: v for k, v in remove.loci2seq.iteritems() if len(v) > 0}
+    c[keep.id] = keep
+    c[remove.id] = remove
+    return c
+
+
 def _add_unseen(loci, clus_seen, n_cluster):
     unseen = {}
     for idc in loci:
         if idc not in clus_seen:
             n_cluster += 1
+            loci[idc].id = n_cluster
             unseen[n_cluster] = loci[idc]
             logger.debug("_add_unseen: add  %s as new %s" %
                          (idc, n_cluster))
     return unseen
+
+
+def _clean_cluster(list_c):
+    """Remove cluster with less than 10 sequences and
+    loci with size smaller than 60%"""
+    list_c = {k: v for k, v in list_c.iteritems() if len(_get_seqs(v)) > 10}
+    return list_c
+
+
+def _select_loci(list_C):
+    """Select only loci with most abundant sequences"""
+    loci_len = {k: len(_get_seqs(v)) for k, v in list_c}
+    loci_len_sort = sorted(loci_len.iteritems(), key=operator.itemgetter(1), reverse=True)
+    max_size = loci_len_sort[0][1]
+    loci_clean = {locus: list_c[locus] for locus, size in loci_len_sort if size > 0.8 * max_size}
+    return loci_clean
 
 
 def _calculate_size_enrichment(c):
@@ -667,7 +763,7 @@ def parse_ma_file(in_file):
     name = ""
     seq_l = {}
     index = 1
-    total = defaultdict(int) 
+    total = defaultdict(int)
     with open(in_file) as handle_in:
         line = handle_in.readline().strip()
         cols = line.split("\t")
