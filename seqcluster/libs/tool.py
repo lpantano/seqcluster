@@ -635,16 +635,22 @@ def _clean_cluster(list_c):
     """Remove cluster with less than 10 sequences and
     loci with size smaller than 60%"""
     list_c = {k: v for k, v in list_c.iteritems() if len(_get_seqs(v)) > 10}
+    logger.debug("_clean_cluster: number of clusters %s " % len(list_c.keys()))
+    list_c = {k: _select_loci(v) for k, v in list_c.iteritems()} 
     return list_c
 
 
-def _select_loci(list_C):
+def _select_loci(c):
     """Select only loci with most abundant sequences"""
-    loci_len = {k: len(_get_seqs(v)) for k, v in list_c}
+    loci_len = {k: len(v) for k, v in c.loci2seq.iteritems()}
+    logger.debug("_select_loci: number of loci %s" % len(c.loci2seq.keys()))
     loci_len_sort = sorted(loci_len.iteritems(), key=operator.itemgetter(1), reverse=True)
     max_size = loci_len_sort[0][1]
-    loci_clean = {locus: list_c[locus] for locus, size in loci_len_sort if size > 0.8 * max_size}
-    return loci_clean
+    logger.debug("_select_loci: max size %s" % max_size)
+    loci_clean = {locus: c.loci2seq[locus] for locus, size in loci_len_sort if size > 0.8 * max_size}
+    c.loci2seq = loci_clean
+    logger.debug("_select_loci: number of loci %s after cleaning" % len(c.loci2seq.keys()))
+    return c
 
 
 def _calculate_size_enrichment(c):
