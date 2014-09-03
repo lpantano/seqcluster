@@ -50,6 +50,7 @@ class sequence:
     def add_pos(self,pos_id):
         self.pos.append(pos_id)
 
+
 class position:
     """
     Object with information about position: chr,start,end,strand
@@ -78,6 +79,7 @@ class annotation:
         self.to5 = to5
         self.to3 = to3
 
+
 class dbannotation:
     """
     Object with information about annotation: containg one dict that 
@@ -87,7 +89,8 @@ class dbannotation:
         self.ann = {}
     def add_db_ann(self,ida,ndba):
         self.ann[ida] = ndba
-      
+
+
 class cluster:
     """
     Object with cluster information. This is the main object.
@@ -126,6 +129,7 @@ class bcolors:
     FAIL  =  '\033[91m'
     ENDC  =  '\033[0m'
 
+
 class bedaligned:
     """
     Object that has the bed format attributes
@@ -139,6 +143,7 @@ class bedaligned:
         self.name = cols[3]
         self.att = cols[4]
         self.strand = cols[5]
+
 
 class mergealigned:
     """

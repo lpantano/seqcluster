@@ -39,29 +39,31 @@ def _create_json(clusL, args):
     seqs = clusL.seq
     loci = clusL.loci
     data_clus = {}
-    with open(os.path.join(args.dir_out, "counts.tsv"),'w') as matrix:
-        matrix.write( "id\tann\t%s\n" % "\t".join(list(seqs[seqs.keys()[1]].freq.keys())))
+    with open(os.path.join(args.dir_out, "counts.tsv"), 'w') as matrix:
+        matrix.write("id\tann\t%s\n" % "\t".join(list(seqs[seqs.keys()[1]].freq.keys())))
         for cid in clus.keys():
             seqList = []
             c = clus[cid]
             data_loci = map(lambda (x): [loci[x].chr, loci[x].start, loci[x].end], c.loci2seq.keys())
             data_ann_temp = {}
-            data_ann= []
+            data_ann = []
             for lid in c.loci2seq:
                 loci[lid].chr
                 seqList = list(set(seqList).union(c.loci2seq[lid]))
                 logger.debug("_json_: %s" % seqList)
                 for dbi in loci[lid].db_ann.keys():
                     data_ann_temp[dbi] = {dbi: map(lambda (x): loci[lid].db_ann[dbi].ann[x].name, loci[lid].db_ann[dbi].ann.keys())}
+                    logger.debug("_json_: data_ann_temp %s %s" % (dbi, data_ann_temp[dbi]))
                 data_ann = data_ann + map(lambda (x): data_ann_temp[x], data_ann_temp.keys())
+                logger.debug("_json_: data_ann %s" % data_ann)
             data_seqs = map(lambda (x): seqs[x].seq, seqList)
             data_freq = map(lambda (x): seqs[x].freq, seqList)
             data_freq_values = map(lambda (x): map(int, seqs[x].freq.values()), seqList)
             sum_freq = _sum_by_samples(data_freq_values)
-            data_ann_str = [k.keys() for k in data_ann]
-            matrix.write("%s\t%s\t%s\n" % (cid, ";".join([ ";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
+            data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
+            matrix.write("%s\t%s\t%s\n" % (cid, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
             data_string = {'seqs': data_seqs, 'freq': data_freq,
-                'loci': data_loci, 'ann': data_ann}
+                           'loci': data_loci, 'ann': data_ann}
             data_clus[cid] = data_string
     with open(os.path.join(args.dir_out, "seqcluster.json"), 'w') as handle_out:
         handle_out.write(json.dumps([data_clus], skipkeys=True, indent=2))

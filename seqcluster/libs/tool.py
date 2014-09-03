@@ -153,8 +153,8 @@ def show_seq(clus_obj, index):
     return clus_obj
 
 
-def anncluster(c,clus_obj,db,type_ann):
-    ##intersect positions of clusters with annotation files
+def anncluster(c, clus_obj, db, type_ann):
+    """intersect transcription position with annotation files"""
     if type_ann == "gtf":
         id_sa = 1
         id_ea = 2
@@ -175,14 +175,14 @@ def anncluster(c,clus_obj,db,type_ann):
         id_sta = 5
         id_stb = 11
         id_tag = 9
-
-    ida  =  0
+    ida = 0
     clus_id = clus_obj.clus
     loci_id = clus_obj.loci
+    db = os.path.splitext(db)[0]
     for cols in c.features():
         id = int(cols[id_id])
         idl = int(cols[id_idl])
-        if (clus_id.has_key(id)):
+        if (id in clus_id):
             clus = clus_id[id]
             strd = "-"
             sa = int(cols[id_sa])
@@ -206,23 +206,17 @@ def anncluster(c,clus_obj,db,type_ann):
             else:
                 lento5 = sa-sb+1
                 lento3 = ea-eb+1
-            #"EXISTS clus %s with db DBA %s" % (cols[9],db)
-            ida +=  1
+            ida += 1
             if db in loci_id[idl].db_ann:
-                # "NEW clus %s with db DBA %s" % (cols[9],db)
-                ann = annotation(db,cols[id_tag],strd,lento5,lento3)
+                ann = annotation(db, cols[id_tag], strd, lento5, lento3)
                 tdb = loci_id[idl].db_ann[db]
-                tdb.add_db_ann(ida,ann)
-                loci_id[idl].add_db(db,tdb)
-                #clus.adddb(db,tdb)
+                tdb.add_db_ann(ida, ann)
+                loci_id[idl].add_db(db, tdb)
             else:
-                # "UPDATE clus %s with db DBA %s" % (cols[9],db)
-                ann = annotation(db,cols[id_tag],strd,lento5,lento3)
+                ann = annotation(db, cols[id_tag], strd, lento5, lento3)
                 tdb = dbannotation(1)
-                tdb.add_db_ann(ida,ann)
-                loci_id[idl].add_db(db,tdb)
-                #clus.adddb(db,tdb)
-
+                tdb.add_db_ann(ida, ann)
+                loci_id[idl].add_db(db, tdb)
             clus_id[id] = clus
     clus_obj.clus = clus_id
     clus_obj.loci = loci_id
@@ -636,7 +630,7 @@ def _clean_cluster(list_c):
     loci with size smaller than 60%"""
     list_c = {k: v for k, v in list_c.iteritems() if len(_get_seqs(v)) > 10}
     logger.debug("_clean_cluster: number of clusters %s " % len(list_c.keys()))
-    list_c = {k: _select_loci(v) for k, v in list_c.iteritems()} 
+    list_c = {k: _select_loci(v) for k, v in list_c.iteritems()}
     return list_c
 
 
