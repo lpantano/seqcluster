@@ -13,4 +13,5 @@ Documentation
 .. automodule:: seqcluster.makecluster
    :members: 
    :undoc-members:
+   :private-members:
 

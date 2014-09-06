@@ -14,7 +14,7 @@ seqcluster generates a list of clusters of small RNA sequences, where they map o
 
 **FIRST STEP**
 
-`python prepare.data.py -c file_w_samples -o directory_for_output`
+`seqcluster prepare -c file_w_samples -o directory_for_output`
 
 the file_w_samples should have the following format:
 
@@ -46,6 +46,7 @@ This script will generate: seqs.fa and seqs.ma.
 
 You should use an aligner to map seqs.fa to your genome. A possibility is bowtie. 
 From here, we need a file in SAM format for the next step.
+VERY IMPORTANT: the sam file should be sorted
 
 **THIRD STEP**
 

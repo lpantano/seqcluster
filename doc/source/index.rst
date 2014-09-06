@@ -19,7 +19,6 @@ Contents:
 
 I am in the process to document all classes and methods
 
-
 Indices and tables
 ==================
 
