@@ -8,7 +8,7 @@ import numpy as np
 import libs.logger as mylog
 import json
 from libs.tool import parse_ma_file, reduceloci, show_seq, what_is, \
-    parse_merge_file, parse_align_file, generate_position_bed, anncluster
+    parse_merge_file, parse_align_file, generate_position_bed, anncluster, _get_seqs
 from libs.classes import *
 
 
@@ -45,17 +45,9 @@ def _create_json(clusL, args):
             seqList = []
             c = clus[cid]
             data_loci = map(lambda (x): [loci[x].chr, loci[x].start, loci[x].end], c.loci2seq.keys())
-            data_ann_temp = {}
-            data_ann = []
-            for lid in c.loci2seq:
-                loci[lid].chr
-                seqList = list(set(seqList).union(c.loci2seq[lid]))
-                logger.debug("_json_: %s" % seqList)
-                for dbi in loci[lid].db_ann.keys():
-                    data_ann_temp[dbi] = {dbi: map(lambda (x): loci[lid].db_ann[dbi].ann[x].name, loci[lid].db_ann[dbi].ann.keys())}
-                    logger.debug("_json_: data_ann_temp %s %s" % (dbi, data_ann_temp[dbi]))
-                data_ann = data_ann + map(lambda (x): data_ann_temp[x], data_ann_temp.keys())
-                logger.debug("_json_: data_ann %s" % data_ann)
+            seqList = _get_seqs(c)
+            logger.debug("_json_: %s" % seqList)
+            data_ann = _get_annotation(c, loci)
             data_seqs = map(lambda (x): seqs[x].seq, seqList)
             data_freq = map(lambda (x): seqs[x].freq, seqList)
             data_freq_values = map(lambda (x): map(int, seqs[x].freq.values()), seqList)
@@ -69,6 +61,20 @@ def _create_json(clusL, args):
         handle_out.write(json.dumps([data_clus], skipkeys=True, indent=2))
 
 
+def _get_annotation(c, loci):
+    """get annotation of transcriptional units"""
+    data_ann_temp = {}
+    data_ann = []
+    for lid in c.loci2seq:
+        loci[lid].chr
+        for dbi in loci[lid].db_ann.keys():
+            data_ann_temp[dbi] = {dbi: map(lambda (x): loci[lid].db_ann[dbi].ann[x].name, loci[lid].db_ann[dbi].ann.keys())}
+            logger.debug("_json_: data_ann_temp %s %s" % (dbi, data_ann_temp[dbi]))
+        data_ann = data_ann + map(lambda (x): data_ann_temp[x], data_ann_temp.keys())
+        logger.debug("_json_: data_ann %s" % data_ann)
+        return data_ann
+
+
 def _sum_by_samples(seqs_freq):
     y = np.array(seqs_freq[0]) * 0
     for x in seqs_freq:
@@ -77,6 +83,8 @@ def _sum_by_samples(seqs_freq):
 
 
 def _annotate(args, setclus):
+    """annotate transcriptional units with
+    gtf/bed files provided by -b/g option"""
     logger.info("Creating bed file")
     bedfile = generate_position_bed(setclus)
     a = pybedtools.BedTool(bedfile, from_string=True)
@@ -87,7 +95,6 @@ def _annotate(args, setclus):
         for filebed in beds:
             logger.info("Using %s " % filebed)
             db = os.path.basename(filebed)
-            #db4js[db] = [0, 0, 0]
             b = pybedtools.BedTool(filebed)
             c = a.intersect(b, wo=True)
             setclus = anncluster(c, setclus, db, args.type_ann)
