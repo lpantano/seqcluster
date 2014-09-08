@@ -9,6 +9,7 @@ import numpy as np
 import pysam
 import logger as mylog
 from classes import *
+import parameters
 
 logger = mylog.getLogger(__name__)
 
@@ -406,6 +407,7 @@ def _iter_loci(c, filtered, n_cluster, min_seq):
     n_loci = len(c.loci2seq)
     n_loci_prev = n_loci + 1
     cicle = 0
+    [logger.note("%s %s %s" % (c.id, idl, len(c.loci2seq[idl]))) for idl in c.loci2seq]
     internal_cluster = {}
     loci = _convert_to_clusters(c)
     if n_loci == 1:
@@ -433,6 +435,8 @@ def _iter_loci(c, filtered, n_cluster, min_seq):
         filtered[n_cluster] = internal_cluster[idc]
         filtered[n_cluster].id = n_cluster
     logger.debug("_iter_loci: filtered %s" % filtered.keys())
+    for new_c in internal_cluster.values():
+        [logger.note("%s %s %s" % (new_c.id, idl, len(new_c.loci2seq[idl]))) for idl in new_c.loci2seq]
     return filtered, n_cluster
 
 
@@ -508,7 +512,7 @@ def _merge_similar(loci, locilen_sorted):
         new_c = cluster(n_cluster)
         logger.debug("_merge_similar:id %s  common %s" % (pairs, common))
         p_seen, p_unseen = [], []
-        if common >= 0.8:
+        if common >= parameters.similar:
             if pairs[0] in clus_seen:
                 p_seen.append(pairs[0])
                 p_unseen.append(pairs[1])
@@ -548,13 +552,16 @@ def _solve_conflict(list_c, n_cluster):
     loci_similarity = _calculate_similarity(list_c)
     loci_similarity = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
     common = sum([score for p, score in loci_similarity])
+    global decision_cluster
     while common:
         n_cluster += 1
         logger.debug("_solve_conflict: ma %s" % loci_similarity)
         logger.debug("_solve_conflict: common %s, new %s" % (common, n_cluster))
         pairs = loci_similarity[0][0]
-        #list_c = _split_cluster(list_c, pairs, n_cluster)
-        list_c = _split_cluster_by_most_vote(list_c, pairs)
+        if parameters.decision_cluster.startswith("most-voted"):
+            list_c = _split_cluster_by_most_vote(list_c, pairs)
+        else:
+            list_c = _split_cluster(list_c, pairs, n_cluster)
         list_c = {k: v for k, v in list_c.iteritems() if len(v.loci2seq) > 0}
         loci_similarity = _calculate_similarity(list_c)
         loci_similarity = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
@@ -709,7 +716,6 @@ def _merge_loci_in_cluster(c, new_c, idl, current_seqs):
     logger.debug("_merge_loci_in_cluster:join")
     locus_seqs = c.loci2seq[idl]
     common = len(set(locus_seqs).intersection(current_seqs))
-    logger.note("%s %s %s %s %s" % (c.id, new_c.id, idl, idl, common))
     seen = list(set(locus_seqs).union(current_seqs))
     new_c.add_id_member(list(locus_seqs), idl)
     c.loci2seq.pop(idl, "None")
@@ -721,7 +727,6 @@ def _merge_with_first_loci(c, new_c, first_idl, idl, current_seqs):
     logger.debug("_merge_with_first_loci:join first")
     locus_seqs = c.loci2seq[idl]
     common = len(set(locus_seqs).intersection(current_seqs))
-    logger.note("%s %s %s %s %s" % (c.id, new_c.id, idl, first_idl, common))
     seen = list(set(locus_seqs).union(current_seqs))
     new_c.add_id_member(list(locus_seqs), first_idl)
     c.loci2seq.pop(idl, "None")
@@ -732,7 +737,6 @@ def _merge_with_first_loci(c, new_c, first_idl, idl, current_seqs):
 def _remove_seqs_from_loci(c, idl, current_seqs):
     current = c.loci2seq[idl]
     common = len(set(current).intersection(current_seqs))
-    logger.note("%s %s %s %s %s" % (c.id, "NA", idl, "NA", common))
     seen = list(set(current).intersection(current_seqs))
     unseen = list(set(sorted(current)).difference(sorted(seen)))
     logger.debug("_remove_seqs_from_loci:seen %s unseen %s" % (len(seen), len(unseen)))

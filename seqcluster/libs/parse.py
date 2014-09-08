@@ -44,6 +44,10 @@ def add_subparser_cluster(subparsers):
                        dest="index", help="reference fasta")
     parser.add_argument("-d", "--debug", action="store_true",
                        dest="debug", help="max verbosity mode", default=False)
-    parser.add_argument("-s", "--show", action="store_false",
+    parser.add_argument("-s", "--show", action="store_true",
                        dest="show", help="no show sequences", default=False)
+    parser.add_argument("--split", action="store_true",
+                       dest="split", help="split cluster if low sequences sharing", default=False)
+    parser.add_argument("--similar",
+                       dest="similar", help="threshold to consider two clusters identicals", default=0.8)
     return parser

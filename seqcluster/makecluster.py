@@ -1,15 +1,13 @@
-import sys
 import os
-import operator
 import pybedtools
 import pickle
-import shutil
 import numpy as np
 import libs.logger as mylog
 import json
 from libs.tool import parse_ma_file, reduceloci, show_seq, what_is, \
     parse_merge_file, parse_align_file, generate_position_bed, anncluster, _get_seqs
 from libs.classes import *
+import libs.parameters as param
 
 
 logger = mylog.getLogger(__name__)
@@ -128,6 +126,8 @@ def _check_args(args):
     logger.info("Checking parameters and files")
     args.dir_out = args.out
     args.samplename = "pro"
+    global decision_cluster
+    global similar
     if not os.path.isdir(args.out):
         logger.warning("the output folder doens't exists")
         os.mkdirs(args.out)
@@ -160,7 +160,10 @@ def _check_args(args):
     if not args.format:
         logging.error("Format of aligned reads not in sam or bed")
         raise "Format of aligned reads not in sam or bed"
-
+    if args.split:
+        param.decision_cluster = "split"
+    if args.similar:
+        param.similar = float(args.similar)
     return args
 
 

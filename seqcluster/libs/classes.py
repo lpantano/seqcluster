@@ -1,3 +1,6 @@
+import copy
+
+
 class sequence_unique:
     """ 
     Object to store the sequence information like: **counts**, **sequence**, **id** 
@@ -21,7 +24,7 @@ class cluster_info_obj:
     Object containing information about clusters(:code:`clus_obj`), 
     positions(:code:`positions`) and sequences(:code:`sequences`)
     """
-    def __init__(self,clus_obj,clus_id,loci_obj,seq_obj):
+    def __init__(self, clus_obj, clus_id, loci_obj, seq_obj):
         self.clus = clus_obj
         self.clusid = clus_id
         self.loci = loci_obj
@@ -41,8 +44,8 @@ class sequence:
     """
     def __init__(self, seq, freq, seq_id):
         self.seq = seq
-        self.freq = freq
-        self.norm_freq = freq
+        self.freq = copy.deepcopy(freq)
+        self.norm_freq = copy.deepcopy(freq)
         self.len = len(seq)
         self.pos = []
         self.id = seq_id
