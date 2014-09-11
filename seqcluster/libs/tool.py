@@ -407,7 +407,7 @@ def _iter_loci(c, filtered, n_cluster, min_seq):
     n_loci = len(c.loci2seq)
     n_loci_prev = n_loci + 1
     cicle = 0
-    [logger.note("%s %s %s" % (c.id, idl, len(c.loci2seq[idl]))) for idl in c.loci2seq]
+    #[logger.note("BEFORE %s %s %s" % (c.id, idl, len(c.loci2seq[idl]))) for idl in c.loci2seq]
     internal_cluster = {}
     loci = _convert_to_clusters(c)
     if n_loci == 1:
@@ -436,7 +436,7 @@ def _iter_loci(c, filtered, n_cluster, min_seq):
         filtered[n_cluster].id = n_cluster
     logger.debug("_iter_loci: filtered %s" % filtered.keys())
     for new_c in internal_cluster.values():
-        [logger.note("%s %s %s" % (new_c.id, idl, len(new_c.loci2seq[idl]))) for idl in new_c.loci2seq]
+        [logger.note("%s %s %s %s" % (c.id, new_c.id, idl, len(new_c.loci2seq[idl]))) for idl in new_c.loci2seq]
     return filtered, n_cluster
 
 

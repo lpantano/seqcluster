@@ -42,7 +42,7 @@ def _create_json(clusL, args):
         for cid in clus.keys():
             seqList = []
             c = clus[cid]
-            data_loci = map(lambda (x): [loci[x].chr, loci[x].start, loci[x].end], c.loci2seq.keys())
+            data_loci = map(lambda (x): [x, loci[x].chr, loci[x].start, loci[x].end], c.loci2seq.keys())
             seqList = _get_seqs(c)
             logger.debug("_json_: %s" % seqList)
             data_ann = _get_annotation(c, loci)
@@ -102,9 +102,6 @@ def _annotate(args, setclus):
 def _create_clusters(seqL, args):
     clus_obj = []
     if not os.path.exists(args.out + '/list_obj.pk'):
-        #merge positions to create clusters: everything connected by
-        #positions on the genome.
-        #assumption: minimun number of common loci
         logger.info("Parsing aligned file")
         bed_obj = parse_align_file(args.afile, args.format)
         logger.info("Merging position")
