@@ -5,7 +5,7 @@ import os
 import re
 import logging
 from libs.classes import sequence_unique
-from libs.tools import parse_ma_file
+from libs.tool import parse_ma_file
 
 
 logger = logging.getLogger('explore')
