@@ -2,7 +2,8 @@ import argparse
 
 def parse_cl(in_args):
 	sub_cmds = {"prepare": add_subparser_prepare,
-	            "cluster": add_subparser_cluster}
+	            "cluster": add_subparser_cluster,
+	            "explore": add_subparser_explore}
 	parser = argparse.ArgumentParser(description="small RNA analysis")
 	sub_cmd = None
 	if len(in_args) > 0 and in_args[0] in sub_cmds:
@@ -15,6 +16,17 @@ def parse_cl(in_args):
 	kwargs = {"args": args,
 	              sub_cmd: True}
 	return kwargs
+
+
+def add_subparser_explore(subparsers):
+    parser = subparsers.add_parser("prepare", help="prepare data")
+    parser.add_argument("-j", "--json", dest="dir", required=1,
+            help="json file from seqcluster")
+    parser.add_argument("-n", "--names", dest="dir", required=1,
+            help="comma-separeted id clusters"),
+    parser.add_argument("-o", "--out", dest="out", required=1,
+            help="dir of output files")
+    return parser
 
 
 def add_subparser_prepare(subparsers):

@@ -3,10 +3,9 @@ import sys
 from libs.parse import parse_cl
 from preparedata import prepare
 from makecluster import cluster
+from explore_cluster import explore
 import libs.logger as mylog
 import time
-
-
 
 
 def main(**kwargs):
@@ -20,4 +19,7 @@ def main(**kwargs):
     elif "cluster" in kwargs:
         logger.info("Run cluster")
         cluster(kwargs["args"])
+    elif "explore" in kwargs:
+        logger.info("Run explore")
+        explore(kwargs["args"])
     logger.info('It took %.3f minutes' % ((time.time()-start)/60))
