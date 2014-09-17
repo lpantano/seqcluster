@@ -6,7 +6,7 @@ import re
 import logging
 from libs.classes import sequence_unique
 from libs.tool import parse_ma_file
-
+from libs.read import load_data, get_sequences_from_cluster, map_to_precursors, get_precursors_from_cluster
 
 logger = logging.getLogger('explore')
 
@@ -15,11 +15,14 @@ def explore(args):
     """Create mapping of sequences of two clusters
     """
     logger.info("reading sequeces")
-    seq_l = parse_ma_file(args.f)
+    data = load_data(args.json)
     logger.info("get sequences from json")
     #get_sequences_from_cluster()
-    #get_precursors_from_cluster()
+    c1, c2 = args.names.split(",")
+    seqs, names = get_sequences_from_cluster(c1, c2, data[0])
+    loci1, loci2 = get_precursors_from_cluster(c1, c2, data[0])
     logger.info("map all sequences to all loci")
+    print "%s %s" % (loci1, loci2)
     #map_sequences_w_bowtie(sequences, precursors)
     logger.info("plot sequences on loci")
     #get_matrix_position()

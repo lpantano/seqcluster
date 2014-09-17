@@ -19,10 +19,10 @@ def parse_cl(in_args):
 
 
 def add_subparser_explore(subparsers):
-    parser = subparsers.add_parser("prepare", help="prepare data")
-    parser.add_argument("-j", "--json", dest="dir", required=1,
+    parser = subparsers.add_parser("explore", help="explore data")
+    parser.add_argument("-j", "--json", dest="json", required=1,
             help="json file from seqcluster")
-    parser.add_argument("-n", "--names", dest="dir", required=1,
+    parser.add_argument("-n", "--names", dest="names", required=1,
             help="comma-separeted id clusters"),
     parser.add_argument("-o", "--out", dest="out", required=1,
             help="dir of output files")
