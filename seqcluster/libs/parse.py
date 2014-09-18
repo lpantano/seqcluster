@@ -24,6 +24,8 @@ def add_subparser_explore(subparsers):
             help="json file from seqcluster")
     parser.add_argument("-n", "--names", dest="names", required=1,
             help="comma-separeted id clusters"),
+    parser.add_argument("-r", "--reference", dest="ref", required=1,
+            help="reference fasta file with index"),
     parser.add_argument("-o", "--out", dest="out", required=1,
             help="dir of output files")
     return parser

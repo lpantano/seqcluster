@@ -13,11 +13,11 @@ def run(cmd, data=None, checks=None, region=None, log_error=True,
     """Run the provided command, logging details and checking for errors.
     """
     try:
-        logger.debug(" ".join(str(x) for x in cmd) if not isinstance(cmd, basestring) else cmd)
+        logger.info(" ".join(str(x) for x in cmd) if not isinstance(cmd, basestring) else cmd)
         _do_run(cmd, checks, log_stdout)
     except:
         if log_error:
-            logger.exception()
+            logger.info("error at command")
         raise
 
 def find_bash():
