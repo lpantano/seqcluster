@@ -14,7 +14,8 @@ seqcluster generates a list of clusters of small RNA sequences, where they map o
 
 **FIRST STEP**
 
-`seqcluster prepare -c file_w_samples -o directory_for_output`
+::
+    seqcluster prepare -c file_w_samples -o directory_for_output
 
 the file_w_samples should have the following format:
 
@@ -29,12 +30,13 @@ two columns file, where the first column is the name of the file with the small 
 
 The fasta files should be like this:
 
-<pre>
->seq_1_x11
-CCCCGTTCCCCCCTCCTCC
->seq_2_x20
-TGCGCAGTGGCAGTATCGTAGCCAATG
-</pre>
+::
+
+    >seq_1_x11
+    CCCCGTTCCCCCCTCCTCC
+    >seq_2_x20
+    TGCGCAGTGGCAGTATCGTAGCCAATG
+    </pre>
 
 Where _x[09]  indicate the abundance of that sequence, and the middle number is the index of the sequence.
 
@@ -50,7 +52,9 @@ VERY IMPORTANT: the sam file should be sorted
 
 **THIRD STEP**
 
-`python make.cluster.py -a seqs.sam -m seqs.fa -b  ANN_FILE1,ANN_FILE2,... -i hg.19.fa -o results`
+::
+
+    python make.cluster.py -a seqs.sam -m seqs.fa -b  ANN_FILE1,ANN_FILE2,... -i hg.19.fa -o results
 
 * `-a` is the SAM file generated after mapped with your tool, which input has been seqs.fa
 * `-m` the previous seqs.fa
@@ -62,17 +66,19 @@ VERY IMPORTANT: the sam file should be sorted
 * `-s` ignore construction of putative precursor 
 
 Example of a bed file for annotation (the fourth column should be the name of the feature): 
-<pre>
-chr1    157783  157886  snRNA   0       -
-</pre>
 
+::
+
+    chr1    157783  157886  snRNA   0       -
 Example of a gtf file for annotation (the third column should be the name of the feature): 
-<pre>
-chr1    source  intergenic      1       11503   .       +       .       .....
-</pre>
+
+::
+
+    chr1    source  intergenic      1       11503   .       +       .       .....
 
 **OUTPUTS**
 
-* matrix.tab: count matrix that can be input of downstream analyses
-* cluster.json: json file containing all information
-
+* counts.tsv: count matrix that can be input of downstream analyses
+* seqcluster.json: json file containing all information
+* run.log: all messages at debug level
+* trace.log: to keep trace of algorithm decision
