@@ -2,9 +2,10 @@
 from __future__ import print_function
 import json, itertools
 import tempfile, os, contextlib, shutil
+from sam2bed import makeBED
 import logging
 from do import find_cmd, run
-
+import pysam
 
 logger = logging.getLogger('read')
 
@@ -58,6 +59,7 @@ def map_to_precursors(seqs, names, loci, args):
             cmd = "bowtie {temp}/pre -f {seqs_fasta} -S > {out_sam}"
             run(cmd.format(**locals()))
             run("head {0}".format(out_sam))
+            read_alignment(out_sam, loci, seqs)
     return True
 
 
@@ -84,6 +86,14 @@ def get_loci_fasta(loci, out_fa, ref):
         cmd = "bedtools getfasta -fi {ref} -bed {bed_file} -fo {out_fa}"
         run(cmd.format(**locals()))
     return out_fa
+
+
+def read_alignment(out_sam, loci, seqs):
+    """read which seqs map to which loci and
+    return a tab separated file"""
+    samfile = pysam.Samfile(out_sam, "r")
+    for a in samfile.fetch():
+        a = makeBED(a)
 
 
 def plot_positions():
