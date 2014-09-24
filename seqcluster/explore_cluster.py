@@ -2,11 +2,9 @@
 import os
 #from os import listdir
 #from os.path import isfile, join
-import re
 import logging
-from libs.classes import sequence_unique
-from libs.tool import parse_ma_file
 from libs.read import load_data, get_sequences_from_cluster, map_to_precursors, get_precursors_from_cluster
+
 
 logger = logging.getLogger('explore')
 

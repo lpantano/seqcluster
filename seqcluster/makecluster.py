@@ -42,7 +42,7 @@ def _create_json(clusL, args):
         for cid in clus.keys():
             seqList = []
             c = clus[cid]
-            data_loci = map(lambda (x): [x, loci[x].chr, loci[x].start, loci[x].end], c.loci2seq.keys())
+            data_loci = map(lambda (x): [x, loci[x].chr, loci[x].start, loci[x].end, loci[x].strand], c.loci2seq.keys())
             seqList = _get_seqs(c)
             logger.debug("_json_: %s" % seqList)
             data_ann = _get_annotation(c, loci)

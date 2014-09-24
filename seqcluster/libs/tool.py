@@ -276,6 +276,7 @@ def parse_merge_file(c, current_seq, MIN_SEQ):
         if len(a.names) >= MIN_SEQ:
             lindex += 1
             already_in, not_in = _get_seqs_from_cluster(a.names, clus_id)
+            logger.debug("_merge_aligned: idl %s %s %s %s %s" % (lindex, a.chr, a.start, a.end, a.strand))
             if len(already_in) > 0:
                 eindex = already_in[0]
                 for toremove in already_in[1:]:
@@ -344,13 +345,13 @@ def reduceloci(clus_obj, min_seq, path):
 
 
 def _add_complete_cluster(idx, clus1):
-    logger.debug("Not resolving cluster %s, too many loci. New id %s" % (idc, idcNew))
+    logger.debug("Not resolving cluster %s, too many loci. New id %s" % (clus1.id, idx))
     locilen_sorted = sorted(clus1.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
     maxidl = locilen_sorted[0][0]
     c = cluster(idx)
     c.add_id_member(clus1.loci2seq[maxidl], maxidl)
     c.id = idx
-    c.toomany = nElements
+    c.toomany = len(locilen_sorted)
     return c
 
 
