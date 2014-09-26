@@ -54,12 +54,12 @@ def map_to_precursors(seqs, names, loci, args):
         pre_fasta = get_loci_fasta(loci, pre_fasta, args.ref)
         seqs_fasta = get_seqs_fasta(seqs, names, seqs_fasta)
         if find_cmd("bowtie-build"):
-            cmd = "bowtie-build -f {pre_fasta} {temp}/pre"
+            cmd = "bowtie2-build -f {pre_fasta} {temp}/pre"
             run(cmd.format(**locals()))
-            cmd = "bowtie {temp}/pre -f {seqs_fasta} -S > {out_sam}"
+            cmd = "bowtie2 --rdg 7,3 --mp 4 --end-to-end -D 20 -R 3 -N 0 -i S,1,0.8 -L 3 -f -x  {temp}/pre -U {seqs_fasta} -S {out_sam}"
             run(cmd.format(**locals()))
             run("head {0}".format(out_sam))
-            read_alignment(out_sam, loci, seqs)
+            read_alignment(out_sam, loci, seqs, args)
     return True
 
 
@@ -81,19 +81,31 @@ def get_loci_fasta(loci, out_fa, ref):
             for nc, loci in loci.iteritems():
                 for l in loci:
                     logger.info("get_fasta: loci %s" % l)
-                    c, s, e = l
-                    print("{0}\t{1}\t{2}\t{3}".format(c, s, e, nc), file=bed_handle)
-        cmd = "bedtools getfasta -fi {ref} -bed {bed_file} -fo {out_fa}"
+                    nc, c, s, e, st = l
+                    print("{0}\t{1}\t{2}\t{3}\t{3}\t{4}".format(c, s, e, nc, st), file=bed_handle)
+        cmd = "bedtools getfasta -s -fi {ref} -bed {bed_file} -fo {out_fa}"
         run(cmd.format(**locals()))
     return out_fa
 
 
-def read_alignment(out_sam, loci, seqs):
+def read_alignment(out_sam, loci, seqs, args):
     """read which seqs map to which loci and
     return a tab separated file"""
-    samfile = pysam.Samfile(out_sam, "r")
-    for a in samfile.fetch():
-        a = makeBED(a)
+    with open(os.path.join(args.out, "map.tsv"), "w") as out_handle:
+        samfile = pysam.Samfile(out_sam, "r")
+        for a in samfile.fetch():
+            a = makeBED(a)
+            if a:
+                ref, locus = get_loci(samfile.getrname(int(a.chr)), loci)
+                print("%s %s %s %s %s %s" % (a.name, a.name.split("-")[0], locus, ref, a.start, a.end), file=out_handle)
+
+
+def get_loci(name, loci):
+    for nc in loci:
+        for l in  loci[nc]:
+            lname = "{0}:{1}-{2}({3})".format(l[1], l[2], l[3], l[4])
+            if name == lname:
+                return nc, l[0]
 
 
 def plot_positions():
