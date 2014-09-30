@@ -1,5 +1,6 @@
 """functions for explore tool"""
 from __future__ import print_function
+from collections import defaultdict
 import json, itertools
 import tempfile, os, contextlib, shutil
 from sam2bed import makeBED
@@ -50,17 +51,16 @@ def map_to_precursors(seqs, names, loci, args):
     with make_temp_directory() as temp:
         pre_fasta = os.path.join(temp, "pre.fa")
         seqs_fasta = os.path.join(temp, "seqs.fa")
-        out_sam = os.path.join(temp, "out.fa")
+        out_sam = os.path.join(temp, "out.sam")
         pre_fasta = get_loci_fasta(loci, pre_fasta, args.ref)
         seqs_fasta = get_seqs_fasta(seqs, names, seqs_fasta)
         if find_cmd("bowtie-build"):
             cmd = "bowtie2-build -f {pre_fasta} {temp}/pre"
             run(cmd.format(**locals()))
-            cmd = "bowtie2 --rdg 7,3 --mp 4 --end-to-end -D 20 -R 3 -N 0 -i S,1,0.8 -L 3 -f -x  {temp}/pre -U {seqs_fasta} -S {out_sam}"
+            cmd = "bowtie2 -a --rdg 7,3 --mp 4 --end-to-end -D 20 -R 3 -N 0 -i S,1,0.8 -L 3 -f -x  {temp}/pre -U {seqs_fasta} -S {out_sam}"
             run(cmd.format(**locals()))
             run("head {0}".format(out_sam))
             read_alignment(out_sam, loci, seqs, args)
-    return True
 
 
 def get_seqs_fasta(seqs, names, out_fa):
@@ -91,13 +91,20 @@ def get_loci_fasta(loci, out_fa, ref):
 def read_alignment(out_sam, loci, seqs, args):
     """read which seqs map to which loci and
     return a tab separated file"""
+    hits = defaultdict(list)
     with open(os.path.join(args.out, "map.tsv"), "w") as out_handle:
         samfile = pysam.Samfile(out_sam, "r")
         for a in samfile.fetch():
-            a = makeBED(a)
-            if a:
+            if not a.is_unmapped:
+                nm = int([t[1] for t in a.tags if t[0] == "NM"][0])
+                a = makeBED(a)
                 ref, locus = get_loci(samfile.getrname(int(a.chr)), loci)
-                print("%s %s %s %s %s %s" % (a.name, a.name.split("-")[0], locus, ref, a.start, a.end), file=out_handle)
+                hits[a.name].append((nm, "%s %s %s %s %s %s" % (a.name, a.name.split("-")[0], locus, ref, a.start, a.end)))
+        for hit in hits.values():
+            nm = hit[0][0]
+            for l in hit:
+                if nm == l[0]:
+                    print(l[1], file=out_handle)
 
 
 def get_loci(name, loci):
