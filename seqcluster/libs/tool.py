@@ -566,6 +566,7 @@ def _solve_conflict(list_c, n_cluster):
         list_c = {k: v for k, v in list_c.iteritems() if len(v.loci2seq) > 0}
         loci_similarity = _calculate_similarity(list_c)
         loci_similarity = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
+        #logger.note("%s %s" % (pairs, loci_similarity[0][1]))
         common = sum([score for p, score in loci_similarity])
         logger.debug("_solve_conflict: solved clusters %s" % len(list_c.keys()))
     return list_c
@@ -609,8 +610,8 @@ def _split_cluster_by_most_vote(c, p):
         keep, remove = old, new
     else:
         keep, remove = new, old
-    logger.debug("_most_vote: keep %s remove  %s" % (keep.id, remove.id))
     common = list(set(old_size).intersection(new_size))
+    logger.debug("_most_vote: keep %s remove  %s with common %s" % (keep.id, remove.id, len(common)))
     for idl in remove.loci2seq:
         if len(common) > 0:
             remove.loci2seq[idl] = list(set(remove.loci2seq[idl]) - set(common))
