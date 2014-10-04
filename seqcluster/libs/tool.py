@@ -3,6 +3,7 @@ import operator
 import os
 import copy
 from sam2bed import makeBED
+from mystats import below_threshold
 import time
 import math
 import numpy as np
@@ -498,7 +499,7 @@ def _common(s1, s2):
 def _merge_similar(loci, locilen_sorted):
     """internal function to reduce loci complexity
 
-    :param c: class cluster
+    :param loci: class cluster
     :param locilen_sorted: list of loci sorted by size
 
     :return
@@ -513,7 +514,8 @@ def _merge_similar(loci, locilen_sorted):
         new_c = cluster(n_cluster)
         logger.debug("_merge_similar:id %s  common %s" % (pairs, common))
         p_seen, p_unseen = [], []
-        if common >= parameters.similar:
+        size = min(len(_get_seqs(loci[pairs[0]])), len(_get_seqs(loci[pairs[1]])))
+        if below_threshold(common * size, size, parameters.similar):
             if pairs[0] in clus_seen:
                 p_seen.append(pairs[0])
                 p_unseen.append(pairs[1])
