@@ -30,6 +30,7 @@ before_install:
   - "pip install pybedtools"
   - "pip install pysam"
   - "pip install colorlog"
+  - "sudo apt-get -y install python-scipy"
 install:
     - "python setup.py install"
 

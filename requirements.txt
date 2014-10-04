@@ -2,3 +2,4 @@ cython
 pysam
 pybedtools
 colorlog
+scipy
