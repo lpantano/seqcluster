@@ -6,7 +6,8 @@ notifications:
         recipients:
             - lorena.pantano@gmail.com
         on_failure: always
-
+virtualenv:
+    system_site_packages: true
 before_install:
   - "sh -e /etc/init.d/xvfb start"
   - "echo `pwd`"
@@ -30,7 +31,7 @@ before_install:
   - "pip install pybedtools"
   - "pip install pysam"
   - "pip install colorlog"
-  - "sudo apt-get -y install gfortran libopenblas-dev liblapack-dev libatlas-dev python-numpy python-scipy"
+  - "sudo apt-get -qq -y install python-numpy python-scipy"
 install:
     - "python setup.py install"
 
