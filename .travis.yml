@@ -30,7 +30,7 @@ before_install:
   - "pip install pybedtools"
   - "pip install pysam"
   - "pip install colorlog"
-  - "sudo apt-get -y install gfortran libopenblas-dev liblapack-dev libopenblas liblapack python-numpy python-scipy"
+  - "sudo apt-get -y install gfortran libopenblas-dev liblapack-dev libopenblas liblapack libatlas libatlas-dev python-numpy python-scipy"
 install:
     - "python setup.py install"
 
