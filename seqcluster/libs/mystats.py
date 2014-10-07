@@ -1,7 +1,7 @@
 import scipy.stats as stat
 
 
-def below_threshold(x, s, p):
+def up_threshold(x, s, p):
     """function to decide if similarity is
     below cutoff"""
     if 1.0 * x/s >= p:

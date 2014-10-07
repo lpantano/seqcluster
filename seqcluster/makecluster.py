@@ -1,8 +1,10 @@
 import os
+from collections import Counter
 import pybedtools
 import pickle
 import numpy as np
 import libs.logger as mylog
+from libs.mystats import up_threshold
 import json
 from libs.tool import parse_ma_file, reduceloci, show_seq, what_is, \
     parse_merge_file, parse_align_file, generate_position_bed, anncluster, _get_seqs
@@ -45,15 +47,16 @@ def _create_json(clusL, args):
             data_loci = map(lambda (x): [x, loci[x].chr, loci[x].start, loci[x].end, loci[x].strand], c.loci2seq.keys())
             seqList = _get_seqs(c)
             logger.debug("_json_: %s" % seqList)
-            data_ann = _get_annotation(c, loci)
+            data_ann, valid_ann = _get_annotation(c, loci)
             data_seqs = map(lambda (x): seqs[x].seq, seqList)
             data_freq = map(lambda (x): seqs[x].freq, seqList)
             data_freq_values = map(lambda (x): map(int, seqs[x].freq.values()), seqList)
             sum_freq = _sum_by_samples(data_freq_values)
             data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
-            matrix.write("%s\t%s\t%s\n" % (cid, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
+            data_valid_str = " ".join(valid_ann)
+            matrix.write("%s\t%s|%s\t%s\n" % (cid, data_valid_str, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
             data_string = {'seqs': data_seqs, 'freq': data_freq,
-                           'loci': data_loci, 'ann': data_ann}
+                    'loci': data_loci, 'ann': data_ann, 'valid' : valid_ann}
             data_clus[cid] = data_string
     with open(os.path.join(args.dir_out, "seqcluster.json"), 'w') as handle_out:
         handle_out.write(json.dumps([data_clus], skipkeys=True, indent=2))
@@ -63,14 +66,18 @@ def _get_annotation(c, loci):
     """get annotation of transcriptional units"""
     data_ann_temp = {}
     data_ann = []
+    counts = Counter()
     for lid in c.loci2seq:
         loci[lid].chr
         for dbi in loci[lid].db_ann.keys():
             data_ann_temp[dbi] = {dbi: map(lambda (x): loci[lid].db_ann[dbi].ann[x].name, loci[lid].db_ann[dbi].ann.keys())}
             logger.debug("_json_: data_ann_temp %s %s" % (dbi, data_ann_temp[dbi]))
+            counts[dbi] += 1
         data_ann = data_ann + map(lambda (x): data_ann_temp[x], data_ann_temp.keys())
         logger.debug("_json_: data_ann %s" % data_ann)
-        return data_ann
+    counts = {k: v for k, v in counts.iteritems()}
+    valid_ann = [k for k, v in counts.iteritems() if up_threshold(v, len(c.loci2seq), 0.7)]
+    return data_ann, valid_ann
 
 
 def _sum_by_samples(seqs_freq):

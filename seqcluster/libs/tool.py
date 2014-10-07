@@ -3,7 +3,7 @@ import operator
 import os
 import copy
 from sam2bed import makeBED
-from mystats import below_threshold
+from mystats import up_threshold
 import time
 import math
 import numpy as np
@@ -515,7 +515,7 @@ def _merge_similar(loci, locilen_sorted):
         logger.debug("_merge_similar:id %s  common %s" % (pairs, common))
         p_seen, p_unseen = [], []
         size = min(len(_get_seqs(loci[pairs[0]])), len(_get_seqs(loci[pairs[1]])))
-        if below_threshold(common * size, size, parameters.similar):
+        if up_threshold(common * size, size, parameters.similar):
             if pairs[0] in clus_seen:
                 p_seen.append(pairs[0])
                 p_unseen.append(pairs[1])
