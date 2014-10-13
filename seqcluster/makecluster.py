@@ -159,6 +159,7 @@ def _check_args(args):
                 f.close()
         except IOError as e:
             logger.error("I/O error({0}): {1}".format(e.errno, e.strerror))
+            raise "Some annotation files doesn't exist"
     args.format = what_is(args.afile)
     logger.info("Aligned file is in: %s" % args.format)
     if not args.format:

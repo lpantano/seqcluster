@@ -36,7 +36,13 @@ def add_subparser_prepare(subparsers):
     parser.add_argument("-c", "--conf", dest="dir", required=1,
             help="file with config file:1st column:path_to_fasta_file ; 2nd column:name")
     parser.add_argument("-o", "--out", dest="out", required=1,
-            help="dir of output files")
+            help="output dir")
+    parser.add_argument("-l", "--minl", dest="minl", required=0,
+            help="minimum length", default=18)
+    parser.add_argument("-u", "--maxl", dest="maxl", required=0,
+            help="maximum length", default=35)
+    parser.add_argument("-e", "--minc", dest="minc", required=0,
+            help="minimum counts", default=10)
     return parser
 
 
