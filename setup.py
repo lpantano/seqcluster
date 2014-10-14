@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 def readme():
     with open('README.rst') as f:
@@ -9,7 +9,7 @@ with open("requirements.txt", "r") as f:
 
 
 setup(name='seqcluster',
-      version='0.99.1',
+      version='0.99.2',
       description='Small RNA-seq analysis',
       long_description=readme(),
       classifiers=[
@@ -23,7 +23,7 @@ setup(name='seqcluster',
       author='Lorena Pantano',
       author_email='lpantano@iscb.org',
       license='MIT',
-      packages=['seqcluster'],
+      packages=find_packages(),
       install_requires=install_requires,
       test_suite='nose',
       entry_points={
