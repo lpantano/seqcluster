@@ -63,7 +63,7 @@ def _read_fasta_files(f, args):
                     counts = re.search("x([0-9]+)", line.strip()).group(1)
                 else:
                     seq = line.strip()
-                    seq = seq[0:args.maxl] if len(seq) > int(args.maxl) else seq
+                    seq = seq[0:int(args.maxl)] if len(seq) > int(args.maxl) else seq
                     if counts > int(args.minc) and len(seq) > int(args.minl):
                         if seq not in seq_l:
                             seq_l[seq] = sequence_unique(idx, seq)
