@@ -24,6 +24,8 @@ setup(name='seqcluster',
       author_email='lpantano@iscb.org',
       license='MIT',
       packages=['seqcluster', 'seqcluster.libs'],
+      package_dir: {'seqcluster': 'seqcluster',
+                    'seqcluster.libs': 'libs'}
       install_requires=install_requires,
       test_suite='nose',
       entry_points={
