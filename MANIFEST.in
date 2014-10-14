@@ -2,3 +2,4 @@ include doc/*
 include README.rst
 include LICENSE
 include requirements.txt
+recursive-include *.py
