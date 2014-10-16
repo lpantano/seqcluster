@@ -1,21 +1,22 @@
 import argparse
 
 def parse_cl(in_args):
-	sub_cmds = {"prepare": add_subparser_prepare,
-	            "cluster": add_subparser_cluster,
-	            "explore": add_subparser_explore}
-	parser = argparse.ArgumentParser(description="small RNA analysis")
-	sub_cmd = None
-	if len(in_args) > 0 and in_args[0] in sub_cmds:
-		subparsers = parser.add_subparsers(help="seqcluster supplemental commands")
-		sub_cmds[in_args[0]](subparsers)
-		sub_cmd = in_args[0]
-	args = parser.parse_args()
+    sub_cmds = {"prepare": add_subparser_prepare,
+                "cluster": add_subparser_cluster,
+                "explore": add_subparser_explore,
+                "stats": add_subparser_stats}
+    parser = argparse.ArgumentParser(description="small RNA analysis")
+    sub_cmd = None
+    if len(in_args) > 0 and in_args[0] in sub_cmds:
+        subparsers = parser.add_subparsers(help="seqcluster supplemental commands")
+        sub_cmds[in_args[0]](subparsers)
+        sub_cmd = in_args[0]
+    args = parser.parse_args()
 
-	assert sub_cmd is not None
-	kwargs = {"args": args,
-	              sub_cmd: True}
-	return kwargs
+    assert sub_cmd is not None
+    kwargs = {"args": args,
+                  sub_cmd: True}
+    return kwargs
 
 
 def add_subparser_explore(subparsers):
@@ -71,3 +72,18 @@ def add_subparser_cluster(subparsers):
     parser.add_argument("--similar",
                        dest="similar", help="threshold to consider two clusters identicals", default=0.8)
     return parser
+
+
+def add_subparser_stats(subparsers):
+    parser = subparsers.add_parser("stats", help="stats data")
+    parser.add_argument("-j", "--json", dest="json", required=0,
+            help="json file from seqcluster")
+    parser.add_argument("-m", "--ma", dest="ma", required=0,
+            help="seqs.ma from prepare"),
+    parser.add_argument("-a", "--sam", dest="sam", required=0,
+            help="aligned file")
+    parser.add_argument("-o", "--out",
+                       dest="out", help="output dir", required=1)
+    return parser
+
+
