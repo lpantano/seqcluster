@@ -60,7 +60,7 @@ def _read_fasta_files(f, args):
             for line in fasta:
                 if line.startswith(">"):
                     idx += 1
-                    counts = re.search("x([0-9]+)", line.strip()).group(1)
+                    counts = int(re.search("x([0-9]+)", line.strip()).group(1))
                 else:
                     seq = line.strip()
                     seq = seq[0:int(args.maxl)] if len(seq) > int(args.maxl) else seq
@@ -87,7 +87,7 @@ def _create_matrix_uniq_seq(sample_l, seq_l, maout, out):
     for s in seq_l.keys():
         maout.write("\n>seq_%s\t%s" % (seq_l[s].idx, seq_l[s].seq))
         for g in sample_l:
-            if seq_l[s].group.has_key(g):
+            if g in seq_l[s].group:
                 maout.write("\t%s" % seq_l[s].group[g])
             else:
                 maout.write("\t0")
