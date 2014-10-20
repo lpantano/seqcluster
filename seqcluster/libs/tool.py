@@ -2,12 +2,11 @@ from collections import defaultdict, Counter
 import operator
 import os
 import copy
-from sam2bed import makeBED
 from mystats import up_threshold
 import time
 import math
 import numpy as np
-import pysam
+import pybedtools
 import logger as mylog
 from classes import *
 import parameters
@@ -225,28 +224,16 @@ def anncluster(c, clus_obj, db, type_ann):
     return clus_obj
 
 
-def parse_align_file(file_in, format):
+def parse_align_file(file_in):
     """parse sam files with aligned sequences"""
     loc_id = 1
     bedfile_clusters = ""
-    if format == "sam":
-        samfile = pysam.Samfile( file_in, "r" )
-        for a in samfile.fetch():
-            loc_id += 1
-            a = makeBED(a)
-            if a:
-                bedfile_clusters += "%s\t%s\t%s\t%s\t%s\t%s\n" % \
-                    (samfile.getrname(int(a.chr)), a.start, a.end, a.name, loc_id, a.strand)
-        samfile.close()
-    elif format == "bed":
-        f = open(file_in, 'r')
-        for line in f:
-            loc_id += 1
-            a = bedaligned(line)
-            #print "%s\t%s\t%s\t%s\t%s\t%s\n" % (a.chr,a.start,a.end,a.name,loc_id,a.strand)
-            bedfile_clusters += "%s\t%s\t%s\t%s\t%s\t%s\n" % \
-                (a.chr, a.start, a.end, a.name, loc_id, a.strand)
-        f.close()
+    bamfile = pybedtools.BedTool(file_in)
+    bed = pybedtools.BedTool.bam_to_bed(bamfile)
+    for c, start, end, name, q, strand in bed:
+        loc_id += 1
+        bedfile_clusters += "%s\t%s\t%s\t%s\t%s\t%s\n" % \
+                    (c, start, end, name, loc_id, strand)
     return bedfile_clusters
 
 

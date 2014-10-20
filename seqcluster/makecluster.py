@@ -6,7 +6,7 @@ import numpy as np
 import libs.logger as mylog
 from libs.mystats import up_threshold
 import json
-from libs.tool import parse_ma_file, reduceloci, show_seq, what_is, \
+from libs.tool import parse_ma_file, reduceloci, show_seq, \
     parse_merge_file, parse_align_file, generate_position_bed, anncluster, _get_seqs
 from libs.classes import *
 import libs.parameters as param
@@ -83,7 +83,7 @@ def _get_annotation(c, loci):
 def _sum_by_samples(seqs_freq):
     y = np.array(seqs_freq[0]) * 0
     for x in seqs_freq:
-        y = list(np.array(x) + y) 
+        y = list(np.array(x) + y)
     return y
 
 
@@ -110,7 +110,7 @@ def _create_clusters(seqL, args):
     clus_obj = []
     if not os.path.exists(args.out + '/list_obj.pk'):
         logger.info("Parsing aligned file")
-        bed_obj = parse_align_file(args.afile, args.format)
+        bed_obj = parse_align_file(args.afile)
         logger.info("Merging position")
         a = pybedtools.BedTool(bed_obj, from_string=True)
         c = a.merge(o="distinct", c="4,5,6", s=True, d=20)
@@ -160,11 +160,6 @@ def _check_args(args):
         except IOError as e:
             logger.error("I/O error({0}): {1}".format(e.errno, e.strerror))
             raise "Some annotation files doesn't exist"
-    args.format = what_is(args.afile)
-    logger.info("Aligned file is in: %s" % args.format)
-    if not args.format:
-        logging.error("Format of aligned reads not in sam or bed")
-        raise "Format of aligned reads not in sam or bed"
     if args.split:
         param.decision_cluster = "split"
     if args.similar:
