@@ -48,7 +48,7 @@ def _create_json(clusL, args):
             seqList = _get_seqs(c)
             logger.debug("_json_: %s" % seqList)
             data_ann, valid_ann = _get_annotation(c, loci)
-            data_seqs = map(lambda (x): seqs[x].seq, seqList)
+            data_seqs = map(lambda (x): {x: seqs[x].seq}, seqList)
             data_freq = map(lambda (x): seqs[x].freq, seqList)
             data_freq_values = map(lambda (x): map(int, seqs[x].freq.values()), seqList)
             sum_freq = _sum_by_samples(data_freq_values)

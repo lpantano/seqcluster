@@ -29,6 +29,8 @@ def add_subparser_explore(subparsers):
             help="reference fasta file with index"),
     parser.add_argument("-o", "--out", dest="out", required=1,
             help="dir of output files")
+    parser.add_argument("-d", "--debug", action="store_true",
+                       dest="debug", help="max verbosity mode", default=False)
     return parser
 
 
@@ -44,6 +46,8 @@ def add_subparser_prepare(subparsers):
             help="maximum length", default=35)
     parser.add_argument("-e", "--minc", dest="minc", required=0,
             help="minimum counts", default=10)
+    parser.add_argument("-d", "--debug", action="store_true",
+                       dest="debug", help="max verbosity mode", default=False)
     return parser
 
 
@@ -82,6 +86,8 @@ def add_subparser_stats(subparsers):
             help="seqs.ma from prepare"),
     parser.add_argument("-a", "--sam", dest="sam", required=0,
             help="aligned file")
+    parser.add_argument("-d", "--debug", action="store_true",
+                       dest="debug", help="max verbosity mode", default=False)
     parser.add_argument("-o", "--out",
                        dest="out", help="output dir", required=1)
     return parser
