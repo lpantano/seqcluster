@@ -1,9 +1,9 @@
 import copy
-
+from operator import add
 
 class sequence_unique:
-    """ 
-    Object to store the sequence information like: **counts**, **sequence**, **id** 
+    """
+    Object to store the sequence information like: **counts**, **sequence**, **id**
     """
     def __init__(self,idx,seq):
         self.idx = idx
@@ -18,6 +18,23 @@ class sequence_unique:
         :returns: dict with key,values equally to name,counts.
         """
         self.group[gr] = exp
+
+
+class quality:
+
+    def __init__(self, q):
+        self.qual = [ord(value) for value in q]
+        self.times = 1
+
+    def update(self, q):
+        now = self.qual
+        self.qual = map(add, now, [ord(value) for value in q])
+        self.times += 1
+
+    def get(self):
+        average = map(lambda x: int(round(x/self.times)), self.qual)
+        return [str(unichr(char)) for char in average]
+
 
 class cluster_info_obj:
     """
