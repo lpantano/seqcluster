@@ -15,7 +15,7 @@ seqcluster generates a list of clusters of small RNA sequences, where they map o
 **FIRST STEP**
 
 ::
-    seqcluster prepare -c file_w_samples -o directory_for_output
+    seqcluster prepare -c file_w_samples -o directory_for_output --minl 17 --minc 2 --maxl 45
 
 the file_w_samples should have the following format:
 
@@ -47,8 +47,12 @@ This script will generate: seqs.fa and seqs.ma.
 **SECOND STEP**
 
 You should use an aligner to map seqs.fa to your genome. A possibility is bowtie. 
-From here, we need a file in SAM format for the next step.
+From here, we need a file in BAM format for the next step.
 VERY IMPORTANT: the sam file should be sorted
+
+::
+
+    bowtie -a --best --strata -m 5000 -f INDEX seqs.fa -S | samtools view -Sbh /dev/stdin | samtools sort -o /dev/stdout temp > seqs.sort.bam
 
 **THIRD STEP**
 
@@ -60,10 +64,10 @@ VERY IMPORTANT: the sam file should be sorted
 * `-m` the previous seqs.fa
 * `-b` annotation files in bed format (see below examples)
 * `-g` annotation files in gtf format (see below examples)
-* `-i` genome fasta file used in the mapping step
+* `-i` genome fasta file used in the mapping step (only needed if -s active)
 * `-o` output folder
 * `-d` create debug logging
-* `-s` ignore construction of putative precursor 
+* `-s` construction of putative precursor (NOT YEP IMPLEMENTED)
 
 Example of a bed file for annotation (the fourth column should be the name of the feature): 
 

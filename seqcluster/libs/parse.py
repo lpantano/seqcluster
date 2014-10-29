@@ -4,6 +4,7 @@ def parse_cl(in_args):
     sub_cmds = {"prepare": add_subparser_prepare,
                 "cluster": add_subparser_cluster,
                 "explore": add_subparser_explore,
+                "collapse": add_subparser_collapse,
                 "stats": add_subparser_stats}
     parser = argparse.ArgumentParser(description="small RNA analysis")
     sub_cmd = None
@@ -93,3 +94,12 @@ def add_subparser_stats(subparsers):
     return parser
 
 
+def add_subparser_collapse(subparsers):
+    parser = subparsers.add_parser("collapse", help="collapse data")
+    parser.add_argument("-f", "--fastq", dest="fastq", required=1,
+                        help="fastq file"),
+    parser.add_argument("-d", "--debug", action="store_true",
+                        dest="debug", help="max verbosity mode", default=False)
+    parser.add_argument("-o", "--out",
+                        dest="out", help="output file", required=1)
+    return parser

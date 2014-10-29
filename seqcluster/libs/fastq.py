@@ -1,15 +1,24 @@
+import os
+from collections import Counter
+from classes import quality
+from itertools import product
 
 
 def collapse(in_file):
     """collapse identical sequences and keep Q"""
+    keep = Counter()
     with open_fastq(in_file) as handle:
         for line in handle:
             if line.startswith("@"):
-                name = line.strip()
-                seq = handle.next().stirp()
-                plus = handle.next().strip()
+                line.strip()
+                seq = handle.next().strip()
+                handle.next().strip()
                 qual = handle.next().strip()
-                keep[seq] += 1
+                if seq in keep:
+                    keep[seq].update(qual)
+                else:
+                    keep[seq] = quality(qual)
+    return keep
 
 
 def open_fastq(in_file):
@@ -35,3 +44,14 @@ def is_fastq(in_file):
         return True
     else:
         return False
+
+
+def splitext_plus(f):
+    """Split on file extensions, allowing for zipped extensions.
+    copy from bcbio
+    """
+    base, ext = os.path.splitext(f)
+    if ext in [".gz", ".bz2", ".zip"]:
+        base, ext2 = os.path.splitext(base)
+        ext = ext2 + ext
+    return base, ext

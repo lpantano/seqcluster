@@ -4,6 +4,7 @@ from libs.parse import parse_cl
 from preparedata import prepare
 from makecluster import cluster
 from explore_cluster import explore
+from collapse import collapse_fastq
 from stats import stats
 import libs.logger as mylog
 import time
@@ -26,4 +27,7 @@ def main(**kwargs):
     elif "stats" in kwargs:
         logger.info("Run stats")
         stats(kwargs["args"])
+    elif "collapse" in kwargs:
+        logger.info("Run collapse")
+        collapse_fastq(kwargs["args"])
     logger.info('It took %.3f minutes' % ((time.time()-start)/60))
