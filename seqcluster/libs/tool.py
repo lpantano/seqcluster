@@ -1,14 +1,15 @@
-from collections import defaultdict, Counter
+from collections import defaultdict
 import operator
 import os
 import copy
-from mystats import up_threshold
 import time
 import math
 import numpy as np
 import pybedtools
 import logger as mylog
 from classes import *
+from mystats import up_threshold
+from annotation import _position_in_feature
 import parameters
 
 logger = mylog.getLogger(__name__)
@@ -190,24 +191,8 @@ def anncluster(c, clus_obj, db, type_ann):
             ea = int(cols[id_ea])
             sb = int(cols[id_sb])
             eb = int(cols[id_eb])
-            if cols[id_sta] in cols[id_stb]:
-                strd = "+"
-            if cols[id_sta] in "+" and cols[id_stb] in "+":
-                lento5 = sa-sb+1
-                lento3 = ea-eb+1
-            if cols[id_sta] in "+" and cols[id_stb] in "-":
-                lento5 = ea-sb+1
-                lento3 = sa-eb+1
-            if cols[id_sta] in "-" and cols[id_stb] in "+":
-                lento5 = sa-eb+1
-                lento3 = ea-sb+1
-            if cols[id_sta] in "-" and cols[id_stb] in "-":
-                lento3 = sa-sb+1
-                lento5 = ea-eb+1
-            else:
-                lento5 = sa-sb+1
-                lento3 = ea-eb+1
             ida += 1
+            lento5, lento3, strd = _position_in_feature([sa, ea, cols[id_sta]], [sb, eb, cols[id_stb]])
             if db in loci_id[idl].db_ann:
                 ann = annotation(db, cols[id_tag], strd, lento5, lento3)
                 tdb = loci_id[idl].db_ann[db]

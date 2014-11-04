@@ -1,14 +1,16 @@
 import copy
 from operator import add
 
+
 class sequence_unique:
     """
     Object to store the sequence information like: **counts**, **sequence**, **id**
     """
-    def __init__(self,idx,seq):
+    def __init__(self, idx, seq):
         self.idx = idx
         self.seq = seq
         self.group = {}
+        self.quality = ""
     def add_exp(self,gr,exp):
         """Function to add the counts for each sample
 
@@ -26,10 +28,10 @@ class quality:
         self.qual = [ord(value) for value in q]
         self.times = 1
 
-    def update(self, q):
+    def update(self, q, counts = 1):
         now = self.qual
         self.qual = map(add, now, [ord(value) for value in q])
-        self.times += 1
+        self.times += counts
 
     def get(self):
         average = map(lambda x: int(round(x/self.times)), self.qual)
