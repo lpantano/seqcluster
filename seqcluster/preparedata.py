@@ -105,6 +105,7 @@ def _read_fastq_files(f, args):
                     handle.next().strip()
                     qual = handle.next().strip()
                     seq = seq[0:int(args.maxl)] if len(seq) > int(args.maxl) else seq
+                    qual = qual[0:int(args.maxl)] if len(qual) > int(args.maxl) else qual
                     if counts > int(args.minc) and len(seq) > int(args.minl):
                         if seq in keep:
                             keep[seq].update(qual)
