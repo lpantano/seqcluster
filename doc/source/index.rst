@@ -13,6 +13,8 @@ Contents:
 
    getting_started.rst
 
+   collapse.rst
+
    documentation.rst
 
    classes.rst

@@ -59,7 +59,6 @@ def map_to_precursors(seqs, names, loci, args):
             run(cmd.format(**locals()))
             cmd = "bowtie2 -a --rdg 7,3 --mp 4 --end-to-end -D 20 -R 3 -N 0 -i S,1,0.8 -L 3 -f -x  {temp}/pre -U {seqs_fasta} -S {out_sam}"
             run(cmd.format(**locals()))
-            run("head {0}".format(out_sam))
             read_alignment(out_sam, loci, seqs, args)
 
 
