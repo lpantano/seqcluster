@@ -12,10 +12,25 @@ clustering of small RNA sequences
 seqcluster generates a list of clusters of small RNA sequences, where they map on the genome, and the abundance in all the sample of the project
 
 
-**FIRST STEP**
+**REMOVE ADAPTER**
+
+I am currently using ``cutadapt``:
+::
+    cutadapt --adapter=$ADAPTER --minimum-length=8 --untrimmed-output=sample1_notfound.fastq -o sample1_clean.fastq -m 17 --overlap=8 sample1.fastq 
+
+**COLLAPSE READS***
+To reduce computational time, I recommend to collapse sequences, also it would help to apply filters based on abundances.
+Like removing sequences that appear only once.
 
 ::
-    seqcluster prepare -c file_w_samples -o directory_for_output --minl 17 --minc 2 --maxl 45
+
+   seqcluster collapse -f sample1_clean.fastq -o collapse
+
+Here I am only using sequences that had the adapter, meaning that for sure are small fragments.
+
+**PREPARE SAMPLES**
+::
+    seqcluster prepare -c file_w_samples -o res --minl 17 --minc 2 --maxl 45
 
 the file_w_samples should have the following format:
 
@@ -28,14 +43,18 @@ the file_w_samples should have the following format:
 
 two columns file, where the first column is the name of the file with the small RNA sequences for each sample, and the second column in the name of the sample.
 
-The fasta files should be like this:
+The fastq files should be like this:
 
 ::
 
-    >seq_1_x11
+    @seq_1_x11
     CCCCGTTCCCCCCTCCTCC
-    >seq_2_x20
+    +
+    QUALITY_LINE
+    @seq_2_x20
     TGCGCAGTGGCAGTATCGTAGCCAATG
+    +
+    QUALITY_LINE
     </pre>
 
 Where _x[09]  indicate the abundance of that sequence, and the middle number is the index of the sequence.
@@ -44,21 +63,30 @@ This script will generate: seqs.fa and seqs.ma.
 * seqs.fa: have unique sequences and unique ids
 * seqs.ma: is the abundance matrix of all unique sequences in all samples
 
-**SECOND STEP**
+**ALIGNMENT**
 
 You should use an aligner to map seqs.fa to your genome. A possibility is bowtie. 
 From here, we need a file in BAM format for the next step.
-VERY IMPORTANT: the sam file should be sorted
+VERY IMPORTANT: the BAM file should be sorted
 
 ::
 
     bowtie -a --best --strata -m 5000 -f INDEX seqs.fa -S | samtools view -Sbh /dev/stdin | samtools sort -o /dev/stdout temp > seqs.sort.bam
 
-**THIRD STEP**
+
+or 
 
 ::
 
-    python make.cluster.py -a seqs.sam -m seqs.fa -b  ANN_FILE1,ANN_FILE2,... -i hg.19.fa -o results
+    STAR --genomeDir $star_index_folder --readFilesIn res/seqs.fastq --outFilterMultimapNmax 5000 --outSAMattributes NH HI NM --outSAMtype BAM SortedByCoordinate
+
+
+**CLUSTERING**
+
+::
+
+    seqcluster cluster -a res/Aligned.sortedByCoord.out.bam  -m res/seqs.ma -b  $ANN_FILE1,$ANN_FILE2  -o res/clluster
+
 
 * `-a` is the SAM file generated after mapped with your tool, which input has been seqs.fa
 * `-m` the previous seqs.fa
