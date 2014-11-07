@@ -76,6 +76,8 @@ def add_subparser_cluster(subparsers):
                        dest="split", help="split cluster if low sequences sharing", default=False)
     parser.add_argument("--similar",
                        dest="similar", help="threshold to consider two clusters identicals", default=0.8)
+    parser.add_argument("--min_seqs",
+                       dest="min_seqs", help="threshold to consider a cluster as valid", default=10)
     return parser
 
 

@@ -164,6 +164,8 @@ def _check_args(args):
         param.decision_cluster = "split"
     if args.similar:
         param.similar = float(args.similar)
+    if args.min_seqs:
+        param.min_seqs = int(args.min_seqs)
     return args
 
 

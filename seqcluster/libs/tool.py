@@ -611,7 +611,7 @@ def _add_unseen(loci, clus_seen, n_cluster):
 def _clean_cluster(list_c):
     """Remove cluster with less than 10 sequences and
     loci with size smaller than 60%"""
-    list_c = {k: v for k, v in list_c.iteritems() if len(_get_seqs(v)) > 10}
+    list_c = {k: v for k, v in list_c.iteritems() if len(_get_seqs(v)) > parameters.min_seqs}
     logger.debug("_clean_cluster: number of clusters %s " % len(list_c.keys()))
     list_c = {k: _select_loci(v) for k, v in list_c.iteritems()}
     return list_c
