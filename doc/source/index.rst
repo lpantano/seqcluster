@@ -18,6 +18,8 @@ Contents:
    documentation.rst
 
    classes.rst
+   
+   more_outputs.rst
 
 I am in the process to document all classes and methods
 
