@@ -1,4 +1,6 @@
 import argparse
+import sys
+
 
 def parse_cl(in_args):
     sub_cmds = {"prepare": add_subparser_prepare,
@@ -12,6 +14,9 @@ def parse_cl(in_args):
         subparsers = parser.add_subparsers(help="seqcluster supplemental commands")
         sub_cmds[in_args[0]](subparsers)
         sub_cmd = in_args[0]
+    else:
+        print "use prepare cluster explore collapse stats"
+        sys.exit(0)
     args = parser.parse_args()
 
     assert sub_cmd is not None
