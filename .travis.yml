@@ -34,9 +34,10 @@ before_install:
   - "sudo apt-get -qq -y install python-numpy python-scipy"
 install:
     - "python setup.py install"
-
 script: nosetests
-
+after_script:
+    - "cd data/test_cluster"
+    - "seqcluster cluster -m seqs_set.ma -a seqs_set.bam -o res -d"
 branches:
     only:
         - master
