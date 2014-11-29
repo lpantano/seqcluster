@@ -4,8 +4,7 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2012 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
-try:
-    from thinkbayes import Pmf
+from thinkbayes import Pmf
 
 
 class Cookie(Pmf):
@@ -54,7 +53,3 @@ def main():
 
     for hypo, prob in pmf.Items():
         print hypo, prob
-
-
-if __name__ == '__main__':
-    main()
