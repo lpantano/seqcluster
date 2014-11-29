@@ -37,6 +37,7 @@ install:
 script: nosetests
 after_script:
     - "cd data/test_cluster"
+    - "export PATH=/home/travis/virtualenv/python2.7_with_system_site_packages/bin:$PATH"
     - "seqcluster cluster -m seqs_set.ma -a seqs_set.bam -o res -d"
 branches:
     only:
