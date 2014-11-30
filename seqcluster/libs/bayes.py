@@ -7,13 +7,14 @@ License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 from thinkbayes import Pmf
 
 
-class Cookie(Pmf):
+class loci(Pmf):
     """A map from string bowl ID to probablity."""
 
-    def __init__(self, hypos):
+    def __init__(self, hypos, loci):
         """Initialize self.
         hypos: sequence of string bowl IDs
         """
+        self.loci = loci
         Pmf.__init__(self)
         for hypo in hypos:
             self.Set(hypo, 1)
@@ -28,27 +29,29 @@ class Cookie(Pmf):
             self.Mult(hypo, like)
         self.Normalize()
 
-    mixes = {
-    'Bowl 1':dict(vanilla=0.75, chocolate=0.25),
-    'Bowl 2':dict(vanilla=0.5, chocolate=0.5),
-
-    }
-
     def Likelihood(self, data, hypo):
         """The likelihood of the data under the hypothesis.
         data: string cookie type
         hypo: string bowl ID
         """
-        mix = self.mixes[hypo]
+        mix = self.loci[hypo]
         like = mix[data]
         return like
 
 
-def main():
-    hypos = ['Bowl 1', 'Bowl 2']
-
-    pmf = Cookie(hypos)
-
+def decide_by_bayes():
+    #get common sequences
+    #for each
+        #get number of loci in common
+        #run bayes
+        #update proportion of counts
+    #returl list of clusters
+    hypos = ['Bowl1', 'Bowl2']
+    loci = {
+    'Bowl1':dict(vanilla=0.75),
+    'Bowl2':dict(vanilla=0.5),
+    }
+    pmf = loci(hypos, loci)
     pmf.Update('vanilla')
 
     for hypo, prob in pmf.Items():

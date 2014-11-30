@@ -69,7 +69,9 @@ class sequence:
         self.pos = []
         self.id = seq_id
         self.score = 0
-    def add_pos(self,pos_id):
+        self.factor = {}
+
+    def add_pos(self, pos_id):
         self.pos.append(pos_id)
 
 

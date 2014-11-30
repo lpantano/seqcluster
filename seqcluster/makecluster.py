@@ -7,7 +7,7 @@ import libs.logger as mylog
 from libs.mystats import up_threshold
 import json
 from libs.tool import parse_ma_file, reduceloci, show_seq, \
-    parse_merge_file, parse_align_file, generate_position_bed, anncluster, _get_seqs
+    parse_merge_file, parse_align_file, generate_position_bed, anncluster, _get_seqs, add_seqs_position_to_loci
 from libs.classes import *
 import libs.parameters as param
 
@@ -20,9 +20,9 @@ def cluster(args):
     args.MIN_SEQ = 10
     logger.info("Parsing matrix file")
     seqL = parse_ma_file(args.ffile)
-    clusL = _create_clusters(seqL, args)
+    clusL, seqs_2_positions = _create_clusters(seqL, args)
     logger.info("Solving multi-mapping events in the network of clusters")
-    clusLred = reduceloci(clusL, args.MIN_SEQ, args.dir_out)
+    clusLred = reduceloci(clusL, seqs_2_positions, args.MIN_SEQ, args.dir_out)
     logger.info("Clusters up to %s" % (len(clusLred.clus.keys())))
     if args.show:
         logger.info("Creating sequences alignment to precursor")
@@ -108,11 +108,11 @@ def _annotate(args, setclus):
 
 def _create_clusters(seqL, args):
     clus_obj = []
+    logger.info("Parsing aligned file")
+    aligned_bed = parse_align_file(args.afile)
     if not os.path.exists(args.out + '/list_obj.pk'):
-        logger.info("Parsing aligned file")
-        bed_obj = parse_align_file(args.afile)
         logger.info("Merging position")
-        a = pybedtools.BedTool(bed_obj, from_string=True)
+        a = pybedtools.BedTool(aligned_bed, from_string=True)
         c = a.merge(o="distinct", c="4,5,6", s=True, d=20)
         logger.info("Creating clusters")
         clus_obj = parse_merge_file(c, seqL, args.MIN_SEQ)
@@ -122,8 +122,11 @@ def _create_clusters(seqL, args):
         logger.info("Loading previous clusters")
         with open(args.out + '/list_obj.pk', 'rb') as input:
             clus_obj = pickle.load(input)
+    bedfile = pybedtools.BedTool(generate_position_bed(clus_obj), from_string=True)
+    seqs_2_loci = bedfile.intersect(pybedtools.BedTool(aligned_bed, from_string=True), wo=True, s=True)
+    seqs_2_position = add_seqs_position_to_loci(seqs_2_loci, seqL)
     logger.info("%s clusters found" % (len(clus_obj.clus.keys())))
-    return clus_obj
+    return clus_obj, seqs_2_position
 
 
 def _check_args(args):

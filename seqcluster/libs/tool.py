@@ -277,6 +277,26 @@ def parse_merge_file(c, current_seq, MIN_SEQ):
     return cluster_info_obj(current_clus, clus_id, current_loci, current_seq)
 
 
+def add_seqs_position_to_loci(fn_bedtools, seqs):
+    """return seqL, with exact position in that loci
+    :param fn_bedtools: pybedtool object
+    :param seqs: object class sequences
+
+    return: dict with locus as key and positions as values"""
+    seqs_pos = defaultdict(defaultdict)
+    for line in fn_bedtools:
+        locus = line[4]
+        name = line[9]
+        pos = [line[6], line[7], line[8]]
+        strand = line[9]
+        start = pos[1] if strand == "+" else pos[2]
+        if start not in seqs_pos[locus]:
+            seqs_pos[locus][start] = []
+        seqs_pos[locus][start].append(name)
+        #print ("{locus} {name} {pos}").format(**locals())
+    return seqs_pos
+
+
 def _get_seqs_from_cluster(seqs, clus_id):
     """
     Returns the sequences that are already part of the cluster
@@ -298,7 +318,7 @@ def _get_seqs_from_cluster(seqs, clus_id):
     return list(already_in), not_in
 
 
-def reduceloci(clus_obj, min_seq, path):
+def reduceloci(clus_obj, seqs_2_positions, min_seq, path):
     """reduce number of loci a cluster has"""
     filtered = {}
     n_cluster = 0
@@ -309,7 +329,7 @@ def reduceloci(clus_obj, min_seq, path):
         c = copy.deepcopy(current[idc])
         n_loci = len(c.loci2seq)
         if n_loci < 1000:
-            filtered, n_cluster = _iter_loci(c, filtered, n_cluster, min_seq)
+            filtered, n_cluster = _iter_loci(c, seqs_2_positions, filtered, n_cluster, min_seq)
         else:
             n_cluster += 1
             filtered[n_cluster] = _add_complete_cluster(n_cluster, c)
@@ -365,11 +385,12 @@ def _iter_loci_deprecated(c, filtered, n_cluster, min_seq):
     return filtered, n_cluster
 
 
-def _iter_loci(c, filtered, n_cluster, min_seq):
+def _iter_loci(c, s2p, filtered, n_cluster, min_seq):
     """Go through all locus and decide if they are part
     of the same TU or not.
 
     :param idx: int cluster id
+    :param s2p: dict with [loci][start]=[seqs]
     :param filtered: dict with clusters object
     :param n_cluster: int cluster id
     :param min_seq: int min number of sequences inside
@@ -401,7 +422,7 @@ def _iter_loci(c, filtered, n_cluster, min_seq):
         logger.debug("_iter_loci: n_loci %s" % n_loci)
     if n_loci > 1:
         n_internal_cluster = sorted(internal_cluster.keys(), reverse=True)[0]
-        internal_cluster = _solve_conflict(internal_cluster, n_internal_cluster)
+        internal_cluster = _solve_conflict(internal_cluster, s2p, n_internal_cluster)
     internal_cluster = _clean_cluster(internal_cluster)
     for idc in internal_cluster:
         n_cluster += 1
@@ -520,14 +541,21 @@ def _merge_cluster(old, new):
     return new
 
 
-def _solve_conflict(list_c, n_cluster):
+def _solve_conflict(list_c, s2p, n_cluster):
     """make sure sequences are counts once.
-    Resolve by most-vote or exclussion"""
+    Resolve by most-vote or exclussion
+
+    :params list_c: dict of objects cluster
+    :param s2p: dict of [loci][start]=[seqs]
+    :param n_cluster: number of clusters
+
+    return dict: new set of clusters"""
     logger.debug("_solve_conflict: count once")
+    if parameters.decision_cluster == "bayes":
+        return decide_by_bayes(list_c, s2p)
     loci_similarity = _calculate_similarity(list_c)
     loci_similarity = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
     common = sum([score for p, score in loci_similarity])
-    global decision_cluster
     while common:
         n_cluster += 1
         logger.debug("_solve_conflict: ma %s" % loci_similarity)
