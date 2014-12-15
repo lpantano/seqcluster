@@ -3,13 +3,13 @@ from collections import Counter
 import pybedtools
 import pickle
 import numpy as np
+from bcbio.utils import file_exists
 import libs.logger as mylog
 from libs.mystats import up_threshold
 import json
 from libs.tool import parse_ma_file, reduceloci, show_seq, \
     parse_merge_file, parse_align_file, generate_position_bed, anncluster, _get_seqs, add_seqs_position_to_loci
 from libs.classes import *
-from libs.utils import file_exists
 import libs.parameters as param
 
 

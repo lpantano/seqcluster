@@ -1,5 +1,6 @@
 """utils from http://www.github.com/chapmanb/bcbio-nextgen.git"""
 import os
+from bcbio import utils
 
 
 def file_exists(fname):

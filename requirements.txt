@@ -3,3 +3,4 @@ pysam
 pybedtools
 colorlog
 scipy
+bcbio-nextgen
