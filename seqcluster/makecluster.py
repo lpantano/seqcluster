@@ -9,6 +9,7 @@ import json
 from libs.tool import parse_ma_file, reduceloci, show_seq, \
     parse_merge_file, parse_align_file, generate_position_bed, anncluster, _get_seqs, add_seqs_position_to_loci
 from libs.classes import *
+from libs.utils import file_exists
 import libs.parameters as param
 
 
@@ -150,19 +151,15 @@ def _check_args(args):
         args.list_files = args.gtf
         args.type_ann = "gtf"
     logger.info("Output dir will be: %s" % args.dir_out)
+    if not all([file_exists(args.ffile), file_exists(args.afile)]):
+        logger.error("I/O error: Seqs.ma or Seqs.bam. ")
+        raise IOError("Seqs.ma or Seqs.bam doesn't exists.")
     if hasattr(args, 'list_files'):
-        try:
-            f = open(args.ffile, 'r')
-            f.close()
-            f = open(args.afile, 'r')
-            f.close()
-            beds = args.list_files.split(",")
-            for filebed in beds:
-                f = open(filebed, 'r')
-                f.close()
-        except IOError as e:
-            logger.error("I/O error({0}): {1}".format(e.errno, e.strerror))
-            raise "Some annotation files doesn't exist"
+        beds = args.list_files.split(",")
+        for filebed in beds:
+            if not file_exists(filebed):
+                logger.error("I/O error: {0}".format(filebed))
+                raise IOError("%s  annotation files doesn't exist" % filebed)
     if args.split:
         param.decision_cluster = "split"
     if args.similar:
