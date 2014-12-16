@@ -32,6 +32,8 @@ before_install:
   - "pip install pysam"
   - "pip install colorlog"
   - "sudo apt-get -qq -y install python-numpy python-scipy"
+  - "pip install conda"
+  - "conda install -c https://conda.binstar.org/bcbio bcbio-nextgen"
 install:
     - "python setup.py install"
 script: nosetests
