@@ -27,12 +27,13 @@ before_install:
 	&& export PATH=${P}/bin:$PATH \
 	&& cd ../.."
   - "echo $PATH"
+  - "pip install conda"
+  - "source create -n seqcluster ipython pip "
+  - "source activate seqcluster python ipython pip distribute setuptools numpy pysam"
   - "pip install -U cython"
   - "pip install pybedtools"
   - "pip install pysam"
   - "pip install colorlog"
-  - "sudo apt-get -qq -y install python-numpy python-scipy"
-  - "pip install conda"
   - "conda install -c https://conda.binstar.org/bcbio bcbio-nextgen"
 install:
     - "python setup.py install"
