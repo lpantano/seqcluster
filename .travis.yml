@@ -12,6 +12,9 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
   - "echo `pwd`"
   - "echo $PATH"
+  - "pip install conda"
+  - "conda create --yes -n seqcluster python ipython pip distribute setuptools nose numpy pysam scipy"
+  - "source activate seqcluster "
   - "mkdir -p deps && cd deps \
         && git clone  https://github.com/arq5x/bedtools2 \
         && cd bedtools2  \
@@ -27,9 +30,6 @@ before_install:
 	&& export PATH=${P}/bin:$PATH \
 	&& cd ../.."
   - "echo $PATH"
-  - "pip install conda"
-  - "conda create --yes -n seqcluster python ipython pip distribute setuptools nose numpy pysam scipy"
-  - "source activate seqcluster "
   - "pip install -U cython"
   - "pip install pybedtools"
   - "pip install colorlog"
@@ -39,7 +39,6 @@ install:
 script: nosetests
 after_script:
     - "cd data/test_cluster"
-    - "export PATH=/home/travis/virtualenv/python2.7_with_system_site_packages/bin:$PATH"
     - "seqcluster cluster -m seqs_set.ma -a seqs_set.bam -o res -d"
 branches:
     only:
