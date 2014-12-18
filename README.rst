@@ -17,6 +17,7 @@ installation
 ---------
 
 Install first bcbio-nextgen and cutadapter::
+
     wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
     bash Miniconda-latest-Linux-x86_64.sh -b -p ~/install/seqcluster/anaconda
     PATH = ~/install/seqcluster/anaconda/bin:$PATH
