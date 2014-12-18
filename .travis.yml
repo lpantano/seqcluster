@@ -28,7 +28,7 @@ before_install:
 	&& cd ../.."
   - "echo $PATH"
   - "pip install conda"
-  - "conda create -n seqcluster python ipython pip distribute setuptools numpy pysam scipy"
+  - "conda create --yes -n seqcluster python ipython pip distribute setuptools numpy pysam scipy"
   - "source activate seqcluster "
   - "pip install -U cython"
   - "pip install pybedtools"
