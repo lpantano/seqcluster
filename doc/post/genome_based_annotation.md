@@ -2,7 +2,7 @@ After the comparison of tools to annotate miRNAs explained here, I decided to tr
 
 The steps in the pipeline are:
 
-* simulate miRNA sequences with SeqBuster simulator
+* simulate miRNA sequences with [SeqBuster](http://github.com/lpantano/seqbuster) simulator
 * index human genome
 * map with STAR
 * [optional] filter not primary hits with bamtools
@@ -13,6 +13,6 @@ The [result](https://rawgit.com/lpantano/reproducibility/master/mirannotation/st
 
 ![annotation of different isomiRs using STAR](https://raw.githubusercontent.com/lpantano/reproducibility/master/mirannotation/star_genome/stats_star_files/figure-html/iso-no-filtered-1.png)
 
-It misses mainly sequences with mismatches and additions at the 3' end.
+From the 16900 initial sequences, 16377 mapped to the genomea, and only 12549 overlapped with any miRNA. The correctly annotated sequences are the ones without mismatches or additions, meaning that you will lose miRNA sequences with post-transcriptional modifications.
 
 Highly recommend to map against miRNA first in this case, and then against the genome to decide best hit.
