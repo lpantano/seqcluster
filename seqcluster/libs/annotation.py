@@ -1,4 +1,21 @@
 
+def read_gtf_file(line):
+    """parse gtf line to get class/name information"""
+    try:
+        cols = line.strip().split("\t")
+        group = cols[2]
+        attrs = cols[8].split("; ")
+        name = [attr.split(" ")[1] for attr in attrs if attrs.endswith("name")]
+        c = cols[0]
+        s = cols[3]
+        e = cols[4]
+        st = cols[6]
+    except Exception, e:
+        print "File is not in correct format"
+        print "Expect chr source feature start end . strand attributes"
+        print "Attributes are 'gene_name SNCA; gene_id ENSG; '"
+        print e
+    return [c, s, e, st, group, name[0]]
 
 
 def _position_in_feature(pos_a, pos_b):
