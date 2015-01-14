@@ -18,7 +18,8 @@ I am currently using ``cutadapt``:
 ::
     cutadapt --adapter=$ADAPTER --minimum-length=8 --untrimmed-output=sample1_notfound.fastq -o sample1_clean.fastq -m 17 --overlap=8 sample1.fastq 
 
-**COLLAPSE READS***
+**COLLAPSE READS**
+
 To reduce computational time, I recommend to collapse sequences, also it would help to apply filters based on abundances.
 Like removing sequences that appear only once.
 
