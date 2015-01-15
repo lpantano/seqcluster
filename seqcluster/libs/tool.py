@@ -9,7 +9,7 @@ import pybedtools
 import logger as mylog
 from classes import *
 from mystats import up_threshold
-from annotation import _position_in_feature
+from annotation import _position_in_feature, read_gtf_line
 import parameters
 
 logger = mylog.getLogger(__name__)
@@ -157,24 +157,10 @@ def show_seq(clus_obj, index):
 
 def anncluster(c, clus_obj, db, type_ann):
     """intersect transcription position with annotation files"""
-    if type_ann == "gtf":
-        id_sa = 1
-        id_ea = 2
-        id_sb = 9
-        id_eb = 10
-        id_id = 3
-        id_idl = 4
-        id_sta = 5
-        id_stb = 12
-        id_tag = 8
-    elif type_ann == "bed":
-        id_sa = 1
-        id_ea = 2
+    id_sa, id_ea, id_id, id_idl, id_sta = 1, 2, 3, 4, 5
+    if type_ann == "bed":
         id_sb = 7
         id_eb = 8
-        id_id = 3
-        id_idl = 4
-        id_sta = 5
         id_stb = 11
         id_tag = 9
     ida = 0
@@ -182,24 +168,28 @@ def anncluster(c, clus_obj, db, type_ann):
     loci_id = clus_obj.loci
     db = os.path.splitext(db)[0]
     for cols in c.features():
+        if type_ann == "gtf":
+            cb, sb, eb, stb, db, id_tag = read_gtf_line(cols[6:])
+        else:
+            sb = int(cols[id_sb])
+            eb = int(cols[id_eb])
+            stb = cols[id_stb]
+            id_tag = cols[id_tag]
         id = int(cols[id_id])
         idl = int(cols[id_idl])
         if (id in clus_id):
             clus = clus_id[id]
-            strd = "-"
             sa = int(cols[id_sa])
             ea = int(cols[id_ea])
-            sb = int(cols[id_sb])
-            eb = int(cols[id_eb])
             ida += 1
-            lento5, lento3, strd = _position_in_feature([sa, ea, cols[id_sta]], [sb, eb, cols[id_stb]])
+            lento5, lento3, strd = _position_in_feature([sa, ea, cols[id_sta]], [sb, eb, stb])
             if db in loci_id[idl].db_ann:
-                ann = annotation(db, cols[id_tag], strd, lento5, lento3)
+                ann = annotation(db, id_tag, strd, lento5, lento3)
                 tdb = loci_id[idl].db_ann[db]
                 tdb.add_db_ann(ida, ann)
                 loci_id[idl].add_db(db, tdb)
             else:
-                ann = annotation(db, cols[id_tag], strd, lento5, lento3)
+                ann = annotation(db, id_tag, strd, lento5, lento3)
                 tdb = dbannotation(1)
                 tdb.add_db_ann(ida, ann)
                 loci_id[idl].add_db(db, tdb)
