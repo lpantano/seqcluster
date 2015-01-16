@@ -35,12 +35,25 @@ def cluster(args):
     logger.info("Finished")
 
 
+def _write_size_table(data_freq, data_len, ann_valid, cluster_id):
+    dd = Counter()
+    for f, l in zip(data_freq, data_len):
+        dd[l] += np.mean(f.values())
+
+    table = ""
+    for l in sorted(dd):
+        table += "%s %s %s %s\n" % (l, dd[l], ann_valid, cluster_id)
+    return table
+
+
 def _create_json(clusL, args):
     clus = clusL.clus
     seqs = clusL.seq
     loci = clusL.loci
     data_clus = {}
-    with open(os.path.join(args.dir_out, "counts.tsv"), 'w') as matrix:
+    out_count = os.path.join(args.dir_out, "counts.tsv")
+    out_size = os.path.join(args.dir_out, "size_counts.tsv")
+    with open(out_count, 'w') as matrix, open(out_size, 'w') as size_matrix:
         matrix.write("id\tann\t%s\n" % "\t".join(list(seqs[seqs.keys()[1]].freq.keys())))
         for cid in clus.keys():
             seqList = []
@@ -51,6 +64,8 @@ def _create_json(clusL, args):
             data_ann, valid_ann = _get_annotation(c, loci)
             data_seqs = map(lambda (x): {x: seqs[x].seq}, seqList)
             data_freq = map(lambda (x): seqs[x].freq, seqList)
+            data_freq = map(lambda (x): seqs[x].norm_freq, seqList)
+            data_len = map(lambda (x): seqs[x].len, seqList)
             data_freq_values = map(lambda (x): map(int, seqs[x].freq.values()), seqList)
             sum_freq = _sum_by_samples(data_freq_values)
             data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
@@ -59,6 +74,7 @@ def _create_json(clusL, args):
             data_string = {'seqs': data_seqs, 'freq': data_freq,
                     'loci': data_loci, 'ann': data_ann, 'valid' : valid_ann}
             data_clus[cid] = data_string
+            size_table = size_matrix.write(_write_size_table(data_freq, data_len, data_valid_str, cid))
     with open(os.path.join(args.dir_out, "seqcluster.json"), 'w') as handle_out:
         handle_out.write(json.dumps([data_clus], skipkeys=True, indent=2))
 
@@ -69,7 +85,6 @@ def _get_annotation(c, loci):
     data_ann = []
     counts = Counter()
     for lid in c.loci2seq:
-        loci[lid].chr
         for dbi in loci[lid].db_ann.keys():
             data_ann_temp[dbi] = {dbi: map(lambda (x): loci[lid].db_ann[dbi].ann[x].name, loci[lid].db_ann[dbi].ann.keys())}
             logger.debug("_json_: data_ann_temp %s %s" % (dbi, data_ann_temp[dbi]))
@@ -77,7 +92,8 @@ def _get_annotation(c, loci):
         data_ann = data_ann + map(lambda (x): data_ann_temp[x], data_ann_temp.keys())
         logger.debug("_json_: data_ann %s" % data_ann)
     counts = {k: v for k, v in counts.iteritems()}
-    valid_ann = [k for k, v in counts.iteritems() if up_threshold(v, len(c.loci2seq), 0.7)]
+    total_loci = sum([counts[db] for db in counts])
+    valid_ann = [k for k, v in counts.iteritems() if up_threshold(v, total_loci, 0.7)]
     return data_ann, valid_ann
 
 

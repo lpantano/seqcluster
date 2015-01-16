@@ -17,7 +17,8 @@ def initialize_logger(output_dir, debug):
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
     output_dir = os.path.join(output_dir, "log")
-    os.mkdir(output_dir)
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
 
     def note(self, message, *args, **kws):
         self.log(NOTE, message, *args, **kws)
