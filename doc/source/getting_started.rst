@@ -112,6 +112,8 @@ Example of a gtf file for annotation (the third column should be the name of the
 **OUTPUTS**
 
 * counts.tsv: count matrix that can be input of downstream analyses
+* size_counts.tsv: size distribution of the small RNA by annotation group
 * seqcluster.json: json file containing all information
 * run.log: all messages at debug level
 * trace.log: to keep trace of algorithm decision
+
