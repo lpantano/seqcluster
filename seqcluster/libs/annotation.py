@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger("run")
+
 
 def read_gtf_line(cols):
     """parse gtf line to get class/name information"""
@@ -11,11 +15,11 @@ def read_gtf_line(cols):
         st = cols[6]
         return [c, s, e, st, group, name[0]]
     except Exception, e:
-        print "File is not in correct format"
-        print "Expect chr source feature start end . strand attributes"
-        print "Attributes are 'gene_name SNCA; gene_id ENSG; '"
-        print "at least should contains '; *name NAME; '"
-        print e
+        logger.error("File is not in correct format")
+        logger.error("Expect chr source feature start end . strand attributes")
+        logger.error("Attributes are 'gene_name SNCA; gene_id ENSG; '")
+        logger.error("at least should contains '; *name NAME; '")
+        logger.error(e)
         raise
 
 
