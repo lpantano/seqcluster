@@ -1,6 +1,6 @@
-import logging
+import libs.logger as mylog
 
-logger = logging.getLogger("run")
+logger = mylog.getLogger("run")
 
 
 def read_gtf_line(cols):
