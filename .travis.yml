@@ -16,8 +16,8 @@ before_install:
   - "pip install conda"
   - "conda create --yes -n seqcluster python ipython pip distribute setuptools nose numpy pysam scipy"
   - "source activate seqcluster "
-  - "cd ../ \
-	&& wget http://downloads.sourceforge.net/samtools/samtools/0.1.19/samtools-0.1.19.tar.bz2 \
+  - "mkdir -p deps && cd deps "
+  - "wget http://downloads.sourceforge.net/samtools/samtools/0.1.19/samtools-0.1.19.tar.bz2 \
 	&& tar -xjvf samtools-0.1.19.tar.bz2 \
 	&& cd samtools-0.1.19 \
 	&& make \
