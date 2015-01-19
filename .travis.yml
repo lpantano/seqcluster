@@ -12,15 +12,10 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
   - "echo `pwd`"
   - "echo $PATH"
+  - "sudo apt-get install bedtools"
   - "pip install conda"
   - "conda create --yes -n seqcluster python ipython pip distribute setuptools nose numpy pysam scipy"
   - "source activate seqcluster "
-  - "mkdir -p deps && cd deps \
-        && git clone  https://github.com/arq5x/bedtools2 \
-        && cd bedtools2  \
-        && make \
-	&& P=`pwd` \
- 	&& export PATH=${P}/bin:$PATH"
   - "cd ../ \
 	&& wget http://downloads.sourceforge.net/samtools/samtools/0.1.19/samtools-0.1.19.tar.bz2 \
 	&& tar -xjvf samtools-0.1.19.tar.bz2 \
