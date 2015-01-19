@@ -79,7 +79,7 @@ or
 
 ::
 
-    STAR --genomeDir $star_index_folder --readFilesIn res/seqs.fastq --outFilterMultimapNmax 5000 --outSAMattributes NH HI NM --outSAMtype BAM SortedByCoordinate
+    STAR --genomeDir $star_index_folder --readFilesIn res/seqs.fastq --alignIntronMax 1  --outFilterMultimapNmax 1000 --outSAMattributes NH HI NM --outSAMtype BAM SortedByCoordinate
 
 
 **CLUSTERING**
@@ -105,13 +105,15 @@ Example of a bed file for annotation (the fourth column should be the name of th
     chr1    157783  157886  snRNA   0       -
 Example of a gtf file for annotation (the third column should be the name of the feature): 
 
-::
+:: 
 
     chr1    source  intergenic      1       11503   .       +       .       .....
 
 **OUTPUTS**
 
 * counts.tsv: count matrix that can be input of downstream analyses
+* size_counts.tsv: size distribution of the small RNA by annotation group
 * seqcluster.json: json file containing all information
 * run.log: all messages at debug level
 * trace.log: to keep trace of algorithm decision
+
