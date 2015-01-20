@@ -1,4 +1,4 @@
-import libs.logger as mylog
+import logger as mylog
 
 logger = mylog.getLogger("run")
 
