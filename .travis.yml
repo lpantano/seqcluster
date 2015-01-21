@@ -23,7 +23,7 @@ before_install:
 	&& make \
 	&& P=`pwd` \
 	&& export PATH=${P}/bin:$PATH \
-	&& cd ../.."
+	&& cd .."
   - "wget http://downloads.sourceforge.net/samtools/samtools/0.1.19/samtools-0.1.19.tar.bz2 \
 	&& tar -xjvf samtools-0.1.19.tar.bz2 \
 	&& cd samtools-0.1.19 \
