@@ -18,7 +18,7 @@ before_install:
   - "source activate seqcluster "
   - "mkdir -p deps && cd deps "
   - "wget https://github.com/arq5x/bedtools2/releases/download/v2.22.0/bedtools-2.22.0.tar.gz \
-	&& tar -xjvf bedtools-2.22.0.tar.gz \
+	&& tar -xzvf bedtools-2.22.0.tar.gz \
 	&& cd bedtools2 \
 	&& make \
 	&& P=`pwd` \
