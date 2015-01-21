@@ -22,7 +22,7 @@ before_install:
 	&& cd samtools-0.1.19 \
 	&& make \
 	&& P=`pwd` \
-	&& export PATH=${P}/bin:$PATH \
+	&& export PATH=${P}/misc:${P}/bcftools:${P}:$PATH \
 	&& cd ../.."
   - "echo $PATH"
   - "pip install -U cython"
