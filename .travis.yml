@@ -17,6 +17,13 @@ before_install:
   - "conda create --yes -n seqcluster python ipython pip distribute setuptools nose numpy pysam scipy"
   - "source activate seqcluster "
   - "mkdir -p deps && cd deps "
+  - "wget https://github.com/arq5x/bedtools2/releases/download/v2.22.0/bedtools-2.22.0.tar.gz \
+	&& tar -xjvf bedtools-2.22.0.tar.gz \
+	&& cd bedtools2 \
+	&& make \
+	&& P=`pwd` \
+	&& export PATH=${P}/bin:$PATH \
+	&& cd ../.."
   - "wget http://downloads.sourceforge.net/samtools/samtools/0.1.19/samtools-0.1.19.tar.bz2 \
 	&& tar -xjvf samtools-0.1.19.tar.bz2 \
 	&& cd samtools-0.1.19 \
