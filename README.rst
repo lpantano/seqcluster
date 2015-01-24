@@ -35,7 +35,7 @@ If you need to install bedtools, samtools and star::
    brew tab chapmanb/homebre-cbl
    brew install bedtools
    brew install samtools
-   brew install star
+   brew install star-rna
    
 
 Then you can get seqcluster::
