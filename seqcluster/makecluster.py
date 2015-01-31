@@ -21,6 +21,9 @@ def cluster(args):
     args.MIN_SEQ = 10
     logger.info("Parsing matrix file")
     seqL = parse_ma_file(args.ffile)
+    if len(seqL.keys()) < 100:
+        logger.error("It seems you have so low coverage. Please check your fastq files have enough sequences.")
+        raise ValueError("So few sequences.")
     clusL, seqs_2_positions = _create_clusters(seqL, args)
     logger.info("Solving multi-mapping events in the network of clusters")
     clusLred = reduceloci(clusL, seqs_2_positions, args.MIN_SEQ, args.dir_out)
