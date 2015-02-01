@@ -18,6 +18,7 @@ def read_gtf_line(cols):
         logger.error("File is not in correct format")
         logger.error("Expect chr source feature start end . strand attributes")
         logger.error("Attributes are 'gene_name SNCA; gene_id ENSG; '")
+        logger.error("The 3rd column is used as type of small RNA (like miRNA)")
         logger.error("at least should contains '; *name NAME; '")
         logger.error(e)
         raise
