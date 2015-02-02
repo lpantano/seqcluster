@@ -16,6 +16,9 @@ small RNA analysis from NGS data
 installation
 ---------
 
+`seqcluster-helper`_ provides 
+a python framework to run an entire pipelie for small RNA (miRNA + others).
+
 Install first bcbio-nextgen and cutadapter::
 
     wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
@@ -47,3 +50,6 @@ or the developement version::
     git clone https://github.com/lpantano/seqcluster
     cd seqcluster
     python setup.py install
+
+
+.. _seqcluster-helper: https://github.com/lpantano/seqcluster-helper/blob/master/README.md

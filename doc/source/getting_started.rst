@@ -103,11 +103,13 @@ Example of a bed file for annotation (the fourth column should be the name of th
 ::
 
     chr1    157783  157886  snRNA   0       -
-Example of a gtf file for annotation (the third column should be the name of the feature): 
+    
+Example of a gtf file for annotation (the third column should be the name of the feature and
+the value after `gene name` attribute is the specific annotation): 
 
 :: 
 
-    chr1    source  intergenic      1       11503   .       +       .       .....
+    chr1    source  miRNA      1       11503   .       +       .       gene name 'mir-102' ;
 
 **OUTPUTS**
 
