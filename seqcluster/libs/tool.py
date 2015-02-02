@@ -167,14 +167,15 @@ def anncluster(c, clus_obj, db, type_ann):
     clus_id = clus_obj.clus
     loci_id = clus_obj.loci
     db = os.path.splitext(db)[0]
+    logger.debug("Type:%s\n" % type_ann)
     for cols in c.features():
         if type_ann == "gtf":
-            cb, sb, eb, stb, db, id_tag = read_gtf_line(cols[6:])
+            cb, sb, eb, stb, db, tag = read_gtf_line(cols[6:])
         else:
             sb = int(cols[id_sb])
             eb = int(cols[id_eb])
             stb = cols[id_stb]
-            id_tag = cols[id_tag]
+            tag = cols[id_tag]
         id = int(cols[id_id])
         idl = int(cols[id_idl])
         if (id in clus_id):
@@ -184,12 +185,12 @@ def anncluster(c, clus_obj, db, type_ann):
             ida += 1
             lento5, lento3, strd = _position_in_feature([sa, ea, cols[id_sta]], [sb, eb, stb])
             if db in loci_id[idl].db_ann:
-                ann = annotation(db, id_tag, strd, lento5, lento3)
+                ann = annotation(db, tag, strd, lento5, lento3)
                 tdb = loci_id[idl].db_ann[db]
                 tdb.add_db_ann(ida, ann)
                 loci_id[idl].add_db(db, tdb)
             else:
-                ann = annotation(db, id_tag, strd, lento5, lento3)
+                ann = annotation(db, tag, strd, lento5, lento3)
                 tdb = dbannotation(1)
                 tdb.add_db_ann(ida, ann)
                 loci_id[idl].add_db(db, tdb)
