@@ -3,6 +3,7 @@ import sys
 from libs.parse import parse_cl
 from preparedata import prepare
 from makecluster import cluster
+from create_report import report
 from explore_cluster import explore
 from collapse import collapse_fastq
 from stats import stats
@@ -21,6 +22,9 @@ def main(**kwargs):
     elif "cluster" in kwargs:
         logger.info("Run cluster")
         cluster(kwargs["args"])
+    elif "report" in kwargs:
+        logger.info("Run report")
+        report(kwargs["args"])
     elif "explore" in kwargs:
         logger.info("Run explore")
         explore(kwargs["args"])

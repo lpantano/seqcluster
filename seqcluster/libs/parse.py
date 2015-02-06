@@ -5,6 +5,7 @@ import sys
 def parse_cl(in_args):
     sub_cmds = {"prepare": add_subparser_prepare,
                 "cluster": add_subparser_cluster,
+                "report": add_subparser_report,
                 "explore": add_subparser_explore,
                 "collapse": add_subparser_collapse,
                 "stats": add_subparser_stats}
@@ -23,6 +24,19 @@ def parse_cl(in_args):
     kwargs = {"args": args,
                   sub_cmd: True}
     return kwargs
+
+
+def add_subparser_report(subparsers):
+    parser = subparsers.add_parser("report", help="report data")
+    parser.add_argument("-j", "--json", dest="json", required=1,
+            help="json file from seqcluster")
+    parser.add_argument("-o", "--out", dest="out", required=1,
+            help="dir of output files")
+    parser.add_argument("-r", "--reference", dest="ref", required=1,
+            help="reference fasta file with index"),
+    parser.add_argument("-d", "--debug", action="store_true",
+                       dest="debug", help="max verbosity mode", default=False)
+    return parser
 
 
 def add_subparser_explore(subparsers):

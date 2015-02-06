@@ -68,13 +68,14 @@ def _create_json(clusL, args):
             data_seqs = map(lambda (x): {x: seqs[x].seq}, seqList)
             data_freq = map(lambda (x): seqs[x].freq, seqList)
             data_freq = map(lambda (x): seqs[x].norm_freq, seqList)
+            data_freq_w_id = map(lambda (x): {x: seqs[x].norm_freq}, seqList)
             data_len = map(lambda (x): seqs[x].len, seqList)
             data_freq_values = map(lambda (x): map(int, seqs[x].freq.values()), seqList)
             sum_freq = _sum_by_samples(data_freq_values)
             data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
             data_valid_str = " ".join(valid_ann)
             matrix.write("%s\t%s|%s\t%s\n" % (cid, data_valid_str, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
-            data_string = {'seqs': data_seqs, 'freq': data_freq,
+            data_string = {'seqs': data_seqs, 'freq': data_freq_w_id,
                     'loci': data_loci, 'ann': data_ann, 'valid' : valid_ann}
             data_clus[cid] = data_string
             size_table = size_matrix.write(_write_size_table(data_freq, data_len, data_valid_str, cid))

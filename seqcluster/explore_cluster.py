@@ -21,7 +21,7 @@ def explore(args):
     loci = get_precursors_from_cluster(c1, c2, data[0])
     logger.info("map all sequences to all loci")
     print "%s" % (loci)
-    map_to_precursors(seqs, names, loci, args)
+    map_to_precursors(seqs, names, loci, os.path.join(args.out, "map.tsv"), args)
     #map_sequences_w_bowtie(sequences, precursors)
     logger.info("plot sequences on loci")
     #get_matrix_position()
