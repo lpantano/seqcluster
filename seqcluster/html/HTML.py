@@ -151,9 +151,9 @@ class TableCell (object):
             # An empty cell should at least contain a non-breaking space
             text = '&nbsp;'
         if self.header:
-            return '  <TH%s>%s</TH>\n' % (attribs_str, text)
+            return '  <th%s>%s</th>\n' % (attribs_str, text)
         else:
-            return '  <TD%s>%s</TD>\n' % (attribs_str, text)
+            return '  <td%s>%s</td>\n' % (attribs_str, text)
 
 #-------------------------------------------------------------------------------
 
@@ -194,7 +194,7 @@ class TableRow (object):
         if self.bgcolor: self.attribs['bgcolor'] = self.bgcolor
         for attr in self.attribs:
             attribs_str += ' %s="%s"' % (attr, self.attribs[attr])
-        result = ' <TR%s>\n' % attribs_str
+        result = ' <tr%s>\n' % attribs_str
         for cell in self.cells:
             col = self.cells.index(cell)    # cell column index
             if not isinstance(cell, TableCell):
@@ -212,7 +212,7 @@ class TableRow (object):
             if self.col_styles and cell.style==None:
                 cell.style = self.col_styles[col]
             result += str(cell)
-        result += ' </TR>\n'
+        result += ' </tr>\n'
         return result
 
 #-------------------------------------------------------------------------------
@@ -273,11 +273,11 @@ class Table (object):
         if self.cellpadding:  self.attribs['cellpadding'] = self.cellpadding
         for attr in self.attribs:
             attribs_str += ' %s="%s"' % (attr, self.attribs[attr])
-        result = '<TABLE%s>\n' % attribs_str
+        result = '<table%s>\n' % attribs_str
         # insert column tags and attributes if specified:
         if self.col_width:
             for width in self.col_width:
-                result += '  <COL width="%s">\n' % width
+                result += '  <col width="%s">\n' % width
         # The following code would also generate column attributes for style
         # and alignement according to HTML4 specs,
         # BUT it is not supported completely (only width) on Mozilla Firefox:
@@ -306,10 +306,11 @@ class Table (object):
         # First insert a header row if specified:
         if self.header_row:
             if not isinstance(self.header_row, TableRow):
-                result += str(TableRow(self.header_row, header=True))
+                result += "<thead>" + str(TableRow(self.header_row, header=True)) + "</thead>"
             else:
                 result += str(self.header_row)
         # Then all data rows:
+        result += "<tbody>"
         for row in self.rows:
             if not isinstance(row, TableRow):
                 row = TableRow(row)
@@ -326,7 +327,7 @@ class Table (object):
             if self.col_styles and not row.col_styles:
                 row.col_styles = self.col_styles
             result += str(row)
-        result += '</TABLE>'
+        result += '</tbody></table>'
         return result
 
 

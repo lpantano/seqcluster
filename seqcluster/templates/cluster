@@ -1,6 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><html>
 <head><meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title>clusters information</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
 <style type="text/css" title="currentStyle">
 @import "../info.css";	
 </style>
@@ -17,16 +19,20 @@ jQuery(document).ready(function()
 
 </head>
 <body id="cluster">
-<div id="profile">
-coverage along precursor<br>
-$profile</div>
-<div id="loci">
-Positions on genome<br>
-$loci</div>
-<div id="annotation">
-Annotation<br>
-$annotation</div>
+<div class="bs-callout bs-callout-info" id="callout-helper-context-color-specificity">
+    <h4>coverage along precursor<h4><br>
+            <p>$profile</p>
+</div>
+<div class="bs-callout bs-callout-info" id="callout-helper-context-color-specificity">
+    <h4>Positions on genome</h4><br>
+    <p>$loci</p>
+</div>
+<div class="bs-callout bs-callout-info" id="callout-helper-context-color-specificity">
+    <h4>Annotation</h4><br>
+    <p>$annotation</p>
+</div>
+
 <div id="table">
-Details<br>
+    <h4>Details</h4><br>
 $table</div>
 </html>

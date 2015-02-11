@@ -1,21 +1,4 @@
-@import url('http://fonts.googleapis.com/css?family=Amarante');
 
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline;
-  outline: none;
-  -webkit-font-smoothing: antialiased;
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-html { overflow-y: scroll; }
 table { 
   background: #eee url('http://i.imgur.com/eeQeRmk.png'); /* http://subtlepatterns.com/weave/ */
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -30,48 +13,7 @@ table {
 ::-moz-selection { background: #5f74a0; color: #fff; }
 ::-webkit-selection { background: #5f74a0; color: #fff; }
 
-br { display: block; line-height: 1.6em; } 
-
-article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
-ol, ul { list-style: none; }
-
-input, textarea { 
-  -webkit-font-smoothing: antialiased;
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  outline: none; 
-}
-
-blockquote, q { quotes: none; }
-blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
-strong, b { font-weight: bold; } 
-
-table { border-collapse: collapse; border-spacing: 0; }
-img { border: 0; max-width: 100%; }
-
-h1 { 
-  font-family: 'Amarante', Tahoma, sans-serif;
-  font-weight: bold;
-  font-size: 3.6em;
-  line-height: 1.7em;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-
 /** page structure **/
-#wrapper {
-  display: block;
-  width: 850px;
-  background: #fff;
-  margin: 0 auto;
-  padding: 10px 17px;
-  -webkit-box-shadow: 2px 2px 3px -1px rgba(0,0,0,0.35);
-}
-
 #keywords {
   margin: 0 auto;
   font-size: 1.2em;
@@ -171,3 +113,68 @@ a:hover {
     padding-bottom:10px;
 }
 
+
+/* Base styles (regardless of theme) */
+.bs-callout {
+        margin: 20px 0;
+            padding: 15px 30px 15px 15px;
+                border-left: 5px solid #eee;
+
+}
+ 
+.bs-callout h4 {
+        margin-top: 0;
+
+}
+ 
+.bs-callout p:last-child {
+        margin-bottom: 0;
+
+}
+ 
+.bs-callout code,
+.bs-callout .highlight {
+        background-color: #fff;
+
+}
+ 
+/* Themes for different contexts */
+.bs-callout-danger {
+        background-color: #fcf2f2;
+            border-color: #dFb5b4;
+
+}
+ 
+.bs-callout-warning {
+        background-color: #fefbed;
+            border-color: #f1e7bc;
+
+}
+ 
+.bs-callout-info {
+            border-color: #d0e3f0;
+
+}
+ 
+.bs-callout-danger h4,
+.bs-callout-danger a.alert-link {
+        color: #B94A48;
+
+}
+ 
+.bs-callout-warning h4,
+.bs-callout-warning a.alert-link {
+        color: #C09853;
+
+}
+ 
+.bs-callout-info h4,
+.bs-callout-info a.alert-link {
+        color: #3A87AD;
+
+}
+ 
+.bs-callout a.alert-link {
+        font-weight: bold;
+
+}
