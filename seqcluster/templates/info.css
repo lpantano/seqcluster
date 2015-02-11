@@ -1,0 +1,173 @@
+@import url('http://fonts.googleapis.com/css?family=Amarante');
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  outline: none;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+html { overflow-y: scroll; }
+table { 
+  background: #eee url('http://i.imgur.com/eeQeRmk.png'); /* http://subtlepatterns.com/weave/ */
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 62.5%;
+  line-height: 1;
+  color: #585858;
+  padding: 22px 10px;
+  padding-bottom: 55px;
+}
+
+::selection { background: #5f74a0; color: #fff; }
+::-moz-selection { background: #5f74a0; color: #fff; }
+::-webkit-selection { background: #5f74a0; color: #fff; }
+
+br { display: block; line-height: 1.6em; } 
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
+ol, ul { list-style: none; }
+
+input, textarea { 
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  outline: none; 
+}
+
+blockquote, q { quotes: none; }
+blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
+strong, b { font-weight: bold; } 
+
+table { border-collapse: collapse; border-spacing: 0; }
+img { border: 0; max-width: 100%; }
+
+h1 { 
+  font-family: 'Amarante', Tahoma, sans-serif;
+  font-weight: bold;
+  font-size: 3.6em;
+  line-height: 1.7em;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+
+/** page structure **/
+#wrapper {
+  display: block;
+  width: 850px;
+  background: #fff;
+  margin: 0 auto;
+  padding: 10px 17px;
+  -webkit-box-shadow: 2px 2px 3px -1px rgba(0,0,0,0.35);
+}
+
+#keywords {
+  margin: 0 auto;
+  font-size: 1.2em;
+  margin-bottom: 15px;
+}
+
+
+#keywords th {
+  cursor: pointer;
+  background: #c9dff0;
+}
+#keywords tr th { 
+  font-weight: bold;
+  padding: 12px 30px;
+  padding-left: 42px;
+}
+#keywords tr th span { 
+  padding-right: 20px;
+  background-repeat: no-repeat;
+  background-position: 100% 100%;
+}
+
+#keywords tr th, #keywords tr th {
+  background: #acc8dd;
+  padding: 15px 10px;
+}
+
+#keywords tr { 
+  color: #555;
+}
+#keywords tr td {
+  text-align: center;
+  padding: 15px 10px;
+}
+#keywords tr td.lalign {
+  text-align: left;
+}
+
+
+#container {
+    text-align: center;
+}
+
+.slider {
+    margin-left: 10px;
+    font-size: 8px;
+    width: 100px; 
+    display: inline-block;
+}
+div.css_clus {
+	width:1000px;
+    padding-top: 10px;
+    padding-bottom:10px;
+    bottom: 5px;
+    top: 5px;
+    border-bottom: orange 1px solid;
+}
+
+.css_id {
+background-color:#ccc;
+padding: 1px 15px 15px 15px;
+margin: 1px 5px 5px 1px;    
+border-radius:1em;
+text-align: center;
+font-size: 16px;
+-moz-border-radius:1em;
+-webkit-border-radius:1em;
+}
+
+div.css_seqs {
+    padding-top: 10px;
+    padding-bottom:10px;
+    width: 1000px;
+    height: 250px;
+    overflow-y: scroll;
+}
+
+a:link {
+ text-decoration:none;
+ color: #CCCCCC;
+}
+a:hover {
+ color:#333333;
+}
+
+
+
+#annotation{
+    padding-top: 10px;
+    padding-bottom:10px;
+}
+
+
+#loci{
+	background-color: yellow;
+    padding-top: 10px;
+    padding-bottom:10px;
+}
+
