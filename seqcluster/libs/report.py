@@ -19,14 +19,37 @@ from seqcluster import templates
 logger = logging.getLogger('html')
 
 
+def _get_link(c):
+    return "<a href=%s/maps.html>%s</a>" % (c, c)
+
+
+def _get_ann(dbs, features):
+    value = ""
+    for db, feature in zip(dbs, features):
+        value += db + ":" + feature
+    return value
+
+
 def make_profile(data, out_dir, args):
     """
     Make html for each cluster
     """
+    main_table = []
+    header = ['id', 'ann']
+    html_file = os.path.join(out_dir, "index.html")
     for c in data[0]:
         logger.debug("creating cluser: {}".format(c))
         safe_dirs(os.path.join(out_dir, c))
-        _single_cluster(c, data, os.path.join(out_dir, c, "maps.tsv"), args)
+        valid, ann = _single_cluster(c, data, os.path.join(out_dir, c, "maps.tsv"), args)
+        main_table.append([_get_link(c), _get_ann(valid, ann)])
+
+    main_html = HTML.table(main_table, header_row=header, attribs={'id': 'keywords'})
+    html_template = os.path.normpath(os.path.join(os.path.dirname(os.path.realpath(templates.__file__)), "main"))
+    content = open(html_template).read()
+    data = {'main': main_html }
+    out_content = string.Template(content).safe_substitute(data)
+    with open(html_file, 'w') as out_handle:
+        print >>out_handle, out_content
 
 
 def _expand(dat, counts, start, end):
@@ -69,7 +92,7 @@ def _make_html(c, html_file, figure_file, prefix):
     logger.debug(ann)
 
     valid = [l for l in c['valid']]
-    ann_list = [" ".join(list(set(ann[feature]))) for feature in ann if feature in valid]
+    ann_list = [", ".join(list(set(ann[feature]))) for feature in ann if feature in valid]
     ann_html = HTML.list(ann_list)
 
     seqs = [s.values()[0] for s in c['seqs']]
@@ -79,8 +102,8 @@ def _make_html(c, html_file, figure_file, prefix):
         f = map(round, f)
         seqs_table.append([s] + map(str, f))
     seqs_html = HTML.table(seqs_table,
-                           header_row=header)
-    seqs_html = seqs_html.replace("TABLE", "TABLE id=\"keywords\"")
+                           header_row=header, attribs={'id': 'keywords'})
+    # seqs_html = seqs_html.replace("TABLE", "TABLE id=\"keywords\"")
 
     html_template = os.path.normpath(os.path.join(os.path.dirname(os.path.realpath(templates.__file__)), "cluster"))
     content = open(html_template).read()
@@ -92,7 +115,7 @@ def _make_html(c, html_file, figure_file, prefix):
     with open(html_file, 'w') as out_handle:
         print >>out_handle, out_content
 
-    return True
+    return valid, ann_list
 
 
 def _single_cluster(c, data, out_file, args):
@@ -110,13 +133,15 @@ def _single_cluster(c, data, out_file, args):
     if loci[0][3] - loci[0][2] > 500:
         logger.info("locus bigger > 500 nt, skipping: %s" % loci)
         return False
-    logger.info("map all sequences to all loci %s " % loci)
-    map_to_precursors(seqs, names, {loci[0][0]: [loci[0]]}, out_file, args)
+    logger.debug("map all sequences to all loci %s " % loci)
+    map_to_precursors(seqs, names, {loci[0][0]: [loci[0][0:5]]}, out_file, args)
     # map_sequences_w_bowtie(sequences, precursors)
 
-    logger.info("plot sequences on loci")
+    logger.debug("plot sequences on loci")
     df = _convert_to_df(out_file)
     plot = df.plot()
     plot.set_ylabel('Normalized expression')
     plot.get_figure().savefig(figure_file)
-    _make_html(data[0][c], html_file, figure_file, prefix)
+    valid, ann = _make_html(data[0][c], html_file, figure_file, prefix)
+
+    return valid, ann

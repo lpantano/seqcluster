@@ -1,5 +1,6 @@
 import os
 from collections import Counter
+from operator import itemgetter
 import pybedtools
 import pickle
 import numpy as np
@@ -61,7 +62,8 @@ def _create_json(clusL, args):
         for cid in clus.keys():
             seqList = []
             c = clus[cid]
-            data_loci = map(lambda (x): [x, loci[x].chr, loci[x].start, loci[x].end, loci[x].strand], c.loci2seq.keys())
+            data_loci = map(lambda (x): [x, loci[x].chr, loci[x].start, loci[x].end, loci[x].strand, len(c.loci2seq[x])], c.loci2seq.keys())
+            data_loci = sorted(data_loci, key=itemgetter(5), reverse=True)
             seqList = _get_seqs(c)
             logger.debug("_json_: %s" % seqList)
             data_ann, valid_ann = _get_annotation(c, loci)
