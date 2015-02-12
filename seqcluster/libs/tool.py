@@ -309,7 +309,7 @@ def _get_seqs_from_cluster(seqs, clus_id):
     return list(already_in), not_in
 
 
-def reduceloci(clus_obj, seqs_2_positions, min_seq, path):
+def reduceloci(clus_obj, seqs_2_positions, path):
     """reduce number of loci a cluster has"""
     filtered = {}
     n_cluster = 0
@@ -320,7 +320,7 @@ def reduceloci(clus_obj, seqs_2_positions, min_seq, path):
         c = copy.deepcopy(current[idc])
         n_loci = len(c.loci2seq)
         if n_loci < 1000:
-            filtered, n_cluster = _iter_loci(c, seqs_2_positions, filtered, n_cluster, min_seq)
+            filtered, n_cluster = _iter_loci(c, seqs_2_positions, filtered, n_cluster)
         else:
             n_cluster += 1
             filtered[n_cluster] = _add_complete_cluster(n_cluster, c)
@@ -376,7 +376,7 @@ def _iter_loci_deprecated(c, filtered, n_cluster, min_seq):
     return filtered, n_cluster
 
 
-def _iter_loci(c, s2p, filtered, n_cluster, min_seq):
+def _iter_loci(c, s2p, filtered, n_cluster):
     """Go through all locus and decide if they are part
     of the same TU or not.
 
@@ -384,8 +384,6 @@ def _iter_loci(c, s2p, filtered, n_cluster, min_seq):
     :param s2p: dict with [loci][start]=[seqs]
     :param filtered: dict with clusters object
     :param n_cluster: int cluster id
-    :param min_seq: int min number of sequences inside
-    cluster
 
     :return:
         * filtered: dict of cluster objects

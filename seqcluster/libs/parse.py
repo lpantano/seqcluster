@@ -89,6 +89,8 @@ def add_subparser_cluster(subparsers):
                        dest="index", help="reference fasta")
     parser.add_argument("-d", "--debug", action="store_true",
                        dest="debug", help="max verbosity mode", default=False)
+    parser.add_argument("-vd", "--print_debug", action="store_true",
+                        help="print debug messageson terminal", default=False)
     parser.add_argument("-s", "--show", action="store_true",
                        dest="show", help="no show sequences", default=False)
     parser.add_argument("--split", action="store_true",

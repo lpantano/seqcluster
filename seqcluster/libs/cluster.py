@@ -31,7 +31,7 @@ def detect_clusters(c, current_seq, MIN_SEQ):
         c, start, end, name, score, strand, c_id = line
         pos = start if strand == "+" else end
         if c_id != previous_id:
-            logger.info("detect_cluster: %s %s %s" % (c_id, previous_id, name))
+            logger.debug("detect_cluster: %s %s %s" % (c_id, previous_id, name))
             lindex += 1
             eindex += 1
             current_clus[eindex] = cluster(eindex)
@@ -45,7 +45,7 @@ def detect_clusters(c, current_seq, MIN_SEQ):
         current_clus[eindex].add_id_member([name], lindex)
         current_seq[name].add_pos(lindex)
         previous_id = c_id
-    logger.info("%s clusters read" % eindex)
+    logger.debug("%s clusters read" % eindex)
     # merge cluster with shared sequences  
     cluster_obj, cluster_id = _find_families(current_clus, MIN_SEQ)
 
@@ -60,29 +60,30 @@ def _find_families(clus_obj, min_seqs):
         if len(clus.idmembers.keys()) < min_seqs:
             del clus_obj[c]
             continue
-        logger.info("reading cluster %s" % c)
+        logger.debug("reading cluster %s" % c)
+        logger.debug("loci2seq  %s" % clus.loci2seq)
         already_in, not_in = _get_seqs_from_cluster(clus.idmembers.keys(), seen)
-        logger.info("seen %s news %s" % (already_in, not_in))
+        logger.debug("seen %s news %s" % (already_in, not_in))
         for s in not_in:
             seen[s] = c
         if len(already_in) > 0:
-            logger.info("seen in %s" % already_in)
+            logger.debug("seen in %s" % already_in)
             for eindex in already_in:
                 prev_clus = clus_obj[eindex]
-                logger.info("_find_families: prev %s current %s" % (eindex, clus.id))
+                logger.debug("_find_families: prev %s current %s" % (eindex, clus.id))
                 # add current seqs to seen cluster
                 for s_in_clus in prev_clus.idmembers:
                     seen[s_in_clus] = c
                     clus.idmembers[s_in_clus] = 0
                 # add current locus to seen cluster
                 for loci in prev_clus.loci2seq:
-                    logger.info("adding %s" % loci)
+                    logger.debug("adding %s" % loci)
                     # if not loci_old in current_clus[eindex].loci2seq:
                     clus.add_id_member(list(prev_clus.loci2seq[loci]), loci)
-                logger.info("loci %s" % clus.loci2seq.keys())
+                logger.debug("loci %s" % clus.loci2seq.keys())
                 del clus_obj[eindex]
             clus_obj[c] = clus
-            logger.info("num cluster %s" % len(clus_obj.keys()))
+            logger.debug("num cluster %s" % len(clus_obj.keys()))
     logger.info("%s clusters merged" % len(clus_obj.keys()))
 
     return clus_obj, seen

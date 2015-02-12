@@ -7,7 +7,7 @@ def getLogger(name):
     return logging.getLogger(__name__)
 
 
-def initialize_logger(output_dir, debug):
+def initialize_logger(output_dir, debug, level=False):
     NOTE = 15
     COLOR_FORMAT = "%(log_color)s%(levelname)s-%(name)s(%(lineno)d)%(reset)s: %(message)s"
     COLOR_FORMAT_INFO = "%(log_color)s%(levelname)s%(reset)s: %(message)s"
@@ -29,14 +29,16 @@ def initialize_logger(output_dir, debug):
         numeric_level = getattr(logging, "INFO", None)
     logger = logging.getLogger()
     logger.setLevel(numeric_level)
-    #create console handler and set level to info
+    # create console handler and set level to info
     handler = logging.StreamHandler()
     handler.setLevel(logging.INFO)
+    if level:
+        handler.setLevel(logging.DEBUG)
     formatter = ColoredFormatter(COLOR_FORMAT_INFO)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-   # create error file handler and set level to error
-    handler = logging.FileHandler(os.path.join(output_dir, "error.log"),"w", encoding=None, delay="true")
+    # create error file handler and set level to error
+    handler = logging.FileHandler(os.path.join(output_dir, "error.log"), "w", encoding=None, delay="true")
     handler.setLevel(logging.ERROR)
     formatter = ColoredFormatter(COLOR_FORMAT)
     handler.setFormatter(formatter)

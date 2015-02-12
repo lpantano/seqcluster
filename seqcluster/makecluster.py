@@ -28,7 +28,7 @@ def cluster(args):
         raise ValueError("So few sequences.")
     clusL, seqs_2_positions = _create_clusters(seqL, args)
     logger.info("Solving multi-mapping events in the network of clusters")
-    clusLred = reduceloci(clusL, seqs_2_positions, args.MIN_SEQ, args.dir_out)
+    clusLred = reduceloci(clusL, seqs_2_positions, args.dir_out)
     logger.info("Clusters up to %s" % (len(clusLred.clus.keys())))
     if args.show:
         logger.info("Creating sequences alignment to precursor")
