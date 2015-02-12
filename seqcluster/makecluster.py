@@ -26,9 +26,9 @@ def cluster(args):
     if len(seqL.keys()) < 100:
         logger.error("It seems you have so low coverage. Please check your fastq files have enough sequences.")
         raise ValueError("So few sequences.")
-    clusL, seqs_2_positions = _create_clusters(seqL, args)
+    clusL = _create_clusters(seqL, args)
     logger.info("Solving multi-mapping events in the network of clusters")
-    clusLred = reduceloci(clusL, seqs_2_positions, args.dir_out)
+    clusLred = reduceloci(clusL, args.dir_out)
     logger.info("Clusters up to %s" % (len(clusLred.clus.keys())))
     if args.show:
         logger.info("Creating sequences alignment to precursor")
@@ -149,10 +149,10 @@ def _create_clusters(seqL, args):
         with open(args.out + '/list_obj.pk', 'rb') as input:
             clus_obj = pickle.load(input)
     bedfile = pybedtools.BedTool(generate_position_bed(clus_obj), from_string=True)
-    seqs_2_loci = bedfile.intersect(pybedtools.BedTool(aligned_bed, from_string=True), wo=True, s=True)
-    seqs_2_position = add_seqs_position_to_loci(seqs_2_loci, seqL)
+    # seqs_2_loci = bedfile.intersect(pybedtools.BedTool(aligned_bed, from_string=True), wo=True, s=True)
+    # seqs_2_position = add_seqs_position_to_loci(seqs_2_loci, seqL)
     logger.info("%s clusters found" % (len(clus_obj.clus.keys())))
-    return clus_obj, seqs_2_position
+    return clus_obj
 
 
 def _check_args(args):

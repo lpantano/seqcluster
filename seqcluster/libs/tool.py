@@ -2,9 +2,9 @@ from collections import defaultdict
 import operator
 import os
 import copy
-import time
+# import time
 import math
-import numpy as np
+# import numpy as np
 import pybedtools
 import logger as mylog
 from classes import *
@@ -320,7 +320,7 @@ def reduceloci(clus_obj, seqs_2_positions, path):
         c = copy.deepcopy(current[idc])
         n_loci = len(c.loci2seq)
         if n_loci < 1000:
-            filtered, n_cluster = _iter_loci(c, seqs_2_positions, filtered, n_cluster)
+            filtered, n_cluster = _iter_loci(c, clus_obj.loci, filtered, n_cluster)
         else:
             n_cluster += 1
             filtered[n_cluster] = _add_complete_cluster(n_cluster, c)
@@ -381,7 +381,7 @@ def _iter_loci(c, s2p, filtered, n_cluster):
     of the same TU or not.
 
     :param idx: int cluster id
-    :param s2p: dict with [loci][start]=[seqs]
+    :param s2p: dict with [loci].coverage[start] = # of sequences there
     :param filtered: dict with clusters object
     :param n_cluster: int cluster id
 
@@ -391,7 +391,7 @@ def _iter_loci(c, s2p, filtered, n_cluster):
     n_loci = len(c.loci2seq)
     n_loci_prev = n_loci + 1
     cicle = 0
-    #[logger.note("BEFORE %s %s %s" % (c.id, idl, len(c.loci2seq[idl]))) for idl in c.loci2seq]
+    # [logger.note("BEFORE %s %s %s" % (c.id, idl, len(c.loci2seq[idl]))) for idl in c.loci2seq]
     internal_cluster = {}
     loci = _convert_to_clusters(c)
     if n_loci == 1:
@@ -535,7 +535,7 @@ def _solve_conflict(list_c, s2p, n_cluster):
     Resolve by most-vote or exclussion
 
     :params list_c: dict of objects cluster
-    :param s2p: dict of [loci][start]=[seqs]
+    :param s2p: dict of [loci].coverage = # num of seqs
     :param n_cluster: number of clusters
 
     return dict: new set of clusters"""
