@@ -8,6 +8,7 @@ from bcbio.utils import file_exists
 import libs.logger as mylog
 from libs.mystats import up_threshold
 import json
+from libs.cluster import detect_clusters
 from libs.tool import parse_ma_file, reduceloci, show_seq, \
     parse_merge_file, parse_align_file, generate_position_bed, anncluster, _get_seqs, add_seqs_position_to_loci
 from libs.classes import *
@@ -136,9 +137,11 @@ def _create_clusters(seqL, args):
     if not os.path.exists(args.out + '/list_obj.pk'):
         logger.info("Merging position")
         a = pybedtools.BedTool(aligned_bed, from_string=True)
-        c = a.merge(o="distinct", c="4,5,6", s=True, d=20)
+        # c = a.merge(o="distinct", c="4,5,6", s=True, d=20)
+        c = a.cluster(s=True, d=20)
         logger.info("Creating clusters")
-        clus_obj = parse_merge_file(c, seqL, args.MIN_SEQ)
+        # clus_obj = parse_merge_file(c, seqL, args.MIN_SEQ)
+        clus_obj = detect_clusters(c, seqL, args.MIN_SEQ)
         with open(args.out + '/list_obj.pk', 'wb') as output:
             pickle.dump(clus_obj, output, pickle.HIGHEST_PROTOCOL)
     else:

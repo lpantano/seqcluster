@@ -6,7 +6,7 @@ import os
 import matplotlib
 matplotlib.use('Agg')
 import pylab
-pylab.rcParams['figure.figsize'] = (35.0, 12.0)
+pylab.rcParams['figure.figsize'] = (25.0, 10.0)
 from collections import Counter, defaultdict
 import pandas as pd
 
@@ -140,7 +140,10 @@ def _single_cluster(c, data, out_file, args):
     logger.debug("plot sequences on loci")
     df = _convert_to_df(out_file)
     plot = df.plot()
-    plot.set_ylabel('Normalized expression')
+    plot.set_ylabel('Normalized expression', fontsize=25)
+    plot.set_xlabel('Position', fontsize=25)
+    plot.tick_params(axis='both', which='major', labelsize=20)
+    plot.tick_params(axis='both', which='minor', labelsize=20)
     plot.get_figure().savefig(figure_file)
     valid, ann = _make_html(data[0][c], html_file, figure_file, prefix)
 
