@@ -1,0 +1,75 @@
+#container {
+    text-align: center;
+}
+
+.slider {
+    margin-left: 10px;
+    font-size: 8px;
+    width: 100px; 
+    display: inline-block;
+}
+div.css_clus {
+	width:1000px;
+    padding-top: 10px;
+    padding-bottom:10px;
+    bottom: 5px;
+    top: 5px;
+    border-bottom: orange 1px solid;
+}
+
+.css_id {
+background-color:#ccc;
+padding: 1px 15px 15px 15px;
+margin: 1px 5px 5px 1px;    
+border-radius:1em;
+text-align: center;
+font-size: 16px;
+-moz-border-radius:1em;
+-webkit-border-radius:1em;
+}
+
+div.css_seqs {
+    padding-top: 10px;
+    padding-bottom:10px;
+    width: 1000px;
+    height: 250px;
+    overflow-y: scroll;
+}
+
+a:link {
+ text-decoration:none;
+ color: #CCCCCC;
+}
+a:hover {
+ color:#333333;
+}
+
+
+
+div.css_loci {
+    padding-top: 10px;
+    padding-bottom:10px;
+}
+
+table.info thead th {
+	padding: 2px 10px 2px 5px;
+	border-bottom: 1px solid black;
+	font-weight: bold;
+	border-left: 1px solid black; border-right: 1px solid
+}
+
+table.info {
+
+	width: 650px;
+}
+table.info td {
+	text-align: center;
+	
+	border-top: none;
+ 	border-left: 1px solid black; border-right: 1px solid
+black;
+}
+
+table.info th {
+	text-align: center;
+}

@@ -1,0 +1,180 @@
+
+table { 
+  background: #eee url('http://i.imgur.com/eeQeRmk.png'); /* http://subtlepatterns.com/weave/ */
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 62.5%;
+  line-height: 1;
+  color: #585858;
+  padding: 22px 10px;
+  padding-bottom: 55px;
+}
+
+::selection { background: #5f74a0; color: #fff; }
+::-moz-selection { background: #5f74a0; color: #fff; }
+::-webkit-selection { background: #5f74a0; color: #fff; }
+
+/** page structure **/
+#keywords {
+  margin: 0 auto;
+  font-size: 1.2em;
+  margin-bottom: 15px;
+}
+
+
+#keywords th {
+  cursor: pointer;
+  background: #c9dff0;
+}
+#keywords tr th { 
+  font-weight: bold;
+  padding: 12px 30px;
+  padding-left: 42px;
+}
+#keywords tr th span { 
+  padding-right: 20px;
+  background-repeat: no-repeat;
+  background-position: 100% 100%;
+}
+
+#keywords tr th, #keywords tr th {
+  background: #acc8dd;
+  padding: 15px 10px;
+}
+
+#keywords tr { 
+  color: #555;
+}
+#keywords tr td {
+  text-align: center;
+  padding: 15px 10px;
+}
+#keywords tr td.lalign {
+  text-align: left;
+}
+
+
+#container {
+    text-align: center;
+}
+
+.slider {
+    margin-left: 10px;
+    font-size: 8px;
+    width: 100px; 
+    display: inline-block;
+}
+div.css_clus {
+	width:1000px;
+    padding-top: 10px;
+    padding-bottom:10px;
+    bottom: 5px;
+    top: 5px;
+    border-bottom: orange 1px solid;
+}
+
+.css_id {
+background-color:#ccc;
+padding: 1px 15px 15px 15px;
+margin: 1px 5px 5px 1px;    
+border-radius:1em;
+text-align: center;
+font-size: 16px;
+-moz-border-radius:1em;
+-webkit-border-radius:1em;
+}
+
+div.css_seqs {
+    padding-top: 10px;
+    padding-bottom:10px;
+    width: 1000px;
+    height: 250px;
+    overflow-y: scroll;
+}
+
+a:link {
+ text-decoration:none;
+ color: #CCCCCC;
+}
+a:hover {
+ color:#333333;
+}
+
+
+
+#annotation{
+    padding-top: 10px;
+    padding-bottom:10px;
+}
+
+
+#loci{
+	background-color: yellow;
+    padding-top: 10px;
+    padding-bottom:10px;
+}
+
+
+/* Base styles (regardless of theme) */
+.bs-callout {
+        margin: 20px 0;
+            padding: 15px 30px 15px 15px;
+                border-left: 5px solid #eee;
+
+}
+ 
+.bs-callout h4 {
+        margin-top: 0;
+
+}
+ 
+.bs-callout p:last-child {
+        margin-bottom: 0;
+
+}
+ 
+.bs-callout code,
+.bs-callout .highlight {
+        background-color: #fff;
+
+}
+ 
+/* Themes for different contexts */
+.bs-callout-danger {
+        background-color: #fcf2f2;
+            border-color: #dFb5b4;
+
+}
+ 
+.bs-callout-warning {
+        background-color: #fefbed;
+            border-color: #f1e7bc;
+
+}
+ 
+.bs-callout-info {
+            border-color: #d0e3f0;
+
+}
+ 
+.bs-callout-danger h4,
+.bs-callout-danger a.alert-link {
+        color: #B94A48;
+
+}
+ 
+.bs-callout-warning h4,
+.bs-callout-warning a.alert-link {
+        color: #C09853;
+
+}
+ 
+.bs-callout-info h4,
+.bs-callout-info a.alert-link {
+        color: #3A87AD;
+
+}
+ 
+.bs-callout a.alert-link {
+        font-weight: bold;
+
+}
