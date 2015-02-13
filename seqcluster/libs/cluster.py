@@ -12,12 +12,12 @@ def detect_clusters(c, current_seq, MIN_SEQ):
     sequences that shared any position on the genome
 
     :param c: file from bedtools with merge sequence positions
-    :param seq_l_in: list of sequences
+    :param current_seq: list of sequences
     :param MIN_SEQ: int cutoff to keep the cluster or not. 10 as default
 
     :return: object with information about:
         * cluster
-        $ dict with sequences (as keys) and cluster_id (as value)
+        * dict with sequences (as keys) and cluster_id (as value)
         * sequences
         * loci
 
@@ -53,6 +53,13 @@ def detect_clusters(c, current_seq, MIN_SEQ):
 
 
 def _find_families(clus_obj, min_seqs):
+    """
+    Mask under same id all clusters that share sequences
+    :param clus_obj: cluster object coming from detect_cluster
+    :param min_seqs: int cutoff to keep the cluster or not. 10 as default
+
+    :return: updated clus_obj and dict with seq_id: cluster_id
+    """
     seen = {}
     c_index = clus_obj.keys()
     for c in c_index:
