@@ -53,3 +53,12 @@ or the developement version::
 
 
 .. _seqcluster-helper: https://github.com/lpantano/seqcluster-helper/blob/master/README.md
+
+report
+---------
+
+Seqcluster can create html report that looks like `this`_. That is a table of all cluster detected, and you 
+can go into each of them and get a complete `description`_.
+
+.. _this: https://rawgit.com/lpantano/seqcluster/master/data/examples_report/html/index.html
+.. _description: https://rawgit.com/lpantano/seqcluster/master/data/examples_report/html/1/maps.html
