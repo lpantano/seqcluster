@@ -3,5 +3,5 @@ pysam
 pybedtools
 colorlog
 scipy
-panda
+pandas
 bcbio-nextgen
