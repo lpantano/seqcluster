@@ -39,7 +39,7 @@ def detect_clusters(c, current_seq, MIN_SEQ):
             current_loci[lindex] = newpos
 
         # update locus, sequences in each line
-        current_loci[lindex].end = end
+        current_loci[lindex].end = int(end)
         current_loci[lindex].coverage[pos] += 1
         current_clus[eindex].idmembers[name] = 0
         current_clus[eindex].add_id_member([name], lindex)

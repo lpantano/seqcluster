@@ -152,7 +152,7 @@ a:hover {
 }
  
 .bs-callout-info {
-            border-color: #d0e3f0;
+            border-color: #0066CC;
 
 }
  
@@ -170,7 +170,7 @@ a:hover {
  
 .bs-callout-info h4,
 .bs-callout-info a.alert-link {
-        color: #3A87AD;
+        color: #0066CC;
 
 }
  

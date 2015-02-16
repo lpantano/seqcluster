@@ -309,7 +309,7 @@ def _get_seqs_from_cluster(seqs, clus_id):
     return list(already_in), not_in
 
 
-def reduceloci(clus_obj, seqs_2_positions, path):
+def reduceloci(clus_obj,  path):
     """reduce number of loci a cluster has"""
     filtered = {}
     n_cluster = 0

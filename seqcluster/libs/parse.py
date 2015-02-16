@@ -36,6 +36,8 @@ def add_subparser_report(subparsers):
             help="reference fasta file with index"),
     parser.add_argument("-d", "--debug", action="store_true",
                        dest="debug", help="max verbosity mode", default=False)
+    parser.add_argument("-vd", "--print_debug", action="store_true",
+                        help="print debug messageson terminal", default=False)
     return parser
 
 
