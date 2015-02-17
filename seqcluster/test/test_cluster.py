@@ -23,5 +23,5 @@ class TestCluster(TestCase):
         initialize_logger(".", args.debug, args.print_debug)
         logger = mylog.getLogger(__name__)
         clus_obj = detect_clusters(c, seqL, args.MIN_SEQ)
-        clusLred = reduceloci(clus_obj, {}, ".")
+        clusLred = reduceloci(clus_obj, ".")
         # self.assertTrue(os.path.exists("pre/seqs.fa"))
