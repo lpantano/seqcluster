@@ -137,7 +137,7 @@ class cluster:
         self.ref = r
     def add_id_member(self, ids, idl):
         for s in ids:
-            self.idmembers[s] = 0
+            self.idmembers[s] = 1
             if not idl in self.loci2seq:
                 self.loci2seq[idl] = []
             self.loci2seq[idl].append(s)
