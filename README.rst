@@ -13,6 +13,13 @@ small RNA analysis from NGS data
     :target: https://pypi.python.org/pypi/seqcluster
 
 
+Cite
+---------
+
+A non-biased framework for the annotation and classification of the non-miRNA small RNA transcriptome.
+Pantano L1, Estivill X, Martí E. Bioinformatics. 2011 Nov 15;27(22):3202-3. doi: 10.1093/bioinformatics/btr527. Epub 2011 Oct 5.
+PMID: 21976421
+
 installation
 ---------
 

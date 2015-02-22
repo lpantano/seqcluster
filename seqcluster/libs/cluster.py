@@ -41,7 +41,7 @@ def detect_clusters(c, current_seq, MIN_SEQ):
         # update locus, sequences in each line
         current_loci[lindex].end = int(end)
         current_loci[lindex].coverage[pos] += 1
-        current_clus[eindex].idmembers[name] = 0
+        current_clus[eindex].idmembers[name] = 1
         current_clus[eindex].add_id_member([name], lindex)
         current_seq[name].add_pos(lindex, pos)
         previous_id = c_id
@@ -81,7 +81,7 @@ def _find_families(clus_obj, min_seqs):
                 # add current seqs to seen cluster
                 for s_in_clus in prev_clus.idmembers:
                     seen[s_in_clus] = c
-                    clus.idmembers[s_in_clus] = 0
+                    clus.idmembers[s_in_clus] = 1
                 # add current locus to seen cluster
                 for loci in prev_clus.loci2seq:
                     logger.debug("adding %s" % loci)
