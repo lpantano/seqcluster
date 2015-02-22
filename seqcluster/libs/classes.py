@@ -67,13 +67,13 @@ class sequence:
         self.freq = copy.deepcopy(freq)
         self.norm_freq = copy.deepcopy(freq)
         self.len = len(seq)
-        self.pos = []
+        self.pos = {}
         self.id = seq_id
         self.score = 0
         self.factor = {}
 
-    def add_pos(self, pos_id):
-        self.pos.append(pos_id)
+    def add_pos(self, pos_id, pos):
+        self.pos[pos_id] = pos
 
 
 class position:

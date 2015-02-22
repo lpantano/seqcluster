@@ -213,7 +213,7 @@ def parse_align_file(file_in):
     return bedfile_clusters
 
 
-def parse_merge_file(c, current_seq, MIN_SEQ):
+def parse_merge_file_deprecated(c, current_seq, MIN_SEQ):
     """
     Parse the merge file of sequences position to create clusters that will have all
     sequences that shared any position on the genome

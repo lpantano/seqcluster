@@ -4,7 +4,9 @@ by Allen B. Downey, available from greenteapress.com
 Copyright 2012 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
+from collections import defaultdict
 from thinkbayes import Pmf
+
 
 
 class loci(Pmf):
@@ -39,20 +41,32 @@ class loci(Pmf):
         return like
 
 
-def decide_by_bayes():
-    #get common sequences
-    #for each
-        #get number of loci in common
-        #run bayes
-        #update proportion of counts
-    #returl list of clusters
-    hypos = ['Bowl1', 'Bowl2']
-    loci = {
-    'Bowl1':dict(vanilla=0.75),
-    'Bowl2':dict(vanilla=0.5),
-    }
-    pmf = loci(hypos, loci)
-    pmf.Update('vanilla')
+def _normalize(loci, loci_obj):
+    """
+    normalized number of sequences in that position
+    """
+    return 0
 
-    for hypo, prob in pmf.Items():
-        print hypo, prob
+
+def _dict_seq_locus(list_c):
+    """
+    return dict with sequences = [locus1. locus2 ...]
+    """
+    for c in list_c.values():
+        for l in c.loci2seq:
+            fake =0 
+
+
+def decide_by_bayes(list_c, loci_obj):
+    # for each cluster get seq ~ loci edges
+    loci = _dict_seq_locus(list_c)
+    loci = _normalize(loci, loci_obj)
+    data = defaultdict(dict)
+    hypos = loci.keys()
+    for hypo in hypos:
+        data[hypo] = dict(position=loci[hypo])
+    pmf = loci(hypos, data)
+    pmf.Update('position')
+    return pmf
+    # for hypo, prob in pmf.Items():
+    #    print hypo, prob

@@ -10,7 +10,7 @@ from libs.mystats import up_threshold
 import json
 from libs.cluster import detect_clusters
 from libs.tool import parse_ma_file, reduceloci, show_seq, \
-    parse_merge_file, parse_align_file, generate_position_bed, anncluster, _get_seqs, add_seqs_position_to_loci
+    parse_align_file, generate_position_bed, anncluster, _get_seqs, add_seqs_position_to_loci
 from libs.classes import *
 import libs.parameters as param
 
