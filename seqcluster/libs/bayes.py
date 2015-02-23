@@ -8,8 +8,7 @@ from collections import defaultdict
 from thinkbayes import Pmf
 
 
-
-class loci(Pmf):
+class _update(Pmf):
     """A map from string bowl ID to probablity."""
 
     def __init__(self, hypos, loci):
@@ -41,32 +40,55 @@ class loci(Pmf):
         return like
 
 
-def _normalize(loci, loci_obj):
-    """
-    normalized number of sequences in that position
-    """
-    return 0
+def _transform(seqs):
+    seqs_in_c = defaultdict(dict)
+    for s, c in seqs:
+        seqs_in_c[s].update({c: seqs[(s, c)]})
+    return seqs_in_c
 
 
-def _dict_seq_locus(list_c):
+def _dict_seq_locus(list_c, loci_obj, seq_obj):
     """
-    return dict with sequences = [locus1. locus2 ...]
+    return dict with sequences = [ cluster1, cluster2 ...]
     """
+    seqs = defaultdict(set)
+    n = len(list_c.keys())
     for c in list_c.values():
         for l in c.loci2seq:
-            fake =0 
+            [seqs[s].add(c.id) for s in c.loci2seq[l]]
+
+    common = [s for s in seqs if len(seqs[s]) > 1]
+    seqs_in_c = defaultdict(float)
+    for c in list_c.values():
+        for l in c.loci2seq:
+            total = sum([v for v in loci_obj[l].coverage.values()])
+            for s in c.loci2seq[l]:
+                if s in common:
+                    pos = seq_obj[s].pos[l]
+                    cov = 1.0 * loci_obj[l].coverage[pos] / total
+                    if seqs_in_c[(s, c.id)] < cov:
+                        seqs_in_c[(s, c.id)] = cov
+    seqs_in_c = _transform(seqs_in_c)
+    return seqs_in_c
 
 
-def decide_by_bayes(list_c, loci_obj):
-    # for each cluster get seq ~ loci edges
-    loci = _dict_seq_locus(list_c)
-    loci = _normalize(loci, loci_obj)
+def _bayes(loci):
     data = defaultdict(dict)
     hypos = loci.keys()
     for hypo in hypos:
         data[hypo] = dict(position=loci[hypo])
-    pmf = loci(hypos, data)
+    pmf = _update(hypos, data)
     pmf.Update('position')
     return pmf
     # for hypo, prob in pmf.Items():
     #    print hypo, prob
+
+
+def decide_by_bayes(list_c, s2p):
+    # for each cluster get seq ~ loci edges
+    loci_obj, seq_obj = s2p
+    seqs_in_c = _dict_seq_locus(list_c, loci_obj, seq_obj)
+    for s in seqs_in_c:
+        prob = _bayes(seqs_in_c[s])
+        # print prob.loci
+    return list_c

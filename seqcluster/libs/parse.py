@@ -95,8 +95,8 @@ def add_subparser_cluster(subparsers):
                         help="print debug messageson terminal", default=False)
     parser.add_argument("-s", "--show", action="store_true",
                        dest="show", help="no show sequences", default=False)
-    parser.add_argument("--split", action="store_true",
-                       dest="split", help="split cluster if low sequences sharing", default=False)
+    parser.add_argument("--method", choices=["most-voted", "split", "bayes"],
+                       dest="method", help="most-voted, split, bayes", default='most-voted')
     parser.add_argument("--similar",
                        dest="similar", help="threshold to consider two clusters identicals", default=0.8)
     parser.add_argument("--min_seqs",

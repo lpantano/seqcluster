@@ -10,6 +10,7 @@ import logger as mylog
 from classes import *
 from mystats import up_threshold
 from annotation import _position_in_feature, read_gtf_line
+from bayes import decide_by_bayes
 import parameters
 
 logger = mylog.getLogger(__name__)
@@ -320,7 +321,7 @@ def reduceloci(clus_obj,  path):
         c = copy.deepcopy(current[idc])
         n_loci = len(c.loci2seq)
         if n_loci < 1000:
-            filtered, n_cluster = _iter_loci(c, clus_obj.loci, filtered, n_cluster)
+            filtered, n_cluster = _iter_loci(c, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
         else:
             n_cluster += 1
             filtered[n_cluster] = _add_complete_cluster(n_cluster, c)

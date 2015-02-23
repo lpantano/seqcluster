@@ -185,8 +185,7 @@ def _check_args(args):
             if not file_exists(filebed):
                 logger.error("I/O error: {0}".format(filebed))
                 raise IOError("%s  annotation files doesn't exist" % filebed)
-    if args.split:
-        param.decision_cluster = "split"
+    param.decision_cluster = args.method
     if args.similar:
         param.similar = float(args.similar)
     if args.min_seqs:
