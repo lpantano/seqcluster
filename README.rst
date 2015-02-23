@@ -61,6 +61,12 @@ or the developement version::
 
 .. _seqcluster-helper: https://github.com/lpantano/seqcluster-helper/blob/master/README.md
 
+
+quick start
+---------
+
+Complete tutorial here: http://seqcluster.readthedocs.org/getting_started.html#clustering-of-small-rna-sequences
+
 report
 ---------
 
