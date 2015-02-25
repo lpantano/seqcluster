@@ -80,8 +80,6 @@ def _bayes(loci):
     pmf = _update(hypos, data)
     pmf.Update('position')
     return pmf
-    # for hypo, prob in pmf.Items():
-    #    print hypo, prob
 
 
 def decide_by_bayes(list_c, s2p):
@@ -90,5 +88,7 @@ def decide_by_bayes(list_c, s2p):
     seqs_in_c = _dict_seq_locus(list_c, loci_obj, seq_obj)
     for s in seqs_in_c:
         prob = _bayes(seqs_in_c[s])
-        # print prob.loci
+        for clus in prob:
+            list_c[clus].idmembers[s] = prob.loci[clus]["position"]
+            # print "%s %s %s" % (s, clus, list_c[clus].idmembers[s])
     return list_c

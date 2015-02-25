@@ -1,5 +1,5 @@
 import os
-from collections import Counter
+from collections import Counter, namedtuple
 from operator import itemgetter
 import pybedtools
 import pickle
@@ -69,17 +69,19 @@ def _create_json(clusL, args):
             logger.debug("_json_: %s" % seqList)
             data_ann, valid_ann = _get_annotation(c, loci)
             data_seqs = map(lambda (x): {x: seqs[x].seq}, seqList)
-            data_freq = map(lambda (x): seqs[x].freq, seqList)
-            data_freq = map(lambda (x): seqs[x].norm_freq, seqList)
-            data_freq_w_id = map(lambda (x): {x: seqs[x].norm_freq}, seqList)
+            # data_freq = map(lambda (x): seqs[x].freq, seqList)
+            scaled_seqs = _get_counts(seqList, seqs, c.idmembers)
+            # print data_freq
+            data_freq = map(lambda (x): scaled_seqs[x].freq, seqList)
+            data_freq_w_id = map(lambda (x): {x: scaled_seqs[x]}, seqList)
             data_len = map(lambda (x): seqs[x].len, seqList)
-            data_freq_values = map(lambda (x): map(int, seqs[x].freq.values()), seqList)
+            data_freq_values = map(lambda (x): map(int, scaled_seqs[x].freq.values()), seqList)
             sum_freq = _sum_by_samples(data_freq_values)
             data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
             data_valid_str = " ".join(valid_ann)
             matrix.write("%s\t%s|%s\t%s\n" % (cid, data_valid_str, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
             data_string = {'seqs': data_seqs, 'freq': data_freq_w_id,
-                    'loci': data_loci, 'ann': data_ann, 'valid' : valid_ann}
+                    'loci': data_loci, 'ann': data_ann, 'valid': valid_ann}
             data_clus[cid] = data_string
             size_table = size_matrix.write(_write_size_table(data_freq, data_len, data_valid_str, cid))
     with open(os.path.join(args.dir_out, "seqcluster.json"), 'w') as handle_out:
@@ -102,6 +104,19 @@ def _get_annotation(c, loci):
     total_loci = sum([counts[db] for db in counts])
     valid_ann = [k for k, v in counts.iteritems() if up_threshold(v, total_loci, 0.7)]
     return data_ann, valid_ann
+
+
+def _get_counts(list_seqs, seqs_obj, factor):
+    scaled = {}
+    seq = namedtuple('seq', 'freq norm_freq')
+    for s in list_seqs:
+        if s not in factor:
+            factor[s] = 1
+        samples = seqs_obj[s].norm_freq.keys()
+        corrected_norm = np.array(seqs_obj[s].norm_freq.values()) * factor[s]
+        corrected_raw = np.array(seqs_obj[s].freq.values()) * factor[s]
+        scaled[s] = seq(dict(zip(samples, corrected_raw)), dict(zip(samples, corrected_norm)))
+    return scaled
 
 
 def _sum_by_samples(seqs_freq):
