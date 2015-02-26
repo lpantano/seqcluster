@@ -9,7 +9,7 @@ with open("requirements.txt", "r") as f:
 
 
 setup(name='seqcluster',
-      version='0.99.7',
+      version='0.99.8',
       description='Small RNA-seq analysis',
       long_description=readme(),
       classifiers=[
