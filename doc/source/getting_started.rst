@@ -92,7 +92,7 @@ or
 * `-a` is the SAM file generated after mapped with your tool, which input has been seqs.fa
 * `-m` the previous seqs.fa
 * `-b` annotation files in bed format (see below examples)
-* `-g` annotation files in gtf format (see below examples)
+* `-g` annotation files in gtf format (see below examples) [recommended]
 * `-i` genome fasta file used in the mapping step (only needed if -s active)
 * `-o` output folder
 * `-d` create debug logging
@@ -104,18 +104,30 @@ Example of a bed file for annotation (the fourth column should be the name of th
 
     chr1    157783  157886  snRNA   0       -
     
-Example of a gtf file for annotation (the third column should be the name of the feature and
+Example of a gtf file for annotation (the **third** column should be the name of the feature and
 the value after `gene name` attribute is the specific annotation): 
 
 :: 
 
     chr1    source  miRNA      1       11503   .       +       .       gene name 'mir-102' ;
 
+
+**REPORT**
+
+This will create html report using the following command assuming the output of `seqcluster cluster` is at `res`::
+
+	seqcluster report -j res/seqcluster.json -o report -r $GENONE_FASTA_PATH
+
+where `$GENOME_FASTA_PATH` is the path to the genome fasta file used in the alignment.
+
 **OUTPUTS**
 
 * counts.tsv: count matrix that can be input of downstream analyses
 * size_counts.tsv: size distribution of the small RNA by annotation group
 * seqcluster.json: json file containing all information
-* run.log: all messages at debug level
-* trace.log: to keep trace of algorithm decision
+* log/run.log: all messages at debug level
+* log/trace.log: to keep trace of algorithm decision
+* report/html/index.html: table with all clusters and the annotation with sorting option
+* report/html/[0-9]/maps.html: summary of the cluster with expression profile, annotation, and all sequences inside
+* report/html/[0-9]/maps.fa: putative precursor
 
