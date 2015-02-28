@@ -25,6 +25,13 @@ def parse_cl(in_args):
                   sub_cmd: True}
     return kwargs
 
+def _add_debug_option(parser):
+    parser.add_argument("-d", "--debug", action="store_true",
+                       dest="debug", help="max verbosity mode", default=False)
+    parser.add_argument("-vd", "--print_debug", action="store_true",
+                        help="print debug messageson terminal", default=False)
+    return parser
+
 
 def add_subparser_report(subparsers):
     parser = subparsers.add_parser("report", help="report data")
@@ -34,10 +41,7 @@ def add_subparser_report(subparsers):
             help="dir of output files")
     parser.add_argument("-r", "--reference", dest="ref", required=1,
             help="reference fasta file with index"),
-    parser.add_argument("-d", "--debug", action="store_true",
-                       dest="debug", help="max verbosity mode", default=False)
-    parser.add_argument("-vd", "--print_debug", action="store_true",
-                        help="print debug messageson terminal", default=False)
+    parser = _add_debug_option(parser)
     return parser
 
 
@@ -51,8 +55,7 @@ def add_subparser_explore(subparsers):
             help="reference fasta file with index"),
     parser.add_argument("-o", "--out", dest="out", required=1,
             help="dir of output files")
-    parser.add_argument("-d", "--debug", action="store_true",
-                       dest="debug", help="max verbosity mode", default=False)
+    parser = _add_debug_option(parser)
     return parser
 
 
@@ -68,8 +71,7 @@ def add_subparser_prepare(subparsers):
             help="maximum length", default=35)
     parser.add_argument("-e", "--minc", dest="minc", required=0,
             help="minimum counts", default=10)
-    parser.add_argument("-d", "--debug", action="store_true",
-                       dest="debug", help="max verbosity mode", default=False)
+    parser = _add_debug_option(parser)
     return parser
 
 
@@ -89,10 +91,7 @@ def add_subparser_cluster(subparsers):
                        dest="out", help="output dir", required=1)
     parser.add_argument("-i", "--index",
                        dest="index", help="reference fasta")
-    parser.add_argument("-d", "--debug", action="store_true",
-                       dest="debug", help="max verbosity mode", default=False)
-    parser.add_argument("-vd", "--print_debug", action="store_true",
-                        help="print debug messageson terminal", default=False)
+    parser = _add_debug_option(parser)
     parser.add_argument("-s", "--show", action="store_true",
                        dest="show", help="no show sequences", default=False)
     parser.add_argument("--method", choices=["most-voted", "split", "bayes"],
@@ -116,6 +115,7 @@ def add_subparser_stats(subparsers):
                        dest="debug", help="max verbosity mode", default=False)
     parser.add_argument("-o", "--out",
                        dest="out", help="output dir", required=1)
+    parser = _add_debug_option(parser)
     return parser
 
 
@@ -127,4 +127,5 @@ def add_subparser_collapse(subparsers):
                         dest="debug", help="max verbosity mode", default=False)
     parser.add_argument("-o", "--out",
                         dest="out", help="output file", required=1)
+    parser = _add_debug_option(parser)
     return parser

@@ -20,10 +20,14 @@ logger = logging.getLogger('html')
 
 
 def _get_link(c):
+    """Gives html link tag for cluster link information"""
     return "<a href=%s/maps.html>%s</a>" % (c, c)
 
 
 def _get_ann(dbs, features):
+    """
+    Gives format to annotation for html table output
+    """
     value = ""
     for db, feature in zip(dbs, features):
         value += db + ":" + feature
@@ -62,6 +66,9 @@ def _expand(dat, counts, start, end):
 
 
 def _convert_to_df(in_file):
+    """
+    convert data frame into table with pandas
+    """
     dat = Counter()
     with open(in_file) as in_handle:
         for line in in_handle:
@@ -119,9 +126,10 @@ def _make_html(c, html_file, figure_file, prefix):
 
 
 def _single_cluster(c, data, out_file, args):
-    # dat_freq = Counter()
-    # for s in data[0][c]['freq']:
-    #     dat_freq[s.keys()[0]] = round(sum(s.values()[0].values()))
+    """
+    Map sequences on precursors and create
+    expression profile
+    """
     figure_file = out_file.replace(".tsv", ".png")
     html_file = out_file.replace(".tsv", ".html")
     prefix = os.path.dirname(out_file)

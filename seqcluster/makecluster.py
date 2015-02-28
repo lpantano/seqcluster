@@ -73,7 +73,7 @@ def _create_json(clusL, args):
             scaled_seqs = _get_counts(seqList, seqs, c.idmembers)
             # print data_freq
             data_freq = map(lambda (x): scaled_seqs[x].freq, seqList)
-            data_freq_w_id = map(lambda (x): {x: scaled_seqs[x]}, seqList)
+            data_freq_w_id = map(lambda (x): {x: scaled_seqs[x].norm_freq}, seqList)
             data_len = map(lambda (x): seqs[x].len, seqList)
             data_freq_values = map(lambda (x): map(int, scaled_seqs[x].freq.values()), seqList)
             sum_freq = _sum_by_samples(data_freq_values)

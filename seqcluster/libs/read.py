@@ -49,13 +49,11 @@ def get_precursors_from_cluster(c1, c2, data):
 def map_to_precursors(seqs, names, loci, out_file, args):
     """map sequences to precursors with bowtie"""
     with make_temp_directory() as temp:
-    #temp = "tmp"
-    #if temp:
         pre_fasta = os.path.join(temp, "pre.fa")
         seqs_fasta = os.path.join(temp, "seqs.fa")
         out_sam = os.path.join(temp, "out.sam")
         pre_fasta = get_loci_fasta(loci, pre_fasta, args.ref)
-        shutil.copy(pre_fasta, "pre.fa")
+        out_precursor_file = out_file.replace("tsv", "fa")
         seqs_fasta = get_seqs_fasta(seqs, names, seqs_fasta)
         if find_cmd("bowtie2-build"):
             cmd = "bowtie2-build -f {pre_fasta} {temp}/pre"
@@ -63,6 +61,7 @@ def map_to_precursors(seqs, names, loci, out_file, args):
             cmd = "bowtie2 -a --rdg 7,3 --mp 4 --end-to-end -D 20 -R 3 -N 0 -i S,1,0.8 -L 3 -f -x  {temp}/pre -U {seqs_fasta} -S {out_sam}"
             run(cmd.format(**locals()))
             out_file = read_alignment(out_sam, loci, seqs, out_file)
+            shutil.copy(pre_fasta, out_precursor_file)
     return out_file
 
 
@@ -77,7 +76,7 @@ def get_seqs_fasta(seqs, names, out_fa):
 def get_loci_fasta(loci, out_fa, ref):
     """get fasta from precursor"""
     if not find_cmd("bedtools"):
-        raise ValueError
+        raise ValueError("Not bedtools installed")
     with make_temp_directory() as temp:
         bed_file = os.path.join(temp, "file.bed")
         with open(bed_file, 'w') as bed_handle:
