@@ -35,6 +35,11 @@ Install first bcbio-nextgen and cutadapter::
     conda install -c https://conda.binstar.org/bcbio bcbio-nextgen
     pip install cutadapt
 
+Remember to add the new python into your path every time you want to user seqcluster. 
+If you already have `conda` in your system, just type::
+
+    conda install -c https://conda.binstar.org/bcbio bcbio-nextgen
+
 If you need to install bedtools, samtools and star::
 
    git clone https://github.com/Homebrew/linuxbrew.git  ~/install/seqcluster/linuxbrew
