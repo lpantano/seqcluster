@@ -2,7 +2,7 @@ import os
 import pysam
 import logging
 import json
-from libs.tool import parse_ma_file
+from libs.inputs import parse_ma_file
 from libs.sam2bed import makeBED
 from collections import defaultdict, Counter
 

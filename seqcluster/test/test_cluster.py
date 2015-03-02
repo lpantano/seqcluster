@@ -9,7 +9,7 @@ import seqcluster.libs.logger as mylog
 from seqcluster.libs.tool import reduceloci
 from seqcluster.libs.cluster import detect_clusters
 from seqcluster.libs.logger import initialize_logger
-from seqcluster.libs.tool import parse_ma_file
+from seqcluster.libs.inputs import parse_ma_file
 
 
 class TestCluster(TestCase):

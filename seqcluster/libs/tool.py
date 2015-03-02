@@ -5,11 +5,10 @@ import copy
 # import time
 import math
 # import numpy as np
-import pybedtools
+# import pybedtools
 import logger as mylog
 from classes import *
 from mystats import up_threshold
-from annotation import _position_in_feature, read_gtf_line
 from bayes import decide_by_bayes
 import parameters
 
@@ -25,11 +24,11 @@ def get_distance(p1, p2):
 
 
 def get_ini_str(n):
-        #get space values
+        # get space values
         return "".join(" " for i in range(n))
 
 
-def readbowtie():
+def readbowtie_deprecated():
     ##read results from bowtie...no longer needed
     dict = {}
     f = open("temp.map", 'r')
@@ -51,7 +50,7 @@ def readbowtie():
     return dict
 
 
-def what_is(file):
+def what_is_deprecated(file):
     with open(file, 'r') as handle_in:
         for line in handle_in:
             if not line.startswith("@"):
@@ -156,64 +155,6 @@ def show_seq(clus_obj, index):
     return clus_obj
 
 
-def anncluster(c, clus_obj, db, type_ann):
-    """intersect transcription position with annotation files"""
-    id_sa, id_ea, id_id, id_idl, id_sta = 1, 2, 3, 4, 5
-    if type_ann == "bed":
-        id_sb = 7
-        id_eb = 8
-        id_stb = 11
-        id_tag = 9
-    ida = 0
-    clus_id = clus_obj.clus
-    loci_id = clus_obj.loci
-    db = os.path.splitext(db)[0]
-    logger.debug("Type:%s\n" % type_ann)
-    for cols in c.features():
-        if type_ann == "gtf":
-            cb, sb, eb, stb, db, tag = read_gtf_line(cols[6:])
-        else:
-            sb = int(cols[id_sb])
-            eb = int(cols[id_eb])
-            stb = cols[id_stb]
-            tag = cols[id_tag]
-        id = int(cols[id_id])
-        idl = int(cols[id_idl])
-        if (id in clus_id):
-            clus = clus_id[id]
-            sa = int(cols[id_sa])
-            ea = int(cols[id_ea])
-            ida += 1
-            lento5, lento3, strd = _position_in_feature([sa, ea, cols[id_sta]], [sb, eb, stb])
-            if db in loci_id[idl].db_ann:
-                ann = annotation(db, tag, strd, lento5, lento3)
-                tdb = loci_id[idl].db_ann[db]
-                tdb.add_db_ann(ida, ann)
-                loci_id[idl].add_db(db, tdb)
-            else:
-                ann = annotation(db, tag, strd, lento5, lento3)
-                tdb = dbannotation(1)
-                tdb.add_db_ann(ida, ann)
-                loci_id[idl].add_db(db, tdb)
-            clus_id[id] = clus
-    clus_obj.clus = clus_id
-    clus_obj.loci = loci_id
-    return clus_obj
-
-
-def parse_align_file(file_in):
-    """parse sam files with aligned sequences"""
-    loc_id = 1
-    bedfile_clusters = ""
-    bamfile = pybedtools.BedTool(file_in)
-    bed = pybedtools.BedTool.bam_to_bed(bamfile)
-    for c, start, end, name, q, strand in bed:
-        loc_id += 1
-        bedfile_clusters += "%s\t%s\t%s\t%s\t%s\t%s\n" % \
-                    (c, start, end, name, loc_id, strand)
-    return bedfile_clusters
-
-
 def parse_merge_file_deprecated(c, current_seq, MIN_SEQ):
     """
     Parse the merge file of sequences position to create clusters that will have all
@@ -269,7 +210,7 @@ def parse_merge_file_deprecated(c, current_seq, MIN_SEQ):
     return cluster_info_obj(current_clus, clus_id, current_loci, current_seq)
 
 
-def add_seqs_position_to_loci(fn_bedtools, seqs):
+def add_seqs_position_to_loci_deprecated(fn_bedtools, seqs):
     """return seqL, with exact position in that loci
     :param fn_bedtools: pybedtool object
     :param seqs: object class sequences
@@ -285,7 +226,7 @@ def add_seqs_position_to_loci(fn_bedtools, seqs):
         if start not in seqs_pos[locus]:
             seqs_pos[locus][start] = []
         seqs_pos[locus][start].append(name)
-        #print ("{locus} {name} {pos}").format(**locals())
+        # print ("{locus} {name} {pos}").format(**locals())
     return seqs_pos
 
 
@@ -753,33 +694,6 @@ def generate_position_bed(clus_obj):
             pos = clus_obj.loci[idl]
             bedaligned +=  "%s\t%s\t%s\t%s\t%s\t%s\n" % (pos.chr,pos.start,pos.end,idc,idl,pos.strand)
     return bedaligned
-
-
-def parse_ma_file(in_file):
-    """read seqs.ma file and create dict with
-    sequence object"""
-    name = ""
-    seq_l = {}
-    index = 1
-    total = defaultdict(int)
-    with open(in_file) as handle_in:
-        line = handle_in.readline().strip()
-        cols = line.split("\t")
-        samples = cols[2:]
-        for line in handle_in:
-            line = line.strip()
-            cols = line.split("\t")
-            exp = {}
-            for i in range(len(samples)):
-                exp[samples[i]] = int(cols[i+2])
-                total[samples[i]] += int(cols[i+2])
-            name = cols[0].replace(">", "")
-            index = index+1
-            seq = cols[1]
-            new_s = sequence(seq, exp, index)
-            seq_l[name] = new_s
-    seq_l = _normalize_seqs(seq_l, total)
-    return seq_l
 
 
 def _normalize_seqs(s, t):

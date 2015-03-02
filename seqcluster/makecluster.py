@@ -5,12 +5,15 @@ import pybedtools
 import pickle
 import numpy as np
 from bcbio.utils import file_exists
+
 import libs.logger as mylog
 from libs.mystats import up_threshold
 import json
 from libs.cluster import detect_clusters
-from libs.tool import parse_ma_file, reduceloci, show_seq, \
-    parse_align_file, generate_position_bed, anncluster, _get_seqs, add_seqs_position_to_loci
+from libs.annotation import anncluster
+from libs.inputs import parse_ma_file, parse_align_file
+from libs.tool import reduceloci, show_seq, \
+    generate_position_bed, _get_seqs
 from libs.classes import *
 import libs.parameters as param
 
@@ -163,7 +166,7 @@ def _create_clusters(seqL, args):
         logger.info("Loading previous clusters")
         with open(args.out + '/list_obj.pk', 'rb') as input:
             clus_obj = pickle.load(input)
-    bedfile = pybedtools.BedTool(generate_position_bed(clus_obj), from_string=True)
+    # bedfile = pybedtools.BedTool(generate_position_bed(clus_obj), from_string=True)
     # seqs_2_loci = bedfile.intersect(pybedtools.BedTool(aligned_bed, from_string=True), wo=True, s=True)
     # seqs_2_position = add_seqs_position_to_loci(seqs_2_loci, seqL)
     logger.info("%s clusters found" % (len(clus_obj.clus.keys())))
