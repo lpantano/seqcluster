@@ -1,4 +1,4 @@
-"""Centralize running of external commands, providing logging and tracking.
+"""Centralize running of external commands, providing logging and tracking. Integrated from bcbio package with some changes.
 """
 import collections
 import os
