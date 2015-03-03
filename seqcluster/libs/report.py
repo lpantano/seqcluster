@@ -76,8 +76,6 @@ def _convert_to_df(in_file):
             cols = line.strip().split(" ")
             counts = float(cols[1].replace("cx", ""))
             dat = _expand(dat, counts, int(cols[4]), int(cols[5]))
-    if len(dat.keys()) == 0:
-        return False
     dat = {'positions': dat.keys(), 'expression': dat.values()}
     df = pd.DataFrame(data=dat, columns=dat.keys())
     df.set_index('positions', inplace=True)
@@ -151,7 +149,7 @@ def _single_cluster(c, data, out_file, args):
 
     logger.debug("plot sequences on loci")
     df = _convert_to_df(out_file)
-    if df:
+    if not df.empty:
         plot = df.plot()
         plot.set_ylabel('Normalized expression', fontsize=25)
         plot.set_xlabel('Position', fontsize=25)
