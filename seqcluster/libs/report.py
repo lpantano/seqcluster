@@ -45,12 +45,13 @@ def make_profile(data, out_dir, args):
         logger.debug("creating cluser: {}".format(c))
         safe_dirs(os.path.join(out_dir, c))
         valid, ann = _single_cluster(c, data, os.path.join(out_dir, c, "maps.tsv"), args)
-        main_table.append([_get_link(c), _get_ann(valid, ann)])
+        if valid:
+            main_table.append([_get_link(c), _get_ann(valid, ann)])
 
     main_html = HTML.table(main_table, header_row=header, attribs={'id': 'keywords'})
     html_template = os.path.normpath(os.path.join(os.path.dirname(os.path.realpath(templates.__file__)), "main"))
     content = open(html_template).read()
-    data = {'main': main_html }
+    data = {'main': main_html}
     out_content = string.Template(content).safe_substitute(data)
     with open(html_file, 'w') as out_handle:
         print >>out_handle, out_content
@@ -140,7 +141,7 @@ def _single_cluster(c, data, out_file, args):
 
     if loci[0][3] - loci[0][2] > 500:
         logger.info("locus bigger > 500 nt, skipping: %s" % loci)
-        return False
+        return False, False
     logger.debug("map all sequences to all loci %s " % loci)
     map_to_precursors(seqs, names, {loci[0][0]: [loci[0][0:5]]}, out_file, args)
     # map_sequences_w_bowtie(sequences, precursors)
