@@ -111,8 +111,6 @@ def add_subparser_stats(subparsers):
             help="seqs.ma from prepare"),
     parser.add_argument("-a", "--sam", dest="sam", required=0,
             help="aligned file")
-    parser.add_argument("-d", "--debug", action="store_true",
-                       dest="debug", help="max verbosity mode", default=False)
     parser.add_argument("-o", "--out",
                        dest="out", help="output dir", required=1)
     parser = _add_debug_option(parser)
@@ -123,8 +121,6 @@ def add_subparser_collapse(subparsers):
     parser = subparsers.add_parser("collapse", help="collapse data")
     parser.add_argument("-f", "--fastq", dest="fastq", required=1,
                         help="fastq file"),
-    parser.add_argument("-d", "--debug", action="store_true",
-                        dest="debug", help="max verbosity mode", default=False)
     parser.add_argument("-o", "--out",
                         dest="out", help="output file", required=1)
     parser = _add_debug_option(parser)
