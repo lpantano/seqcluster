@@ -76,6 +76,8 @@ def _convert_to_df(in_file):
             cols = line.strip().split(" ")
             counts = float(cols[1].replace("cx", ""))
             dat = _expand(dat, counts, int(cols[4]), int(cols[5]))
+    if len(dat.keys()) == 0:
+        return False
     dat = {'positions': dat.keys(), 'expression': dat.values()}
     df = pd.DataFrame(data=dat, columns=dat.keys())
     df.set_index('positions', inplace=True)
@@ -131,6 +133,7 @@ def _single_cluster(c, data, out_file, args):
     Map sequences on precursors and create
     expression profile
     """
+    valid, ann = 0, 0
     figure_file = out_file.replace(".tsv", ".png")
     html_file = out_file.replace(".tsv", ".html")
     prefix = os.path.dirname(out_file)
@@ -141,19 +144,20 @@ def _single_cluster(c, data, out_file, args):
 
     if loci[0][3] - loci[0][2] > 500:
         logger.info("locus bigger > 500 nt, skipping: %s" % loci)
-        return False, False
+        return valid, ann
     logger.debug("map all sequences to all loci %s " % loci)
     map_to_precursors(seqs, names, {loci[0][0]: [loci[0][0:5]]}, out_file, args)
     # map_sequences_w_bowtie(sequences, precursors)
 
     logger.debug("plot sequences on loci")
     df = _convert_to_df(out_file)
-    plot = df.plot()
-    plot.set_ylabel('Normalized expression', fontsize=25)
-    plot.set_xlabel('Position', fontsize=25)
-    plot.tick_params(axis='both', which='major', labelsize=20)
-    plot.tick_params(axis='both', which='minor', labelsize=20)
-    plot.get_figure().savefig(figure_file)
-    valid, ann = _make_html(data[0][c], html_file, figure_file, prefix)
+    if df:
+        plot = df.plot()
+        plot.set_ylabel('Normalized expression', fontsize=25)
+        plot.set_xlabel('Position', fontsize=25)
+        plot.tick_params(axis='both', which='major', labelsize=20)
+        plot.tick_params(axis='both', which='minor', labelsize=20)
+        plot.get_figure().savefig(figure_file)
+        valid, ann = _make_html(data[0][c], html_file, figure_file, prefix)
 
     return valid, ann
