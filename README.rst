@@ -35,6 +35,8 @@ Install first bcbio-nextgen and cutadapter::
     conda install -c https://conda.binstar.org/bcbio bcbio-nextgen
     pip install cutadapt
     pip install matplotlib
+    pip install -U cython
+
 
 Remember to add the new python into your path every time you want to user seqcluster. 
 If you already have `conda` in your system, just type::
