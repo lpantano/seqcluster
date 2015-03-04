@@ -10,8 +10,8 @@ def read_gtf_line(cols):
     """parse gtf line to get class/name information"""
     try:
         group = cols[2]
-        attrs = cols[8].split("; ")
-        name = [attr.split(" ")[1] for attr in attrs if attr.split(" ")[0].endswith("name")]
+        attrs = cols[8].split(";")
+        name = [attr.strip().split(" ")[1] for attr in attrs if attr.strip().split(" ")[0].endswith("name")]
         c = cols[0]
         s = int(cols[3])
         e = int(cols[4])
