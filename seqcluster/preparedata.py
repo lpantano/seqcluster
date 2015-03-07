@@ -25,7 +25,7 @@ def prepare(args):
      and aligner (as bowtie) and run `seqcluster cluster`
     """
     try:
-        f = open(args.dir, 'r')
+        f = open(args.config, 'r')
         seq_out = open(os.path.join(args.out, "seqs.fastq"), 'w')
         ma_out = open(os.path.join(args.out, "seqs.ma"), 'w')
     except IOError as e:
@@ -34,7 +34,7 @@ def prepare(args):
     logger.info("reading sequeces")
     seq_l, sample_l = _read_fastq_files(f, args)
     logger.info("creating matrix with unique sequences")
-    _create_matrix_uniq_seq(sample_l, seq_l, ma_out, seq_out)
+    _create_matrix_uniq_seq(sample_l, seq_l, ma_out, seq_out, args.min_shared)
     logger.info("Finish preprocessing. Get an SAM file of seqs.fa and run seqcluster cluster.")
 
 
@@ -118,7 +118,7 @@ def _read_fastq_files(f, args):
     return seq_l, sample_l
 
 
-def _create_matrix_uniq_seq(sample_l, seq_l, maout, out):
+def _create_matrix_uniq_seq(sample_l, seq_l, maout, out, min_shared):
     """ create matrix counts for each different sequence in all the fasta files
 
     :param sample_l: :code:`list_s` is the output of :code:`_read_fasta_files`
@@ -132,6 +132,9 @@ def _create_matrix_uniq_seq(sample_l, seq_l, maout, out):
     for g in sample_l:
         maout.write("\t%s" % g)
     for s in seq_l.keys():
+        seen = sum([1 for g in seq_l[s].group if seq_l[s].group[g] > 0])
+        if seen < int(min_shared):
+            continue
         maout.write("\nseq_%s\t%s" % (seq_l[s].idx, seq_l[s].seq))
         for g in sample_l:
             if g in seq_l[s].group:

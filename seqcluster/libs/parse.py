@@ -25,6 +25,7 @@ def parse_cl(in_args):
                   sub_cmd: True}
     return kwargs
 
+
 def _add_debug_option(parser):
     parser.add_argument("-d", "--debug", action="store_true",
                        dest="debug", help="max verbosity mode", default=False)
@@ -61,7 +62,7 @@ def add_subparser_explore(subparsers):
 
 def add_subparser_prepare(subparsers):
     parser = subparsers.add_parser("prepare", help="prepare data")
-    parser.add_argument("-c", "--conf", dest="dir", required=1,
+    parser.add_argument("-c", "--conf", dest="config", required=1,
             help="file with config file:1st column:path_to_fasta_file ; 2nd column:name")
     parser.add_argument("-o", "--out", dest="out", required=1,
             help="output dir")
@@ -71,6 +72,8 @@ def add_subparser_prepare(subparsers):
             help="maximum length", default=35)
     parser.add_argument("-e", "--minc", dest="minc", required=0,
             help="minimum counts", default=10)
+    parser.add_argument("--min-shared", dest="min_shared", required=0,
+            help="minimum shamples with same sequences", default=2)
     parser = _add_debug_option(parser)
     return parser
 
