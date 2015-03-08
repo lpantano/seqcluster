@@ -19,6 +19,6 @@ class TestPreparedata(TestCase):
         seq_l, list_s = _read_fastq_files(open("config"), args)
         ma_out = open("seqs.ma", 'w')
         seq_out = open("seqs.fa", 'w')
-        _create_matrix_uniq_seq(list_s, seq_l, ma_out, seq_out)
+        _create_matrix_uniq_seq(list_s, seq_l, ma_out, seq_out, 1)
         self.assertTrue(os.path.exists("seqs.ma"))
         self.assertTrue(os.path.exists("seqs.fa"))
