@@ -61,8 +61,9 @@ def _create_json(clusL, args):
     data_clus = {}
     out_count = os.path.join(args.dir_out, "counts.tsv")
     out_size = os.path.join(args.dir_out, "size_counts.tsv")
+    samples_order = list(seqs[seqs.keys()[1]].freq.keys())
     with open(out_count, 'w') as matrix, open(out_size, 'w') as size_matrix:
-        matrix.write("id\tann\t%s\n" % "\t".join(list(seqs[seqs.keys()[1]].freq.keys())))
+        matrix.write("id\tann\t%s\n" % "\t".join(samples_order))
         for cid in clus.keys():
             seqList = []
             c = clus[cid]
@@ -78,8 +79,9 @@ def _create_json(clusL, args):
             data_freq = map(lambda (x): scaled_seqs[x].freq, seqList)
             data_freq_w_id = map(lambda (x): {x: scaled_seqs[x].norm_freq}, seqList)
             data_len = map(lambda (x): seqs[x].len, seqList)
-            data_freq_values = map(lambda (x): map(int, scaled_seqs[x].freq.values()), seqList)
-            sum_freq = _sum_by_samples(data_freq_values)
+            # data_freq_values = map(lambda (x): map(int, scaled_seqs[x].freq.values()), seqList)
+            # sum_freq = _sum_by_samples(data_freq_values)
+            sum_freq = _sum_by_samples(scaled_seqs, samples_order)
             data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
             data_valid_str = " ".join(valid_ann)
             matrix.write("%s\t%s|%s\t%s\n" % (cid, data_valid_str, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
@@ -122,10 +124,13 @@ def _get_counts(list_seqs, seqs_obj, factor):
     return scaled
 
 
-def _sum_by_samples(seqs_freq):
-    y = np.array(seqs_freq[0]) * 0
-    for x in seqs_freq:
-        y = list(np.array(x) + y)
+def _sum_by_samples(seqs_freq, samples_order):
+    n = len(seqs_freq[seqs_freq.keys()[0]].freq.keys())
+    y = np.array([0] * n)
+    for s in seqs_freq:
+        x = seqs_freq[s].freq
+        exp = [seqs_freq[s].freq[sam] for sam in samples_order]
+        y = list(np.array(exp) + y)
     return y
 
 
