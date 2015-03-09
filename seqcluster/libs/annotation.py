@@ -18,6 +18,7 @@ def read_gtf_line(cols):
         st = cols[6]
         return [c, s, e, st, group, name[0]]
     except Exception, e:
+        logger.error(cols)
         logger.error("File is not in correct format")
         logger.error("Expect chr source feature start end . strand attributes")
         logger.error("Attributes are 'gene_name SNCA; gene_id ENSG; '")
