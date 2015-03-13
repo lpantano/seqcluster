@@ -50,7 +50,7 @@ def _write_size_table(data_freq, data_len, ann_valid, cluster_id):
 
     table = ""
     for l in sorted(dd):
-        table += "%s %s %s %s\n" % (l, dd[l], ann_valid, cluster_id)
+        table += "%s\t%s\t%s\t%s\n" % (l, dd[l], ann_valid, cluster_id)
     return table
 
 
