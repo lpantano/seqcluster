@@ -1,5 +1,5 @@
 include doc *
-include seqcluster templates/*
+recursive-include seqcluster/templates *
 include README.rst
 include LICENSE
 include requirements.txt
