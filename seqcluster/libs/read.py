@@ -73,6 +73,12 @@ def get_seqs_fasta(seqs, names, out_fa):
     return out_fa
 
 
+def get_fasta(bed_file, ref, out_fa):
+    """Run bedtools to get fasta from bed file"""
+    cmd = "bedtools getfasta -s -fi {ref} -bed {bed_file} -fo {out_fa}"
+    run(cmd.format(**locals()))
+
+
 def get_loci_fasta(loci, out_fa, ref):
     """get fasta from precursor"""
     if not find_cmd("bedtools"):
@@ -85,8 +91,7 @@ def get_loci_fasta(loci, out_fa, ref):
                     logger.info("get_fasta: loci %s" % l)
                     nc, c, s, e, st = l
                     print("{0}\t{1}\t{2}\t{3}\t{3}\t{4}".format(c, s, e, nc, st), file=bed_handle)
-        cmd = "bedtools getfasta -s -fi {ref} -bed {bed_file} -fo {out_fa}"
-        run(cmd.format(**locals()))
+                    get_fasta(bed_file, ref, out_fa)
     return out_fa
 
 
