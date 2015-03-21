@@ -34,4 +34,7 @@ def main(**kwargs):
     elif "collapse" in kwargs:
         logger.info("Run collapse")
         collapse_fastq(kwargs["args"])
+    elif "simulator" in kwargs:
+        logger.info("Run simulator")
+        # function to simulator
     logger.info('It took %.3f minutes' % ((time.time()-start)/60))

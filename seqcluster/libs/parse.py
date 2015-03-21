@@ -128,3 +128,15 @@ def add_subparser_collapse(subparsers):
                         dest="out", help="output file", required=1)
     parser = _add_debug_option(parser)
     return parser
+
+
+def add_subparser_simulator(subparsers):
+    parser = subparsers.add_parser("simulator", help="simulate small RNA  from bed file")
+    parser.add_argument("--bed", dest="bed", required=1,
+                        help="bed file with position of precursors <=200 nt")
+    parser.add_argument("--out", dest="out", required=1,
+                        help="dir of output files")
+    parser.add_argument("-r", "--reference", dest="ref", required=1,
+                        help="reference fasta file with index"),
+    parser = _add_debug_option(parser)
+    return parser
