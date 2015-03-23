@@ -5,7 +5,9 @@ from tool import _normalize_seqs
 
 
 def parse_align_file(file_in):
-    """parse sam files with aligned sequences"""
+    """
+    Parse sam files with aligned sequences
+    """
     loc_id = 1
     bedfile_clusters = ""
     bamfile = pybedtools.BedTool(file_in)
@@ -18,8 +20,10 @@ def parse_align_file(file_in):
 
 
 def parse_ma_file(in_file):
-    """read seqs.ma file and create dict with
-    sequence object"""
+    """
+    read seqs.ma file and create dict with
+    sequence object
+    """
     name = ""
     seq_l = {}
     index = 1

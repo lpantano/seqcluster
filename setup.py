@@ -1,3 +1,4 @@
+"""small RNA-seq analysis"""
 from setuptools import setup, find_packages
 
 def readme():
@@ -13,7 +14,6 @@ setup(name='seqcluster',
       description='Small RNA-seq analysis',
       long_description=readme(),
       classifiers=[
-        'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2.7',
         'Topic :: Scientific/Engineering :: Bio-Informatics'
