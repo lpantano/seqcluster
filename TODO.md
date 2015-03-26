@@ -1,6 +1,9 @@
-* add length enrichment function
-* implement bayes function to decide which sequences go where
-* sequence in the cluster - text
+X add length enrichment function
+X implement bayes function to decide which sequences go where
+X sequence in the cluster - text
+* segmentation algorithm
+* implement tRNA-scan
+* implement mirna prediction
 * counts of sequnces - barplot / problem: need to be in the same page, select and update :( clickId?? maybe
 * annotation - datatable
 * viz with http://stanford.edu/~mwaskom/software/seaborn/index.html
