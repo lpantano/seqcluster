@@ -24,9 +24,9 @@ installation
 ---------
 
 `seqcluster-helper`_ provides 
-a python framework to run an entire pipelie for small RNA (miRNA + others).
+a python framework to run a whole pipeline for small RNA (miRNA + others).
 
-Install first bcbio-nextgen and cutadapter::
+Install first bcbio-nextgen and cutadapter after install conda if you want a isolate env::
 
     wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
     bash Miniconda-latest-Linux-x86_64.sh -b -p ~/install/seqcluster/anaconda
@@ -43,7 +43,7 @@ If you already have `conda` in your system, just type::
 
     conda install -c https://conda.binstar.org/bcbio bcbio-nextgen
 
-If you need to install bedtools, samtools and star::
+If you need to install bedtools, samtools and star, follow these steps::
 
    git clone https://github.com/Homebrew/linuxbrew.git  ~/install/seqcluster/linuxbrew
    cd ~/install/seqcluster/linuxbrew/bin
@@ -79,7 +79,8 @@ report
 ---------
 
 Seqcluster can create html report that looks like `this`_. That is a table of all cluster detected, and you 
-can go into each of them and get a complete `description`_.
+can go into each of them and get a complete `description`_ with profile expression figures, annotation details and
+sequences counts for each sample.
 
 .. _this: https://rawgit.com/lpantano/seqcluster/master/data/examples_report/html/index.html
 .. _description: https://rawgit.com/lpantano/seqcluster/master/data/examples_report/html/1/maps.html
