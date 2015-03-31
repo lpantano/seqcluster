@@ -1,9 +1,11 @@
 X add length enrichment function
 X implement bayes function to decide which sequences go where
 X sequence in the cluster - text
-* segmentation algorithm: RSEQtools has a C tool to create segmentation
+* segmentation algorithm: RSEQtools has a C tool to create segmentation: https://github.com/sbonerlab/rseqtools/blob/master/src/bgrSegmenter.c
 * implement tRNA-scan
-* implement mirna prediction: CoRaL is an option for everything
+* implement small rna  prediction: CoRaL is an option for everything http://wanglab.pcbi.upenn.edu/coral/  or
+  implement mirna prediction http://evryrna.ibisc.univ-evry.fr/miRBoost/index.html
+* implement submire target prediction module http://research.nhgri.nih.gov/software/SubmiRine/user_guide.shtml
 * counts of sequnces - barplot / problem: need to be in the same page, select and update :( clickId?? maybe
 * annotation - datatable
 * viz with http://stanford.edu/~mwaskom/software/seaborn/index.html or D3.js
