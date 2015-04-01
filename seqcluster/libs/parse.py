@@ -6,6 +6,7 @@ def parse_cl(in_args):
     sub_cmds = {"prepare": add_subparser_prepare,
                 "cluster": add_subparser_cluster,
                 "report": add_subparser_report,
+                "predict": add_subparser_predict,
                 "explore": add_subparser_explore,
                 "collapse": add_subparser_collapse,
                 "stats": add_subparser_stats}
@@ -16,7 +17,7 @@ def parse_cl(in_args):
         sub_cmds[in_args[0]](subparsers)
         sub_cmd = in_args[0]
     else:
-        print "use prepare cluster explore collapse stats"
+        print "use prepare cluster report predict explore collapse stats"
         sys.exit(0)
     args = parser.parse_args()
 
@@ -36,6 +37,18 @@ def _add_debug_option(parser):
 
 def add_subparser_report(subparsers):
     parser = subparsers.add_parser("report", help="report data")
+    parser.add_argument("-j", "--json", dest="json", required=1,
+            help="json file from seqcluster")
+    parser.add_argument("-o", "--out", dest="out", required=1,
+            help="dir of output files")
+    parser.add_argument("-r", "--reference", dest="ref", required=1,
+            help="reference fasta file with index"),
+    parser = _add_debug_option(parser)
+    return parser
+
+
+def add_subparser_predict(subparsers):
+    parser = subparsers.add_parser("predict", help="predict smallRNA types")
     parser.add_argument("-j", "--json", dest="json", required=1,
             help="json file from seqcluster")
     parser.add_argument("-o", "--out", dest="out", required=1,
