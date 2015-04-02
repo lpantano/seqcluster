@@ -1,17 +1,19 @@
 """Implementation of open source tools to predict small RNA functions"""
 from os import path as op
-from bcbio import transaction
+from bcbio.distributed import transaction
 import os
-import shutils
+import shutil
 
 import utils
-from read.py import get_loci_fasta
+from read import get_loci_fasta
 from do import run
 
 
-def predictions(clus_obj, ref, out):
-    """Iterates through cluster precursors to predict sRNA types"""
-    out_dir = op.join(out, "predictions")
+def make_predictions(clus_obj, out_dir, args):
+    """
+    Iterates through cluster precursors to predict sRNA types
+    """
+    ref = args.reference
     utils.safe_dirs(out_dir)
     for c in clus_obj[0]:
         loci = c['loci']
@@ -21,8 +23,8 @@ def predictions(clus_obj, ref, out):
                 os.chdir(tmpdir)
                 get_loci_fasta({loci[0][0]: [loci[0][0:5]]}, out_fa, ref)
                 summary_file, str_file = _run_tRNA_scan(out_fa)
-                shutils.move(summary_file, op.join(out_dir, summary_file))
-                shutils.move(str_file, op.join(out_dir, str_file))
+                shutil.move(summary_file, op.join(out_dir, summary_file))
+                shutil.move(str_file, op.join(out_dir, str_file))
 
 
 def _run_tRNA_scan(fasta_file):

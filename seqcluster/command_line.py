@@ -4,6 +4,7 @@ from libs.parse import parse_cl
 from prepare_data import prepare
 from make_clusters import cluster
 from create_report import report
+from make_predictions import predictions
 from explore_cluster import explore
 from collapse import collapse_fastq
 from stats import stats
@@ -25,6 +26,9 @@ def main(**kwargs):
     elif "report" in kwargs:
         logger.info("Run report")
         report(kwargs["args"])
+    elif "predict" in kwargs:
+        logger.info("Run predictions")
+        predictions(kwargs["args"])
     elif "explore" in kwargs:
         logger.info("Run explore")
         explore(kwargs["args"])
