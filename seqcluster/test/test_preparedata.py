@@ -2,7 +2,7 @@ from unittest import TestCase
 from collections import namedtuple
 import os
 import inspect
-from seqcluster.preparedata import _read_fastq_files, _create_matrix_uniq_seq
+from seqcluster.prepare_data import _read_fastq_files, _create_matrix_uniq_seq
 import seqcluster
 
 
