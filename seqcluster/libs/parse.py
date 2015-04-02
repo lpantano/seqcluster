@@ -16,19 +16,18 @@ def parse_cl(in_args):
         sub_cmds[in_args[0]](subparsers)
         sub_cmd = in_args[0]
     else:
-        print "use prepare cluster explore collapse stats"
+        print "use %s" % sub_cmds.keys()
         sys.exit(0)
     args = parser.parse_args()
 
     assert sub_cmd is not None
-    kwargs = {"args": args,
-                  sub_cmd: True}
+    kwargs = {"args": args, sub_cmd: True}
     return kwargs
 
 
 def _add_debug_option(parser):
     parser.add_argument("-d", "--debug", action="store_true",
-                       dest="debug", help="max verbosity mode", default=False)
+                        dest="debug", help="max verbosity mode", default=False)
     parser.add_argument("-vd", "--print_debug", action="store_true",
                         help="print debug messageson terminal", default=False)
     return parser

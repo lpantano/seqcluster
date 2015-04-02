@@ -1,4 +1,5 @@
-"""small RNA-seq analysis"""
+"""small RNA-seq pipeline"""
+
 from setuptools import setup, find_packages
 
 def readme():
@@ -10,8 +11,8 @@ with open("requirements.txt", "r") as f:
 
 
 setup(name='seqcluster',
-      version='0.99.10',
-      description='Small RNA-seq analysis',
+      version='0.99.11',
+      description='Small RNA-seq pipeline',
       long_description=readme(),
       classifiers=[
         'License :: OSI Approved :: MIT License',

@@ -78,7 +78,7 @@ Complete tutorial here: http://seqcluster.readthedocs.org/getting_started.html#c
 report
 ---------
 
-Seqcluster can create html report that looks like `this`_. That is a table of all cluster detected, and you 
+Seqcluster creates html report that looks like `this`_. That is a table of all cluster detected, and you 
 can go into each of them and get a complete `description`_ with profile expression figures, annotation details and
 sequences counts for each sample.
 

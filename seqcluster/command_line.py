@@ -1,8 +1,8 @@
 from libs.logger import initialize_logger
 import sys
 from libs.parse import parse_cl
-from preparedata import prepare
-from makecluster import cluster
+from prepare_data import prepare
+from make_clusters import cluster
 from create_report import report
 from explore_cluster import explore
 from collapse import collapse_fastq
