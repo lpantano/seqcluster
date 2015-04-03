@@ -1,0 +1,653 @@
+STAR version=STAR_2.4.0e
+STAR compilation time,server,dir=Fri Oct 24 11:14:19 EDT 2014 verona.cshl.edu:/sonas-hs/gingeras/nlsas_norepl/user/dobin/STAR/Releases/STAR_2.4.0e/source
+##### DEFAULT parameters:
+versionSTAR                       20201
+versionGenome                     20101   20200   
+parametersFiles                   -   
+runMode                           alignReads
+runThreadN                        1
+genomeDir                         ./GenomeDir/
+genomeLoad                        NoSharedMemory
+genomeFastaFiles                  -   
+genomeSAindexNbases               14
+genomeChrBinNbits                 18
+genomeSAsparseD                   1
+readFilesIn                       Read1   Read2   
+readFilesCommand                  -   
+readMatesLengthsIn                NotEqual
+readMapNumber                     18446744073709551615
+inputBAMfile                      -
+bamRemoveDuplicatesType           -
+bamRemoveDuplicatesMate2basesN    0
+limitGenomeGenerateRAM            31000000000
+limitIObufferSize                 150000000
+limitOutSAMoneReadBytes           100000
+limitOutSJcollapsed               1000000
+limitOutSJoneRead                 1000
+limitBAMsortRAM                   0
+outFileNamePrefix                 ./
+outTmpDir                         -
+outStd                            Log
+outReadsUnmapped                  None
+outQSconversionAdd                0
+outSAMtype                        SAM   
+outSAMmode                        Full
+outSAMstrandField                 None
+outSAMattributes                  Standard   
+outSAMunmapped                    None
+outSAMorder                       Paired
+outSAMprimaryFlag                 OneBestScore
+outSAMreadID                      Standard
+outSAMmapqUnique                  255
+outSAMattrRGline                  -   
+outSAMheaderHD                    -   
+outSAMheaderPG                    -   
+outSAMheaderCommentFile           -
+outBAMcompression                 -1
+outSJfilterReads                  All
+outSJfilterCountUniqueMin         3   1   1   1   
+outSJfilterCountTotalMin          3   1   1   1   
+outSJfilterOverhangMin            30   12   12   12   
+outSJfilterDistToOtherSJmin       10   0   5   10   
+outSJfilterIntronMaxVsReadN       50000   100000   200000   
+outWigType                        None   
+outWigStrand                      Stranded   
+outWigReferencesPrefix            -
+outWigNorm                        RPM   
+outFilterType                     Normal
+outFilterMultimapNmax             10
+outFilterMultimapScoreRange       1
+outFilterScoreMin                 0
+outFilterScoreMinOverLread        0.66
+outFilterMatchNmin                0
+outFilterMatchNminOverLread       0.66
+outFilterMismatchNmax             10
+outFilterMismatchNoverLmax        0.3
+outFilterMismatchNoverReadLmax    1
+outFilterIntronMotifs             None
+clip5pNbases                      0   
+clip3pNbases                      0   
+clip3pAfterAdapterNbases          0   
+clip3pAdapterSeq                  -   
+clip3pAdapterMMp                  0.1   
+winBinNbits                       16
+winAnchorDistNbins                9
+winFlankNbins                     4
+winAnchorMultimapNmax             50
+scoreGap                          0
+scoreGapNoncan                    -8
+scoreGapGCAG                      -4
+scoreGapATAC                      -8
+scoreStitchSJshift                1
+scoreGenomicLengthLog2scale       -0.25
+scoreDelBase                      -2
+scoreDelOpen                      -2
+scoreInsOpen                      -2
+scoreInsBase                      -2
+seedSearchLmax                    0
+seedSearchStartLmax               50
+seedSearchStartLmaxOverLread      1
+seedPerReadNmax                   1000
+seedPerWindowNmax                 50
+seedNoneLociPerWindow             10
+seedMultimapNmax                  10000
+alignIntronMin                    21
+alignIntronMax                    0
+alignMatesGapMax                  0
+alignTranscriptsPerReadNmax       10000
+alignSJoverhangMin                5
+alignSJDBoverhangMin              3
+alignSplicedMateMapLmin           0
+alignSplicedMateMapLminOverLmate    0.66
+alignWindowsPerReadNmax           10000
+alignTranscriptsPerWindowNmax     100
+alignEndsType                     Local
+chimSegmentMin                    0
+chimScoreMin                      0
+chimScoreDropMax                  20
+chimScoreSeparation               10
+chimScoreJunctionNonGTAG          -1
+chimJunctionOverhangMin           20
+sjdbFileChrStartEnd               -
+sjdbGTFfile                       -
+sjdbGTFchrPrefix                  -
+sjdbGTFfeatureExon                exon
+sjdbGTFtagExonParentTranscript    transcript_id
+sjdbOverhang                      0
+sjdbScore                         2
+quantMode                         -   
+twopass1readsN                    0
+twopassSJlimit                    1000000
+##### Command Line:
+STAR --genomeDir star --genomeFastaFiles genome.fa --runMode genomeGenerate --genomeSAindexNbases 3
+##### Initial USER parameters from Command Line:
+###### All USER parameters from Command Line:
+genomeDir                     star     ~RE-DEFINED
+genomeFastaFiles              genome.fa        ~RE-DEFINED
+runMode                       genomeGenerate     ~RE-DEFINED
+genomeSAindexNbases           3     ~RE-DEFINED
+##### Finished reading parameters from all sources
+
+##### Final user re-defined parameters-----------------:
+runMode                           genomeGenerate
+genomeDir                         star
+genomeFastaFiles                  genome.fa   
+genomeSAindexNbases               3
+
+-------------------------------
+##### Final effective command line:
+STAR   --runMode genomeGenerate   --genomeDir star   --genomeFastaFiles genome.fa      --genomeSAindexNbases 3
+
+##### Final parameters after user input--------------------------------:
+versionSTAR                       20201
+versionGenome                     20101   20200   
+parametersFiles                   -   
+runMode                           genomeGenerate
+runThreadN                        1
+genomeDir                         star
+genomeLoad                        NoSharedMemory
+genomeFastaFiles                  genome.fa   
+genomeSAindexNbases               3
+genomeChrBinNbits                 18
+genomeSAsparseD                   1
+readFilesIn                       Read1   Read2   
+readFilesCommand                  -   
+readMatesLengthsIn                NotEqual
+readMapNumber                     18446744073709551615
+inputBAMfile                      -
+bamRemoveDuplicatesType           -
+bamRemoveDuplicatesMate2basesN    0
+limitGenomeGenerateRAM            31000000000
+limitIObufferSize                 150000000
+limitOutSAMoneReadBytes           100000
+limitOutSJcollapsed               1000000
+limitOutSJoneRead                 1000
+limitBAMsortRAM                   0
+outFileNamePrefix                 ./
+outTmpDir                         -
+outStd                            Log
+outReadsUnmapped                  None
+outQSconversionAdd                0
+outSAMtype                        SAM   
+outSAMmode                        Full
+outSAMstrandField                 None
+outSAMattributes                  Standard   
+outSAMunmapped                    None
+outSAMorder                       Paired
+outSAMprimaryFlag                 OneBestScore
+outSAMreadID                      Standard
+outSAMmapqUnique                  255
+outSAMattrRGline                  -   
+outSAMheaderHD                    -   
+outSAMheaderPG                    -   
+outSAMheaderCommentFile           -
+outBAMcompression                 -1
+outSJfilterReads                  All
+outSJfilterCountUniqueMin         3   1   1   1   
+outSJfilterCountTotalMin          3   1   1   1   
+outSJfilterOverhangMin            30   12   12   12   
+outSJfilterDistToOtherSJmin       10   0   5   10   
+outSJfilterIntronMaxVsReadN       50000   100000   200000   
+outWigType                        None   
+outWigStrand                      Stranded   
+outWigReferencesPrefix            -
+outWigNorm                        RPM   
+outFilterType                     Normal
+outFilterMultimapNmax             10
+outFilterMultimapScoreRange       1
+outFilterScoreMin                 0
+outFilterScoreMinOverLread        0.66
+outFilterMatchNmin                0
+outFilterMatchNminOverLread       0.66
+outFilterMismatchNmax             10
+outFilterMismatchNoverLmax        0.3
+outFilterMismatchNoverReadLmax    1
+outFilterIntronMotifs             None
+clip5pNbases                      0   
+clip3pNbases                      0   
+clip3pAfterAdapterNbases          0   
+clip3pAdapterSeq                  -   
+clip3pAdapterMMp                  0.1   
+winBinNbits                       16
+winAnchorDistNbins                9
+winFlankNbins                     4
+winAnchorMultimapNmax             50
+scoreGap                          0
+scoreGapNoncan                    -8
+scoreGapGCAG                      -4
+scoreGapATAC                      -8
+scoreStitchSJshift                1
+scoreGenomicLengthLog2scale       -0.25
+scoreDelBase                      -2
+scoreDelOpen                      -2
+scoreInsOpen                      -2
+scoreInsBase                      -2
+seedSearchLmax                    0
+seedSearchStartLmax               50
+seedSearchStartLmaxOverLread      1
+seedPerReadNmax                   1000
+seedPerWindowNmax                 50
+seedNoneLociPerWindow             10
+seedMultimapNmax                  10000
+alignIntronMin                    21
+alignIntronMax                    0
+alignMatesGapMax                  0
+alignTranscriptsPerReadNmax       10000
+alignSJoverhangMin                5
+alignSJDBoverhangMin              3
+alignSplicedMateMapLmin           0
+alignSplicedMateMapLminOverLmate    0.66
+alignWindowsPerReadNmax           10000
+alignTranscriptsPerWindowNmax     100
+alignEndsType                     Local
+chimSegmentMin                    0
+chimScoreMin                      0
+chimScoreDropMax                  20
+chimScoreSeparation               10
+chimScoreJunctionNonGTAG          -1
+chimJunctionOverhangMin           20
+sjdbFileChrStartEnd               -
+sjdbGTFfile                       -
+sjdbGTFchrPrefix                  -
+sjdbGTFfeatureExon                exon
+sjdbGTFtagExonParentTranscript    transcript_id
+sjdbOverhang                      0
+sjdbScore                         2
+quantMode                         -   
+twopass1readsN                    0
+twopassSJlimit                    1000000
+----------------------------------------
+
+Finished loading and checking parameters
+Apr 03 09:52:00 ... Starting to generate Genome files
+genome.fa : chr # 0  "1_41222971_41223032" chrStart: 0
+genome.fa : chr # 1  "1_48087402_48087423" chrStart: 262144
+genome.fa : chr # 2  "1_52439082_52439117" chrStart: 524288
+genome.fa : chr # 3  "1_65154802_65154830" chrStart: 786432
+genome.fa : chr # 4  "1_68041953_68041969" chrStart: 1048576
+genome.fa : chr # 5  "1_72642647_72642675" chrStart: 1310720
+genome.fa : chr # 6  "1_74215239_74215271" chrStart: 1572864
+genome.fa : chr # 7  "1_74272630_74272666" chrStart: 1835008
+genome.fa : chr # 8  "1_75313345_75313361" chrStart: 2097152
+genome.fa : chr # 9  "1_78560518_78560546" chrStart: 2359296
+genome.fa : chr # 10  "1_80365643_80365658" chrStart: 2621440
+genome.fa : chr # 11  "1_92676576_92676591" chrStart: 2883584
+genome.fa : chr # 12  "1_97018451_97018478" chrStart: 3145728
+genome.fa : chr # 13  "1_108413719_108413733" chrStart: 3407872
+genome.fa : chr # 14  "1_117575797_117575816" chrStart: 3670016
+genome.fa : chr # 15  "1_149298575_149298628" chrStart: 3932160
+genome.fa : chr # 16  "1_149684088_149684162" chrStart: 4194304
+genome.fa : chr # 17  "1_161369489_161369563" chrStart: 4456448
+genome.fa : chr # 18  "1_166975297_166975318" chrStart: 4718592
+genome.fa : chr # 19  "1_180184320_180184348" chrStart: 4980736
+genome.fa : chr # 20  "1_182913550_182913589" chrStart: 5242880
+genome.fa : chr # 21  "1_186341790_186341821" chrStart: 5505024
+genome.fa : chr # 22  "1_204531539_204531604" chrStart: 5767168
+genome.fa : chr # 23  "1_225304958_225304986" chrStart: 6029312
+genome.fa : chr # 24  "1_227746050_227746074" chrStart: 6291456
+genome.fa : chr # 25  "1_227748881_227749005" chrStart: 6553600
+genome.fa : chr # 26  "1_228743548_228743580" chrStart: 6815744
+genome.fa : chr # 27  "1_228746006_228746133" chrStart: 7077888
+genome.fa : chr # 28  "1_228748247_228748374" chrStart: 7340032
+genome.fa : chr # 29  "1_228750488_228750615" chrStart: 7602176
+genome.fa : chr # 30  "1_228752729_228752856" chrStart: 7864320
+genome.fa : chr # 31  "1_228754970_228755097" chrStart: 8126464
+genome.fa : chr # 32  "1_228757185_228757312" chrStart: 8388608
+genome.fa : chr # 33  "1_228759405_228759532" chrStart: 8650752
+genome.fa : chr # 34  "1_228761647_228761774" chrStart: 8912896
+genome.fa : chr # 35  "1_228763886_228764013" chrStart: 9175040
+genome.fa : chr # 36  "1_228766128_228766255" chrStart: 9437184
+genome.fa : chr # 37  "1_228768369_228768496" chrStart: 9699328
+genome.fa : chr # 38  "1_228770609_228770736" chrStart: 9961472
+genome.fa : chr # 39  "1_228772834_228772961" chrStart: 10223616
+genome.fa : chr # 40  "1_228775075_228775202" chrStart: 10485760
+genome.fa : chr # 41  "1_228777306_228777433" chrStart: 10747904
+genome.fa : chr # 42  "1_228779547_228779674" chrStart: 11010048
+genome.fa : chr # 43  "1_228781778_228781905" chrStart: 11272192
+genome.fa : chr # 44  "1_232768928_232768943" chrStart: 11534336
+genome.fa : chr # 45  "1_234912589_234912605" chrStart: 11796480
+genome.fa : chr # 46  "2_9620276_9620290" chrStart: 12058624
+genome.fa : chr # 47  "2_11657584_11657603" chrStart: 12320768
+genome.fa : chr # 48  "2_11701786_11701812" chrStart: 12582912
+genome.fa : chr # 49  "2_18991651_18991667" chrStart: 12845056
+genome.fa : chr # 50  "2_20601457_20601485" chrStart: 13107200
+genome.fa : chr # 51  "2_22561756_22561783" chrStart: 13369344
+genome.fa : chr # 52  "2_23307834_23307850" chrStart: 13631488
+genome.fa : chr # 53  "2_26669341_26669358" chrStart: 13893632
+genome.fa : chr # 54  "2_32183415_32183430" chrStart: 14155776
+genome.fa : chr # 55  "2_47507894_47507932" chrStart: 14417920
+genome.fa : chr # 56  "2_47881833_47881848" chrStart: 14680064
+genome.fa : chr # 57  "2_59496123_59496144" chrStart: 14942208
+genome.fa : chr # 58  "2_59549321_59549393" chrStart: 15204352
+genome.fa : chr # 59  "2_73089948_73089961" chrStart: 15466496
+genome.fa : chr # 60  "2_81723388_81723420" chrStart: 15728640
+genome.fa : chr # 61  "2_86564516_86564531" chrStart: 15990784
+genome.fa : chr # 62  "2_115695363_115695382" chrStart: 16252928
+genome.fa : chr # 63  "2_127129309_127129324" chrStart: 16515072
+genome.fa : chr # 64  "2_162669984_162670001" chrStart: 16777216
+genome.fa : chr # 65  "2_169127418_169127433" chrStart: 17039360
+genome.fa : chr # 66  "2_170568551_170568566" chrStart: 17301504
+genome.fa : chr # 67  "2_171278465_171278481" chrStart: 17563648
+genome.fa : chr # 68  "2_176684081_176684099" chrStart: 17825792
+genome.fa : chr # 69  "2_185612450_185612466" chrStart: 18087936
+genome.fa : chr # 70  "2_200185317_200185338" chrStart: 18350080
+genome.fa : chr # 71  "3_12196530_12196571" chrStart: 18612224
+genome.fa : chr # 72  "3_13806303_13806322" chrStart: 18874368
+genome.fa : chr # 73  "3_14436235_14436259" chrStart: 19136512
+genome.fa : chr # 74  "3_29899254_29899290" chrStart: 19398656
+genome.fa : chr # 75  "3_48642132_48642150" chrStart: 19660800
+genome.fa : chr # 76  "3_51728477_51728503" chrStart: 19922944
+genome.fa : chr # 77  "3_61684877_61684912" chrStart: 20185088
+genome.fa : chr # 78  "3_72794947_72794976" chrStart: 20447232
+genome.fa : chr # 79  "3_81795769_81795784" chrStart: 20709376
+genome.fa : chr # 80  "3_125058716_125058742" chrStart: 20971520
+genome.fa : chr # 81  "3_127844988_127845005" chrStart: 21233664
+genome.fa : chr # 82  "3_134502335_134502397" chrStart: 21495808
+genome.fa : chr # 83  "3_142099332_142099358" chrStart: 21757952
+genome.fa : chr # 84  "3_149225568_149225589" chrStart: 22020096
+genome.fa : chr # 85  "3_150905885_150905964" chrStart: 22282240
+genome.fa : chr # 86  "3_152916213_152916229" chrStart: 22544384
+genome.fa : chr # 87  "3_155093810_155093838" chrStart: 22806528
+genome.fa : chr # 88  "3_160683084_160683100" chrStart: 23068672
+genome.fa : chr # 89  "3_162464368_162464384" chrStart: 23330816
+genome.fa : chr # 90  "3_169490016_169490091" chrStart: 23592960
+genome.fa : chr # 91  "3_175584517_175584531" chrStart: 23855104
+genome.fa : chr # 92  "3_179879686_179879765" chrStart: 24117248
+genome.fa : chr # 93  "3_181540661_181540778" chrStart: 24379392
+genome.fa : chr # 94  "3_189598992_189599007" chrStart: 24641536
+genome.fa : chr # 95  "4_8394810_8394834" chrStart: 24903680
+genome.fa : chr # 96  "4_22934562_22934578" chrStart: 25165824
+genome.fa : chr # 97  "4_28160158_28160175" chrStart: 25427968
+genome.fa : chr # 98  "4_56963581_56963645" chrStart: 25690112
+genome.fa : chr # 99  "4_79822301_79822318" chrStart: 25952256
+genome.fa : chr # 100  "4_83459137_83459157" chrStart: 26214400
+genome.fa : chr # 101  "4_86420245_86420260" chrStart: 26476544
+genome.fa : chr # 102  "4_86789518_86789539" chrStart: 26738688
+genome.fa : chr # 103  "4_97991974_97991999" chrStart: 27000832
+genome.fa : chr # 104  "4_106679390_106679406" chrStart: 27262976
+genome.fa : chr # 105  "4_108569301_108569319" chrStart: 27525120
+genome.fa : chr # 106  "4_131427821_131427841" chrStart: 27787264
+genome.fa : chr # 107  "4_178378292_178378327" chrStart: 28049408
+genome.fa : chr # 108  "4_185419802_185419819" chrStart: 28311552
+genome.fa : chr # 109  "5_18789240_18789257" chrStart: 28573696
+genome.fa : chr # 110  "5_30228993_30229021" chrStart: 28835840
+genome.fa : chr # 111  "5_33277981_33278009" chrStart: 29097984
+genome.fa : chr # 112  "5_33556617_33556632" chrStart: 29360128
+genome.fa : chr # 113  "5_34802409_34802473" chrStart: 29622272
+genome.fa : chr # 114  "5_54437397_54437412" chrStart: 29884416
+genome.fa : chr # 115  "5_101466819_101466845" chrStart: 30146560
+genome.fa : chr # 116  "5_103105117_103105133" chrStart: 30408704
+genome.fa : chr # 117  "5_112146426_112146441" chrStart: 30670848
+genome.fa : chr # 118  "5_116153783_116153826" chrStart: 30932992
+genome.fa : chr # 119  "5_118408212_118408229" chrStart: 31195136
+genome.fa : chr # 120  "5_129450114_129450185" chrStart: 31457280
+genome.fa : chr # 121  "5_138348087_138348109" chrStart: 31719424
+genome.fa : chr # 122  "5_155272446_155272516" chrStart: 31981568
+genome.fa : chr # 123  "5_159974329_159974349" chrStart: 32243712
+genome.fa : chr # 124  "5_162571742_162571757" chrStart: 32505856
+genome.fa : chr # 125  "5_170716930_170716947" chrStart: 32768000
+genome.fa : chr # 126  "5_172643285_172643310" chrStart: 33030144
+genome.fa : chr # 127  "5_180524068_180524142" chrStart: 33292288
+genome.fa : chr # 128  "5_180529252_180529326" chrStart: 33554432
+genome.fa : chr # 129  "5_180591152_180591226" chrStart: 33816576
+genome.fa : chr # 130  "5_180596608_180596682" chrStart: 34078720
+genome.fa : chr # 131  "5_180600648_180600724" chrStart: 34340864
+genome.fa : chr # 132  "5_180615415_180615488" chrStart: 34603008
+genome.fa : chr # 133  "5_180645269_180645342" chrStart: 34865152
+genome.fa : chr # 134  "5_180649393_180649468" chrStart: 35127296
+genome.fa : chr # 135  "6_3080072_3080101" chrStart: 35389440
+genome.fa : chr # 136  "6_4428196_4428317" chrStart: 35651584
+genome.fa : chr # 137  "6_17722015_17722043" chrStart: 35913728
+genome.fa : chr # 138  "6_18879765_18879782" chrStart: 36175872
+genome.fa : chr # 139  "6_26538280_26538355" chrStart: 36438016
+genome.fa : chr # 140  "6_27173887_27173939" chrStart: 36700160
+genome.fa : chr # 141  "6_27203286_27203353" chrStart: 36962304
+genome.fa : chr # 142  "6_27248048_27248121" chrStart: 37224448
+genome.fa : chr # 143  "6_27258404_27258438" chrStart: 37486592
+genome.fa : chr # 144  "6_27618739_27618779" chrStart: 37748736
+genome.fa : chr # 145  "6_27648405_27648433" chrStart: 38010880
+genome.fa : chr # 146  "6_27648885_27648957" chrStart: 38273024
+genome.fa : chr # 147  "6_27696365_27696399" chrStart: 38535168
+genome.fa : chr # 148  "6_27721178_27721252" chrStart: 38797312
+genome.fa : chr # 149  "6_27740108_27740132" chrStart: 39059456
+genome.fa : chr # 150  "6_67679401_67679417" chrStart: 39321600
+genome.fa : chr # 151  "6_72086665_72086729" chrStart: 39583744
+genome.fa : chr # 152  "6_97360391_97360407" chrStart: 39845888
+genome.fa : chr # 153  "6_100269162_100269177" chrStart: 40108032
+genome.fa : chr # 154  "6_110074368_110074432" chrStart: 40370176
+genome.fa : chr # 155  "6_116499409_116499444" chrStart: 40632320
+genome.fa : chr # 156  "6_126301030_126301080" chrStart: 40894464
+genome.fa : chr # 157  "6_126448904_126448925" chrStart: 41156608
+genome.fa : chr # 158  "6_129093911_129093928" chrStart: 41418752
+genome.fa : chr # 159  "6_134578257_134578282" chrStart: 41680896
+genome.fa : chr # 160  "6_143296745_143296761" chrStart: 41943040
+genome.fa : chr # 161  "6_151002339_151002355" chrStart: 42205184
+genome.fa : chr # 162  "6_152611109_152611137" chrStart: 42467328
+genome.fa : chr # 163  "6_152731480_152731502" chrStart: 42729472
+genome.fa : chr # 164  "6_153741608_153741651" chrStart: 42991616
+genome.fa : chr # 165  "6_162473083_162473108" chrStart: 43253760
+genome.fa : chr # 166  "6_165823057_165823140" chrStart: 43515904
+genome.fa : chr # 167  "7_2624551_2624584" chrStart: 43778048
+genome.fa : chr # 168  "7_28396159_28396177" chrStart: 44040192
+genome.fa : chr # 169  "7_74011128_74011163" chrStart: 44302336
+genome.fa : chr # 170  "7_77547258_77547276" chrStart: 44564480
+genome.fa : chr # 171  "7_126159707_126159732" chrStart: 44826624
+genome.fa : chr # 172  "7_128337505_128337612" chrStart: 45088768
+genome.fa : chr # 173  "7_128337749_128337798" chrStart: 45350912
+genome.fa : chr # 174  "7_128444746_128444766" chrStart: 45613056
+genome.fa : chr # 175  "7_129667116_129667144" chrStart: 45875200
+genome.fa : chr # 176  "7_132283726_132283742" chrStart: 46137344
+genome.fa : chr # 177  "7_134660549_134660582" chrStart: 46399488
+genome.fa : chr # 178  "7_140086578_140086607" chrStart: 46661632
+genome.fa : chr # 179  "7_141107342_141107368" chrStart: 46923776
+genome.fa : chr # 180  "7_158707438_158707459" chrStart: 47185920
+genome.fa : chr # 181  "8_2204749_2204766" chrStart: 47448064
+genome.fa : chr # 182  "8_10544145_10544172" chrStart: 47710208
+genome.fa : chr # 183  "8_13393537_13393562" chrStart: 47972352
+genome.fa : chr # 184  "8_20147725_20147754" chrStart: 48234496
+genome.fa : chr # 185  "8_28387964_28388006" chrStart: 48496640
+genome.fa : chr # 186  "8_33499463_33499479" chrStart: 48758784
+genome.fa : chr # 187  "8_35636155_35636169" chrStart: 49020928
+genome.fa : chr # 188  "8_35764554_35764569" chrStart: 49283072
+genome.fa : chr # 189  "8_60368457_60368489" chrStart: 49545216
+genome.fa : chr # 190  "8_61156161_61156203" chrStart: 49807360
+genome.fa : chr # 191  "8_91523443_91523469" chrStart: 50069504
+genome.fa : chr # 192  "8_93179688_93179772" chrStart: 50331648
+genome.fa : chr # 193  "8_108039360_108039375" chrStart: 50593792
+genome.fa : chr # 194  "8_109723215_109723230" chrStart: 50855936
+genome.fa : chr # 195  "8_111907142_111907157" chrStart: 51118080
+genome.fa : chr # 196  "8_119539228_119539246" chrStart: 51380224
+genome.fa : chr # 197  "8_122114334_122114350" chrStart: 51642368
+genome.fa : chr # 198  "8_135812815_135812834" chrStart: 51904512
+genome.fa : chr # 199  "8_139815642_139815695" chrStart: 52166656
+genome.fa : chr # 200  "8_141873117_141873133" chrStart: 52428800
+genome.fa : chr # 201  "9_9632269_9632289" chrStart: 52690944
+genome.fa : chr # 202  "9_36857825_36857842" chrStart: 52953088
+genome.fa : chr # 203  "9_66458231_66458251" chrStart: 53215232
+genome.fa : chr # 204  "9_76365914_76365943" chrStart: 53477376
+genome.fa : chr # 205  "9_90063913_90063929" chrStart: 53739520
+genome.fa : chr # 206  "9_95168761_95168777" chrStart: 54001664
+genome.fa : chr # 207  "9_104328710_104328743" chrStart: 54263808
+genome.fa : chr # 208  "9_111165845_111165865" chrStart: 54525952
+genome.fa : chr # 209  "9_115014592_115014627" chrStart: 54788096
+genome.fa : chr # 210  "10_327975_328065" chrStart: 55050240
+genome.fa : chr # 211  "10_672175_672189" chrStart: 55312384
+genome.fa : chr # 212  "10_5895690_5895746" chrStart: 55574528
+genome.fa : chr # 213  "10_5942291_5942322" chrStart: 55836672
+genome.fa : chr # 214  "10_19922610_19922638" chrStart: 56098816
+genome.fa : chr # 215  "10_26102760_26102779" chrStart: 56360960
+genome.fa : chr # 216  "10_50387904_50387927" chrStart: 56623104
+genome.fa : chr # 217  "10_55654121_55654145" chrStart: 56885248
+genome.fa : chr # 218  "10_67030893_67030908" chrStart: 57147392
+genome.fa : chr # 219  "10_70877248_70877266" chrStart: 57409536
+genome.fa : chr # 220  "10_87812297_87812325" chrStart: 57671680
+genome.fa : chr # 221  "10_91369106_91369120" chrStart: 57933824
+genome.fa : chr # 222  "10_95270408_95270437" chrStart: 58195968
+genome.fa : chr # 223  "10_95952619_95952645" chrStart: 58458112
+genome.fa : chr # 224  "10_108729812_108729831" chrStart: 58720256
+genome.fa : chr # 225  "10_117403602_117403619" chrStart: 58982400
+genome.fa : chr # 226  "10_123281089_123281112" chrStart: 59244544
+genome.fa : chr # 227  "10_127208455_127208470" chrStart: 59506688
+genome.fa : chr # 228  "11_8739141_8739166" chrStart: 59768832
+genome.fa : chr # 229  "11_19423438_19423473" chrStart: 60030976
+genome.fa : chr # 230  "11_21022425_21022475" chrStart: 60293120
+genome.fa : chr # 231  "11_22709930_22709949" chrStart: 60555264
+genome.fa : chr # 232  "11_28346826_28346841" chrStart: 60817408
+genome.fa : chr # 233  "11_44784466_44784504" chrStart: 61079552
+genome.fa : chr # 234  "11_49312721_49312737" chrStart: 61341696
+genome.fa : chr # 235  "11_59318101_59318174" chrStart: 61603840
+genome.fa : chr # 236  "11_59318458_59318516" chrStart: 61865984
+genome.fa : chr # 237  "11_71193837_71193859" chrStart: 62128128
+genome.fa : chr # 238  "11_95232825_95232841" chrStart: 62390272
+genome.fa : chr # 239  "11_108290588_108290603" chrStart: 62652416
+genome.fa : chr # 240  "11_109283607_109283632" chrStart: 62914560
+genome.fa : chr # 241  "11_110910906_110910932" chrStart: 63176704
+genome.fa : chr # 242  "11_124506391_124506444" chrStart: 63438848
+genome.fa : chr # 243  "11_125023195_125023219" chrStart: 63700992
+genome.fa : chr # 244  "12_13199085_13199175" chrStart: 63963136
+genome.fa : chr # 245  "12_17919500_17919514" chrStart: 64225280
+genome.fa : chr # 246  "12_28658326_28658382" chrStart: 64487424
+genome.fa : chr # 247  "12_28971820_28971835" chrStart: 64749568
+genome.fa : chr # 248  "12_30846809_30846834" chrStart: 65011712
+genome.fa : chr # 249  "12_34356838_34356857" chrStart: 65273856
+genome.fa : chr # 250  "12_34358727_34358755" chrStart: 65536000
+genome.fa : chr # 251  "12_38555264_38555302" chrStart: 65798144
+genome.fa : chr # 252  "12_61936982_61937004" chrStart: 66060288
+genome.fa : chr # 253  "12_66799903_66799919" chrStart: 66322432
+genome.fa : chr # 254  "12_71892271_71892290" chrStart: 66584576
+genome.fa : chr # 255  "12_89012669_89012688" chrStart: 66846720
+genome.fa : chr # 256  "12_99477625_99477657" chrStart: 67108864
+genome.fa : chr # 257  "12_102173591_102173617" chrStart: 67371008
+genome.fa : chr # 258  "12_104519013_104519103" chrStart: 67633152
+genome.fa : chr # 259  "12_105198645_105198664" chrStart: 67895296
+genome.fa : chr # 260  "12_110986817_110986834" chrStart: 68157440
+genome.fa : chr # 261  "12_121198590_121198605" chrStart: 68419584
+genome.fa : chr # 262  "12_131784232_131784260" chrStart: 68681728
+genome.fa : chr # 263  "12_132145643_132145671" chrStart: 68943872
+genome.fa : chr # 264  "12_132285887_132285916" chrStart: 69206016
+genome.fa : chr # 265  "12_133624135_133624172" chrStart: 69468160
+genome.fa : chr # 266  "13_21920154_21920182" chrStart: 69730304
+genome.fa : chr # 267  "13_30980376_30980391" chrStart: 69992448
+genome.fa : chr # 268  "13_58565494_58565513" chrStart: 70254592
+genome.fa : chr # 269  "13_69387157_69387172" chrStart: 70516736
+genome.fa : chr # 270  "13_70982604_70982619" chrStart: 70778880
+genome.fa : chr # 271  "13_85679058_85679075" chrStart: 71041024
+genome.fa : chr # 272  "14_20883156_20883182" chrStart: 71303168
+genome.fa : chr # 273  "14_56973136_56973160" chrStart: 71565312
+genome.fa : chr # 274  "14_68123847_68123869" chrStart: 71827456
+genome.fa : chr # 275  "14_69570351_69570379" chrStart: 72089600
+genome.fa : chr # 276  "14_76070554_76070605" chrStart: 72351744
+genome.fa : chr # 277  "14_76529559_76529589" chrStart: 72613888
+genome.fa : chr # 278  "14_76693874_76693890" chrStart: 72876032
+genome.fa : chr # 279  "14_77870247_77870282" chrStart: 73138176
+genome.fa : chr # 280  "14_78644200_78644230" chrStart: 73400320
+genome.fa : chr # 281  "14_90894659_90894673" chrStart: 73662464
+genome.fa : chr # 282  "14_92630849_92630868" chrStart: 73924608
+genome.fa : chr # 283  "14_94883072_94883100" chrStart: 74186752
+genome.fa : chr # 284  "14_99531803_99531818" chrStart: 74448896
+genome.fa : chr # 285  "14_103783283_103783318" chrStart: 74711040
+genome.fa : chr # 286  "14_104401618_104401637" chrStart: 74973184
+genome.fa : chr # 287  "14_105590094_105590122" chrStart: 75235328
+genome.fa : chr # 288  "14_107092676_107092766" chrStart: 75497472
+genome.fa : chr # 289  "15_24942471_24942486" chrStart: 75759616
+genome.fa : chr # 290  "15_40623824_40623849" chrStart: 76021760
+genome.fa : chr # 291  "15_44218570_44218598" chrStart: 76283904
+genome.fa : chr # 292  "15_50755596_50755613" chrStart: 76546048
+genome.fa : chr # 293  "15_86681524_86681552" chrStart: 76808192
+genome.fa : chr # 294  "15_93963509_93963538" chrStart: 77070336
+genome.fa : chr # 295  "16_4864565_4864579" chrStart: 77332480
+genome.fa : chr # 296  "16_14929245_14929273" chrStart: 77594624
+genome.fa : chr # 297  "16_47484342_47484361" chrStart: 77856768
+genome.fa : chr # 298  "16_50903363_50903388" chrStart: 78118912
+genome.fa : chr # 299  "16_59765258_59765347" chrStart: 78381056
+genome.fa : chr # 300  "16_66335766_66335801" chrStart: 78643200
+genome.fa : chr # 301  "16_68776381_68776458" chrStart: 78905344
+genome.fa : chr # 302  "16_74607783_74607797" chrStart: 79167488
+genome.fa : chr # 303  "16_76097123_76097138" chrStart: 79429632
+genome.fa : chr # 304  "17_2092245_2092278" chrStart: 79691776
+genome.fa : chr # 305  "17_8744443_8744462" chrStart: 79953920
+genome.fa : chr # 306  "17_9491435_9491450" chrStart: 80216064
+genome.fa : chr # 307  "17_36888052_36888077" chrStart: 80478208
+genome.fa : chr # 308  "17_39874405_39874440" chrStart: 80740352
+genome.fa : chr # 309  "17_41530795_41530810" chrStart: 81002496
+genome.fa : chr # 310  "17_43635032_43635051" chrStart: 81264640
+genome.fa : chr # 311  "17_62900695_62900714" chrStart: 81526784
+genome.fa : chr # 312  "17_64263914_64263949" chrStart: 81788928
+genome.fa : chr # 313  "17_65822072_65822093" chrStart: 82051072
+genome.fa : chr # 314  "17_70071167_70071183" chrStart: 82313216
+genome.fa : chr # 315  "18_8354232_8354250" chrStart: 82575360
+genome.fa : chr # 316  "18_9923926_9923968" chrStart: 82837504
+genome.fa : chr # 317  "18_20771776_20771791" chrStart: 83099648
+genome.fa : chr # 318  "18_21750466_21750500" chrStart: 83361792
+genome.fa : chr # 319  "18_57835954_57835971" chrStart: 83623936
+genome.fa : chr # 320  "18_68181215_68181230" chrStart: 83886080
+genome.fa : chr # 321  "19_4724667_4724719" chrStart: 84148224
+genome.fa : chr # 322  "19_5352672_5352686" chrStart: 84410368
+genome.fa : chr # 323  "19_7951860_7951910" chrStart: 84672512
+genome.fa : chr # 324  "19_21295931_21296011" chrStart: 84934656
+genome.fa : chr # 325  "19_32734868_32734891" chrStart: 85196800
+genome.fa : chr # 326  "19_54485793_54485813" chrStart: 85458944
+genome.fa : chr # 327  "19_58378660_58378704" chrStart: 85721088
+genome.fa : chr # 328  "20_3048546_3048568" chrStart: 85983232
+genome.fa : chr # 329  "20_6029746_6029761" chrStart: 86245376
+genome.fa : chr # 330  "20_9197571_9197599" chrStart: 86507520
+genome.fa : chr # 331  "20_19495656_19495672" chrStart: 86769664
+genome.fa : chr # 332  "20_30596178_30596240" chrStart: 87031808
+genome.fa : chr # 333  "20_30638459_30638481" chrStart: 87293952
+genome.fa : chr # 334  "20_41270012_41270029" chrStart: 87556096
+genome.fa : chr # 335  "20_43951000_43951033" chrStart: 87818240
+genome.fa : chr # 336  "20_46501971_46501993" chrStart: 88080384
+genome.fa : chr # 337  "20_49329332_49329348" chrStart: 88342528
+genome.fa : chr # 338  "20_52040722_52040738" chrStart: 88604672
+genome.fa : chr # 339  "20_53710960_53710975" chrStart: 88866816
+genome.fa : chr # 340  "20_57002039_57002393" chrStart: 89128960
+genome.fa : chr # 341  "20_57002857_57003099" chrStart: 89391104
+genome.fa : chr # 342  "21_42499012_42499026" chrStart: 89653248
+genome.fa : chr # 343  "22_24253654_24253684" chrStart: 89915392
+genome.fa : chr # 344  "22_25149146_25149162" chrStart: 90177536
+genome.fa : chr # 345  "22_39043646_39043662" chrStart: 90439680
+genome.fa : chr # 346  "22_48751985_48752005" chrStart: 90701824
+genome.fa : chr # 347  "X_10253784_10253821" chrStart: 90963968
+genome.fa : chr # 348  "X_12176379_12176394" chrStart: 91226112
+genome.fa : chr # 349  "X_18693007_18693101" chrStart: 91488256
+genome.fa : chr # 350  "X_29000964_29000995" chrStart: 91750400
+genome.fa : chr # 351  "X_41152087_41152140" chrStart: 92012544
+genome.fa : chr # 352  "X_42966962_42966978" chrStart: 92274688
+genome.fa : chr # 353  "X_45571706_45571720" chrStart: 92536832
+genome.fa : chr # 354  "X_45727927_45727945" chrStart: 92798976
+genome.fa : chr # 355  "X_53119742_53119759" chrStart: 93061120
+genome.fa : chr # 356  "X_57612705_57612729" chrStart: 93323264
+genome.fa : chr # 357  "X_68892368_68892443" chrStart: 93585408
+genome.fa : chr # 358  "X_69945684_69945698" chrStart: 93847552
+genome.fa : chr # 359  "X_71941011_71941028" chrStart: 94109696
+genome.fa : chr # 360  "X_80798444_80798466" chrStart: 94371840
+genome.fa : chr # 361  "X_84565079_84565098" chrStart: 94633984
+genome.fa : chr # 362  "X_116134859_116134882" chrStart: 94896128
+genome.fa : chr # 363  "X_128896294_128896320" chrStart: 95158272
+genome.fa : chr # 364  "X_131072902_131072939" chrStart: 95420416
+genome.fa : chr # 365  "Y_9113467_9113482" chrStart: 95682560
+genome.fa : chr # 366  "Y_19671737_19671770" chrStart: 95944704
+genome.fa : chr # 367  "Y_20508007_20508040" chrStart: 96206848
+genome.fa : chr # 368  "GL000220.1_116564_116589" chrStart: 96468992
+genome.fa : chr # 369  "GL000220.1_160536_160561" chrStart: 96731136
+genome.fa : chr # 370  "GL000223.1_58492_58529" chrStart: 96993280
+Writing genome to disk...Writing 97255424 bytes into star/Genome ; empty space on disk = 257384607744 bytes ... done
+ done.
+Number of SA indices: 27312
+SA size in bytes: 112663
+Apr 03 09:52:01 ... starting to sort  Suffix Array. This may take a long time...
+Number of chunks: 1;   chunks size limit: 18483281488 bytes
+Apr 03 09:52:01 ... sorting Suffix Array chunks and saving them to disk...
+Writing 218496 bytes into star/SA_0 ; empty space on disk = 257287065600 bytes ... done
+Apr 03 09:52:01 ... loading chunks from disk, packing SA...
+Apr 03 09:52:01 ... writing Suffix Array to disk ...
+Writing 112663 bytes into star/SA ; empty space on disk = 257287065600 bytes ... done
+Apr 03 09:52:01 ... Finished generating suffix array
+Apr 03 09:52:01 ... starting to generate Suffix Array index...
+0%  done
+Apr 03 09:52:01 ... writing SAindex to disk
+Writing 8 bytes into star/SAindex ; empty space on disk = 257286946816 bytes ... done
+Writing 32 bytes into star/SAindex ; empty space on disk = 257286946816 bytes ... done
+Writing 368 bytes into star/SAindex ; empty space on disk = 257286946816 bytes ... done
+Apr 03 09:52:01 ..... Finished successfully
+DONE: Genome generation, EXITING
