@@ -1,3 +1,7 @@
+"""
+Main classes used in seqcluster
+"""
+
 import copy
 from operator import add
 from collections import Counter
@@ -133,12 +137,16 @@ class cluster:
         self.showseq = ""
         self.showseq_plain = ""
         self.toomany = 0
-    def set_ref(self,r):
+        self.predictions = {}
+        self.errors = []
+
+    def set_ref(self, r):
         self.ref = r
+
     def add_id_member(self, ids, idl):
         for s in ids:
             self.idmembers[s] = 1
-            if not idl in self.loci2seq:
+            if idl not in self.loci2seq:
                 self.loci2seq[idl] = []
             self.loci2seq[idl].append(s)
         self.loci2seq[idl] = list(set(self.loci2seq[idl]))

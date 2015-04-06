@@ -18,13 +18,31 @@ def make_predictions(clus_obj, out_dir, args):
     for c in clus_obj[0]:
         loci = c['loci']
         out_fa = "cluster_" + c.id
-        if loci[0][3] - loci[0][2] > 500:
+        if loci[0][3] - loci[0][2] < 500:
             with transaction.tx_tmpdir as tmpdir:
                 os.chdir(tmpdir)
                 get_loci_fasta({loci[0][0]: [loci[0][0:5]]}, out_fa, ref)
                 summary_file, str_file = _run_tRNA_scan(out_fa)
+                # c['predictions']['tRNA'] = _read_tRNA_scan(summary_file)
                 shutil.move(summary_file, op.join(out_dir, summary_file))
                 shutil.move(str_file, op.join(out_dir, str_file))
+        else:
+            c['errors'].add("precursor too long")
+        clus_obj[0][c] = c
+
+    return clus_obj
+
+
+def _read_tRNA_scan(summary_file):
+    """
+    Parse output from tRNA_Scan
+    """
+    score = 0
+    with open(summary_file) as in_handle:
+        for line in in_handle:
+            if line.startswith("#"):
+                continue
+    return score
 
 
 def _run_tRNA_scan(fasta_file):
