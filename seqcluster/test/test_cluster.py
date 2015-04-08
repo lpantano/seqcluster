@@ -22,6 +22,7 @@ class TestCluster(TestCase):
         c = pybedtools.BedTool("2_clusters_2_seqs_shared")
         initialize_logger(".", args.debug, args.print_debug)
         logger = mylog.getLogger(__name__)
+        logger.info("Start reduceloci test")
         clus_obj = detect_clusters(c, seqL, args.MIN_SEQ)
         clusLred = reduceloci(clus_obj, ".")
-        # self.assertTrue(os.path.exists("pre/seqs.fa"))
+        # self.assertTrue()
