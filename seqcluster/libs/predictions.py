@@ -5,30 +5,35 @@ import os
 import shutil
 
 import utils
+import logger as mylog
 from read import get_loci_fasta
 from do import run
+
+
+logger = mylog.getLogger(__name__)
 
 
 def make_predictions(clus_obj, out_dir, args):
     """
     Iterates through cluster precursors to predict sRNA types
     """
-    ref = args.reference
+    ref = os.path.abspath(args.reference)
     utils.safe_dirs(out_dir)
-    for c in clus_obj[0]:
+    for nc in clus_obj[0]:
+        c = clus_obj[0][nc]
         loci = c['loci']
-        out_fa = "cluster_" + c.id
+        out_fa = "cluster_" + nc
         if loci[0][3] - loci[0][2] < 500:
-            with transaction.tx_tmpdir as tmpdir:
-                os.chdir(tmpdir)
+            with transaction.tx_tmpdir() as tmpdir:
+                # os.chdir(tmpdir)
                 get_loci_fasta({loci[0][0]: [loci[0][0:5]]}, out_fa, ref)
                 summary_file, str_file = _run_tRNA_scan(out_fa)
                 # c['predictions']['tRNA'] = _read_tRNA_scan(summary_file)
-                shutil.move(summary_file, op.join(out_dir, summary_file))
-                shutil.move(str_file, op.join(out_dir, str_file))
+                # shutil.move(summary_file, op.join(out_dir, summary_file))
+                # shutil.move(str_file, op.join(out_dir, str_file))
         else:
             c['errors'].add("precursor too long")
-        clus_obj[0][c] = c
+        clus_obj[0][nc] = c
 
     return clus_obj
 

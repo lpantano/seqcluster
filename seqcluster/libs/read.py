@@ -12,11 +12,10 @@ logger = logging.getLogger('read')
 
 
 @contextlib.contextmanager
-def make_temp_directory():
+def make_temp_directory(remove=True):
     temp_dir = tempfile.mkdtemp()
     yield temp_dir
     shutil.rmtree(temp_dir)
-
 
 def load_data(in_file):
     """load json file from seqcluster cluster"""
@@ -85,13 +84,13 @@ def get_loci_fasta(loci, out_fa, ref):
         raise ValueError("Not bedtools installed")
     with make_temp_directory() as temp:
         bed_file = os.path.join(temp, "file.bed")
-        with open(bed_file, 'w') as bed_handle:
-            for nc, loci in loci.iteritems():
-                for l in loci:
+        for nc, loci in loci.iteritems():
+            for l in loci:
+                with open(bed_file, 'w') as bed_handle:
                     logger.info("get_fasta: loci %s" % l)
                     nc, c, s, e, st = l
                     print("{0}\t{1}\t{2}\t{3}\t{3}\t{4}".format(c, s, e, nc, st), file=bed_handle)
-                    get_fasta(bed_file, ref, out_fa)
+                get_fasta(bed_file, ref, out_fa)
     return out_fa
 
 
@@ -117,7 +116,7 @@ def read_alignment(out_sam, loci, seqs, out_file):
 
 def get_loci(name, loci):
     for nc in loci:
-        for l in  loci[nc]:
+        for l in loci[nc]:
             lname = "{0}:{1}-{2}({3})".format(l[1], l[2], l[3], l[4])
             if name == lname:
                 return nc, l[0]
