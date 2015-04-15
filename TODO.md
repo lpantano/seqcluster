@@ -6,6 +6,7 @@ X sequence in the cluster - text
 * create small stats: # of sequences, # in seqs.ma, # in alignment, # in clusters
 * segmentation algorithm: RSEQtools has a C tool to create segmentation: https://github.com/sbonerlab/rseqtools/blob/master/src/bgrSegmenter.c
 * NOW implement tRNA-scan
+* Add to report: https://github.com/pkerpedjiev/forna/
 * implement small rna  prediction: CoRaL is an option for everything http://wanglab.pcbi.upenn.edu/coral/  or
 * implement mirna prediction http://evryrna.ibisc.univ-evry.fr/miRBoost/index.html
 * implement submire target prediction module http://research.nhgri.nih.gov/software/SubmiRine/user_guide.shtml
