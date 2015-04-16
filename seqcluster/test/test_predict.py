@@ -13,7 +13,7 @@ from seqcluster.libs.logger import initialize_logger
 
 class TestPredict(TestCase):
     def test_predict(self):
-        if find_cmd("tRNAscan-se"):
+        if find_cmd("tRNAscan-SE"):
             mod_dir = os.path.dirname(inspect.getfile(seqcluster)).replace("seqcluster/", "")
             os.chdir(os.path.join(mod_dir, "data/examples"))
             out_dir = os.path.join(mod_dir, "data/examples/predictions")
