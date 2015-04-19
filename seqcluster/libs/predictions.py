@@ -31,8 +31,8 @@ def make_predictions(clus_obj, out_dir, args):
                 # c['predictions']['tRNA'] = _read_tRNA_scan(summary_file)
                 score = _read_tRNA_scan(summary_file)
                 logger.debug(score)
-                # shutil.move(summary_file, op.join(out_dir, summary_file))
-                # shutil.move(str_file, op.join(out_dir, str_file))
+                shutil.move(summary_file, op.join(out_dir, summary_file))
+                shutil.move(str_file, op.join(out_dir, str_file))
         else:
             c['errors'].add("precursor too long")
         clus_obj[0][nc] = c
@@ -48,7 +48,7 @@ def _read_tRNA_scan(summary_file):
     if os.path.getsize(summary_file) == 0:
         return 0
     with open(summary_file) as in_handle:
-        header = in_handle.next().strip().split()
+        # header = in_handle.next().strip().split()
         for line in in_handle:
             if not line.startswith("--"):
                 pre = line.strip().split()
