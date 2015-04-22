@@ -12,14 +12,17 @@ Contents:
    :maxdepth: 2
 
    getting_started.rst
+   
+   more_outputs.rst
 
    collapse.rst
 
+   multi-mapped.rst
+   
    documentation.rst
 
    classes.rst
-   
-   more_outputs.rst
+  
 
 I am in the process to document all classes and methods
 
