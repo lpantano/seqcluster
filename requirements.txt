@@ -1,7 +1,7 @@
-cython
-pysam
-pybedtools
+Cython>=0.19
+pysam>=0.8.2.1
+pybedtools>=0.6.8
 colorlog
-scipy
-pandas
-bcbio-nextgen
+scipy>=0.15.1
+pandas>=0.14.1
+bcbio-nextgen>=0.8.7
