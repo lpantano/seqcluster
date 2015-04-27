@@ -1,4 +1,5 @@
 """Implementation of open source tools to predict small RNA functions"""
+
 from os import path as op
 from bcbio.distributed import transaction
 import os
@@ -28,7 +29,9 @@ def make_predictions(clus_obj, out_dir, args):
                 os.chdir(tmpdir)
                 get_loci_fasta({loci[0][0]: [loci[0][0:5]]}, out_fa, ref)
                 summary_file, str_file = _run_tRNA_scan(out_fa)
-                # c['predictions']['tRNA'] = _read_tRNA_scan(summary_file)
+                if "predictions" not in c:
+                    c['predictions'] = {}
+                c['predictions']['tRNA'] = _read_tRNA_scan(summary_file)
                 score = _read_tRNA_scan(summary_file)
                 logger.debug(score)
                 shutil.move(summary_file, op.join(out_dir, summary_file))
