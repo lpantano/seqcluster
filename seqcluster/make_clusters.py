@@ -61,8 +61,9 @@ def _create_json(clusL, args):
     data_clus = {}
     out_count = os.path.join(args.dir_out, "counts.tsv")
     out_size = os.path.join(args.dir_out, "size_counts.tsv")
+    out_bed = os.path.join(args.dir_out, "positions.bed")
     samples_order = list(seqs[seqs.keys()[1]].freq.keys())
-    with open(out_count, 'w') as matrix, open(out_size, 'w') as size_matrix:
+    with open(out_count, 'w') as matrix, open(out_size, 'w') as size_matrix, open(out_bed, 'w') as out_bed:
         matrix.write("id\tann\t%s\n" % "\t".join(samples_order))
         for cid in clus.keys():
             seqList = []
@@ -72,10 +73,14 @@ def _create_json(clusL, args):
             seqList = _get_seqs(c)
             logger.debug("_json_: %s" % seqList)
             data_ann, valid_ann = _get_annotation(c, loci)
+
+            idloci, chrom, s, e, st, size = data_loci[0]
+            annotation = valid_ann[0] if valid_ann else "none"
+            bed_line = "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (chrom, s, e, idloci, cid, st, annotation)
+
             data_seqs = map(lambda (x): {x: seqs[x].seq}, seqList)
             # data_freq = map(lambda (x): seqs[x].freq, seqList)
             scaled_seqs = _get_counts(seqList, seqs, c.idmembers)
-            # print data_freq
             data_freq = map(lambda (x): scaled_seqs[x].freq, seqList)
             data_freq_w_id = map(lambda (x): {x: scaled_seqs[x].norm_freq}, seqList)
             data_len = map(lambda (x): seqs[x].len, seqList)
@@ -88,7 +93,9 @@ def _create_json(clusL, args):
             data_string = {'seqs': data_seqs, 'freq': data_freq_w_id,
                     'loci': data_loci, 'ann': data_ann, 'valid': valid_ann}
             data_clus[cid] = data_string
-            size_table = size_matrix.write(_write_size_table(data_freq, data_len, data_valid_str, cid))
+            size_matrix.write(_write_size_table(data_freq, data_len, data_valid_str, cid))
+            out_bed.write(bed_line)
+
     with open(os.path.join(args.dir_out, "seqcluster.json"), 'w') as handle_out:
         handle_out.write(json.dumps([data_clus], skipkeys=True, indent=2))
 
