@@ -2,7 +2,7 @@ import os
 import logging
 
 from libs.read import load_data
-from libs.predictions import make_predictions
+from function.predictions import make_predictions
 from libs.utils import safe_dirs
 
 logger = logging.getLogger('predictions')

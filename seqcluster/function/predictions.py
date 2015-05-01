@@ -5,10 +5,10 @@ from bcbio.distributed import transaction
 import os
 import shutil
 
-import utils
-import logger as mylog
-from read import get_loci_fasta, make_temp_directory
-from do import run
+from seqcluster.libs import utils, logger as mylog
+# import logger as mylog
+from seqcluster.libs.read import get_loci_fasta, make_temp_directory
+from seqcluster.libs.do import run
 
 
 logger = mylog.getLogger(__name__)
