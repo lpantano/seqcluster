@@ -5,6 +5,9 @@
 Getting started
 ***************
 
+Best practices are implemented in a `python framework`_.
+
+.. _python framework: https://github.com/lpantano/seqcluster-helper/blob/master/README.md
 
 clustering of small RNA sequences
 -------- 
@@ -128,6 +131,7 @@ where `$GENOME_FASTA_PATH` is the path to the genome fasta file used in the alig
 * log/run.log: all messages at debug level
 * log/trace.log: to keep trace of algorithm decision
 * report/html/index.html: table with all clusters and the annotation with sorting option
-* report/html/[0-9]/maps.html: summary of the cluster with expression profile, annotation, and all sequences inside
+* report/html/[0-9]/maps.html: `summary`_ of the cluster with expression profile, annotation, and all sequences inside
 * report/html/[0-9]/maps.fa: putative precursor
 
+.. _summary: https://rawgit.com/lpantano/seqcluster/master/data/examples_report/html/1/maps.html
