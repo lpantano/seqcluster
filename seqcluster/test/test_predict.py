@@ -7,7 +7,7 @@ import seqcluster.libs.logger as mylog
 
 from seqcluster.libs.do import find_cmd
 from seqcluster.libs.read import load_data
-from seqcluster.libs.predictions import make_predictions
+from seqcluster.function.predictions import make_predictions
 from seqcluster.libs.logger import initialize_logger
 
 
