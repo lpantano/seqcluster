@@ -9,9 +9,18 @@ from seqcluster.libs import utils, logger as mylog
 # import logger as mylog
 from seqcluster.libs.read import get_loci_fasta, make_temp_directory
 from seqcluster.libs.do import run
-
+import coral
 
 logger = mylog.getLogger(__name__)
+
+
+def run_coral(clus_obj, out_dir, args):
+    """
+    Run some CoRaL modules to predict small RNA function
+    """
+    if not args.bed:
+        raise ValueError("This module needs the bed file output from cluster subcmd.")
+    bam_clean = coral.prepare_bam(args.bam, args.bed)
 
 
 def make_predictions(clus_obj, out_dir, args):

@@ -76,7 +76,7 @@ def _create_json(clusL, args):
 
             idloci, chrom, s, e, st, size = data_loci[0]
             annotation = valid_ann[0] if valid_ann else "none"
-            bed_line = "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (chrom, s, e, idloci, cid, st, annotation)
+            bed_line = "%s\t%s\t%s\t%s\t%s\t%s\n" % (chrom, s, e, annotation, cid, st)
 
             data_seqs = map(lambda (x): {x: seqs[x].seq}, seqList)
             # data_freq = map(lambda (x): seqs[x].freq, seqList)
