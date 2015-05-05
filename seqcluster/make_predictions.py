@@ -2,7 +2,7 @@ import os
 import logging
 
 from libs.read import load_data
-from function.predictions import make_predictions
+from function.predictions import make_predictions, run_coral
 from libs.utils import safe_dirs
 
 logger = logging.getLogger('predictions')
@@ -19,6 +19,10 @@ def predictions(args):
     safe_dirs(out_dir)
 
     logger.info("make predictions")
-    make_predictions(data, out_dir, args)
+    # make_predictions(data, out_dir, args)
+
+    if args.coral:
+        logger.info("make CoRaL predictions")
+        run_coral(data, out_dir, args)
 
     logger.info("Done")

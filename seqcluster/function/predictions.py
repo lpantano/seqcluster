@@ -1,9 +1,11 @@
 """Implementation of open source tools to predict small RNA functions"""
 
 from os import path as op
-from bcbio.distributed import transaction
 import os
 import shutil
+
+from bcbio.distributed import transaction
+from bcbio.utils import chdir, safe_makedir
 
 from seqcluster.libs import utils, logger as mylog
 # import logger as mylog
@@ -20,7 +22,16 @@ def run_coral(clus_obj, out_dir, args):
     """
     if not args.bed:
         raise ValueError("This module needs the bed file output from cluster subcmd.")
-    bam_clean = coral.prepare_bam(args.bam, args.bed)
+    workdir = op.abspath(op.join(args.out, 'coral'))
+    safe_makedir(workdir)
+    bam_in = op.abspath(args.bam)
+    bed_in = op.abspath(args.bed)
+    with chdir(workdir):
+        bam_clean = coral.prepare_bam(bam_in, bed_in)
+        out_dir = op.join(workdir, "regions")
+        safe_makedir(out_dir)
+        prefix = "seqcluster"
+        coral.detect_regions(bam_clean, out_dir, prefix)
 
 
 def make_predictions(clus_obj, out_dir, args):

@@ -55,7 +55,9 @@ def add_subparser_predict(subparsers):
     parser.add_argument("-o", "--out", dest="out", required=1,
             help="dir of output files")
     parser.add_argument("-r", "--reference", dest="ref", required=1,
-            help="reference fasta file with index"),
+            help="reference fasta file with index")
+    parser.add_argument("--coral", action='store_true',
+            help="Run CoRaL pipeline")
     parser = _add_debug_option(parser)
     return parser
 
