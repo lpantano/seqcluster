@@ -31,7 +31,9 @@ def run_coral(clus_obj, out_dir, args):
         out_dir = op.join(workdir, "regions")
         safe_makedir(out_dir)
         prefix = "seqcluster"
-        coral.detect_regions(bam_clean, out_dir, prefix)
+        loci_file = coral.detect_regions(bam_clean, bed_in, out_dir, prefix)
+        coral.create_features(bam_clean, loci_file, out_dir)
+
 
 
 def make_predictions(clus_obj, out_dir, args):
