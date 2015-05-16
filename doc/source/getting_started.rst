@@ -69,7 +69,7 @@ This script will generate: seqs.fa and seqs.ma.
 
 **ALIGNMENT**
 
-You should use an aligner to map seqs.fa to your genome. A possibility is bowtie. 
+You should use an aligner to map seqs.fa to your genome. A possibility is bowtie or STAR. 
 From here, we need a file in BAM format for the next step.
 VERY IMPORTANT: the BAM file should be sorted
 
@@ -89,17 +89,18 @@ or
 
 ::
 
-    seqcluster cluster -a res/Aligned.sortedByCoord.out.bam  -m res/seqs.ma -b  $ANN_FILE1,$ANN_FILE2  -o res/clluster
+    seqcluster cluster -a res/Aligned.sortedByCoord.out.bam  -m res/seqs.ma -g $GTF_FILE  -o res/cluster --db example
 
 
 * `-a` is the SAM file generated after mapped with your tool, which input has been seqs.fa
 * `-m` the previous seqs.fa
-* `-b` annotation files in bed format (see below examples)
+* `-b` annotation files in bed format (see below examples) [deprecated]
 * `-g` annotation files in gtf format (see below examples) [recommended]
 * `-i` genome fasta file used in the mapping step (only needed if -s active)
 * `-o` output folder
 * `-d` create debug logging
-* `-s` construction of putative precursor (NOT YEP IMPLEMENTED)
+* `-s` construction of putative precursor (NOT YET IMPLEMENTED)
+* `--db` (optional) will create sqlite3 database with results that will be used to browse data with html web page (under development)
 
 Example of a bed file for annotation (the fourth column should be the name of the feature): 
 
