@@ -119,6 +119,8 @@ def add_subparser_cluster(subparsers):
                        dest="similar", help="threshold to consider two clusters identicals", default=0.8)
     parser.add_argument("--min_seqs",
                        dest="min_seqs", help="threshold to consider a cluster as valid", default=10)
+    parser.add_argument("--db",
+                        help="prefix for sqlite3 database with results to use htmlViz plugin (in dev).")
     return parser
 
 

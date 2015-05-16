@@ -1,14 +1,17 @@
 import os
+import os.path as op
 from collections import Counter, namedtuple
 from operator import itemgetter
 import pybedtools
 import pickle
 import numpy as np
+import json
+
 from bcbio.utils import file_exists
 
 import libs.logger as mylog
+from libs.read import load_data
 from libs.mystats import up_threshold
-import json
 from libs.cluster import detect_clusters
 from libs.annotation import anncluster
 from libs.inputs import parse_ma_file, parse_align_file
@@ -16,6 +19,7 @@ from libs.tool import reduceloci, show_seq, \
     generate_position_bed, _get_seqs
 from libs.classes import *
 import libs.parameters as param
+from db import make_database
 
 
 logger = mylog.getLogger(__name__)
@@ -38,8 +42,14 @@ def cluster(args):
         clusLred = show_seq(clusLred, args.index)
     clusLred = _annotate(args, clusLred)
     logger.info("Creating json and count matrix")
-    _create_json(clusLred, args)
+    json_file = _create_json(clusLred, args)
     logger.info("Output file in: %s" % args.dir_out)
+    if args.db:
+        name = args.db + ".db"
+        logger.info("Create database: database/" + name)
+        data = load_data(json_file)
+        out_dir = op.join(args.dir_out, "databse")
+        make_database(data, name, out_dir)
     logger.info("Finished")
 
 
@@ -95,9 +105,10 @@ def _create_json(clusL, args):
             data_clus[cid] = data_string
             size_matrix.write(_write_size_table(data_freq, data_len, data_valid_str, cid))
             out_bed.write(bed_line)
-
-    with open(os.path.join(args.dir_out, "seqcluster.json"), 'w') as handle_out:
+    out_file = os.path.join(args.dir_out, "seqcluster.json")
+    with open(out_file, 'w') as handle_out:
         handle_out.write(json.dumps([data_clus], skipkeys=True, indent=2))
+    return out_file
 
 
 def _get_annotation(c, loci):

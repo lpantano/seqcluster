@@ -36,9 +36,8 @@ def _close(con):
         con.close()
 
 
-def make_database(data):
-    name = "seqcluter.db"
-    out_dir = safe_makedir("database")
+def make_database(data, name="seqcluster.db", out_dir="databse"):
+    out_dir = safe_makedir(out_dir)
     op.abspath(out_dir)
     con = _create_db(op.join(out_dir, name))
     _insert_data(con, data)
