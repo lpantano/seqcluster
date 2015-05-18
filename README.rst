@@ -1,11 +1,16 @@
 seqcluster
 ---------
 
+Ask questions in the repo's Gitter: Join the chat at:
+
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+    :target: https://gitter.im/lpantano/seqcluster
+    
 small RNA analysis from NGS data
 
 .. image:: https://travis-ci.org/lpantano/seqcluster.png?branch=master
     :target: https://travis-ci.org/lpantano/seqcluster.png?branch=master
-    
+
 .. image:: https://badge.fury.io/py/seqcluster.svg
     :target: http://badge.fury.io/py/seqcluster
 
