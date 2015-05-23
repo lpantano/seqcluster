@@ -17,8 +17,10 @@ Contents:
 
    collapse.rst
 
-   multi-mapped.rst
-   
+   multi_mapped.rst
+
+   tools.rst
+
    documentation.rst
 
    classes.rst
