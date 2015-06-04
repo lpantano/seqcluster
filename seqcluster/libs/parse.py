@@ -97,7 +97,7 @@ def add_subparser_prepare(subparsers):
 def add_subparser_cluster(subparsers):
     parser = subparsers.add_parser("cluster", help="cluster data")
     parser.add_argument("-a", "--afile", dest="afile", required=1,
-                      help="aligned file in bed/sam format")
+                      help="aligned file in bam format")
     parser.add_argument("-m", "--ma", dest="ffile", required=1,
                       help="matrix file with sequences and counts for each sample")
     parser.add_argument("-g", "--gtf",

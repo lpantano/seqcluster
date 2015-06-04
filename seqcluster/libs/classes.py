@@ -16,6 +16,7 @@ class sequence_unique:
         self.seq = seq
         self.group = {}
         self.quality = ""
+        self.total = 0
     def add_exp(self,gr,exp):
         """Function to add the counts for each sample
 
@@ -25,6 +26,7 @@ class sequence_unique:
         :returns: dict with key,values equally to name,counts.
         """
         self.group[gr] = exp
+        self.total = sum(self.group.values())
 
 
 class quality:
@@ -79,6 +81,8 @@ class sequence:
     def add_pos(self, pos_id, pos):
         self.pos[pos_id] = pos
 
+    def total(self):
+        return sum(self.freq.values())
 
 class position:
     """

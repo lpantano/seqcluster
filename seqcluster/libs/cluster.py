@@ -1,3 +1,6 @@
+import os.path as op
+import pysam
+
 import logger as mylog
 from classes import *
 from tool import _get_seqs_from_cluster
@@ -5,6 +8,21 @@ from tool import _get_seqs_from_cluster
 
 logger = mylog.getLogger(__name__)
 
+def clean_bam_file(bam_in, seqs_list):
+    """
+    Remove from alignment reads with low counts and highly # of hits
+    """
+    out_file = op.splitext(bam_in)[0] + "_rmlw.bam"
+    pysam.index(bam_in)
+    bam = pysam.AlignmentFile(bam_in, "rb")
+    with pysam.AlignmentFile(out_file, "wb", template=bam) as out_handle:
+        for read in bam.fetch():
+            seq_name = read.query_name
+            nh = read.get_tag('NH')
+            ratio = seqs_list[seq_name].total() / float(nh)
+            if ratio > 0.1:
+                out_handle.write(read)
+    return out_file
 
 def detect_clusters(c, current_seq, MIN_SEQ):
     """

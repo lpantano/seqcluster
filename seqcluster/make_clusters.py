@@ -12,7 +12,7 @@ from bcbio.utils import file_exists
 import libs.logger as mylog
 from libs.read import load_data
 from libs.mystats import up_threshold
-from libs.cluster import detect_clusters
+from libs.cluster import detect_clusters, clean_bam_file
 from libs.annotation import anncluster
 from libs.inputs import parse_ma_file, parse_align_file
 from libs.tool import reduceloci, show_seq, \
@@ -173,8 +173,10 @@ def _annotate(args, setclus):
 
 def _create_clusters(seqL, args):
     clus_obj = []
+    logger.info("Clean bam file with highly repetitive reads with low counts. sum(counts)/n_hits > 1%")
+    bam_file = clean_bam_file(args.afile, seqL)
     logger.info("Parsing aligned file")
-    aligned_bed = parse_align_file(args.afile)
+    aligned_bed = parse_align_file(bam_file)
     if not os.path.exists(args.out + '/list_obj.pk'):
         logger.info("Merging position")
         a = pybedtools.BedTool(aligned_bed, from_string=True)
