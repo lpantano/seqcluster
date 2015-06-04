@@ -18,6 +18,7 @@ seqcluster generates a list of clusters of small RNA sequences, where they map o
 **REMOVE ADAPTER**
 
 I am currently using ``cutadapt``:
+
 ::
     cutadapt --adapter=$ADAPTER --minimum-length=8 --untrimmed-output=sample1_notfound.fastq -o sample1_clean.fastq -m 17 --overlap=8 sample1.fastq 
 
@@ -33,6 +34,7 @@ Like removing sequences that appear only once.
 Here I am only using sequences that had the adapter, meaning that for sure are small fragments.
 
 **PREPARE SAMPLES**
+
 ::
     seqcluster prepare -c file_w_samples -o res --minl 17 --minc 2 --maxl 45
 

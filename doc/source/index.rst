@@ -12,6 +12,8 @@ Contents:
    :maxdepth: 2
 
    getting_started.rst
+
+   mirna_annotation.rst
    
    more_outputs.rst
 
