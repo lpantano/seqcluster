@@ -1,5 +1,6 @@
 #import sys
 import os
+import os.path as op
 #from os import listdir
 #from os.path import isfile, join
 import re
@@ -9,7 +10,7 @@ from libs.classes import quality
 from libs.fastq import is_fastq, open_fastq
 
 
-logger = logging.getLogger('seqbuster')
+logger = logging.getLogger('prepare')
 
 
 def prepare(args):
@@ -26,8 +27,8 @@ def prepare(args):
     """
     try:
         f = open(args.config, 'r')
-        seq_out = open(os.path.join(args.out, "seqs.fastq"), 'w')
-        ma_out = open(os.path.join(args.out, "seqs.ma"), 'w')
+        seq_out = open(op.join(args.out, "seqs.fastq"), 'w')
+        ma_out = open(op.join(args.out, "seqs.ma"), 'w')
     except IOError as e:
         logger.error("I/O error({0}): {1}".format(e.errno, e.strerror))
         raise "Can not create output files"
@@ -89,32 +90,39 @@ def _read_fastq_files(f, args):
     seq_l = {}
     sample_l = []
     idx = 1
-    for line1 in f:
-        line1 = line1.strip()
-        cols = line1.split("\t")
-        if not is_fastq(cols[0]):
-            raise ValueError("file is not fastq: %s" % cols[0])
-        with open_fastq(cols[0]) as handle:
-            sample_l.append(cols[1])
-            for line in handle:
-                if line.startswith("@"):
-                    idx += 1
-                    keep = {}
-                    counts = int(re.search("x([0-9]+)", line.strip()).group(1))
-                    seq = handle.next().strip()
-                    handle.next().strip()
-                    qual = handle.next().strip()
-                    seq = seq[0:int(args.maxl)] if len(seq) > int(args.maxl) else seq
-                    qual = qual[0:int(args.maxl)] if len(qual) > int(args.maxl) else qual
-                    if counts > int(args.minc) and len(seq) > int(args.minl):
-                        if seq in keep:
-                            keep[seq].update(qual)
-                        else:
-                            keep[seq] = quality(qual)
-                        if seq not in seq_l:
-                            seq_l[seq] = sequence_unique(idx, seq)
-                        seq_l[seq].add_exp(cols[1], counts)
-                        seq_l[seq].quality = keep[seq].get()
+    with open(op.join(args.out, "stats_prepare.tsv"), 'w') as out_handle:
+        for line1 in f:
+            line1 = line1.strip()
+            cols = line1.split("\t")
+            if not is_fastq(cols[0]):
+                raise ValueError("file is not fastq: %s" % cols[0])
+            with open_fastq(cols[0]) as handle:
+                sample_l.append(cols[1])
+                total = added = 0
+
+                for line in handle:
+                    if line.startswith("@"):
+                        idx += 1
+                        total += 1
+                        keep = {}
+                        counts = int(re.search("x([0-9]+)", line.strip()).group(1))
+                        seq = handle.next().strip()
+                        handle.next().strip()
+                        qual = handle.next().strip()
+                        seq = seq[0:int(args.maxl)] if len(seq) > int(args.maxl) else seq
+                        qual = qual[0:int(args.maxl)] if len(qual) > int(args.maxl) else qual
+                        if counts > int(args.minc) and len(seq) > int(args.minl):
+                            added += 1
+                            if seq in keep:
+                                keep[seq].update(qual)
+                            else:
+                                keep[seq] = quality(qual)
+                            if seq not in seq_l:
+                                seq_l[seq] = sequence_unique(idx, seq)
+                            seq_l[seq].add_exp(cols[1], counts)
+                            seq_l[seq].quality = keep[seq].get()
+                print >>out_handle, "total\t%s\t%s" % (idx, cols[1])
+                print >>out_handle, "added\t%s\t%s" % (len(seq_l), cols[1])
     return seq_l, sample_l
 
 
@@ -139,9 +147,9 @@ def _create_matrix_uniq_seq(sample_l, seq_l, maout, out, min_shared):
         for g in sample_l:
             if g in seq_l[s].group:
                 maout.write("\t%s" % seq_l[s].group[g])
-            else:
-                maout.write("\t0")
-        qual = "".join(seq_l[s].quality)
-        out.write("@seq_%s\n%s\n+\n%s\n" % (seq_l[s].idx, seq_l[s].seq, qual))
+        else:
+            maout.write("\t0")
+    qual = "".join(seq_l[s].quality)
+    out.write("@seq_%s\n%s\n+\n%s\n" % (seq_l[s].idx, seq_l[s].seq, qual))
     out.close()
     maout.close()

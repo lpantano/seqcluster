@@ -3,7 +3,7 @@ X implement bayes function to decide which sequences go where
 X sequence in the cluster - text
 X create modules to save sqlite3 results
 * NEXT html to connect to sqlite3 db to viz results
-* add doc about web servers with downstream analysis:
+X add doc about web servers with downstream analysis:
 ** http://compbio.uthsc.edu/miR2GO/home.php
 * create small stats: # of sequences, # in seqs.ma, # in alignment, # in clusters
 * segmentation algorithm: RSEQtools has a C tool to create segmentation: https://github.com/sbonerlab/rseqtools/blob/master/src/bgrSegmenter.c
