@@ -133,11 +133,13 @@ class cluster:
     def __init__(self, id):
         self.id = id
         self.idmembers = {}
-        self.locimax = 0
+        self.locimax = None
+        self.locimaxid = None
         self.locilen = {}
         self.loci2seq = {}
         self.ref = 0
         self.score = 0
+        self.peaks = []
         self.showseq = ""
         self.showseq_plain = ""
         self.toomany = 0
@@ -146,6 +148,13 @@ class cluster:
 
     def set_ref(self, r):
         self.ref = r
+
+    def update(self):
+        for idl in self.loci2seq:
+            l = len(self.loci2seq[idl])
+            if l > self.locimax:
+                self.locimax = l
+                self.locimaxid = idl
 
     def add_id_member(self, ids, idl):
         for s in ids:
@@ -158,6 +167,7 @@ class cluster:
         self.locilen[idl] = lenid
         if lenid > self.locimax:
             self.locimax = lenid
+            self.locimaxid = idl
 
 
 class bcolors:

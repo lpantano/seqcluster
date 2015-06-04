@@ -12,7 +12,7 @@ from bcbio.utils import file_exists
 import libs.logger as mylog
 from libs.read import load_data
 from libs.mystats import up_threshold
-from libs.cluster import detect_clusters, clean_bam_file
+from libs.cluster import detect_clusters, clean_bam_file, peak_calling
 from libs.annotation import anncluster
 from libs.inputs import parse_ma_file, parse_align_file
 from libs.tool import reduceloci, show_seq, \
@@ -40,6 +40,7 @@ def cluster(args):
     if args.show:
         logger.info("Creating sequences alignment to precursor")
         clusLred = show_seq(clusLred, args.index)
+    # clusLred = peak_calling(clusLred)
     clusLred = _annotate(args, clusLred)
     logger.info("Creating json and count matrix")
     json_file = _create_json(clusLred, args)
@@ -101,7 +102,7 @@ def _create_json(clusL, args):
             data_valid_str = " ".join(valid_ann)
             matrix.write("%s\t%s|%s\t%s\n" % (cid, data_valid_str, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
             data_string = {'seqs': data_seqs, 'freq': data_freq_w_id,
-                    'loci': data_loci, 'ann': data_ann, 'valid': valid_ann}
+                    'loci': data_loci, 'ann': data_ann, 'valid': valid_ann, 'peaks': clus[cid].peaks}
             data_clus[cid] = data_string
             size_matrix.write(_write_size_table(data_freq, data_len, data_valid_str, cid))
             out_bed.write(bed_line)

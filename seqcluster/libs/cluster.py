@@ -1,5 +1,9 @@
 import os.path as op
+import pickle
 import pysam
+
+from pypeaks import Data
+import numpy as np
 
 import logger as mylog
 from classes import *
@@ -18,7 +22,11 @@ def clean_bam_file(bam_in, seqs_list):
     with pysam.AlignmentFile(out_file, "wb", template=bam) as out_handle:
         for read in bam.fetch():
             seq_name = read.query_name
-            nh = read.get_tag('NH')
+            try:
+                nh = read.get_tag('NH')
+            except ValueError:
+                nh = 1
+                continue
             ratio = seqs_list[seq_name].total() / float(nh)
             if ratio > 0.1:
                 out_handle.write(read)
@@ -69,7 +77,6 @@ def detect_clusters(c, current_seq, MIN_SEQ):
 
     return cluster_info_obj(current_clus, cluster_id, current_loci, current_seq)
 
-
 def _find_families(clus_obj, min_seqs):
     """
     Mask under same id all clusters that share sequences
@@ -114,3 +121,38 @@ def _find_families(clus_obj, min_seqs):
     return clus_obj, seen
 
 
+def peak_calling(clus_obj):
+    """
+    Run peak calling inside each cluster
+    """
+    new_cluster = {}
+    for cid in clus_obj.clus:
+        cluster = clus_obj.clus[cid]
+        cluster.update()
+        logger.debug("peak calling for %s" % cid)
+        bigger = cluster.locimaxid
+        s, e = clus_obj.loci[bigger].start, clus_obj.loci[bigger].end
+        scale = min(s, e)
+        logger.debug("bigger %s at %s-%s" % (bigger, s, e))
+        seqs = cluster.loci2seq[bigger]
+        dt = np.array([0] * (e - s))
+        for seq in seqs:
+            ss = int(clus_obj.seq[seq].pos[bigger]) - scale
+            se = clus_obj.seq[seq].len + ss + 1
+            dt[ss:se] += clus_obj.seq[seq].total()
+        x = np.array(range(0, len(dt)))
+        logger.debug("x %s and y %s" % (x, dt))
+
+        if len(x) > 35:
+            profile = Data(x, dt, smoothness=5)
+            pickle.dump(profile, open("xy.pickle", 'w'))
+            profile.normalize()
+            profile.get_peaks(method='slope')
+            peaks = profile.peaks['peaks']
+            logger.debug(profile.peaks)
+        else:
+            peaks = [[s], [e], ['short']]
+        cluster.peaks = peaks
+        new_cluster[cid] = cluster
+    clus_obj.clus = new_cluster
+    return clus_obj
