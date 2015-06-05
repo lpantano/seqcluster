@@ -230,7 +230,7 @@ def add_seqs_position_to_loci_deprecated(fn_bedtools, seqs):
     return seqs_pos
 
 
-def _get_seqs_from_cluster(seqs, clus_id):
+def _get_seqs_from_cluster(seqs, seen):
     """
     Returns the sequences that are already part of the cluster
 
@@ -243,12 +243,17 @@ def _get_seqs_from_cluster(seqs, clus_id):
     """
     already_in = set()
     not_in = []
-    for s in seqs:
-        if s in clus_id:
-            already_in.add(clus_id[s])
-        else:
-            not_in.append(s)
-    return list(already_in), not_in
+
+    already_in = map(seen.get, seqs)
+    if isinstance(already_in, list):
+        already_in = filter(None, already_in)
+    not_in = set(seqs) - set(seen.keys())
+    # for s in seqs:
+    #    if s in seen:
+    #        already_in.add(seen[s])
+    #    else:
+    #        not_in.append(s)
+    return list(set(already_in)), list(not_in)
 
 
 def reduceloci(clus_obj,  path):

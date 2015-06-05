@@ -203,14 +203,15 @@ def _cleaning(clusL, path):
     """
     Load saved cluster and jump to next step
     """
-    if not os.path.exists(path + '/list_obj_red.pk'):
+    backup = op.join(path, "list_obj_red.pk")
+    if not op.exists(backup):
         clus_obj = reduceloci(clusL, path)
-        with open(path + '/list_obj_red.pk', 'wb') as output:
+        with open(backup, 'wb') as output:
             pickle.dump(clus_obj, output, pickle.HIGHEST_PROTOCOL)
         return clus_obj
     else:
         logger.info("Loading previous reduced clusters")
-        with open(path + '/list_obj_red.pk', 'rb') as input:
+        with open(backup, 'rb') as input:
             clus_obj = pickle.load(input)
         return clus_obj
 
