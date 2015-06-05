@@ -18,7 +18,7 @@ fi
 
     zgrep -v 'hsa-' wgRna.txt.gz | awk '{print $2"\t.\tncrna\t"$3"\t"$4"\t.\t"$7"\t.\tname "$5";"}' >> $FINAL
 
-if [ ! -e tRNAs.txt.gz] ; then
+if [ ! -e tRNAs.txt.gz ] ; then
 
     wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/tRNAs.txt.gz
     
@@ -26,13 +26,13 @@ fi
 
     zcat tRNAs.txt.gz | awk '{print $2"\t.\ttRNA\t"$3"\t"$4"\t.\t"$7"\t.\tname "$5";"}' >> $FINAL
 
-if [ ! -e rmsk.txt.gz] ; then
+if [ ! -e rmsk.txt.gz ] ; then
 
     wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/rmsk.txt.gz
     
 fi
 
-    zcat rmsk.txt.gz | awk '{print $6"\t.\trepeat\t"$7"\t"$8"\t.\t"$10"\t.\tname "$12";"}' >> $FINAL
+    zcat rmsk.txt.gz | awk '{print $6"\t.\trepeat\t"$7+1"\t"$8+1"\t.\t"$10"\t.\tname "$12";"}' >> $FINAL
 
 
 if [ ! -e refGene.txt.gz] ; then

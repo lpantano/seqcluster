@@ -28,7 +28,7 @@ def clean_bam_file(bam_in, seqs_list):
                 nh = 1
                 continue
             ratio = seqs_list[seq_name].total() / float(nh)
-            if ratio > 0.1:
+            if ratio > 0.01:
                 out_handle.write(read)
     return out_file
 
@@ -119,7 +119,6 @@ def _find_families(clus_obj, min_seqs):
     logger.info("%s clusters merged" % len(clus_obj.keys()))
 
     return clus_obj, seen
-
 
 def peak_calling(clus_obj):
     """

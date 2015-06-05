@@ -35,7 +35,7 @@ def cluster(args):
         raise ValueError("So few sequences.")
     clusL = _create_clusters(seqL, args)
     logger.info("Solving multi-mapping events in the network of clusters")
-    clusLred = reduceloci(clusL, args.dir_out)
+    clusLred = _cleaning(clusL, args.dir_out)
     logger.info("Clusters up to %s" % (len(clusLred.clus.keys())))
     if args.show:
         logger.info("Creating sequences alignment to precursor")
@@ -197,6 +197,22 @@ def _create_clusters(seqL, args):
     # seqs_2_position = add_seqs_position_to_loci(seqs_2_loci, seqL)
     logger.info("%s clusters found" % (len(clus_obj.clus.keys())))
     return clus_obj
+
+
+def _cleaning(clusL, path):
+    """
+    Load saved cluster and jump to next step
+    """
+    if not os.path.exists(path + '/list_obj_red.pk'):
+        clus_obj = reduceloci(clusL, path)
+        with open(path + '/list_obj_red.pk', 'wb') as output:
+            pickle.dump(clus_obj, output, pickle.HIGHEST_PROTOCOL)
+        return clus_obj
+    else:
+        logger.info("Loading previous reduced clusters")
+        with open(path + '/list_obj_red.pk', 'rb') as input:
+            clus_obj = pickle.load(input)
+        return clus_obj
 
 
 def _check_args(args):
