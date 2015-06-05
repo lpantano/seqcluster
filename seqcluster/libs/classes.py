@@ -4,7 +4,7 @@ Main classes used in seqcluster
 
 import copy
 from operator import add
-from collections import Counter
+from collections import Counter, defaultdict
 
 
 class sequence_unique:
@@ -132,7 +132,7 @@ class cluster:
     """
     def __init__(self, id):
         self.id = id
-        self.idmembers = {}
+        self.idmembers = defaultdict(int)
         self.locimax = None
         self.locimaxid = None
         self.locilen = {}
@@ -145,13 +145,23 @@ class cluster:
         self.toomany = 0
         self.predictions = {}
         self.errors = []
+        self.freq = []
+
+    def set_freq(self, seqL):
+        total = Counter()
+        [total.update(seqL[s].freq) for s in self.idmembers.keys()]
+        self.freq = total
+        return total
 
     def set_ref(self, r):
         self.ref = r
 
-    def update(self):
+    def update(self, id=None):
+        if id:
+            self.id = id
         for idl in self.loci2seq:
             l = len(self.loci2seq[idl])
+            self.idmembers.update(dict(zip(self.loci2seq[idl], [1] * l)))
             if l > self.locimax:
                 self.locimax = l
                 self.locimaxid = idl

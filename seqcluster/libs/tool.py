@@ -343,8 +343,8 @@ def _iter_loci(c, s2p, filtered, n_cluster):
     loci = _convert_to_clusters(c)
     if n_loci == 1:
         n_cluster += 1
-        c.id = n_loci
         filtered[n_cluster] = c
+        filtered[n_cluster].update(id=n_cluster)
     while n_loci < n_loci_prev and n_loci != 1:
         n_loci_prev = n_loci
         cicle += 1
@@ -365,6 +365,7 @@ def _iter_loci(c, s2p, filtered, n_cluster):
         logger.debug("_iter_loci: add to filtered %s" % n_cluster)
         filtered[n_cluster] = internal_cluster[idc]
         filtered[n_cluster].id = n_cluster
+        filtered[n_cluster].update(id=n_cluster)
     logger.debug("_iter_loci: filtered %s" % filtered.keys())
     for new_c in internal_cluster.values():
         [logger.note("%s %s %s %s" % (c.id, new_c.id, idl, len(new_c.loci2seq[idl]))) for idl in new_c.loci2seq]

@@ -2,10 +2,12 @@ import os
 import os.path as op
 from collections import Counter, namedtuple
 from operator import itemgetter
-import pybedtools
 import pickle
-import numpy as np
 import json
+import numpy as np
+import pandas as pd
+
+import pybedtools
 
 from bcbio.utils import file_exists
 
@@ -27,24 +29,49 @@ logger = mylog.getLogger(__name__)
 
 def cluster(args):
     args = _check_args(args)
-    args.MIN_SEQ = 10
+    read_stats_file = op.join(args.dir_out, "read_stats.tsv")
+    if file_exists(read_stats_file):
+        os.remove(read_stats_file)
+
     logger.info("Parsing matrix file")
     seqL = parse_ma_file(args.ffile)
+    y = _total_counts(seqL.keys(), seqL)
+    logger.info("sequences after: %s" % sum(y.values()))
+    dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
+    dt['step'] = 'raw'
+    dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
     if len(seqL.keys()) < 100:
         logger.error("It seems you have so low coverage. Please check your fastq files have enough sequences.")
         raise ValueError("So few sequences.")
+
     clusL = _create_clusters(seqL, args)
+    y = _total_counts(clusL.clus, seqL)
+    logger.info("sequences after: %s" % sum(y.values()))
+    dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
+    dt['step'] = 'cluster'
+    dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
+
     logger.info("Solving multi-mapping events in the network of clusters")
     clusLred = _cleaning(clusL, args.dir_out)
+    y = _total_counts(clusLred.clus, seqL)
+    logger.info("sequences after: %s" % sum(y.values()))
+    dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
+    dt['step'] = 'multimap'
+    dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
     logger.info("Clusters up to %s" % (len(clusLred.clus.keys())))
+
     if args.show:
         logger.info("Creating sequences alignment to precursor")
         clusLred = show_seq(clusLred, args.index)
+
     # clusLred = peak_calling(clusLred)
+
     clusLred = _annotate(args, clusLred)
     logger.info("Creating json and count matrix")
+
     json_file = _create_json(clusLred, args)
     logger.info("Output file in: %s" % args.dir_out)
+
     if args.db:
         name = args.db + ".db"
         logger.info("Create database: database/" + name)
@@ -52,6 +79,18 @@ def cluster(args):
         out_dir = op.join(args.dir_out, "databse")
         make_database(data, name, out_dir)
     logger.info("Finished")
+
+
+def _total_counts(seqs, seqL):
+    """
+    Counts total seqs after each step
+    """
+    total = Counter()
+    if isinstance(seqs, list):
+        [total.update(seqL[s].freq) for s in seqs]
+    elif isinstance(seqs, dict):
+        [total.update(seqs[s].set_freq(seqL)) for s in seqs]
+    return total
 
 
 def _write_size_table(data_freq, data_len, ann_valid, cluster_id):
@@ -76,7 +115,7 @@ def _create_json(clusL, args):
     samples_order = list(seqs[seqs.keys()[1]].freq.keys())
     with open(out_count, 'w') as matrix, open(out_size, 'w') as size_matrix, open(out_bed, 'w') as out_bed:
         matrix.write("id\tann\t%s\n" % "\t".join(samples_order))
-        for cid in clus.keys():
+        for cid in clus:
             seqList = []
             c = clus[cid]
             data_loci = map(lambda (x): [x, loci[x].chr, int(loci[x].start), int(loci[x].end), loci[x].strand, len(c.loci2seq[x])], c.loci2seq.keys())
