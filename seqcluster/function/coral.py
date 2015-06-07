@@ -7,6 +7,7 @@ from bcbio import utils
 from bcbio.distributed.transaction import tx_tmpdir
 
 from seqcluster.libs.do import run, find_cmd
+from seqcluster.function.rnafold import calculate_structure
 
 min_trimmed_read_len = 14
 max_trimmed_read_len = 50
@@ -111,6 +112,7 @@ def _reads_per_position(bam_in, loci_file, out_dir):
 
     return counts_reads
 
+
 def create_features(bam_in, loci_file, out_dir):
     """
     Use feature extraction module from CoRaL
@@ -149,6 +151,7 @@ def create_features(bam_in, loci_file, out_dir):
         feat_antisense = _order_antisense_column(cov_S_file, min_trimmed_read_len)
         counts_reads = _reads_per_position(bam_in, loci_file, out_dir)
         run(entropy_cmd.format(**locals()), "Run entropy")
+        rnafold = calculate_structure(loci_file)
 
 
 def prepare_ann_file(args):
