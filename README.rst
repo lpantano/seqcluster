@@ -89,3 +89,8 @@ sequences counts for each sample.
 
 .. _this: https://rawgit.com/lpantano/seqcluster/master/data/examples_report/html/index.html
 .. _description: https://rawgit.com/lpantano/seqcluster/master/data/examples_report/html/1/maps.html
+
+
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/lpantano/seqcluster
+   :target: https://gitter.im/lpantano/seqcluster?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
