@@ -111,6 +111,7 @@ def _reads_per_position(bam_in, loci_file, out_dir):
 
     return counts_reads
 
+
 def create_features(bam_in, loci_file, out_dir):
     """
     Use feature extraction module from CoRaL
