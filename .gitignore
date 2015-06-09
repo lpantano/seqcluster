@@ -1,4 +1,12 @@
-create tsv file for R viz
+# test
+data/test_c*/report/*
+data/test_c*/res/*
+data/res/*
+data/test_collapse/collapse/res/*
+data/test_collapse/prepare/*
+data/examples/database/*
+data/test_cluster/predictions/*
+data/test_cluster/coral/*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -53,3 +61,6 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
+# vim
+*swo
+*swp
