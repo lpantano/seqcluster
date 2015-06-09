@@ -64,8 +64,8 @@ def detect_regions(bam_in, bed_file, out_dir, prefix):
     Detect regions using first CoRaL module
     """
     bed_file = _reorder_columns(bed_file)
-    counts_reads_cmd = ("coverageBed -s -counts -abam {bam_in} "
-                        "-b {bed_file} | sort -k4,4 "
+    counts_reads_cmd = ("coverageBed -s -counts -b {bam_in} "
+                        "-a {bed_file} | sort -k4,4 "
                         "> {out_dir}/loci.cov")
     # with tx_tmpdir() as temp_dir:
     with utils.chdir(out_dir):
@@ -113,7 +113,7 @@ def _reads_per_position(bam_in, loci_file, out_dir):
     return counts_reads
 
 
-def create_features(bam_in, loci_file, out_dir):
+def create_features(bam_in, loci_file, reference, out_dir):
     """
     Use feature extraction module from CoRaL
     """
@@ -135,8 +135,8 @@ def create_features(bam_in, loci_file, out_dir):
                          "{max_len} "
                          "> {feat_len_file}")
     cov_S_file = op.join(out_dir, 'loci.cov_anti')
-    coverage_anti_cmd = ("coverageBed -S -counts -abam "
-                         "{bam_in} -b {loci_file} "
+    coverage_anti_cmd = ("coverageBed -S -counts -b "
+                         "{bam_in} -a {loci_file} "
                          "> {cov_S_file}")
     feat_posentropy = op.join(out_dir, 'feat_posentropy.txt')
     entropy_cmd = ("compute_locus_entropy.rb "
@@ -149,9 +149,11 @@ def create_features(bam_in, loci_file, out_dir):
         run(compute_locus_cmd.format(min_len=min_trimmed_read_len, max_len=max_trimmed_read_len, **locals()), "Run compute locus")
         run(coverage_anti_cmd.format(**locals()), "Run coverage antisense")
         feat_antisense = _order_antisense_column(cov_S_file, min_trimmed_read_len)
+
         counts_reads = _reads_per_position(bam_in, loci_file, out_dir)
         run(entropy_cmd.format(**locals()), "Run entropy")
-        rnafold = calculate_structure(loci_file)
+
+        rnafold = calculate_structure(loci_file, reference)
 
 
 def prepare_ann_file(args):
