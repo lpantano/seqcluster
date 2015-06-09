@@ -224,7 +224,7 @@ def _create_clusters(seqL, args):
         c = a.cluster(s=True, d=20)
         logger.info("Creating clusters")
         # clus_obj = parse_merge_file(c, seqL, args.MIN_SEQ)
-        clus_obj = detect_clusters(c, seqL, args.MIN_SEQ)
+        clus_obj = detect_clusters(c, seqL, args.min_seqs)
         with open(args.out + '/list_obj.pk', 'wb') as output:
             pickle.dump(clus_obj, output, pickle.HIGHEST_PROTOCOL)
     else:
