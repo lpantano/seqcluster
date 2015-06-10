@@ -12,6 +12,7 @@ import pandas as pd
 
 from read import map_to_precursors
 from utils import safe_dirs
+from progressbar import ProgressBar
 
 from bcbio.utils import file_exists
 
@@ -43,12 +44,15 @@ def make_profile(data, out_dir, args):
     main_table = []
     header = ['id', 'ann']
     html_file = os.path.join(out_dir, "index.html")
-    for c in data[0]:
-        logger.debug("creating cluser: {}".format(c))
-        safe_dirs(os.path.join(out_dir, c))
-        valid, ann = _single_cluster(c, data, os.path.join(out_dir, c, "maps.tsv"), args)
-        if valid:
-            main_table.append([_get_link(c), _get_ann(valid, ann)])
+    n = len(data[0])
+    with ProgressBar(maxval=n, redirect_stdout=True) as p:
+        for itern, c in enumerate(data[0]):
+            p.update(itern)
+            logger.debug("creating cluser: {}".format(c))
+            safe_dirs(os.path.join(out_dir, c))
+            valid, ann = _single_cluster(c, data, os.path.join(out_dir, c, "maps.tsv"), args)
+            if valid:
+                main_table.append([_get_link(c), _get_ann(valid, ann)])
 
     main_html = HTML.table(main_table, header_row=header, attribs={'id': 'keywords'})
     html_template = os.path.normpath(os.path.join(os.path.dirname(os.path.realpath(templates.__file__)), "main"))
