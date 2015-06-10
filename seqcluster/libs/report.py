@@ -13,6 +13,8 @@ import pandas as pd
 from read import map_to_precursors
 from utils import safe_dirs
 
+from bcbio.utils import file_exists
+
 from seqcluster.html import HTML
 from seqcluster import templates
 
@@ -143,13 +145,14 @@ def _single_cluster(c, data, out_file, args):
     if loci[0][3] - loci[0][2] > 500:
         logger.info("locus bigger > 500 nt, skipping: %s" % loci)
         return valid, ann
-    logger.debug("map all sequences to all loci %s " % loci)
-    map_to_precursors(seqs, names, {loci[0][0]: [loci[0][0:5]]}, out_file, args)
+    if not file_exists(out_file):
+        logger.debug("map all sequences to all loci %s " % loci)
+        map_to_precursors(seqs, names, {loci[0][0]: [loci[0][0:5]]}, out_file, args)
     # map_sequences_w_bowtie(sequences, precursors)
 
     logger.debug("plot sequences on loci")
     df = _convert_to_df(out_file)
-    if not df.empty:
+    if not df.empty and not file_exists(html_file):
         plot = df.plot()
         plot.set_ylabel('Normalized expression', fontsize=25)
         plot.set_xlabel('Position', fontsize=25)
