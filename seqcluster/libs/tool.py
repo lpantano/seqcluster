@@ -2,10 +2,13 @@ from collections import defaultdict
 import operator
 import os
 import copy
+from progressbar import ProgressBar
+
 # import time
 import math
 # import numpy as np
 # import pybedtools
+
 import logger as mylog
 from classes import *
 from mystats import up_threshold
@@ -262,15 +265,17 @@ def reduceloci(clus_obj,  path):
     n_cluster = 0
     current = clus_obj.clus
     logger.info("Number of loci: %s" % len(clus_obj.loci.keys()))
-    for idc in current:
-        logger.debug("_reduceloci: cluster %s" % idc)
-        c = copy.deepcopy(current[idc])
-        n_loci = len(c.loci2seq)
-        if n_loci < 1000:
-            filtered, n_cluster = _iter_loci(c, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
-        else:
-            n_cluster += 1
-            filtered[n_cluster] = _add_complete_cluster(n_cluster, c)
+    with ProgressBar(maxval=len(current), redirect_stdout=True) as p:
+        for itern, idc in enumerate(current):
+            p.update(itern)
+            logger.debug("_reduceloci: cluster %s" % idc)
+            c = copy.deepcopy(current[idc])
+            n_loci = len(c.loci2seq)
+            if n_loci < 1000:
+                filtered, n_cluster = _iter_loci(c, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
+            else:
+                n_cluster += 1
+                filtered[n_cluster] = _add_complete_cluster(n_cluster, c)
     clus_obj.clus = filtered
     return clus_obj
 

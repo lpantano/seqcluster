@@ -1,7 +1,8 @@
 import os.path as op
 import pickle
-import pysam
+from progressbar import ProgressBar
 
+import pysam
 from pypeaks import Data
 import numpy as np
 
@@ -87,35 +88,37 @@ def _find_families(clus_obj, min_seqs):
     """
     seen = {}
     c_index = clus_obj.keys()
-    for c in c_index:
-        clus = clus_obj[c]
-        if len(clus.idmembers.keys()) < min_seqs:
-            del clus_obj[c]
-            continue
-        logger.debug("reading cluster %s" % c)
-        logger.debug("loci2seq  %s" % clus.loci2seq)
-        already_in, not_in = _get_seqs_from_cluster(clus.idmembers.keys(), seen)
-        logger.debug("seen %s news %s" % (already_in, not_in))
-        for s in not_in:
-            seen[s] = c
-        if len(already_in) > 0:
-            logger.debug("seen in %s" % already_in)
-            for eindex in already_in:
-                prev_clus = clus_obj[eindex]
-                logger.debug("_find_families: prev %s current %s" % (eindex, clus.id))
-                # add current seqs to seen cluster
-                for s_in_clus in prev_clus.idmembers:
-                    seen[s_in_clus] = c
-                    clus.idmembers[s_in_clus] = 1
-                # add current locus to seen cluster
-                for loci in prev_clus.loci2seq:
-                    logger.debug("adding %s" % loci)
-                    # if not loci_old in current_clus[eindex].loci2seq:
-                    clus.add_id_member(list(prev_clus.loci2seq[loci]), loci)
-                logger.debug("loci %s" % clus.loci2seq.keys())
-                del clus_obj[eindex]
-            clus_obj[c] = clus
-            logger.debug("num cluster %s" % len(clus_obj.keys()))
+    with ProgressBar(maxval=len(c_index), redirect_stdout=True) as p:
+        for itern, c in enumerate(c_index):
+            p.update(itern)
+            clus = clus_obj[c]
+            if len(clus.idmembers.keys()) < min_seqs:
+                del clus_obj[c]
+                continue
+            logger.debug("reading cluster %s" % c)
+            logger.debug("loci2seq  %s" % clus.loci2seq)
+            already_in, not_in = _get_seqs_from_cluster(clus.idmembers.keys(), seen)
+            logger.debug("seen %s news %s" % (already_in, not_in))
+            for s in not_in:
+                seen[s] = c
+            if len(already_in) > 0:
+                logger.debug("seen in %s" % already_in)
+                for eindex in already_in:
+                    prev_clus = clus_obj[eindex]
+                    logger.debug("_find_families: prev %s current %s" % (eindex, clus.id))
+                    # add current seqs to seen cluster
+                    for s_in_clus in prev_clus.idmembers:
+                        seen[s_in_clus] = c
+                        clus.idmembers[s_in_clus] = 1
+                    # add current locus to seen cluster
+                    for loci in prev_clus.loci2seq:
+                        logger.debug("adding %s" % loci)
+                        # if not loci_old in current_clus[eindex].loci2seq:
+                        clus.add_id_member(list(prev_clus.loci2seq[loci]), loci)
+                    logger.debug("loci %s" % clus.loci2seq.keys())
+                    del clus_obj[eindex]
+                clus_obj[c] = clus
+                logger.debug("num cluster %s" % len(clus_obj.keys()))
     logger.info("%s clusters merged" % len(clus_obj.keys()))
 
     return clus_obj, seen
