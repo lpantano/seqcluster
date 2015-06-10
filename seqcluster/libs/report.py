@@ -94,7 +94,6 @@ def _make_html(c, html_file, figure_file, prefix):
 
     src_img = "<img src=\"%s\" width=\"800\" height=\"350\" />" % os.path.basename(figure_file)
     coor_list = [" ".join(map(str, l)) for l in c['loci']]
-    coor_html = HTML.list(coor_list)
 
     for pos in c['ann']:
         for db in pos:
@@ -103,7 +102,6 @@ def _make_html(c, html_file, figure_file, prefix):
 
     valid = [l for l in c['valid']]
     ann_list = [", ".join(list(set(ann[feature]))) for feature in ann if feature in valid]
-    ann_html = HTML.list(ann_list)
 
     seqs = [s.values()[0] for s in c['seqs']]
     freq = [map(float, s.values()[0].values()) for s in c['freq']]
@@ -111,19 +109,21 @@ def _make_html(c, html_file, figure_file, prefix):
     for s, f in zip(seqs, freq):
         f = map(round, f)
         seqs_table.append([s] + map(str, f))
-    seqs_html = HTML.table(seqs_table,
-                           header_row=header, attribs={'id': 'keywords'})
     # seqs_html = seqs_html.replace("TABLE", "TABLE id=\"keywords\"")
-
-    html_template = os.path.normpath(os.path.join(os.path.dirname(os.path.realpath(templates.__file__)), "cluster"))
-    content = open(html_template).read()
-    data = {'profile': src_img,
-            'loci': coor_html,
-            'annotation': ann_html,
-            'table': seqs_html}
-    out_content = string.Template(content).safe_substitute(data)
-    with open(html_file, 'w') as out_handle:
-        print >>out_handle, out_content
+    if not file_exists(html_file):
+        coor_html = HTML.list(coor_list)
+        ann_html = HTML.list(ann_list)
+        seqs_html = HTML.table(seqs_table,
+                               header_row=header, attribs={'id': 'keywords'})
+        html_template = os.path.normpath(os.path.join(os.path.dirname(os.path.realpath(templates.__file__)), "cluster"))
+        content = open(html_template).read()
+        data = {'profile': src_img,
+                'loci': coor_html,
+                'annotation': ann_html,
+                'table': seqs_html}
+        out_content = string.Template(content).safe_substitute(data)
+        with open(html_file, 'w') as out_handle:
+            print >>out_handle, out_content
 
     return valid, ann_list
 
@@ -152,13 +152,14 @@ def _single_cluster(c, data, out_file, args):
 
     logger.debug("plot sequences on loci")
     df = _convert_to_df(out_file)
-    if not df.empty and not file_exists(html_file):
-        plot = df.plot()
-        plot.set_ylabel('Normalized expression', fontsize=25)
-        plot.set_xlabel('Position', fontsize=25)
-        plot.tick_params(axis='both', which='major', labelsize=20)
-        plot.tick_params(axis='both', which='minor', labelsize=20)
-        plot.get_figure().savefig(figure_file)
+    if not df.empty:
+        if not file_exists(figure_file):
+            plot = df.plot()
+            plot.set_ylabel('Normalized expression', fontsize=25)
+            plot.set_xlabel('Position', fontsize=25)
+            plot.tick_params(axis='both', which='major', labelsize=20)
+            plot.tick_params(axis='both', which='minor', labelsize=20)
+            plot.get_figure().savefig(figure_file)
         valid, ann = _make_html(data[0][c], html_file, figure_file, prefix)
 
     return valid, ann
