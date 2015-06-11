@@ -487,7 +487,10 @@ def _merge_cluster(old, new):
     logger.debug("_merge_cluster: %s to %s" % (old.id, new.id))
     for idl in old.loci2seq:
         logger.debug("_merge_cluster: add idl %s" % idl)
-        new.loci2seq[idl] = old.loci2seq[idl]
+        # if idl in new.loci2seq:
+        #    new.loci2seq[idl] = list(set(new.loci2seq[idl] + old.loci2seq[idl]))
+        # new.loci2seq[idl] = old.loci2seq[idl]
+        new.add_id_member(old.loci2seq[idl], idl)
     return new
 
 
