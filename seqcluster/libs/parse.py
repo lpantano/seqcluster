@@ -108,8 +108,8 @@ def add_subparser_cluster(subparsers):
                        "\nchr1    157783  157886  snRNA   0       -")
     parser.add_argument("-o", "--out",
                        dest="out", help="output dir", required=1)
-    parser.add_argument("-i", "--index",
-                       dest="index", help="reference fasta")
+    parser.add_argument("-ref",
+                       dest="ref", help="reference fasta")
     parser = _add_debug_option(parser)
     parser.add_argument("-s", "--show", action="store_true",
                        dest="show", help="no show sequences", default=False)

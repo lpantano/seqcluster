@@ -14,7 +14,7 @@ from bcbio.utils import file_exists
 import libs.logger as mylog
 from libs.read import load_data
 from libs.mystats import up_threshold
-from libs.cluster import detect_clusters, clean_bam_file, peak_calling
+from libs.cluster import detect_clusters, clean_bam_file, peak_calling, detect_complexity
 from libs.annotation import anncluster
 from libs.inputs import parse_ma_file, parse_align_file
 from libs.tool import reduceloci, show_seq, \
@@ -126,7 +126,7 @@ def _create_json(clusL, args):
 
             idloci, chrom, s, e, st, size = data_loci[0]
             annotation = valid_ann[0] if valid_ann else "none"
-            bed_line = "%s\t%s\t%s\t%s\t%s\t%s\n" % (chrom, s, e, annotation, cid, st)
+            bed_line = "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (chrom, s, e, annotation, cid, st, len(seqList))
 
             data_seqs = map(lambda (x): {x: seqs[x].seq}, seqList)
             # data_freq = map(lambda (x): seqs[x].freq, seqList)
@@ -215,6 +215,7 @@ def _create_clusters(seqL, args):
     clus_obj = []
     logger.info("Clean bam file with highly repetitive reads with low counts. sum(counts)/n_hits > 1%")
     bam_file = clean_bam_file(args.afile, seqL)
+    detect_complexity(bam_file, args.ref)
     logger.info("Parsing aligned file")
     aligned_bed = parse_align_file(bam_file)
     if not os.path.exists(args.out + '/list_obj.pk'):
