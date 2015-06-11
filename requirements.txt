@@ -6,4 +6,4 @@ scipy>=0.15.1
 pandas>=0.14.1
 bcbio-nextgen>=0.8.7
 pypeaks
-progressba>=2.7.3
+progressbar2>=2.7.3

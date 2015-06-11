@@ -10,7 +10,8 @@ def getLogger(name):
 def initialize_logger(output_dir, debug, level=False):
     NOTE = 15
     COLOR_FORMAT = "%(log_color)s%(levelname)s-%(name)s(%(lineno)d)%(reset)s: %(message)s"
-    COLOR_FORMAT_INFO = "%(log_color)s%(levelname)s%(reset)s: %(message)s"
+    COLOR_FORMAT_INFO = "%(log_color)s%(asctime)s %(levelname)s%(reset)s: %(message)s"
+    DATE_FRT = '%m/%d/%Y %I:%M:%S %p'
     FORMAT = "%(levelname)s-%(name)s(%(lineno)d): %(message)s"
     FORMAT_INFO = "%(levelname)s %(message)s"
     logging.addLevelName(NOTE, "NOTE")
@@ -34,7 +35,7 @@ def initialize_logger(output_dir, debug, level=False):
     handler.setLevel(logging.INFO)
     if level:
         handler.setLevel(logging.DEBUG)
-    formatter = ColoredFormatter(COLOR_FORMAT_INFO)
+    formatter = ColoredFormatter(COLOR_FORMAT_INFO, datefmt=DATE_FRT)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     # create error file handler and set level to error

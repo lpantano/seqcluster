@@ -2,10 +2,13 @@ from collections import defaultdict
 import operator
 import os
 import copy
+from progressbar import ProgressBar
+
 # import time
 import math
 # import numpy as np
 # import pybedtools
+
 import logger as mylog
 from classes import *
 from mystats import up_threshold
@@ -13,6 +16,9 @@ from bayes import decide_by_bayes
 import parameters
 
 logger = mylog.getLogger(__name__)
+
+
+REMOVED = 0
 
 
 def get_distance(p1, p2):
@@ -262,16 +268,19 @@ def reduceloci(clus_obj,  path):
     n_cluster = 0
     current = clus_obj.clus
     logger.info("Number of loci: %s" % len(clus_obj.loci.keys()))
-    for idc in current:
-        logger.debug("_reduceloci: cluster %s" % idc)
-        c = copy.deepcopy(current[idc])
-        n_loci = len(c.loci2seq)
-        if n_loci < 1000:
-            filtered, n_cluster = _iter_loci(c, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
-        else:
-            n_cluster += 1
-            filtered[n_cluster] = _add_complete_cluster(n_cluster, c)
+    with ProgressBar(maxval=len(current), redirect_stdout=True) as p:
+        for itern, idc in enumerate(current):
+            p.update(itern)
+            logger.debug("_reduceloci: cluster %s" % idc)
+            c = copy.deepcopy(current[idc])
+            n_loci = len(c.loci2seq)
+            if n_loci < 1000:
+                filtered, n_cluster = _iter_loci(c, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
+            else:
+                n_cluster += 1
+                filtered[n_cluster] = _add_complete_cluster(n_cluster, c)
     clus_obj.clus = filtered
+    logger.info("Number of clusters removed because low number of reads: %s" % REMOVED)
     return clus_obj
 
 
@@ -356,10 +365,13 @@ def _iter_loci(c, s2p, filtered, n_cluster):
         n_loci = len(internal_cluster)
         loci = internal_cluster
         logger.debug("_iter_loci: n_loci %s" % n_loci)
+
     if n_loci > 1:
         n_internal_cluster = sorted(internal_cluster.keys(), reverse=True)[0]
         internal_cluster = _solve_conflict(internal_cluster, s2p, n_internal_cluster)
+
     internal_cluster = _clean_cluster(internal_cluster)
+
     for idc in internal_cluster:
         n_cluster += 1
         logger.debug("_iter_loci: add to filtered %s" % n_cluster)
@@ -367,6 +379,7 @@ def _iter_loci(c, s2p, filtered, n_cluster):
         filtered[n_cluster].id = n_cluster
         filtered[n_cluster].update(id=n_cluster)
     logger.debug("_iter_loci: filtered %s" % filtered.keys())
+
     for new_c in internal_cluster.values():
         [logger.note("%s %s %s %s" % (c.id, new_c.id, idl, len(new_c.loci2seq[idl]))) for idl in new_c.loci2seq]
     return filtered, n_cluster
@@ -574,11 +587,17 @@ def _add_unseen(loci, clus_seen, n_cluster):
 
 
 def _clean_cluster(list_c):
-    """Remove cluster with less than 10 sequences and
-    loci with size smaller than 60%"""
+    """
+    Remove cluster with less than 10 sequences and
+    loci with size smaller than 60%
+    """
+    global REMOVED
+    init = len(list_c)
     list_c = {k: v for k, v in list_c.iteritems() if len(_get_seqs(v)) > parameters.min_seqs}
     logger.debug("_clean_cluster: number of clusters %s " % len(list_c.keys()))
     list_c = {k: _select_loci(v) for k, v in list_c.iteritems()}
+    end = len(list_c)
+    REMOVED += init - end
     return list_c
 
 
