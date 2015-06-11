@@ -266,6 +266,7 @@ def reduceloci(clus_obj,  path):
     """reduce number of loci a cluster has"""
     filtered = {}
     n_cluster = 0
+    large = 0
     current = clus_obj.clus
     logger.info("Number of loci: %s" % len(clus_obj.loci.keys()))
     with ProgressBar(maxval=len(current), redirect_stdout=True) as p:
@@ -277,9 +278,11 @@ def reduceloci(clus_obj,  path):
             if n_loci < 1000:
                 filtered, n_cluster = _iter_loci(c, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
             else:
+                large += 1
                 n_cluster += 1
                 filtered[n_cluster] = _add_complete_cluster(n_cluster, c)
     clus_obj.clus = filtered
+    logger.info("Clusters too long to be analized: %s" % large)
     logger.info("Number of clusters removed because low number of reads: %s" % REMOVED)
     return clus_obj
 
@@ -378,6 +381,7 @@ def _iter_loci(c, s2p, filtered, n_cluster):
         filtered[n_cluster] = internal_cluster[idc]
         filtered[n_cluster].id = n_cluster
         filtered[n_cluster].update(id=n_cluster)
+        filtered[n_cluster].set_freq(s2p[1])
     logger.debug("_iter_loci: filtered %s" % filtered.keys())
 
     for new_c in internal_cluster.values():
@@ -418,7 +422,7 @@ def _calculate_similarity(c):
     for idc in c:
         set1 = _get_seqs(c[idc])
         [ma.update({(idc, idc2): _common(set1, _get_seqs(c[idc2]))}) for idc2 in c if idc != idc2 and (idc2, idc) not in ma]
-    logger.debug("_calculate_similarity_ %s" % ma)
+    # logger.debug("_calculate_similarity_ %s" % ma)
     return ma
 
 
@@ -426,9 +430,9 @@ def _get_seqs(list_idl):
     """get all sequences in a cluster knowing loci"""
     seqs = set()
     for idl in list_idl.loci2seq:
-        logger.debug("_get_seqs_: loci %s" % idl)
+        # logger.debug("_get_seqs_: loci %s" % idl)
         [seqs.add(s) for s in list_idl.loci2seq[idl]]
-    logger.debug("_get_seqs_: %s" % len(seqs))
+    # logger.debug("_get_seqs_: %s" % len(seqs))
     return seqs
 
 
