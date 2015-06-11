@@ -93,7 +93,7 @@ def _total_counts(seqs, seqL):
     if isinstance(seqs, list):
         [total.update(seqL[s].freq) for s in seqs]
     elif isinstance(seqs, dict):
-        [total.update(seqs[s].set_freq(seqL)) for s in seqs]
+        [total.update(seqs[s].get_freq(seqL)) for s in seqs]
         l = sum(len(seqs[s].idmembers) for s in seqs)
     return total, l
 
@@ -119,7 +119,7 @@ def _create_json(clusL, args):
     out_bed = os.path.join(args.dir_out, "positions.bed")
     samples_order = list(seqs[seqs.keys()[1]].freq.keys())
     with open(out_count, 'w') as matrix, open(out_size, 'w') as size_matrix, open(out_bed, 'w') as out_bed:
-        matrix.write("id\tann\t%s\n" % "\t".join(samples_order))
+        matrix.write("id\tnloci\tann\t%s\n" % "\t".join(samples_order))
         for cid in clus:
             seqList = []
             c = clus[cid]
@@ -144,7 +144,7 @@ def _create_json(clusL, args):
             sum_freq = _sum_by_samples(scaled_seqs, samples_order)
             data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
             data_valid_str = " ".join(valid_ann)
-            matrix.write("%s\t%s|%s\t%s\n" % (cid, data_valid_str, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
+            matrix.write("%s\t%s\t%s|%s\t%s\n" % (cid, c.toomany, data_valid_str, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
             data_string = {'seqs': data_seqs, 'freq': data_freq_w_id,
                     'loci': data_loci, 'ann': data_ann, 'valid': valid_ann, 'peaks': clus[cid].peaks}
             data_clus[cid] = data_string

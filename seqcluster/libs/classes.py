@@ -153,6 +153,12 @@ class cluster:
         self.freq = total
         return total
 
+    def get_freq(self, seqL):
+        if self.freq:
+            return self.freq
+        else:
+            return self.set_freq(seqL)
+
     def set_ref(self, r):
         self.ref = r
 
