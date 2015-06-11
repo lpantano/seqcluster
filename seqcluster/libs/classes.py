@@ -159,6 +159,7 @@ class cluster:
     def update(self, id=None):
         if id:
             self.id = id
+        self.idmembers = {}
         for idl in self.loci2seq:
             l = len(self.loci2seq[idl])
             self.idmembers.update(dict(zip(self.loci2seq[idl], [1] * l)))

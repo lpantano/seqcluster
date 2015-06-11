@@ -537,16 +537,18 @@ def _split_cluster(c , pairs, n):
         in_common = list(set(common).intersection(old.loci2seq[idl]))
         if len(in_common) > 0:
             logger.debug("_split_cluster: in_common %s with pair 1" % (len(in_common)))
-            new_c.loci2seq[idl] = in_common
+            new_c.add_id_member(in_common, idl)
             old.loci2seq[idl] = list(set(old.loci2seq[idl]) - set(common))
             logger.debug("_split_cluster: len old %s with pair 1" % (len(old.loci2seq)))
     for idl in new.loci2seq:
         in_common = list(set(common).intersection(new.loci2seq[idl]))
         if len(in_common) > 0:
             logger.debug("_split_cluster: in_common %s with pair 2" % (len(in_common)))
-            new_c.loci2seq[idl] = in_common
+            new_c.add_id_member(in_common, idl)
             new.loci2seq[idl] = list(set(new.loci2seq[idl]) - set(common))
             logger.debug("_split_cluster: len old %s with pair 2" % (len(new.loci2seq)))
+    old.update()
+    new.update()
     old.loci2seq = {k: v for k, v in old.loci2seq.iteritems() if len(v) > 0}
     new.loci2seq = {k: v for k, v in new.loci2seq.iteritems() if len(v) > 0}
     c[n] = new
