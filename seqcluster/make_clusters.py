@@ -35,8 +35,9 @@ def cluster(args):
 
     logger.info("Parsing matrix file")
     seqL = parse_ma_file(args.ffile)
-    y = _total_counts(seqL.keys(), seqL)
-    logger.info("sequences after: %s" % sum(y.values()))
+    y, l = _total_counts(seqL.keys(), seqL)
+    logger.info("counts after: %s" % sum(y.values()))
+    logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
     dt['step'] = 'raw'
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
@@ -45,16 +46,18 @@ def cluster(args):
         raise ValueError("So few sequences.")
 
     clusL = _create_clusters(seqL, args)
-    y = _total_counts(clusL.clus, seqL)
-    logger.info("sequences after: %s" % sum(y.values()))
+    y, l = _total_counts(clusL.clus, seqL)
+    logger.info("counts after: %s" % sum(y.values()))
+    logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
     dt['step'] = 'cluster'
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
 
     logger.info("Solving multi-mapping events in the network of clusters")
     clusLred = _cleaning(clusL, args.dir_out)
-    y = _total_counts(clusLred.clus, seqL)
-    logger.info("sequences after: %s" % sum(y.values()))
+    y, l = _total_counts(clusLred.clus, seqL)
+    logger.info("counts after: %s" % sum(y.values()))
+    logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
     dt['step'] = 'multimap'
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
@@ -86,11 +89,13 @@ def _total_counts(seqs, seqL):
     Counts total seqs after each step
     """
     total = Counter()
+    l = len(seqs)
     if isinstance(seqs, list):
         [total.update(seqL[s].freq) for s in seqs]
     elif isinstance(seqs, dict):
         [total.update(seqs[s].set_freq(seqL)) for s in seqs]
-    return total
+        l = sum(len(seqs[s].idmembers) for s in seqs)
+    return total, l
 
 
 def _write_size_table(data_freq, data_len, ann_valid, cluster_id):
