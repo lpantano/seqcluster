@@ -22,9 +22,12 @@ def detect_complexity(bam_in, genome):
     """
     genome coverage of small RNA
     """
+    out_file = bam_in + "_cov.tsv"
+    if not genome or file_exists(out_file):
+        return None
     fai = genome + ".fai"
     cov = pybedtools.BedTool(bam_in).genome_coverage(g=fai, max=1)
-    cov.saveas(bam_in + "_cov.tsv")
+    cov.saveas()
     total = 0
     for region in cov:
         if region[0] == "genome" and int(region[1]) != 0:
