@@ -289,7 +289,7 @@ def _add_complete_cluster(idx, clus1):
     locilen_sorted = sorted(clus1.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
     maxidl = locilen_sorted[0][0]
     c = cluster(idx)
-    c.add_id_member(clus1.loci2seq[maxidl], maxidl)
+    c.add_id_member(clus1.idmembers, maxidl)
     c.id = idx
     c.toomany = len(locilen_sorted)
     return c
@@ -527,7 +527,7 @@ def _solve_conflict(list_c, s2p, n_cluster):
     return list_c
 
 
-def _split_cluster(c , pairs, n):
+def _split_cluster(c, pairs, n):
     """split cluster by exclussion"""
     old = c[p[0]]
     new = c[p[1]]
