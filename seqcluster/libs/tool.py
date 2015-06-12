@@ -283,8 +283,8 @@ def reduceloci(clus_obj,  path):
             else:
                 large += 1
                 n_cluster += 1
-                # _write_cluster(c, clus_obj.clus, clus_obj.loci, path)
-                filtered[n_cluster] = _add_complete_cluster(n_cluster, c)
+                _write_cluster(c, clus_obj.clus, clus_obj.loci, path)
+                filtered[n_cluster] = _add_complete_cluster(n_cluster, clus_obj.clus, c)
     clus_obj.clus = filtered
     logger.info("Clusters too long to be analized: %s" % large)
     logger.info("Number of clusters removed because low number of reads: %s" % REMOVED)

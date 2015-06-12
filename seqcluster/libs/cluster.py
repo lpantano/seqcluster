@@ -45,6 +45,9 @@ def clean_bam_file(bam_in, seqs_list, mask=None):
         with pysam.AlignmentFile(out_file, "wb", template=bam) as out_handle:
             for read in bam.fetch():
                 seq_name = read.query_name
+                match_size = [nts for oper, nts in read.cigartuples if oper == 0]
+                if match_size < 17:
+                    continue
                 try:
                     nh = read.get_tag('NH')
                 except ValueError:
@@ -118,7 +121,7 @@ def _find_families(clus_obj, min_seqs):
     :return: updated clus_obj and dict with seq_id: cluster_id
     """
     logger.info("Creating meta-clusters based on shared sequences.")
-    seen = {}
+    seen = defaultdict()
     metacluster = defaultdict(list)
     c_index = clus_obj.keys()
     meta_idx = 0
@@ -135,8 +138,7 @@ def _find_families(clus_obj, min_seqs):
             logger.debug("seen %s news %s" % (already_in, not_in))
             meta_idx += 1
             metacluster[meta_idx].append(c)
-            for s in not_in:
-                seen[s] = meta_idx
+            seen.update(dict(zip(not_in, [meta_idx] * len(not_in))))
             if len(already_in) > 0:
                 logger.debug("seen in %s" % already_in)
                 for eindex in already_in:
@@ -145,8 +147,10 @@ def _find_families(clus_obj, min_seqs):
                         prev_clus = clus_obj[cluster]
                         logger.debug("_find_families: prev %s current %s" % (eindex, clus.id))
                         # add current seqs to seen cluster
-                        for s_in_clus in prev_clus.idmembers:
-                            seen[s_in_clus] = meta_idx
+                        seqs_in = prev_clus.idmembers.keys()
+                        seen.update(dict(zip(seqs_in, [meta_idx] * len(seqs_in))))
+                        # for s_in_clus in prev_clus.idmembers:
+                        #    seen[s_in_clus] = meta_idx
                     #    clus.idmembers[s_in_clus] = 1
                     # add current locus to seen cluster
                     # for loci in prev_clus.loci2seq:

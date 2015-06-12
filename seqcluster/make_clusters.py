@@ -46,12 +46,12 @@ def cluster(args):
         raise ValueError("So few sequences.")
 
     clusL = _create_clusters(seqL, args)
-    y, l = _total_counts(clusL.clus, seqL)
-    logger.info("counts after: %s" % sum(y.values()))
-    logger.info("# sequences after: %s" % l)
-    dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
-    dt['step'] = 'cluster'
-    dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
+    # y, l = _total_counts(clusL.clus, seqL)
+    # logger.info("counts after: %s" % sum(y.values()))
+    # logger.info("# sequences after: %s" % l)
+    # dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
+    # dt['step'] = 'cluster'
+    # dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
 
     logger.info("Solving multi-mapping events in the network of clusters")
     clusLred = _cleaning(clusL, args.dir_out)

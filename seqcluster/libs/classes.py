@@ -155,6 +155,7 @@ class cluster:
         return total
 
     def get_freq(self, seqL):
+        self.update()
         if self.freq:
             return self.freq
         else:
