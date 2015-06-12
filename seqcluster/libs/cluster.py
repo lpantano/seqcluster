@@ -103,7 +103,7 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
         current_clus[eindex].add_id_member([name], lindex)
         current_seq[name].add_pos(lindex, pos)
         previous_id = c_id
-    logger.debug("%s clusters read" % eindex)
+    logger.info("%s Clusters read" % eindex)
     # merge cluster with shared sequences  
     cluster_obj, cluster_id = _find_families(current_clus, MIN_SEQ)
 
@@ -146,7 +146,7 @@ def _find_families(clus_obj, min_seqs):
                         logger.debug("_find_families: prev %s current %s" % (eindex, clus.id))
                         # add current seqs to seen cluster
                         for s_in_clus in prev_clus.idmembers:
-                            seen[s_in_clus] = eindex
+                            seen[s_in_clus] = meta_idx
                     #    clus.idmembers[s_in_clus] = 1
                     # add current locus to seen cluster
                     # for loci in prev_clus.loci2seq:
