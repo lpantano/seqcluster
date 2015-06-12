@@ -27,7 +27,7 @@ def detect_complexity(bam_in, genome):
         return None
     fai = genome + ".fai"
     cov = pybedtools.BedTool(bam_in).genome_coverage(g=fai, max=1)
-    cov.saveas()
+    cov.saveas(out_file)
     total = 0
     for region in cov:
         if region[0] == "genome" and int(region[1]) != 0:
@@ -107,7 +107,7 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
     # merge cluster with shared sequences  
     cluster_obj, cluster_id = _find_families(current_clus, MIN_SEQ)
 
-    return cluster_info_obj(current_clus, cluster_id, current_loci, current_seq)
+    return cluster_info_obj(current_clus, cluster_obj, current_loci, current_seq)
 
 def _find_families(clus_obj, min_seqs):
     """
@@ -119,7 +119,9 @@ def _find_families(clus_obj, min_seqs):
     """
     logger.info("Creating meta-clusters based on shared sequences.")
     seen = {}
+    metacluster = defaultdict(list)
     c_index = clus_obj.keys()
+    meta_idx = 0
     with ProgressBar(maxval=len(c_index), redirect_stdout=True) as p:
         for itern, c in enumerate(c_index):
             p.update(itern)
@@ -131,29 +133,34 @@ def _find_families(clus_obj, min_seqs):
             logger.debug("loci2seq  %s" % clus.loci2seq)
             already_in, not_in = _get_seqs_from_cluster(clus.idmembers.keys(), seen)
             logger.debug("seen %s news %s" % (already_in, not_in))
+            meta_idx += 1
+            metacluster[meta_idx].append(c)
             for s in not_in:
-                seen[s] = c
+                seen[s] = meta_idx
             if len(already_in) > 0:
                 logger.debug("seen in %s" % already_in)
                 for eindex in already_in:
-                    prev_clus = clus_obj[eindex]
-                    logger.debug("_find_families: prev %s current %s" % (eindex, clus.id))
-                    # add current seqs to seen cluster
-                    for s_in_clus in prev_clus.idmembers:
-                        seen[s_in_clus] = c
+                    for cluster in metacluster[eindex]:
+                        metacluster[meta_idx].append(cluster)
+                        prev_clus = clus_obj[cluster]
+                        logger.debug("_find_families: prev %s current %s" % (eindex, clus.id))
+                        # add current seqs to seen cluster
+                        for s_in_clus in prev_clus.idmembers:
+                            seen[s_in_clus] = eindex
                     #    clus.idmembers[s_in_clus] = 1
                     # add current locus to seen cluster
-                    for loci in prev_clus.loci2seq:
-                        logger.debug("adding %s" % loci)
+                    # for loci in prev_clus.loci2seq:
+                    #    logger.debug("adding %s" % loci)
                         # if not loci_old in current_clus[eindex].loci2seq:
-                        clus.add_id_member(list(prev_clus.loci2seq[loci]), loci)
-                    logger.debug("loci %s" % clus.loci2seq.keys())
-                    del clus_obj[eindex]
-                clus_obj[c] = clus
-                logger.debug("num cluster %s" % len(clus_obj.keys()))
-    logger.info("%s clusters merged" % len(clus_obj.keys()))
+                    #    clus.add_id_member(list(prev_clus.loci2seq[loci]), loci)
+                    # logger.debug("loci %s" % clus.loci2seq.keys())
+                    del metacluster[eindex]
+                # clus_obj[c] = clus
 
-    return clus_obj, seen
+                # logger.debug("num cluster %s" % len(clus_obj.keys()))
+    logger.info("%s clusters merged" % len(metacluster))
+
+    return metacluster, seen
 
 def peak_calling(clus_obj):
     """
