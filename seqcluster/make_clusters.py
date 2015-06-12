@@ -245,7 +245,7 @@ def _create_clusters(seqL, args):
     # bedfile = pybedtools.BedTool(generate_position_bed(clus_obj), from_string=True)
     # seqs_2_loci = bedfile.intersect(pybedtools.BedTool(aligned_bed, from_string=True), wo=True, s=True)
     # seqs_2_position = add_seqs_position_to_loci(seqs_2_loci, seqL)
-    logger.info("%s clusters found" % (len(clus_obj.clus.keys())))
+    logger.info("%s clusters found" % (len(clus_obj.clusid)))
     return clus_obj
 
 
