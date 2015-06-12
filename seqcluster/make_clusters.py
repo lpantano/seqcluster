@@ -261,8 +261,8 @@ def _cleaning(clusL, path):
         return clus_obj
     else:
         logger.info("Loading previous reduced clusters")
-        with open(backup, 'rb') as input:
-            clus_obj = pickle.load(input)
+        with open(backup, 'rb') as in_handle:
+            clus_obj = pickle.load(in_handle)
         return clus_obj
 
 
