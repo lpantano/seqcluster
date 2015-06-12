@@ -1,6 +1,7 @@
 from collections import defaultdict
 import operator
 import os
+import os.path as op
 import copy
 from progressbar import ProgressBar
 
@@ -8,6 +9,8 @@ from progressbar import ProgressBar
 import math
 # import numpy as np
 # import pybedtools
+
+from bcbio.distributed.transaction import file_transaction
 
 import logger as mylog
 from classes import *
@@ -280,6 +283,7 @@ def reduceloci(clus_obj,  path):
             else:
                 large += 1
                 n_cluster += 1
+                _write_cluster(c, clus_obj.loci, path)
                 filtered[n_cluster] = _add_complete_cluster(n_cluster, c)
     clus_obj.clus = filtered
     logger.info("Clusters too long to be analized: %s" % large)
@@ -287,12 +291,24 @@ def reduceloci(clus_obj,  path):
     return clus_obj
 
 
-def _add_complete_cluster(idx, clus1):
-    logger.debug("Not resolving cluster %s, too many loci. New id %s" % (clus1.id, idx))
-    locilen_sorted = sorted(clus1.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
+def _write_cluster(c, loci, path):
+    """
+    For complex meta-clusters, write all the loci for further debug
+    """
+    out_file = op.join(path, 'log', str(c.id) + '.bed')
+    with file_transaction(out_file) as out_tx:
+        with open(out_tx, 'w') as out_handle:
+            for idl in c.loci2seq:
+                pos = loci[idl].list()
+                print >>out_handle, "\t".join(pos[:4] + [str(len(c.loci2seq[idl]))] + [pos[-1]])
+
+
+def _add_complete_cluster(idx, clus):
+    logger.debug("Not resolving cluster %s, too many loci. New id %s" % (clus.id, idx))
+    locilen_sorted = sorted(clus.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
     maxidl = locilen_sorted[0][0]
     c = cluster(idx)
-    c.add_id_member(clus1.idmembers, maxidl)
+    c.add_id_member(clus.idmembers, maxidl)
     c.id = idx
     c.toomany = len(locilen_sorted)
     return c

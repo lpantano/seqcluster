@@ -110,6 +110,8 @@ def add_subparser_cluster(subparsers):
                        dest="out", help="output dir", required=1)
     parser.add_argument("-ref",
                        dest="ref", help="reference fasta")
+    parser.add_argument("--mask",
+                        help="bed file with regions to mask")
     parser = _add_debug_option(parser)
     parser.add_argument("-s", "--show", action="store_true",
                        dest="show", help="no show sequences", default=False)
