@@ -34,26 +34,30 @@ def detect_complexity(bam_in, genome):
             total += float(region[4])
     logger.info("Total genome with sequences: %s " % total)
 
-def clean_bam_file(bam_in, seqs_list):
+def clean_bam_file(bam_in, seqs_list, mask=None):
     """
     Remove from alignment reads with low counts and highly # of hits
     """
     out_file = op.splitext(bam_in)[0] + "_rmlw.bam"
-    if file_exists(out_file):
-        return out_file
-    pysam.index(bam_in)
-    bam = pysam.AlignmentFile(bam_in, "rb")
-    with pysam.AlignmentFile(out_file, "wb", template=bam) as out_handle:
-        for read in bam.fetch():
-            seq_name = read.query_name
-            try:
-                nh = read.get_tag('NH')
-            except ValueError:
-                nh = 1
-                continue
-            ratio = seqs_list[seq_name].total() / float(nh)
-            if ratio > 0.01:
-                out_handle.write(read)
+    if not file_exists(out_file):
+        pysam.index(bam_in)
+        bam = pysam.AlignmentFile(bam_in, "rb")
+        with pysam.AlignmentFile(out_file, "wb", template=bam) as out_handle:
+            for read in bam.fetch():
+                seq_name = read.query_name
+                try:
+                    nh = read.get_tag('NH')
+                except ValueError:
+                    nh = 1
+                    continue
+                ratio = seqs_list[seq_name].total() / float(nh)
+                if ratio > 0.01:
+                    out_handle.write(read)
+    if mask:
+        mask_file = op.splitext(bam_in)[0] + "_rmlw_mask.bam"
+        if not file_exists(mask_file):
+            pybedtools.BedTool(out_file).intersect(b=mask, v=True).saveas(mask_file)
+        return mask_file
     return out_file
 
 def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
@@ -104,7 +108,6 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
     cluster_obj, cluster_id = _find_families(current_clus, MIN_SEQ)
 
     return cluster_info_obj(current_clus, cluster_id, current_loci, current_seq)
-
 
 def _find_families(clus_obj, min_seqs):
     """

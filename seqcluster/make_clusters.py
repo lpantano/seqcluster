@@ -59,7 +59,7 @@ def cluster(args):
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
-    dt['step'] = 'multimap'
+    dt['step'] = 'meta-cluster'
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
     logger.info("Clusters up to %s" % (len(clusLred.clus.keys())))
 
@@ -219,7 +219,7 @@ def _annotate(args, setclus):
 def _create_clusters(seqL, args):
     clus_obj = []
     logger.info("Clean bam file with highly repetitive reads with low counts. sum(counts)/n_hits > 1%")
-    bam_file = clean_bam_file(args.afile, seqL)
+    bam_file = clean_bam_file(args.afile, seqL, args.mask)
     detect_complexity(bam_file, args.ref)
     logger.info("Parsing aligned file")
     cluster_file = op.join(args.out, "cluster.bed")
