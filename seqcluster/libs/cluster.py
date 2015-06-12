@@ -105,6 +105,7 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
 
     return cluster_info_obj(current_clus, cluster_id, current_loci, current_seq)
 
+
 def _find_families(clus_obj, min_seqs):
     """
     Mask under same id all clusters that share sequences
@@ -113,6 +114,7 @@ def _find_families(clus_obj, min_seqs):
 
     :return: updated clus_obj and dict with seq_id: cluster_id
     """
+    logger.info("Creating meta-clusters based on shared sequences.")
     seen = {}
     c_index = clus_obj.keys()
     with ProgressBar(maxval=len(c_index), redirect_stdout=True) as p:
