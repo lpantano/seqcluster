@@ -220,6 +220,7 @@ def _create_clusters(seqL, args):
     clus_obj = []
     logger.info("Clean bam file with highly repetitive reads with low counts. sum(counts)/n_hits > 1%")
     bam_file = clean_bam_file(args.afile, seqL, args.mask)
+    logger.info("Using %s file" % bam_file)
     detect_complexity(bam_file, args.ref)
     logger.info("Parsing aligned file")
     cluster_file = op.join(args.out, "cluster.bed")
