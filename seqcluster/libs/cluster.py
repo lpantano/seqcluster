@@ -46,13 +46,13 @@ def clean_bam_file(bam_in, seqs_list, mask=None):
             for read in bam.fetch():
                 seq_name = read.query_name
                 match_size = [nts for oper, nts in read.cigartuples if oper == 0]
-                if match_size < 17:
+                if match_size[0] < 17:
                     continue
                 try:
                     nh = read.get_tag('NH')
                 except ValueError:
                     nh = 1
-                    continue
+
                 ratio = seqs_list[seq_name].total() / float(nh)
                 if ratio > 0.01:
                     out_handle.write(read)
