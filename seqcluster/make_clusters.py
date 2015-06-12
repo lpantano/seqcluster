@@ -222,15 +222,20 @@ def _create_clusters(seqL, args):
     bam_file = clean_bam_file(args.afile, seqL)
     detect_complexity(bam_file, args.ref)
     logger.info("Parsing aligned file")
-    aligned_bed = parse_align_file(bam_file)
+    cluster_file = op.join(args.out, "cluster.bed")
     if not os.path.exists(args.out + '/list_obj.pk'):
         logger.info("Merging position")
-        a = pybedtools.BedTool(aligned_bed, from_string=True)
-        # c = a.merge(o="distinct", c="4,5,6", s=True, d=20)
-        c = a.cluster(s=True, d=20)
+        if not file_exists(cluster_file):
+            aligned_bed = parse_align_file(bam_file)
+            a = pybedtools.BedTool(aligned_bed, from_string=True)
+            # c = a.merge(o="distinct", c="4,5,6", s=True, d=20)
+            c = a.cluster(s=True, d=20)
+            c.saveas(cluster_file)
+        else:
+            c = pybedtools.BedTool(cluster_file)
         logger.info("Creating clusters")
         # clus_obj = parse_merge_file(c, seqL, args.MIN_SEQ)
-        clus_obj = detect_clusters(c, seqL, args.min_seqs)
+        clus_obj = detect_clusters(c, seqL, args.min_seqs, args.non_un_gl)
         with open(args.out + '/list_obj.pk', 'wb') as output:
             pickle.dump(clus_obj, output, pickle.HIGHEST_PROTOCOL)
     else:

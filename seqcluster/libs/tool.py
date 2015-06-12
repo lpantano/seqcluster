@@ -251,8 +251,8 @@ def _get_seqs_from_cluster(seqs, seen):
     not_in = []
 
     already_in = map(seen.get, seqs)
-    if isinstance(already_in, list):
-        already_in = filter(None, already_in)
+    # if isinstance(already_in, list):
+    already_in = filter(None, already_in)
     not_in = set(seqs) - set(seen.keys())
     # for s in seqs:
     #    if s in seen:

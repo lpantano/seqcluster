@@ -23,7 +23,7 @@ def detect_complexity(bam_in, genome):
     genome coverage of small RNA
     """
     out_file = bam_in + "_cov.tsv"
-    if not genome or file_exists(out_file):
+    if file_exists(out_file):
         return None
     fai = genome + ".fai"
     cov = pybedtools.BedTool(bam_in).genome_coverage(g=fai, max=1)
@@ -56,7 +56,7 @@ def clean_bam_file(bam_in, seqs_list):
                 out_handle.write(read)
     return out_file
 
-def detect_clusters(c, current_seq, MIN_SEQ):
+def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
     """
     Parse the merge file of sequences position to create clusters that will have all
     sequences that shared any position on the genome
@@ -80,6 +80,10 @@ def detect_clusters(c, current_seq, MIN_SEQ):
     for line in c.features():
         c, start, end, name, score, strand, c_id = line
         pos = start if strand == "+" else end
+        if name not in current_seq:
+            continue
+        if c.find('Un_gl') > -1 and non_un_gl:
+            continue
         if c_id != previous_id:
             logger.debug("detect_cluster: %s %s %s" % (c_id, previous_id, name))
             lindex += 1
@@ -132,7 +136,7 @@ def _find_families(clus_obj, min_seqs):
                     # add current seqs to seen cluster
                     for s_in_clus in prev_clus.idmembers:
                         seen[s_in_clus] = c
-                        clus.idmembers[s_in_clus] = 1
+                    #    clus.idmembers[s_in_clus] = 1
                     # add current locus to seen cluster
                     for loci in prev_clus.loci2seq:
                         logger.debug("adding %s" % loci)

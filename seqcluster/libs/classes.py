@@ -132,7 +132,7 @@ class cluster:
     """
     def __init__(self, id):
         self.id = id
-        self.idmembers = defaultdict(int)
+        self.idmembers = defaultdict()
         self.locimax = None
         self.locimaxid = None
         self.locilen = {}
@@ -165,7 +165,7 @@ class cluster:
     def update(self, id=None):
         if id:
             self.id = id
-        self.idmembers = {}
+        self.idmembers = defaultdict()
         for idl in self.loci2seq:
             l = len(self.loci2seq[idl])
             self.idmembers.update(dict(zip(self.loci2seq[idl], [1] * l)))
