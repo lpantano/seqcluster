@@ -311,7 +311,8 @@ def _add_complete_cluster(idx, meta, clusters):
     locilen_sorted = sorted(clus.iteritems(), key=operator.itemgetter(1), reverse=True)
     maxidl = locilen_sorted[0][0]
     c = cluster(idx)
-    # c.add_id_member(clusters.idmembers, maxidl)
+    for idc in meta:
+        c.add_id_member(clusters[idc].idmembers.keys(), maxidl)
     c.id = idx
     c.toomany = len(meta)
     return c
