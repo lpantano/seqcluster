@@ -301,7 +301,7 @@ def _write_cluster(metacluster, cluster, loci, path):
             for idc in metacluster:
                 for idl in cluster[idc].loci2seq:
                     pos = loci[idl].list()
-                    print >>out_handle, "\t".join(pos[:4] + [str(len(c.loci2seq[idl]))] + [pos[-1]])
+                    print >>out_handle, "\t".join(pos[:4] + [str(len(cluster[idc].loci2seq[idl]))] + [pos[-1]])
 
 
 def _add_complete_cluster(idx, meta, clusters):
