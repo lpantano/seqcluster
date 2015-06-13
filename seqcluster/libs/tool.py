@@ -283,7 +283,7 @@ def reduceloci(clus_obj,  path):
             else:
                 large += 1
                 n_cluster += 1
-                _write_cluster(c, clus_obj.clus, clus_obj.loci, path)
+                _write_cluster(c, clus_obj.clus, clus_obj.loci, n_cluster, path)
                 filtered[n_cluster] = _add_complete_cluster(n_cluster, clus_obj.clus, c)
     clus_obj.clus = filtered
     logger.info("Clusters too long to be analized: %s" % large)
@@ -291,11 +291,11 @@ def reduceloci(clus_obj,  path):
     return clus_obj
 
 
-def _write_cluster(metacluster, cluster, loci, path):
+def _write_cluster(metacluster, cluster, loci, idx, path):
     """
     For complex meta-clusters, write all the loci for further debug
     """
-    out_file = op.join(path, 'log', str(c.id) + '.bed')
+    out_file = op.join(path, 'log', str(idx) + '.bed')
     with file_transaction(out_file) as out_tx:
         with open(out_tx, 'w') as out_handle:
             for idc in metacluster:
