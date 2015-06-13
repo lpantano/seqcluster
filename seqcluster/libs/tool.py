@@ -284,7 +284,7 @@ def reduceloci(clus_obj,  path):
                 large += 1
                 n_cluster += 1
                 _write_cluster(c, clus_obj.clus, clus_obj.loci, n_cluster, path)
-                filtered[n_cluster] = _add_complete_cluster(n_cluster, clus_obj.clus, c)
+                filtered[n_cluster] = _add_complete_cluster(n_cluster, c, clus_obj.clus)
     clus_obj.clus = filtered
     logger.info("Clusters too long to be analized: %s" % large)
     logger.info("Number of clusters removed because low number of reads: %s" % REMOVED)
@@ -305,9 +305,9 @@ def _write_cluster(metacluster, cluster, loci, idx, path):
 
 
 def _add_complete_cluster(idx, meta, clusters):
-    logger.debug("Not resolving cluster %s, too many loci. New id %s" % (clus.id, idx))
+    logger.debug("Not resolving cluster %s, too many loci" % (idx))
     clus = {}
-    [clus.update({clusters[idc].locilen}) for idc in meta]
+    [clus.update(clusters[idc].locilen) for idc in meta]
     locilen_sorted = sorted(clus.iteritems(), key=operator.itemgetter(1), reverse=True)
     maxidl = locilen_sorted[0][0]
     c = cluster(idx)
