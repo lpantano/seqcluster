@@ -46,12 +46,12 @@ def cluster(args):
         raise ValueError("So few sequences.")
 
     clusL = _create_clusters(seqL, args)
-    # y, l = _total_counts(clusL.clus, seqL)
-    # logger.info("counts after: %s" % sum(y.values()))
-    # logger.info("# sequences after: %s" % l)
-    # dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
-    # dt['step'] = 'cluster'
-    # dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
+    y, l = _total_counts(clusL.seq.keys(), clusL.seq)
+    logger.info("counts after: %s" % sum(y.values()))
+    logger.info("# sequences after: %s" % l)
+    dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
+    dt['step'] = 'aligned'
+    dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
 
     logger.info("Solving multi-mapping events in the network of clusters")
     clusLred = _cleaning(clusL, args.dir_out)
@@ -84,14 +84,17 @@ def cluster(args):
     logger.info("Finished")
 
 
-def _total_counts(seqs, seqL):
+def _total_counts(seqs, seqL, aligned=False):
     """
     Counts total seqs after each step
     """
     total = Counter()
     l = len(seqs)
     if isinstance(seqs, list):
-        [total.update(seqL[s].freq) for s in seqs]
+        if not aligned:
+            [total.update(seqL[s].freq) for s in seqs]
+        else:
+            [total.update(seqL[s].freq) for s in seqs if seqL[s].align == 1]
     elif isinstance(seqs, dict):
         [total.update(seqs[s].get_freq(seqL)) for s in seqs]
         l = sum(len(seqs[s].idmembers) for s in seqs)

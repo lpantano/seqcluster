@@ -105,6 +105,7 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
         current_clus[eindex].idmembers[name] = 1
         current_clus[eindex].add_id_member([name], lindex)
         current_seq[name].add_pos(lindex, pos)
+        current_seq[name].align = 1
         previous_id = c_id
     logger.info("%s Clusters read" % eindex)
     # merge cluster with shared sequences  
