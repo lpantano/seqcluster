@@ -1,7 +1,12 @@
 from collections import defaultdict
 import pybedtools
+
+import logger as mylog
 from classes import sequence
 from tool import _normalize_seqs
+
+
+logger = mylog.getLogger(__name__)
 
 
 def parse_align_file(file_in):
@@ -19,13 +24,12 @@ def parse_align_file(file_in):
     return bedfile_clusters
 
 
-def parse_ma_file(in_file):
+def parse_ma_file(seq_obj, in_file):
     """
     read seqs.ma file and create dict with
     sequence object
     """
     name = ""
-    seq_l = {}
     index = 1
     total = defaultdict(int)
     with open(in_file) as handle_in:
@@ -35,16 +39,17 @@ def parse_ma_file(in_file):
         for line in handle_in:
             line = line.strip()
             cols = line.split("\t")
+            name = cols[0].replace(">", "")
+            seq = cols[1]
             exp = {}
             for i in range(len(samples)):
                 exp[samples[i]] = int(cols[i+2])
                 total[samples[i]] += int(cols[i+2])
-            name = cols[0].replace(">", "")
             index = index+1
-            seq = cols[1]
-            new_s = sequence(seq, exp, index)
-            seq_l[name] = new_s
-    seq_l = _normalize_seqs(seq_l, total)
-    return seq_l
-
-
+            if name in seq_obj:
+                seq_obj[name].set_freq(exp)
+                seq_obj[name].set_seq(seq)
+            # new_s = sequence(seq, exp, index)
+            # seq_l[name] = new_s
+    seq_obj = _normalize_seqs(seq_obj, total)
+    return seq_obj, total, index

@@ -33,19 +33,22 @@ def cluster(args):
     if file_exists(read_stats_file):
         os.remove(read_stats_file)
 
+    bam_file, seq_obj = _clean_alignment(args)
+
     logger.info("Parsing matrix file")
-    seqL = parse_ma_file(args.ffile)
-    y, l = _total_counts(seqL.keys(), seqL)
+    seqL, y, l = parse_ma_file(seq_obj, args.ffile)
+    # y, l = _total_counts(seqL.keys(), seqL)
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
     dt['step'] = 'raw'
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
+
     if len(seqL.keys()) < 100:
         logger.error("It seems you have so low coverage. Please check your fastq files have enough sequences.")
         raise ValueError("So few sequences.")
 
-    clusL = _create_clusters(seqL, args)
+    clusL = _create_clusters(seqL, bam_file, args)
     y, l = _total_counts(clusL.seq.keys(), clusL.seq)
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
@@ -218,13 +221,18 @@ def _annotate(args, setclus):
             setclus = anncluster(c, setclus, db, args.type_ann)
     return setclus
 
-
-def _create_clusters(seqL, args):
-    clus_obj = []
+def _clean_alignment(args):
+    """
+    Prepare alignment for cluster detection.
+    """
     logger.info("Clean bam file with highly repetitive reads with low counts. sum(counts)/n_hits > 1%")
-    bam_file = clean_bam_file(args.afile, seqL, args.mask)
+    bam_file, seq_obj = clean_bam_file(args.afile, args.mask)
     logger.info("Using %s file" % bam_file)
     detect_complexity(bam_file, args.ref)
+    return bam_file, seq_obj
+
+def _create_clusters(seqL, bam_file, args):
+    clus_obj = []
     logger.info("Parsing aligned file")
     cluster_file = op.join(args.out, "cluster.bed")
     if not os.path.exists(args.out + '/list_obj.pk'):

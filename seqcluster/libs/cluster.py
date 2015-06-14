@@ -34,34 +34,35 @@ def detect_complexity(bam_in, genome):
             total += float(region[4])
     logger.info("Total genome with sequences: %s " % total)
 
-def clean_bam_file(bam_in, seqs_list, mask=None):
+def clean_bam_file(bam_in, mask=None):
     """
     Remove from alignment reads with low counts and highly # of hits
     """
-    out_file = op.splitext(bam_in)[0] + "_rmlw.bam"
-    if not file_exists(out_file):
-        pysam.index(bam_in)
-        bam = pysam.AlignmentFile(bam_in, "rb")
-        with pysam.AlignmentFile(out_file, "wb", template=bam) as out_handle:
-            for read in bam.fetch():
-                seq_name = read.query_name
-                match_size = [nts for oper, nts in read.cigartuples if oper == 0]
-                if match_size[0] < 17:
-                    continue
-                try:
-                    nh = read.get_tag('NH')
-                except ValueError:
-                    nh = 1
-
-                ratio = seqs_list[seq_name].total() / float(nh)
-                if ratio > 0.01:
-                    out_handle.write(read)
+    seq_obj = defaultdict(sequence)
     if mask:
-        mask_file = op.splitext(bam_in)[0] + "_rmlw_mask.bam"
+        mask_file = op.splitext(bam_in)[0] + "_mask.bam"
         if not file_exists(mask_file):
-            pybedtools.BedTool(out_file).intersect(b=mask, v=True).saveas(mask_file)
-        return mask_file
-    return out_file
+            pybedtools.BedTool(bam_file).intersect(b=mask, v=True).saveas(mask_file)
+        bam_in = mask_file
+    out_file = op.splitext(bam_in)[0] + "_rmlw.bam"
+    pysam.index(bam_in)
+    bam = pysam.AlignmentFile(bam_in, "rb")
+    with pysam.AlignmentFile(out_file, "wb", template=bam) as out_handle:
+        for read in bam.fetch():
+            seq_name = read.query_name
+            match_size = [nts for oper, nts in read.cigartuples if oper == 0]
+            if match_size[0] < 17:
+                continue
+            try:
+                nh = read.get_tag('NH')
+            except ValueError:
+                nh = 1
+            seq_obj[seq_name] = sequence(seq_name)
+            seq_obj[seq_name].align = nh
+            # ratio = seqs_list[seq_name].total() / float(nh)
+            # if ratio > 0.01:
+            out_handle.write(read)
+    return out_file, seq_obj
 
 def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
     """
