@@ -39,7 +39,7 @@ def parse_ma_file(seq_obj, in_file):
         for line in handle_in:
             line = line.strip()
             cols = line.split("\t")
-            name = cols[0].replace(">", "")
+            name = int(cols[0].replace("seq_", ""))
             seq = cols[1]
             exp = {}
             for i in range(len(samples)):

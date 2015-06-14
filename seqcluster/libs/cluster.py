@@ -38,7 +38,7 @@ def clean_bam_file(bam_in, mask=None):
     """
     Remove from alignment reads with low counts and highly # of hits
     """
-    seq_obj = defaultdict(sequence)
+    seq_obj = defaultdict(int)
     if mask:
         mask_file = op.splitext(bam_in)[0] + "_mask.bam"
         if not file_exists(mask_file):
@@ -49,7 +49,7 @@ def clean_bam_file(bam_in, mask=None):
     bam = pysam.AlignmentFile(bam_in, "rb")
     with pysam.AlignmentFile(out_file, "wb", template=bam) as out_handle:
         for read in bam.fetch():
-            seq_name = read.query_name
+            seq_name = int(read.query_name.replace('seq_', ''))
             match_size = [nts for oper, nts in read.cigartuples if oper == 0]
             if match_size[0] < 17:
                 continue
@@ -82,17 +82,26 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
     """
     current_loci = {}
     current_clus = {}
+    # sequence2clusters = [set()] * (max(current_seq.keys()) + 2)
+    sequence2clusters = defaultdict(set)
     lindex = 0
     eindex = 0
     previous_id = 0
     for line in c.features():
         c, start, end, name, score, strand, c_id = line
+        name = int(name.replace('seq_', ''))
         pos = start if strand == "+" else end
         if name not in current_seq:
             continue
         if c.find('Un_gl') > -1 and non_un_gl:
             continue
         if c_id != previous_id:
+            if previous_id > 0:
+                if len(current_clus[eindex].idmembers) < MIN_SEQ:
+                    for s in current_clus[eindex].idmembers:
+                        sequence2clusters[s] = sequence2clusters[s] - set([eindex])
+                    del current_clus[eindex]
+
             logger.debug("detect_cluster: %s %s %s" % (c_id, previous_id, name))
             lindex += 1
             eindex += 1
@@ -108,11 +117,54 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
         current_seq[name].add_pos(lindex, pos)
         current_seq[name].align = 1
         previous_id = c_id
+        sequence2clusters[name].add(eindex)
     logger.info("%s Clusters read" % eindex)
     # merge cluster with shared sequences  
-    cluster_obj, cluster_id = _find_families(current_clus, MIN_SEQ)
+    metacluster_obj, cluster_id = _find_metaclusters(current_clus, sequence2clusters, MIN_SEQ)
 
-    return cluster_info_obj(current_clus, cluster_obj, current_loci, current_seq)
+    return cluster_info_obj(current_clus, metacluster_obj, current_loci, current_seq)
+
+
+def _common(items, seen):
+    intersect = map(seen.get, items)
+    return filter(None, intersect)
+
+def _update(clusters, idx, hash):
+    return hash.update(dict(zip(clusters, [idx] * len(clusters))))
+
+def _find_metaclusters(clus_obj, sequence2clusters, min_seqs):
+    """
+    Mask under same id all clusters that share sequences
+    :param clus_obj: cluster object coming from detect_cluster
+    :param min_seqs: int cutoff to keep the cluster or not. 10 as default
+
+    :return: updated clus_obj and dict with seq_id: cluster_id
+    """
+    logger.info("Creating meta-clusters based on shared sequences.")
+    seen = defaultdict(int)
+    metacluster = defaultdict(set)
+    c_index = len(sequence2clusters)
+    meta_idx = 1
+    with ProgressBar(maxval=c_index, redirect_stdout=True) as p:
+        for itern, clusters in enumerate(sequence2clusters.values()):
+            if len(clusters) == 0:
+                continue
+            meta_idx += 1
+            p.update(itern)
+            already_in = _common(clusters, seen)
+            _update(clusters, meta_idx, seen)
+            metacluster[meta_idx] = metacluster[meta_idx].union(clusters)
+
+            if already_in:
+                for seen_metacluster in already_in:
+                    clusters2merge = metacluster[seen_metacluster]
+                    metacluster[meta_idx] = metacluster[meta_idx].union(clusters2merge)
+                    _update(clusters2merge, meta_idx, seen)
+                    # metacluster[seen_metacluster] = 0
+                    del metacluster[seen_metacluster]
+    logger.info("%s clusters merged" % len(metacluster))
+
+    return metacluster, seen
 
 def _find_families(clus_obj, min_seqs):
     """

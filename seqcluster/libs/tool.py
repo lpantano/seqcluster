@@ -276,7 +276,7 @@ def reduceloci(clus_obj,  path):
         for itern, idmc in enumerate(current):
             p.update(itern)
             logger.debug("_reduceloci: cluster %s" % idmc)
-            c = copy.deepcopy(current[idmc])
+            c = copy.deepcopy(list(current[idmc]))
             n_loci = len(c)
             if n_loci < 1000:
                 filtered, n_cluster = _iter_loci(c, clus_obj.clus, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
