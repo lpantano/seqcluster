@@ -140,14 +140,15 @@ def _find_metaclusters(clus_obj, sequence2clusters, min_seqs):
 
     :return: updated clus_obj and dict with seq_id: cluster_id
     """
-    logger.info("Creating meta-clusters based on shared sequences.")
     seen = defaultdict(int)
     metacluster = defaultdict(set)
     c_index = len(sequence2clusters)
+    logger.info("Creating meta-clusters based on shared sequences: %s" % c_index)
     meta_idx = 1
     with ProgressBar(maxval=c_index, redirect_stdout=True) as p:
         for itern, clusters in enumerate(sequence2clusters.values()):
             if len(clusters) == 0:
+                c_index -= 1
                 continue
             meta_idx += 1
             p.update(itern)
@@ -162,7 +163,7 @@ def _find_metaclusters(clus_obj, sequence2clusters, min_seqs):
                     _update(clusters2merge, meta_idx, seen)
                     # metacluster[seen_metacluster] = 0
                     del metacluster[seen_metacluster]
-    logger.info("%s clusters merged" % len(metacluster))
+    logger.info("%s metaclusters from %s sequences" % (len(metacluster), c_index))
 
     return metacluster, seen
 

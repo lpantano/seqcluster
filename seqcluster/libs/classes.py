@@ -162,9 +162,9 @@ class cluster:
         self.freq = total
         return total
 
-    def get_freq(self, seqL):
+    def get_freq(self, seqL, force=False):
         self.update()
-        if self.freq:
+        if self.freq and not force:
             return self.freq
         else:
             return self.set_freq(seqL)
