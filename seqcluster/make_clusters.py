@@ -41,19 +41,27 @@ def cluster(args):
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
-    dt['step'] = 'raw'
+    dt['step'] = 'aligned'
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
 
     if len(seqL.keys()) < 100:
         logger.error("It seems you have so low coverage. Please check your fastq files have enough sequences.")
         raise ValueError("So few sequences.")
 
-    clusL = _create_clusters(seqL, bam_file, args)
-    y, l = _total_counts(clusL.seq.keys(), clusL.seq)
+    logger.info("Cleaning bam file")
+    y, l = _total_counts(seqL.keys(), seqL)
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
-    dt['step'] = 'aligned'
+    dt['step'] = 'cleaned'
+    dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
+
+    clusL = _create_clusters(seqL, bam_file, args)
+    y, l = _total_counts(clusL.seq.keys(), clusL.seq, aligned=True)
+    logger.info("counts after: %s" % sum(y.values()))
+    logger.info("# sequences after: %s" % l)
+    dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
+    dt['step'] = 'clusters'
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
 
     logger.info("Solving multi-mapping events in the network of clusters")
@@ -92,12 +100,11 @@ def _total_counts(seqs, seqL, aligned=False):
     Counts total seqs after each step
     """
     total = Counter()
-    l = len(seqs)
     if isinstance(seqs, list):
         if not aligned:
-            [total.update(seqL[s].freq) for s in seqs]
+            l = len([total.update(seqL[s].freq) for s in seqs])
         else:
-            [total.update(seqL[s].freq) for s in seqs if seqL[s].align == 1]
+            l = len([total.update(seqL[s].freq) for s in seqs if seqL[s].align == 1])
     elif isinstance(seqs, dict):
         [total.update(seqs[s].get_freq(seqL)) for s in seqs]
         l = sum(len(seqs[s].idmembers) for s in seqs)

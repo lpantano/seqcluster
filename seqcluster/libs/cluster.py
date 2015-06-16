@@ -58,7 +58,7 @@ def clean_bam_file(bam_in, mask=None):
             except ValueError:
                 nh = 1
             seq_obj[seq_name] = sequence(seq_name)
-            seq_obj[seq_name].align = nh
+            # seq_obj[seq_name].align = nh
             # ratio = seqs_list[seq_name].total() / float(nh)
             # if ratio > 0.01:
             out_handle.write(read)
@@ -115,15 +115,14 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
         current_clus[eindex].idmembers[name] = 1
         current_clus[eindex].add_id_member([name], lindex)
         current_seq[name].add_pos(lindex, pos)
-        current_seq[name].align = 1
+        # current_seq[name].align = 1
         previous_id = c_id
         sequence2clusters[name].add(eindex)
     logger.info("%s Clusters read" % eindex)
     # merge cluster with shared sequences  
-    metacluster_obj, cluster_id = _find_metaclusters(current_clus, sequence2clusters, MIN_SEQ)
+    metacluster_obj, cluster_id = _find_metaclusters(current_clus, sequence2clusters, current_seq, MIN_SEQ)
 
     return cluster_info_obj(current_clus, metacluster_obj, current_loci, current_seq)
-
 
 def _common(items, seen):
     intersect = map(seen.get, items)
@@ -132,7 +131,7 @@ def _common(items, seen):
 def _update(clusters, idx, hash):
     return hash.update(dict(zip(clusters, [idx] * len(clusters))))
 
-def _find_metaclusters(clus_obj, sequence2clusters, min_seqs):
+def _find_metaclusters(clus_obj, sequence2clusters, current_seq, min_seqs):
     """
     Mask under same id all clusters that share sequences
     :param clus_obj: cluster object coming from detect_cluster
@@ -146,10 +145,12 @@ def _find_metaclusters(clus_obj, sequence2clusters, min_seqs):
     logger.info("Creating meta-clusters based on shared sequences: %s" % c_index)
     meta_idx = 1
     with ProgressBar(maxval=c_index, redirect_stdout=True) as p:
-        for itern, clusters in enumerate(sequence2clusters.values()):
+        for itern, name in enumerate(sequence2clusters):
+            clusters = sequence2clusters[name]
             if len(clusters) == 0:
                 c_index -= 1
                 continue
+            current_seq[name].align = 1
             meta_idx += 1
             p.update(itern)
             already_in = _common(clusters, seen)
