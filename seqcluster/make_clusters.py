@@ -14,7 +14,7 @@ from bcbio.utils import file_exists
 import libs.logger as mylog
 from libs.read import load_data
 from libs.mystats import up_threshold
-from libs.cluster import detect_clusters, clean_bam_file, peak_calling
+from libs.cluster import detect_clusters, clean_bam_file, peak_calling, detect_complexity
 from libs.annotation import anncluster
 from libs.inputs import parse_ma_file, parse_align_file
 from libs.tool import reduceloci, show_seq, \
@@ -35,8 +35,9 @@ def cluster(args):
 
     logger.info("Parsing matrix file")
     seqL = parse_ma_file(args.ffile)
-    y = _total_counts(seqL.keys(), seqL)
-    logger.info("sequences after: %s" % sum(y.values()))
+    y, l = _total_counts(seqL.keys(), seqL)
+    logger.info("counts after: %s" % sum(y.values()))
+    logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
     dt['step'] = 'raw'
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
@@ -45,18 +46,20 @@ def cluster(args):
         raise ValueError("So few sequences.")
 
     clusL = _create_clusters(seqL, args)
-    y = _total_counts(clusL.clus, seqL)
-    logger.info("sequences after: %s" % sum(y.values()))
+    y, l = _total_counts(clusL.clus, seqL)
+    logger.info("counts after: %s" % sum(y.values()))
+    logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
     dt['step'] = 'cluster'
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
 
     logger.info("Solving multi-mapping events in the network of clusters")
     clusLred = _cleaning(clusL, args.dir_out)
-    y = _total_counts(clusLred.clus, seqL)
-    logger.info("sequences after: %s" % sum(y.values()))
+    y, l = _total_counts(clusLred.clus, seqL)
+    logger.info("counts after: %s" % sum(y.values()))
+    logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
-    dt['step'] = 'multimap'
+    dt['step'] = 'meta-cluster'
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
     logger.info("Clusters up to %s" % (len(clusLred.clus.keys())))
 
@@ -86,11 +89,13 @@ def _total_counts(seqs, seqL):
     Counts total seqs after each step
     """
     total = Counter()
+    l = len(seqs)
     if isinstance(seqs, list):
         [total.update(seqL[s].freq) for s in seqs]
     elif isinstance(seqs, dict):
-        [total.update(seqs[s].set_freq(seqL)) for s in seqs]
-    return total
+        [total.update(seqs[s].get_freq(seqL)) for s in seqs]
+        l = sum(len(seqs[s].idmembers) for s in seqs)
+    return total, l
 
 
 def _write_size_table(data_freq, data_len, ann_valid, cluster_id):
@@ -114,7 +119,7 @@ def _create_json(clusL, args):
     out_bed = os.path.join(args.dir_out, "positions.bed")
     samples_order = list(seqs[seqs.keys()[1]].freq.keys())
     with open(out_count, 'w') as matrix, open(out_size, 'w') as size_matrix, open(out_bed, 'w') as out_bed:
-        matrix.write("id\tann\t%s\n" % "\t".join(samples_order))
+        matrix.write("id\tnloci\tann\t%s\n" % "\t".join(samples_order))
         for cid in clus:
             seqList = []
             c = clus[cid]
@@ -126,7 +131,7 @@ def _create_json(clusL, args):
 
             idloci, chrom, s, e, st, size = data_loci[0]
             annotation = valid_ann[0] if valid_ann else "none"
-            bed_line = "%s\t%s\t%s\t%s\t%s\t%s\n" % (chrom, s, e, annotation, cid, st)
+            bed_line = "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (chrom, s, e, annotation, cid, st, len(seqList))
 
             data_seqs = map(lambda (x): {x: seqs[x].seq}, seqList)
             # data_freq = map(lambda (x): seqs[x].freq, seqList)
@@ -139,7 +144,7 @@ def _create_json(clusL, args):
             sum_freq = _sum_by_samples(scaled_seqs, samples_order)
             data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
             data_valid_str = " ".join(valid_ann)
-            matrix.write("%s\t%s|%s\t%s\n" % (cid, data_valid_str, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
+            matrix.write("%s\t%s\t%s|%s\t%s\n" % (cid, c.toomany, data_valid_str, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
             data_string = {'seqs': data_seqs, 'freq': data_freq_w_id,
                     'loci': data_loci, 'ann': data_ann, 'valid': valid_ann, 'peaks': clus[cid].peaks}
             data_clus[cid] = data_string
@@ -214,17 +219,23 @@ def _annotate(args, setclus):
 def _create_clusters(seqL, args):
     clus_obj = []
     logger.info("Clean bam file with highly repetitive reads with low counts. sum(counts)/n_hits > 1%")
-    bam_file = clean_bam_file(args.afile, seqL)
+    bam_file = clean_bam_file(args.afile, seqL, args.mask)
+    detect_complexity(bam_file, args.ref)
     logger.info("Parsing aligned file")
-    aligned_bed = parse_align_file(bam_file)
+    cluster_file = op.join(args.out, "cluster.bed")
     if not os.path.exists(args.out + '/list_obj.pk'):
         logger.info("Merging position")
-        a = pybedtools.BedTool(aligned_bed, from_string=True)
-        # c = a.merge(o="distinct", c="4,5,6", s=True, d=20)
-        c = a.cluster(s=True, d=20)
+        if not file_exists(cluster_file):
+            aligned_bed = parse_align_file(bam_file)
+            a = pybedtools.BedTool(aligned_bed, from_string=True)
+            # c = a.merge(o="distinct", c="4,5,6", s=True, d=20)
+            c = a.cluster(s=True, d=20)
+            c.saveas(cluster_file)
+        else:
+            c = pybedtools.BedTool(cluster_file)
         logger.info("Creating clusters")
         # clus_obj = parse_merge_file(c, seqL, args.MIN_SEQ)
-        clus_obj = detect_clusters(c, seqL, args.MIN_SEQ)
+        clus_obj = detect_clusters(c, seqL, args.min_seqs, args.non_un_gl)
         with open(args.out + '/list_obj.pk', 'wb') as output:
             pickle.dump(clus_obj, output, pickle.HIGHEST_PROTOCOL)
     else:
@@ -250,8 +261,8 @@ def _cleaning(clusL, path):
         return clus_obj
     else:
         logger.info("Loading previous reduced clusters")
-        with open(backup, 'rb') as input:
-            clus_obj = pickle.load(input)
+        with open(backup, 'rb') as in_handle:
+            clus_obj = pickle.load(in_handle)
         return clus_obj
 
 

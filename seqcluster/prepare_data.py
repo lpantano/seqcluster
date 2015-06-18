@@ -147,9 +147,9 @@ def _create_matrix_uniq_seq(sample_l, seq_l, maout, out, min_shared):
         for g in sample_l:
             if g in seq_l[s].group:
                 maout.write("\t%s" % seq_l[s].group[g])
-        else:
-            maout.write("\t0")
-    qual = "".join(seq_l[s].quality)
-    out.write("@seq_%s\n%s\n+\n%s\n" % (seq_l[s].idx, seq_l[s].seq, qual))
+            else:
+                maout.write("\t0")
+        qual = "".join(seq_l[s].quality)
+        out.write("@seq_%s\n%s\n+\n%s\n" % (seq_l[s].idx, seq_l[s].seq, qual))
     out.close()
     maout.close()

@@ -87,7 +87,7 @@ def get_loci_fasta(loci, out_fa, ref):
         for nc, loci in loci.iteritems():
             for l in loci:
                 with open(bed_file, 'w') as bed_handle:
-                    logger.info("get_fasta: loci %s" % l)
+                    logger.debug("get_fasta: loci %s" % l)
                     nc, c, s, e, st = l
                     print("{0}\t{1}\t{2}\t{3}\t{3}\t{4}".format(c, s, e, nc, st), file=bed_handle)
                 get_fasta(bed_file, ref, out_fa)

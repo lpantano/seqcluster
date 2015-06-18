@@ -1,11 +1,17 @@
 from collections import defaultdict
 import operator
 import os
+import os.path as op
 import copy
+from progressbar import ProgressBar
+
 # import time
 import math
 # import numpy as np
 # import pybedtools
+
+from bcbio.distributed.transaction import file_transaction
+
 import logger as mylog
 from classes import *
 from mystats import up_threshold
@@ -13,6 +19,9 @@ from bayes import decide_by_bayes
 import parameters
 
 logger = mylog.getLogger(__name__)
+
+
+REMOVED = 0
 
 
 def get_distance(p1, p2):
@@ -245,8 +254,8 @@ def _get_seqs_from_cluster(seqs, seen):
     not_in = []
 
     already_in = map(seen.get, seqs)
-    if isinstance(already_in, list):
-        already_in = filter(None, already_in)
+    # if isinstance(already_in, list):
+    already_in = filter(None, already_in)
     not_in = set(seqs) - set(seen.keys())
     # for s in seqs:
     #    if s in seen:
@@ -260,27 +269,46 @@ def reduceloci(clus_obj,  path):
     """reduce number of loci a cluster has"""
     filtered = {}
     n_cluster = 0
+    large = 0
     current = clus_obj.clus
     logger.info("Number of loci: %s" % len(clus_obj.loci.keys()))
-    for idc in current:
-        logger.debug("_reduceloci: cluster %s" % idc)
-        c = copy.deepcopy(current[idc])
-        n_loci = len(c.loci2seq)
-        if n_loci < 1000:
-            filtered, n_cluster = _iter_loci(c, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
-        else:
-            n_cluster += 1
-            filtered[n_cluster] = _add_complete_cluster(n_cluster, c)
+    with ProgressBar(maxval=len(current), redirect_stdout=True) as p:
+        for itern, idc in enumerate(current):
+            p.update(itern)
+            logger.debug("_reduceloci: cluster %s" % idc)
+            c = copy.deepcopy(current[idc])
+            n_loci = len(c.loci2seq)
+            if n_loci < 1000:
+                filtered, n_cluster = _iter_loci(c, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
+            else:
+                large += 1
+                n_cluster += 1
+                _write_cluster(c, clus_obj.loci, path)
+                filtered[n_cluster] = _add_complete_cluster(n_cluster, c)
     clus_obj.clus = filtered
+    logger.info("Clusters too long to be analized: %s" % large)
+    logger.info("Number of clusters removed because low number of reads: %s" % REMOVED)
     return clus_obj
 
 
-def _add_complete_cluster(idx, clus1):
-    logger.debug("Not resolving cluster %s, too many loci. New id %s" % (clus1.id, idx))
-    locilen_sorted = sorted(clus1.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
+def _write_cluster(c, loci, path):
+    """
+    For complex meta-clusters, write all the loci for further debug
+    """
+    out_file = op.join(path, 'log', str(c.id) + '.bed')
+    with file_transaction(out_file) as out_tx:
+        with open(out_tx, 'w') as out_handle:
+            for idl in c.loci2seq:
+                pos = loci[idl].list()
+                print >>out_handle, "\t".join(pos[:4] + [str(len(c.loci2seq[idl]))] + [pos[-1]])
+
+
+def _add_complete_cluster(idx, clus):
+    logger.debug("Not resolving cluster %s, too many loci. New id %s" % (clus.id, idx))
+    locilen_sorted = sorted(clus.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
     maxidl = locilen_sorted[0][0]
     c = cluster(idx)
-    c.add_id_member(clus1.loci2seq[maxidl], maxidl)
+    c.add_id_member(clus.idmembers, maxidl)
     c.id = idx
     c.toomany = len(locilen_sorted)
     return c
@@ -356,17 +384,22 @@ def _iter_loci(c, s2p, filtered, n_cluster):
         n_loci = len(internal_cluster)
         loci = internal_cluster
         logger.debug("_iter_loci: n_loci %s" % n_loci)
+
     if n_loci > 1:
         n_internal_cluster = sorted(internal_cluster.keys(), reverse=True)[0]
         internal_cluster = _solve_conflict(internal_cluster, s2p, n_internal_cluster)
+
     internal_cluster = _clean_cluster(internal_cluster)
+
     for idc in internal_cluster:
         n_cluster += 1
         logger.debug("_iter_loci: add to filtered %s" % n_cluster)
         filtered[n_cluster] = internal_cluster[idc]
         filtered[n_cluster].id = n_cluster
         filtered[n_cluster].update(id=n_cluster)
+        filtered[n_cluster].set_freq(s2p[1])
     logger.debug("_iter_loci: filtered %s" % filtered.keys())
+
     for new_c in internal_cluster.values():
         [logger.note("%s %s %s %s" % (c.id, new_c.id, idl, len(new_c.loci2seq[idl]))) for idl in new_c.loci2seq]
     return filtered, n_cluster
@@ -405,7 +438,7 @@ def _calculate_similarity(c):
     for idc in c:
         set1 = _get_seqs(c[idc])
         [ma.update({(idc, idc2): _common(set1, _get_seqs(c[idc2]))}) for idc2 in c if idc != idc2 and (idc2, idc) not in ma]
-    logger.debug("_calculate_similarity_ %s" % ma)
+    # logger.debug("_calculate_similarity_ %s" % ma)
     return ma
 
 
@@ -413,9 +446,9 @@ def _get_seqs(list_idl):
     """get all sequences in a cluster knowing loci"""
     seqs = set()
     for idl in list_idl.loci2seq:
-        logger.debug("_get_seqs_: loci %s" % idl)
+        # logger.debug("_get_seqs_: loci %s" % idl)
         [seqs.add(s) for s in list_idl.loci2seq[idl]]
-    logger.debug("_get_seqs_: %s" % len(seqs))
+    # logger.debug("_get_seqs_: %s" % len(seqs))
     return seqs
 
 
@@ -474,7 +507,10 @@ def _merge_cluster(old, new):
     logger.debug("_merge_cluster: %s to %s" % (old.id, new.id))
     for idl in old.loci2seq:
         logger.debug("_merge_cluster: add idl %s" % idl)
-        new.loci2seq[idl] = old.loci2seq[idl]
+        # if idl in new.loci2seq:
+        #    new.loci2seq[idl] = list(set(new.loci2seq[idl] + old.loci2seq[idl]))
+        # new.loci2seq[idl] = old.loci2seq[idl]
+        new.add_id_member(old.loci2seq[idl], idl)
     return new
 
 
@@ -511,7 +547,7 @@ def _solve_conflict(list_c, s2p, n_cluster):
     return list_c
 
 
-def _split_cluster(c , pairs, n):
+def _split_cluster(c, pairs, n):
     """split cluster by exclussion"""
     old = c[p[0]]
     new = c[p[1]]
@@ -521,16 +557,18 @@ def _split_cluster(c , pairs, n):
         in_common = list(set(common).intersection(old.loci2seq[idl]))
         if len(in_common) > 0:
             logger.debug("_split_cluster: in_common %s with pair 1" % (len(in_common)))
-            new_c.loci2seq[idl] = in_common
+            new_c.add_id_member(in_common, idl)
             old.loci2seq[idl] = list(set(old.loci2seq[idl]) - set(common))
             logger.debug("_split_cluster: len old %s with pair 1" % (len(old.loci2seq)))
     for idl in new.loci2seq:
         in_common = list(set(common).intersection(new.loci2seq[idl]))
         if len(in_common) > 0:
             logger.debug("_split_cluster: in_common %s with pair 2" % (len(in_common)))
-            new_c.loci2seq[idl] = in_common
+            new_c.add_id_member(in_common, idl)
             new.loci2seq[idl] = list(set(new.loci2seq[idl]) - set(common))
             logger.debug("_split_cluster: len old %s with pair 2" % (len(new.loci2seq)))
+    old.update()
+    new.update()
     old.loci2seq = {k: v for k, v in old.loci2seq.iteritems() if len(v) > 0}
     new.loci2seq = {k: v for k, v in new.loci2seq.iteritems() if len(v) > 0}
     c[n] = new
@@ -574,11 +612,17 @@ def _add_unseen(loci, clus_seen, n_cluster):
 
 
 def _clean_cluster(list_c):
-    """Remove cluster with less than 10 sequences and
-    loci with size smaller than 60%"""
+    """
+    Remove cluster with less than 10 sequences and
+    loci with size smaller than 60%
+    """
+    global REMOVED
+    init = len(list_c)
     list_c = {k: v for k, v in list_c.iteritems() if len(_get_seqs(v)) > parameters.min_seqs}
     logger.debug("_clean_cluster: number of clusters %s " % len(list_c.keys()))
     list_c = {k: _select_loci(v) for k, v in list_c.iteritems()}
+    end = len(list_c)
+    REMOVED += init - end
     return list_c
 
 

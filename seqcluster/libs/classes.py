@@ -3,6 +3,7 @@ Main classes used in seqcluster
 """
 
 import copy
+import numpy as np
 from operator import add
 from collections import Counter, defaultdict
 
@@ -56,13 +57,6 @@ class cluster_info_obj:
         self.loci = loci_obj
         self.seq = seq_obj
 
-#class pairs:
-#        def __init__(self):
-#                self.p2 = {}
-#                self.st = {}
-#        def set_dist(self,p,d,st):
-#                self.p2[p] = d
-#                self.st[p] = st
 
 class sequence:
     """
@@ -84,6 +78,7 @@ class sequence:
     def total(self):
         return sum(self.freq.values())
 
+
 class position:
     """
     Object with information about position: chr,start,end,strand
@@ -97,6 +92,9 @@ class position:
         self.strand = strand
         self.coverage = Counter()
         self.db_ann = {}
+
+    def list(self):
+        return map(str, [self.chr, self. start, self.end, self.idl, self.strand])
 
     def add_db(self, db, ndb):
         self.db_ann[db] = ndb
@@ -147,11 +145,20 @@ class cluster:
         self.errors = []
         self.freq = []
 
+    def normalize(self, seq, factor):
+        return dict(zip(seq.freq.keys(), list(np.array(seq.freq.values()) * factor)))
+
     def set_freq(self, seqL):
         total = Counter()
-        [total.update(seqL[s].freq) for s in self.idmembers.keys()]
+        [total.update(self.normalize(seqL[s], f)) for s, f in self.idmembers.iteritems()]
         self.freq = total
         return total
+
+    def get_freq(self, seqL):
+        if self.freq:
+            return self.freq
+        else:
+            return self.set_freq(seqL)
 
     def set_ref(self, r):
         self.ref = r
@@ -159,12 +166,19 @@ class cluster:
     def update(self, id=None):
         if id:
             self.id = id
+        # self.idmembers = defaultdict(int)
+        seen = set()
         for idl in self.loci2seq:
             l = len(self.loci2seq[idl])
-            self.idmembers.update(dict(zip(self.loci2seq[idl], [1] * l)))
+            # self.idmembers.update(dict(zip(self.loci2seq[idl], [1] * l)))
+            seen = seen.union(set(self.loci2seq[idl]))
             if l > self.locimax:
                 self.locimax = l
                 self.locimaxid = idl
+        remove = set(self.idmembers.keys()) - seen
+        add = seen - set(self.idmembers.keys())
+        self.idmembers.update(dict(zip(add, [1] * len(add))))
+        map(self.idmembers.__delitem__, remove)
 
     def add_id_member(self, ids, idl):
         for s in ids:

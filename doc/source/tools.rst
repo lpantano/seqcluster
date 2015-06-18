@@ -14,9 +14,12 @@ Web-servers
 
 `StarScan`_: Database to browse the targets of miRNAs from degradome data. It has a fancy interface, and many species and data from GEO.
 
+`piRBase`_: Database for piRNA annotation and function. Published last year, for now the best I can find out there.
 
 .. _TFmiR: http://service.bioinformatik.uni-saarland.de/tfmir/
 
 .. _Diana-TarBase v7.0: http://diana.imis.athena-innovation.gr/DianaTools
 
 .. _StarScan: http://mirlab.sysu.edu.cn/starscan/Scan.php
+
+.. _piRBase: http://www.regulatoryrna.org/database/piRNA/index.html

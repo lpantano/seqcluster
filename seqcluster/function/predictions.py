@@ -26,14 +26,14 @@ def run_coral(clus_obj, out_dir, args):
     safe_makedir(workdir)
     bam_in = op.abspath(args.bam)
     bed_in = op.abspath(args.bed)
+    reference = op.abspath(args.ref)
     with chdir(workdir):
         bam_clean = coral.prepare_bam(bam_in, bed_in)
         out_dir = op.join(workdir, "regions")
         safe_makedir(out_dir)
         prefix = "seqcluster"
         loci_file = coral.detect_regions(bam_clean, bed_in, out_dir, prefix)
-        coral.create_features(bam_clean, loci_file, out_dir)
-
+        coral.create_features(bam_clean, loci_file, reference, out_dir)
 
 
 def make_predictions(clus_obj, out_dir, args):

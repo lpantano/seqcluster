@@ -9,6 +9,9 @@ Handling multi-mapped reads
 
 multi-mapped reads are the sequences that map more than one time on the genome, for instance, because there are multiple copies of a gene, like happens with tRNA precursors
 
+.. image:: seqcluster.png
+
+
 **Consequence**
 
 Many pipelines ignores these sequences as defaults, what means that you are losing at leas 20-30% of the data. In this case is difficult to decide where these sequences come from and currently there are three strategies:
