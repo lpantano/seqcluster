@@ -58,9 +58,7 @@ def clean_bam_file(bam_in, mask=None):
             except ValueError:
                 nh = 1
             seq_obj[seq_name] = sequence(seq_name)
-            # seq_obj[seq_name].align = nh
-            # ratio = seqs_list[seq_name].total() / float(nh)
-            # if ratio > 0.01:
+            seq_obj[seq_name].align = nh
             out_handle.write(read)
     return out_file, seq_obj
 
@@ -168,7 +166,7 @@ def _find_metaclusters(clus_obj, sequence2clusters, current_seq, min_seqs):
 
     return metacluster, seen
 
-def _find_families(clus_obj, min_seqs):
+def _find_families_deprecated(clus_obj, min_seqs):
     """
     Mask under same id all clusters that share sequences
     :param clus_obj: cluster object coming from detect_cluster

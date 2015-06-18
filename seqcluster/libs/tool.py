@@ -272,17 +272,11 @@ def reduceloci(clus_obj,  path):
     large = 0
     current = clus_obj.clusid
     logger.info("Number of loci: %s" % len(clus_obj.loci.keys()))
-    # before = 0
     with ProgressBar(maxval=len(current), redirect_stdout=True) as p:
         for itern, idmc in enumerate(current):
             p.update(itern)
             logger.debug("_reduceloci: cluster %s" % idmc)
             c = copy.deepcopy(list(current[idmc]))
-
-            # oo = set()
-            # for idc in c:
-            #    oo = oo.union(_get_seqs(clus_obj.clus[idc]))
-            # before += len(oo)
 
             n_loci = len(c)
             if n_loci < 1000:

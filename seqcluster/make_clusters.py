@@ -104,7 +104,7 @@ def _total_counts(seqs, seqL, aligned=False):
         if not aligned:
             l = len([total.update(seqL[s].freq) for s in seqs])
         else:
-            l = len([total.update(seqL[s].freq) for s in seqs if seqL[s].align == 1])
+            l = len([total.update(seqL[s].freq) for s in seqs if seqL[s].align > 0])
     elif isinstance(seqs, dict):
         [total.update(seqs[s].get_freq(seqL)) for s in seqs]
         l = sum(len(seqs[s].idmembers) for s in seqs)
@@ -144,7 +144,10 @@ def _create_json(clusL, args):
 
             idloci, chrom, s, e, st, size = data_loci[0]
             annotation = valid_ann[0] if valid_ann else "none"
+
             bed_line = "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (chrom, s, e, annotation, cid, st, len(seqList))
+            out_bed.write(bed_line)
+
 
             data_seqs = map(lambda (x): {x: seqs[x].seq}, seqList)
             # data_freq = map(lambda (x): seqs[x].freq, seqList)
@@ -155,17 +158,21 @@ def _create_json(clusL, args):
             # data_freq_values = map(lambda (x): map(int, scaled_seqs[x].freq.values()), seqList)
             # sum_freq = _sum_by_samples(data_freq_values)
             sum_freq = _sum_by_samples(scaled_seqs, samples_order)
+
             data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
             data_valid_str = " ".join(valid_ann)
             matrix.write("%s\t%s\t%s|%s\t%s\n" % (cid, c.toomany, data_valid_str, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
+            size_matrix.write(_write_size_table(data_freq, data_len, data_valid_str, cid))
+
             data_string = {'seqs': data_seqs, 'freq': data_freq_w_id,
                     'loci': data_loci, 'ann': data_ann, 'valid': valid_ann, 'peaks': clus[cid].peaks}
             data_clus[cid] = data_string
-            size_matrix.write(_write_size_table(data_freq, data_len, data_valid_str, cid))
-            out_bed.write(bed_line)
+
+
     out_file = os.path.join(args.dir_out, "seqcluster.json")
     with open(out_file, 'w') as handle_out:
         handle_out.write(json.dumps([data_clus], skipkeys=True, indent=2))
+
     return out_file
 
 
@@ -228,6 +235,7 @@ def _annotate(args, setclus):
             setclus = anncluster(c, setclus, db, args.type_ann)
     return setclus
 
+
 def _clean_alignment(args):
     """
     Prepare alignment for cluster detection.
@@ -237,6 +245,7 @@ def _clean_alignment(args):
     logger.info("Using %s file" % bam_file)
     detect_complexity(bam_file, args.ref)
     return bam_file, seq_obj
+
 
 def _create_clusters(seqL, bam_file, args):
     clus_obj = []
