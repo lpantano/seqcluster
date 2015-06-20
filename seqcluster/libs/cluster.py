@@ -52,8 +52,11 @@ def clean_bam_file(bam_in, mask=None):
             seq_name = int(read.query_name.replace('seq_', ''))
             match_size = [nts for oper, nts in read.cigartuples if oper == 0]
             subs_size = [nts for oper, nts in read.cigartuples if oper == 4]
-            if match_size[0] < 17 or subs_size[0] > 3:
+            if match_size[0] < 17:
                 continue
+            if subs_size:
+                if subs_size[0] > 3:
+                    continue
             try:
                 nh = read.get_tag('NH')
             except ValueError:
