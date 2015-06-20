@@ -14,12 +14,14 @@ clustering of small RNA sequences
 
 seqcluster generates a list of clusters of small RNA sequences, where they map on the genome, and the abundance in all the sample of the project
 
+.. image:: seqcluster.png
 
 **REMOVE ADAPTER**
 
 I am currently using ``cutadapt``:
 
 ::
+
     cutadapt --adapter=$ADAPTER --minimum-length=8 --untrimmed-output=sample1_notfound.fastq -o sample1_clean.fastq -m 17 --overlap=8 sample1.fastq 
 
 **COLLAPSE READS**
@@ -36,6 +38,7 @@ Here I am only using sequences that had the adapter, meaning that for sure are s
 **PREPARE SAMPLES**
 
 ::
+
     seqcluster prepare -c file_w_samples -o res --minl 17 --minc 2 --maxl 45
 
 the file_w_samples should have the following format:

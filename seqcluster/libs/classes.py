@@ -62,15 +62,23 @@ class sequence:
     """
     Object with information about sequences, counts, size, position, id and score
     """
-    def __init__(self, seq, freq, seq_id):
-        self.seq = seq
-        self.freq = copy.deepcopy(freq)
-        self.norm_freq = copy.deepcopy(freq)
-        self.len = len(seq)
+    def __init__(self, seq_id, seq=None, freq=None):
+        # self.seq = seq
+        # self.freq = copy.deepcopy(freq)
+        # self.norm_freq = copy.deepcopy(freq)
         self.pos = {}
         self.id = seq_id
+        self.align = 0
         self.score = 0
         self.factor = {}
+
+    def set_seq(self, seq):
+        self.seq = seq
+        self.len = len(seq)
+
+    def set_freq(self, freq):
+        self.freq = copy.deepcopy(freq)
+        self.norm_freq = copy.deepcopy(freq)
 
     def add_pos(self, pos_id, pos):
         self.pos[pos_id] = pos
@@ -154,8 +162,9 @@ class cluster:
         self.freq = total
         return total
 
-    def get_freq(self, seqL):
-        if self.freq:
+    def get_freq(self, seqL, force=False):
+        self.update()
+        if self.freq and not force:
             return self.freq
         else:
             return self.set_freq(seqL)

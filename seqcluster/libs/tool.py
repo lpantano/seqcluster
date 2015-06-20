@@ -270,47 +270,58 @@ def reduceloci(clus_obj,  path):
     filtered = {}
     n_cluster = 0
     large = 0
-    current = clus_obj.clus
+    current = clus_obj.clusid
     logger.info("Number of loci: %s" % len(clus_obj.loci.keys()))
     with ProgressBar(maxval=len(current), redirect_stdout=True) as p:
-        for itern, idc in enumerate(current):
+        for itern, idmc in enumerate(current):
             p.update(itern)
-            logger.debug("_reduceloci: cluster %s" % idc)
-            c = copy.deepcopy(current[idc])
-            n_loci = len(c.loci2seq)
+            logger.debug("_reduceloci: cluster %s" % idmc)
+            c = copy.deepcopy(list(current[idmc]))
+
+            n_loci = len(c)
             if n_loci < 1000:
-                filtered, n_cluster = _iter_loci(c, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
+                filtered, n_cluster = _iter_loci(c, clus_obj.clus, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
             else:
                 large += 1
                 n_cluster += 1
-                _write_cluster(c, clus_obj.loci, path)
-                filtered[n_cluster] = _add_complete_cluster(n_cluster, c)
+                _write_cluster(c, clus_obj.clus, clus_obj.loci, n_cluster, path)
+                filtered[n_cluster] = _add_complete_cluster(n_cluster, c, clus_obj.clus)
     clus_obj.clus = filtered
+
+    seqs = 0
+    for idc in filtered:
+        seqs += len(filtered[idc].idmembers)
+    logger.info("seqs in clusters %s" % (seqs))
+
     logger.info("Clusters too long to be analized: %s" % large)
     logger.info("Number of clusters removed because low number of reads: %s" % REMOVED)
     return clus_obj
 
 
-def _write_cluster(c, loci, path):
+def _write_cluster(metacluster, cluster, loci, idx, path):
     """
     For complex meta-clusters, write all the loci for further debug
     """
-    out_file = op.join(path, 'log', str(c.id) + '.bed')
+    out_file = op.join(path, 'log', str(idx) + '.bed')
     with file_transaction(out_file) as out_tx:
         with open(out_tx, 'w') as out_handle:
-            for idl in c.loci2seq:
-                pos = loci[idl].list()
-                print >>out_handle, "\t".join(pos[:4] + [str(len(c.loci2seq[idl]))] + [pos[-1]])
+            for idc in metacluster:
+                for idl in cluster[idc].loci2seq:
+                    pos = loci[idl].list()
+                    print >>out_handle, "\t".join(pos[:4] + [str(len(cluster[idc].loci2seq[idl]))] + [pos[-1]])
 
 
-def _add_complete_cluster(idx, clus):
-    logger.debug("Not resolving cluster %s, too many loci. New id %s" % (clus.id, idx))
-    locilen_sorted = sorted(clus.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
+def _add_complete_cluster(idx, meta, clusters):
+    logger.debug("Not resolving cluster %s, too many loci" % (idx))
+    clus = {}
+    [clus.update(clusters[idc].locilen) for idc in meta]
+    locilen_sorted = sorted(clus.iteritems(), key=operator.itemgetter(1), reverse=True)
     maxidl = locilen_sorted[0][0]
     c = cluster(idx)
-    c.add_id_member(clus.idmembers, maxidl)
+    for idc in meta:
+        c.add_id_member(clusters[idc].idmembers.keys(), maxidl)
     c.id = idx
-    c.toomany = len(locilen_sorted)
+    c.toomany = len(meta)
     return c
 
 
@@ -351,7 +362,7 @@ def _iter_loci_deprecated(c, filtered, n_cluster, min_seq):
     return filtered, n_cluster
 
 
-def _iter_loci(c, s2p, filtered, n_cluster):
+def _iter_loci(meta, clusters, s2p, filtered, n_cluster):
     """Go through all locus and decide if they are part
     of the same TU or not.
 
@@ -363,16 +374,19 @@ def _iter_loci(c, s2p, filtered, n_cluster):
     :return:
         * filtered: dict of cluster objects
         * n_cluster: int cluster id"""
-    n_loci = len(c.loci2seq)
+    loci = dict(zip(meta, [clusters[idc] for idc in meta]))
+
+    n_loci = len(meta)
     n_loci_prev = n_loci + 1
     cicle = 0
     # [logger.note("BEFORE %s %s %s" % (c.id, idl, len(c.loci2seq[idl]))) for idl in c.loci2seq]
     internal_cluster = {}
-    loci = _convert_to_clusters(c)
     if n_loci == 1:
         n_cluster += 1
-        filtered[n_cluster] = c
+        filtered[n_cluster] = clusters[meta[0]]
         filtered[n_cluster].update(id=n_cluster)
+        filtered[n_cluster].set_freq(s2p[1])
+
     while n_loci < n_loci_prev and n_loci != 1:
         n_loci_prev = n_loci
         cicle += 1
@@ -400,8 +414,8 @@ def _iter_loci(c, s2p, filtered, n_cluster):
         filtered[n_cluster].set_freq(s2p[1])
     logger.debug("_iter_loci: filtered %s" % filtered.keys())
 
-    for new_c in internal_cluster.values():
-        [logger.note("%s %s %s %s" % (c.id, new_c.id, idl, len(new_c.loci2seq[idl]))) for idl in new_c.loci2seq]
+    # for new_c in internal_cluster.values():
+    #    [logger.note("%s %s %s %s" % (meta, new_c.id, idl, len(new_c.loci2seq[idl]))) for idl in new_c.loci2seq]
     return filtered, n_cluster
 
 
@@ -594,6 +608,8 @@ def _split_cluster_by_most_vote(c, p):
             remove.loci2seq[idl] = list(set(remove.loci2seq[idl]) - set(common))
     keep.loci2seq = {k: v for k, v in keep.loci2seq.iteritems() if len(v) > 0}
     remove.loci2seq = {k: v for k, v in remove.loci2seq.iteritems() if len(v) > 0}
+    keep.update()
+    remove.update()
     c[keep.id] = keep
     c[remove.id] = remove
     return c
@@ -635,6 +651,8 @@ def _select_loci(c):
     logger.debug("_select_loci: max size %s" % max_size)
     loci_clean = {locus: c.loci2seq[locus] for locus, size in loci_len_sort if size > 0.8 * max_size}
     c.loci2seq = loci_clean
+    removed = list(set(c.idmembers.keys()) - set(_get_seqs(c)))
+    c.add_id_member(removed, loci_len_sort[0][0])
     logger.debug("_select_loci: number of loci %s after cleaning" % len(c.loci2seq.keys()))
     return c
 
