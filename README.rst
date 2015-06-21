@@ -25,60 +25,17 @@ A non-biased framework for the annotation and classification of the non-miRNA sm
 Pantano L1, Estivill X, Martí E. Bioinformatics. 2011 Nov 15;27(22):3202-3. doi: 10.1093/bioinformatics/btr527. Epub 2011 Oct 5.
 PMID: 21976421
 
-installation
+quick start links
 ---------
 
-`seqcluster-helper`_ provides 
-a python framework to run a whole pipeline for small RNA (miRNA + others).
+See installation at http://seqcluster.readthedocs.org/installation.html
 
-Install first bcbio-nextgen and cutadapter after install conda if you want a isolate env::
+Moreover `seqcluster-helper`_ provides 
+a python framework to run a whole pipeline for small RNA (miRNA + tRNA + piRNA + others).
 
-    wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
-    bash Miniconda-latest-Linux-x86_64.sh -b -p ~/install/seqcluster/anaconda
-    PATH = ~/install/seqcluster/anaconda/bin:$PATH
-    conda install pip
-    conda install -c https://conda.binstar.org/bcbio bcbio-nextgen
-    pip install cutadapt
-    pip install matplotlib
-    pip install -U cython
+.. _seqcluster-helper: http://seqcluster.readthedocs.org/getting_started.html#easy-start-with-seqcluster-helper-py
 
-
-Remember to add the new python into your path every time you want to user seqcluster. 
-If you already have `conda` in your system, just type::
-
-    conda install -c https://conda.binstar.org/bcbio bcbio-nextgen
-
-If you need to install bedtools, samtools and star, follow these steps::
-
-   git clone https://github.com/Homebrew/linuxbrew.git  ~/install/seqcluster/linuxbrew
-   cd ~/install/seqcluster/linuxbrew/bin
-   ln -s `which gcc gcc-4.4`
-   PATH = ~/install/seqcluster/linuxbrew/bin:$PATH
-   brew tab homebrew/science
-   brew tab chapmanb/homebre-cbl
-   brew install bedtools
-   brew install samtools
-   brew install star-rna
-   
-
-Then you can get seqcluster::
-
-    pip install seqcluster
-
-or the developement version::
-
-    git clone https://github.com/lpantano/seqcluster
-    cd seqcluster
-    python setup.py install
-
-
-.. _seqcluster-helper: https://github.com/lpantano/seqcluster-helper/blob/master/README.md
-
-
-quick start
----------
-
-Complete tutorial here: http://seqcluster.readthedocs.org/getting_started.html#clustering-of-small-rna-sequences
+Complete tutorial is here: http://seqcluster.readthedocs.org/getting_started.html#clustering-of-small-rna-sequences
 
 report
 ---------
@@ -89,3 +46,11 @@ sequences counts for each sample.
 
 .. _this: https://rawgit.com/lpantano/seqcluster/master/data/examples_report/html/index.html
 .. _description: https://rawgit.com/lpantano/seqcluster/master/data/examples_report/html/1/maps.html
+
+Contributors
+------------
+
+* `Lorena Pantano  <https://github.com/lpantano>`_ (Bioinformatic Core, Harvard Chan School, Boston, USA)
+* `Judith Flo Gaya <http://www.seas.harvard.edu/directory/jflo>`_ (School of Engineer and Aplied Science- Harvard University, Boston, USA)
+* `Eulalia Marti Puig <http://www.crg.eu/en/group-members/eul%C3%A0lia-mart%C3%AD-puig>`_ ( 
+Genomics and Disease, Center of Genomic Regulation, Barcelona, Spain)
