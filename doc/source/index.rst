@@ -11,6 +11,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   installation.rst
+   
    getting_started.rst
 
    mirna_annotation.rst
