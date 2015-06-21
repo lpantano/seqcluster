@@ -52,5 +52,4 @@ Contributors
 
 * `Lorena Pantano  <https://github.com/lpantano>`_ (Bioinformatic Core, Harvard Chan School, Boston, USA)
 * `Judith Flo Gaya <http://www.seas.harvard.edu/directory/jflo>`_ (School of Engineer and Aplied Science- Harvard University, Boston, USA)
-* `Eulalia Marti Puig <http://www.crg.eu/en/group-members/eul%C3%A0lia-mart%C3%AD-puig>`_ ( 
-Genomics and Disease, Center of Genomic Regulation, Barcelona, Spain)
+* `Eulalia Marti Puig <http://www.crg.eu/en/group-members/eul%C3%A0lia-mart%C3%AD-puig>`_ (Genomics and Disease, Center of Genomic Regulation, Barcelona, Spain)
