@@ -1,4 +1,5 @@
 # adapted from http://stackoverflow.com/questions/4090169/elegant-way-to-check-for-missing-packages-and-install-them
+# adapted from @roryk https://github.com/roryk/bcbio.rnaseq/blob/master/resources/scripts/install_libraries.R
 library(methods)
 mirror = "http://cran.at.r-project.org"
 update.packages(checkBuilt = TRUE, ask = FALSE, repos=mirror)
