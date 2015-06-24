@@ -16,6 +16,18 @@ def _create_db(name):
     return con
 
 
+def _get_description(string):
+    """
+    Parse annotation to get nice description
+    """
+    ann = set()
+    if not string:
+        return "This cluster is inter-genic."
+    for item in string:
+        for db in item:
+            ann = ann.union(set(item[db]))
+    return "annotated as: %s ..." % ",".join(list(ann)[:3])
+
 def _insert_data(con, data):
     """
     insert line for each cluster
@@ -23,12 +35,14 @@ def _insert_data(con, data):
     with con:
         cur = con.cursor()
         cur.execute("DROP TABLE IF EXISTS clusters;")
-        cur.execute("CREATE TABLE clusters(Id INT, Locus TEXT, Annotation TEXT, Sequences TEXT)")
+        cur.execute("CREATE TABLE clusters(Id INT, Description TEXT, Locus TEXT, Annotation TEXT, Sequences TEXT)")
         for c in data[0]:
             locus = json.dumps(data[0][c]['loci'])
             annotation = json.dumps(data[0][c]['ann'])
+            description = _get_description(data[0][c]['ann'])
+            print description
             sequences = json.dumps(data[0][c]['seqs'])
-            cur.execute("INSERT INTO clusters VALUES(%s, '%s', '%s', '%s')" % (c, locus, annotation, sequences))
+            cur.execute("INSERT INTO clusters VALUES(%s, '%s', '%s', '%s', '%s')" % (c, description, locus, annotation, sequences))
 
 
 def _close(con):
