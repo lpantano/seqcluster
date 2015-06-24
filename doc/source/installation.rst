@@ -68,7 +68,11 @@ Install isomiRs package for R using devtools::
 
     devtools::install_github('lpantano/isomiRs', ref='develop')
 
+To install all packages used by the report::
 
+    Rscript -e 'source(https://raw.githubusercontent.com/lpantano/seqcluster/master/scripts/install_libraries.R)'
+    
+    
 .. _seqcluster-helper: https://github.com/lpantano/seqcluster-helper/blob/master/README.md
 
 
