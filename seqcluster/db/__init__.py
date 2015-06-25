@@ -28,6 +28,14 @@ def _get_description(string):
             ann = ann.union(set(item[db]))
     return "annotated as: %s ..." % ",".join(list(ann)[:3])
 
+def _get_sequences(cluster):
+    seqs = [s.values()[0] for s in cluster['seqs']]
+    freqs = [f.values()[0] for f in cluster['freq']]
+    data = []
+    for s, f in zip(seqs, freqs):
+        data.append({'name': s, 'freq': f})
+    return data
+
 def _insert_data(con, data):
     """
     insert line for each cluster
@@ -40,8 +48,7 @@ def _insert_data(con, data):
             locus = json.dumps(data[0][c]['loci'])
             annotation = json.dumps(data[0][c]['ann'])
             description = _get_description(data[0][c]['ann'])
-            print description
-            sequences = json.dumps(data[0][c]['seqs'])
+            sequences = json.dumps(_get_sequences(data[0][c]))
             cur.execute("INSERT INTO clusters VALUES(%s, '%s', '%s', '%s', '%s')" % (c, description, locus, annotation, sequences))
 
 
