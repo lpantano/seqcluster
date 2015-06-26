@@ -42,7 +42,8 @@ script: nosetests
 after_script:
     - "echo $PATH"
     - "cd data/test_cluster"
-    - "seqcluster cluster -m seqs_set.ma -a seqs_map.bam -o res -d"
+    - "seqcluster cluster -m seqs_set.ma -a seqs_map.bam -o res -d -ref ../genomes/genome.fa"
+    - "seqcluster report -j res/seqcluster.json -r ../genomes/genome.fa -o report"
 branches:
     only:
         - master
