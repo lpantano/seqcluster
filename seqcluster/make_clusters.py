@@ -90,7 +90,7 @@ def cluster(args):
         name = args.db + ".db"
         logger.info("Create database: database/" + name)
         data = load_data(json_file)
-        out_dir = op.join(args.dir_out, "databse")
+        out_dir = op.join(args.dir_out, "database")
         make_database(data, name, out_dir)
     logger.info("Finished")
 

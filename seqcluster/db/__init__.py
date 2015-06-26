@@ -43,13 +43,18 @@ def _insert_data(con, data):
     with con:
         cur = con.cursor()
         cur.execute("DROP TABLE IF EXISTS clusters;")
-        cur.execute("CREATE TABLE clusters(Id INT, Description TEXT, Locus TEXT, Annotation TEXT, Sequences TEXT)")
+        cur.execute("CREATE TABLE clusters(Id INT, Description TEXT, Locus TEXT, Annotation TEXT, Sequences TEXT, Profile TXT)")
         for c in data[0]:
             locus = json.dumps(data[0][c]['loci'])
             annotation = json.dumps(data[0][c]['ann'])
             description = _get_description(data[0][c]['ann'])
             sequences = json.dumps(_get_sequences(data[0][c]))
-            cur.execute("INSERT INTO clusters VALUES(%s, '%s', '%s', '%s', '%s')" % (c, description, locus, annotation, sequences))
+            keys = data[0][c]['freq'][0].values()[0].keys()
+            profile = "Not available."
+            if data[0][c]['profile']:
+                data[0][c]['profile']['num_lines'] = len(data[0][c]['profile'])
+                profile = json.dumps(data[0][c]['profile'])
+            cur.execute("INSERT INTO clusters VALUES(%s, '%s', '%s', '%s', '%s', '%s')" % (c, description, locus, annotation, sequences, profile))
 
 
 def _close(con):
