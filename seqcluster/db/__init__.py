@@ -51,7 +51,7 @@ def _insert_data(con, data):
             sequences = json.dumps(_get_sequences(data[0][c]))
             keys = data[0][c]['freq'][0].values()[0].keys()
             profile = "Not available."
-            if data[0][c]['profile']:
+            if 'profile' in data[0][c]:
                 data[0][c]['profile']['num_lines'] = len(data[0][c]['profile'])
                 profile = json.dumps(data[0][c]['profile'])
             cur.execute("INSERT INTO clusters VALUES(%s, '%s', '%s', '%s', '%s', '%s')" % (c, description, locus, annotation, sequences, profile))
