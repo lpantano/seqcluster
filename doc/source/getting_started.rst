@@ -12,7 +12,7 @@ Best practices are implemented in a `python framework`_.
 clustering of small RNA sequences
 -------- 
 
-seqcluster generates a list of clusters of small RNA sequences, where they map on the genome, and the abundance in all the sample of the project
+seqcluster generates a list of clusters of small RNA sequences, their genome location, their annotation and the abundance in all the sample of the project
 
 .. image:: seqcluster.png
 
