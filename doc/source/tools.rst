@@ -16,6 +16,11 @@ Web-servers
 
 `piRBase`_: Database for piRNA annotation and function. Published last year, for now the best I can find out there.
 
+`chimira`_: Web tool to analyze isomiR. It gives you a quick idea of you samples.
+
+
+`MicroCosm`_: MiRNA target database. Updated and download option.
+
 .. _TFmiR: http://service.bioinformatik.uni-saarland.de/tfmir/
 
 .. _Diana-TarBase v7.0: http://diana.imis.athena-innovation.gr/DianaTools
@@ -23,3 +28,7 @@ Web-servers
 .. _StarScan: http://mirlab.sysu.edu.cn/starscan/Scan.php
 
 .. _piRBase: http://www.regulatoryrna.org/database/piRNA/index.html
+
+.. _chimira: http://wwwdev.ebi.ac.uk/enright-srv/chimira/
+
+.. _MicroCosm: http://www.ebi.ac.uk/enright-srv/microcosm/htdocs/targets/v5/

@@ -4,17 +4,21 @@ import os
 # from collections import Counter
 
 import matplotlib
-matplotlib.use('Agg')
-import pylab
-pylab.rcParams['figure.figsize'] = (25.0, 10.0)
+matplotlib.use('Agg', force=True)
+from matplotlib import pyplot as plt
+plt.ioff()
+AXIS_FONT = {'fontname':'Arial', 'size':'14'}
+# import pylab
+# pylab.rcParams['figure.figsize'] = (25.0, 10.0)
 from collections import Counter, defaultdict
-import pandas as pd
+# import pandas as pd
 
 from read import map_to_precursors
 from utils import safe_dirs
 from progressbar import ProgressBar
 
 from bcbio.utils import file_exists
+from bcbio import install
 
 from seqcluster.html import HTML
 from seqcluster import templates
@@ -50,42 +54,49 @@ def make_profile(data, out_dir, args):
             p.update(itern)
             logger.debug("creating cluser: {}".format(c))
             safe_dirs(os.path.join(out_dir, c))
-            valid, ann = _single_cluster(c, data, os.path.join(out_dir, c, "maps.tsv"), args)
+            valid, ann, pos_structure = _single_cluster(c, data, os.path.join(out_dir, c, "maps.tsv"), args)
+            data[0][c].update({'profile': pos_structure})
             if valid:
                 main_table.append([_get_link(c), _get_ann(valid, ann)])
 
     main_html = HTML.table(main_table, header_row=header, attribs={'id': 'keywords'})
     html_template = os.path.normpath(os.path.join(os.path.dirname(os.path.realpath(templates.__file__)), "main"))
     content = open(html_template).read()
-    data = {'main': main_html}
-    out_content = string.Template(content).safe_substitute(data)
+    main_html = {'main': main_html}
+    out_content = string.Template(content).safe_substitute(main_html)
     with open(html_file, 'w') as out_handle:
         print >>out_handle, out_content
+    return data
 
 
 def _expand(dat, counts, start, end):
     """
     expand the same counts from start to end
     """
-    for pos in range(start, end):
-        dat[pos] += counts
+    for s in counts:
+        for pos in range(start, end):
+            dat[s][pos] += counts[s]
     return dat
 
 
-def _convert_to_df(in_file):
+def _convert_to_df(in_file, freq):
     """
     convert data frame into table with pandas
     """
-    dat = Counter()
+    dat = defaultdict(Counter)
     with open(in_file) as in_handle:
         for line in in_handle:
             cols = line.strip().split(" ")
-            counts = float(cols[1].replace("cx", ""))
+            name = cols[1].replace("cx", "")
+            counts = freq[name]
             dat = _expand(dat, counts, int(cols[4]), int(cols[5]))
-    dat = {'positions': dat.keys(), 'expression': dat.values()}
-    df = pd.DataFrame(data=dat, columns=dat.keys())
-    df.set_index('positions', inplace=True)
-    return df
+    # dat = {'positions': dat.keys(), 'expression': dat.values()}
+    # df = pd.DataFrame(data=dat)
+    # print df
+    # df.set_index('positions', inplace=True)
+    for s in dat:
+        dat[s] = {'x': dat[s].keys(), 'y': dat[s].values()}
+    return dat
 
 
 def _make_html(c, html_file, figure_file, prefix):
@@ -95,7 +106,7 @@ def _make_html(c, html_file, figure_file, prefix):
     """
     ann = defaultdict(list)
     seqs_table = []
-
+    install._set_matplotlib_default_backend()
     src_img = "<img src=\"%s\" width=\"800\" height=\"350\" />" % os.path.basename(figure_file)
     coor_list = [" ".join(map(str, l)) for l in c['loci']]
 
@@ -141,7 +152,9 @@ def _single_cluster(c, data, out_file, args):
     figure_file = out_file.replace(".tsv", ".png")
     html_file = out_file.replace(".tsv", ".html")
     prefix = os.path.dirname(out_file)
-    names = [round(sum(s.values()[0].values())) for s in data[0][c]['freq']]
+    freq = defaultdict()
+    [freq.update({s.keys()[0]: s.values()[0]}) for s in data[0][c]['freq']]
+    names = [s.keys()[0] for s in data[0][c]['seqs']]
     seqs = [s.values()[0] for s in data[0][c]['seqs']]
 
     loci = data[0][c]['loci']
@@ -152,18 +165,16 @@ def _single_cluster(c, data, out_file, args):
     if not file_exists(out_file):
         logger.debug("map all sequences to all loci %s " % loci)
         map_to_precursors(seqs, names, {loci[0][0]: [loci[0][0:5]]}, out_file, args)
-    # map_sequences_w_bowtie(sequences, precursors)
 
     logger.debug("plot sequences on loci")
-    df = _convert_to_df(out_file)
-    if not df.empty:
+    df = _convert_to_df(out_file, freq)
+    if df:
         if not file_exists(figure_file):
-            plot = df.plot()
-            plot.set_ylabel('Normalized expression', fontsize=25)
-            plot.set_xlabel('Position', fontsize=25)
-            plot.tick_params(axis='both', which='major', labelsize=20)
-            plot.tick_params(axis='both', which='minor', labelsize=20)
-            plot.get_figure().savefig(figure_file)
+            for s in df:
+                plt.plot(df[s]['x'], df[s]['y'])
+            plt.ylabel('Normalized expression', fontsize=15)
+            plt.xlabel('Position', fontsize=15)
+            plt.savefig(figure_file)
         valid, ann = _make_html(data[0][c], html_file, figure_file, prefix)
 
-    return valid, ann
+    return valid, ann, df
