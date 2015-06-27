@@ -1,24 +1,21 @@
 import logging
 import string
 import os
-# from collections import Counter
 
-import matplotlib
-matplotlib.use('Agg', force=True)
+# import matplotlib
+# matplotlib.use('Agg', force=True)
 from matplotlib import pyplot as plt
 plt.ioff()
-AXIS_FONT = {'fontname':'Arial', 'size':'14'}
+AXIS_FONT = {'fontname': 'Arial', 'size': '14'}
 # import pylab
 # pylab.rcParams['figure.figsize'] = (25.0, 10.0)
 from collections import Counter, defaultdict
-# import pandas as pd
 
 from read import map_to_precursors
 from utils import safe_dirs
 from progressbar import ProgressBar
 
 from bcbio.utils import file_exists
-from bcbio import install
 
 from seqcluster.html import HTML
 from seqcluster import templates
@@ -106,7 +103,6 @@ def _make_html(c, html_file, figure_file, prefix):
     """
     ann = defaultdict(list)
     seqs_table = []
-    install._set_matplotlib_default_backend()
     src_img = "<img src=\"%s\" width=\"800\" height=\"350\" />" % os.path.basename(figure_file)
     coor_list = [" ".join(map(str, l)) for l in c['loci']]
 
@@ -161,7 +157,7 @@ def _single_cluster(c, data, out_file, args):
 
     if loci[0][3] - loci[0][2] > 500:
         logger.info("locus bigger > 500 nt, skipping: %s" % loci)
-        return valid, ann
+        return valid, ann, {}
     if not file_exists(out_file):
         logger.debug("map all sequences to all loci %s " % loci)
         map_to_precursors(seqs, names, {loci[0][0]: [loci[0][0:5]]}, out_file, args)

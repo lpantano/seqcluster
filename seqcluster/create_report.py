@@ -1,8 +1,11 @@
 import os
 import shutil
 import logging
+
+from bcbio import install
+install._set_matplotlib_default_backend()
 import matplotlib
-matplotlib.use('Agg')
+matplotlib.use('Agg', force=True)
 
 from libs.read import load_data
 from libs.report import make_profile
