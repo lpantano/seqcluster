@@ -4,14 +4,17 @@ from progressbar import ProgressBar
 
 import pysam
 import pybedtools
-from pypeaks import Data
+try:
+    from pypeaks import Data
+except ImportError:
+    None
 import numpy as np
 
 from bcbio.utils import file_exists
 
 import logger as mylog
 from classes import *
-from seqcluster.function.peakdetect import peakdetect as peakdetect
+# from seqcluster.function.peakdetect import peakdetect as peakdetect
 from tool import _get_seqs_from_cluster
 
 
