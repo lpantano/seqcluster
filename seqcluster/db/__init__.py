@@ -5,6 +5,8 @@ import os.path as op
 import sqlite3 as lite
 import json
 
+from collections import defaultdict
+
 from bcbio.utils import safe_makedir
 
 
@@ -14,7 +16,6 @@ def _create_db(name):
     """
     con = lite.connect(name)
     return con
-
 
 def _get_description(string):
     """
@@ -36,6 +37,34 @@ def _get_sequences(cluster):
         data.append({'name': s, 'freq': f})
     return data
 
+def _take_closest(num,collection):
+    return min(collection,key=lambda x:abs(x-num))
+
+def _get_closer(dat, pos):
+    if pos in dat:
+        return pos
+    else:
+        closest_pos = _take_closest(pos, dat.keys())
+        if abs(closest_pos - pos) < 5:
+            return closest_pos
+        return 0
+
+def _set_format(profile):
+    """
+    Prepare dict to list of y values with same x
+    """
+    x = set()
+    for sample in profile:
+        x = x.union(set(profile[sample].keys()))
+    end, start = max(x), min(x)
+    x = range(start, end, 4)
+    scaled_profile = defaultdict(list)
+    for pos in x:
+        for sample in profile:
+            y = _get_closer(profile[sample], pos)
+            scaled_profile[sample].append(profile[sample][y])
+    return {'x': list(x), 'y': scaled_profile.values(), 'names': scaled_profile.keys()}
+
 def _insert_data(con, data):
     """
     insert line for each cluster
@@ -52,15 +81,13 @@ def _insert_data(con, data):
             keys = data[0][c]['freq'][0].values()[0].keys()
             profile = "Not available."
             if 'profile' in data[0][c]:
-                data[0][c]['profile']['num_lines'] = len(data[0][c]['profile'])
-                profile = json.dumps(data[0][c]['profile'])
+                # data[0][c]['profile']['num_lines'] = len(data[0][c]['profile'])
+                profile = json.dumps(_set_format(data[0][c]['profile']))
             cur.execute("INSERT INTO clusters VALUES(%s, '%s', '%s', '%s', '%s', '%s')" % (c, description, locus, annotation, sequences, profile))
-
 
 def _close(con):
     if con:
         con.close()
-
 
 def make_database(data, name="seqcluster.db", out_dir="database"):
     out_dir = safe_makedir(out_dir)

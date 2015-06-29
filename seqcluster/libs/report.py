@@ -72,7 +72,7 @@ def _expand(dat, counts, start, end):
     """
     for s in counts:
         for pos in range(start, end):
-            dat[s][pos] += counts[s]
+            dat[s][int(pos)] += counts[s]
     return dat
 
 
@@ -91,8 +91,8 @@ def _convert_to_df(in_file, freq):
     # df = pd.DataFrame(data=dat)
     # print df
     # df.set_index('positions', inplace=True)
-    for s in dat:
-        dat[s] = {'x': dat[s].keys(), 'y': dat[s].values()}
+    # for s in dat:
+    #    dat[s] = {'x': dat[s].keys(), 'y': dat[s].values()}
     return dat
 
 
@@ -167,7 +167,7 @@ def _single_cluster(c, data, out_file, args):
     if df:
         if not file_exists(figure_file):
             for s in df:
-                plt.plot(df[s]['x'], df[s]['y'])
+                plt.plot(df[s].keys(), df[s].values())
             plt.ylabel('Normalized expression', fontsize=15)
             plt.xlabel('Position', fontsize=15)
             plt.savefig(figure_file)
