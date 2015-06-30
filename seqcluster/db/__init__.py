@@ -63,7 +63,7 @@ def _set_format(profile):
         for sample in profile:
             y = _get_closer(profile[sample], pos)
             scaled_profile[sample].append(profile[sample][y])
-    return {'x': list(x), 'y': scaled_profile.values(), 'names': scaled_profile.keys()}
+    return {'x': list(x), 'y': scaled_profile, 'num_lines': len(scaled_profile)}
 
 def _insert_data(con, data):
     """
