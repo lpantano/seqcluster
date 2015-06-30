@@ -33,8 +33,8 @@ Download the tool from `miraligner`_ repository.
 
 Download the mirbase files (`hairpin`_ and `miRNA`_) from the ftp and save it to `DB` folder.
 
-.. _hairpin: ftp://mirbase.org/pub/mirbase/CURRENT/hairpin.fa
-.. _miRNA: ftp://mirbase.org/pub/mirbase/CURRENT/miRNA.str
+.. _hairpin: ftp://mirbase.org/pub/mirbase/CURRENT/hairpin.fa.zip
+.. _miRNA: ftp://mirbase.org/pub/mirbase/CURRENT/miRNA.str.zip
 
 You can map the miRNAs with.
 
