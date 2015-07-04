@@ -113,5 +113,10 @@ To install all packages used by the Rmd report::
 
 **check installation**
 
-`seqcluster-installer.py --check` will tell you if all dependencies are installed and ready to use the framework
+::
+
+    
+    seqcluster-installer.py --check 
+
+will tell you if all dependencies are installed and ready to use the framework
 
