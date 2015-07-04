@@ -1,8 +1,8 @@
 .. _installation:
 
-
-installation
---------
+============
+Installation
+============
 
 **Binstar binary**
 
