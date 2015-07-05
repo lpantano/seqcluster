@@ -34,6 +34,7 @@ def _get_sequences(cluster):
     freqs = [f.values()[0] for f in cluster['freq']]
     data = []
     for s, f in zip(seqs, freqs):
+        f = dict(zip(f.keys(), map(int, f.values())))
         data.append({'name': s, 'freq': f})
     return data
 
@@ -56,14 +57,16 @@ def _set_format(profile):
     x = set()
     for sample in profile:
         x = x.union(set(profile[sample].keys()))
+    if not x:
+        return ''
     end, start = max(x), min(x)
     x = range(start, end, 4)
     scaled_profile = defaultdict(list)
     for pos in x:
         for sample in profile:
             y = _get_closer(profile[sample], pos)
-            scaled_profile[sample].append(profile[sample][y])
-    return {'x': list(x), 'y': scaled_profile.values(), 'names': scaled_profile.keys()}
+            scaled_profile[sample].append(int(profile[sample][y]))
+    return {'x': list(x), 'y': scaled_profile, 'names': scaled_profile.keys()}
 
 def _insert_data(con, data):
     """
