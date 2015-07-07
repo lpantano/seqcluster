@@ -98,13 +98,13 @@ Header of the *.mirna.out file:
 * mir: miRNA name
 * start: start of the sequence at the precursor
 * end: end of the sequence at the precursor
-* mism: nucleotide substitution position-nucleotide at sequence-nucleotide at precursor
+* mism: nucleotide substitution position | nucleotide at sequence | nucleotide at precursor
 * addition: nucleotides at 3 end added::
 
 
     precursor         => cctgtggttagctggttgcatatcc
     annotated miRNA   =>   TGTGGTTAGCTGGTTGCATAT
-    sequence add: qTT =>   TGTGGTTAGCTGGTTGCATATTT
+    sequence add: dTT =>   TGTGGTTAGCTGGTTGCATATTT
 
 
 * tr5: nucleotides at 5 end different from the annonated sequence in miRBase::
@@ -112,8 +112,8 @@ Header of the *.mirna.out file:
 
 	precursor 	      => cctgtggttagctggttgcatatcc
 	annotated miRNA   =>   TGTGGTTAGCTGGTTGCATAT
-	sequence tr5: qCC => CCTGTGGTTAGCTGGTTGCATAT
-	sequence tr5: tTG =>     TGGTTAGCTGGTTGCATAT
+	sequence tr5: uCC => CCTGTGGTTAGCTGGTTGCATAT
+	sequence tr5: dTG =>     TGGTTAGCTGGTTGCATAT
 
 
 * tr3: nucleotides at 3 end different from the annotated sequence in miRBase::
@@ -121,8 +121,8 @@ Header of the *.mirna.out file:
 
     precursor         => cctgtggttagctggttgcatatcc
     annotated miRNA   =>   TGTGGTTAGCTGGTTGCATAT
-    sequence tr3: qCC =>   TGTGGTTAGCTGGTTGCATATCC
-    sequence tr3: tAT =>   TGTGGTTAGCTGGTTGCAT
+    sequence tr3: dCC =>   TGTGGTTAGCTGGTTGCATATCC
+    sequence tr3: uAT =>   TGTGGTTAGCTGGTTGCAT
 
 * s5: offset nucleotides at the begining of the annotated miRNAs::
 
