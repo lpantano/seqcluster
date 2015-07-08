@@ -99,6 +99,7 @@ class position:
         self.end = int(end)
         self.strand = strand
         self.coverage = Counter()
+        self.counts = Counter()
         self.db_ann = {}
 
     def list(self):
