@@ -14,9 +14,6 @@ small RNA analysis from NGS data
 .. image:: https://badge.fury.io/py/seqcluster.svg
     :target: http://badge.fury.io/py/seqcluster
 
-.. image:: https://pypip.in/d/seqcluster/badge.png
-    :target: https://pypi.python.org/pypi/seqcluster
-
 
 Cite
 ---------
@@ -53,3 +50,9 @@ Contributors
 * `Lorena Pantano  <https://github.com/lpantano>`_ (Bioinformatic Core, Harvard Chan School, Boston, USA)
 * `Judith Flo Gaya <http://www.seas.harvard.edu/directory/jflo>`_ (School of Engineer and Aplied Science- Harvard University, Boston, USA)
 * `Eulalia Marti Puig <http://www.crg.eu/en/group-members/eul%C3%A0lia-mart%C3%AD-puig>`_ (Genomics and Disease, Center of Genomic Regulation, Barcelona, Spain)
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/lpantano/seqcluster/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
