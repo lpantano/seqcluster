@@ -7,6 +7,7 @@ import os
 from matplotlib import pyplot as plt
 plt.ioff()
 AXIS_FONT = {'fontname': 'Arial', 'size': '14'}
+from math import log10 as mlog10
 # import pylab
 # pylab.rcParams['figure.figsize'] = (25.0, 10.0)
 from collections import Counter, defaultdict
@@ -70,9 +71,9 @@ def _expand(dat, counts, start, end):
     """
     expand the same counts from start to end
     """
-    for s in counts:
-        for pos in range(start, end):
-            dat[s][int(pos)] += counts[s]
+    for pos in range(start, end):
+        for s in counts:
+            dat[s][pos] += counts[s]
     return dat
 
 
@@ -91,8 +92,9 @@ def _convert_to_df(in_file, freq):
     # df = pd.DataFrame(data=dat)
     # print df
     # df.set_index('positions', inplace=True)
-    # for s in dat:
-    #    dat[s] = {'x': dat[s].keys(), 'y': dat[s].values()}
+    for s in dat:
+        for p in dat[s]:
+            dat[s][p] = mlog10(dat[s][p] + 1)
     return dat
 
 
