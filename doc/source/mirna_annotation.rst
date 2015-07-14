@@ -23,7 +23,7 @@ Like removing sequences that appear only once.
 
    seqcluster collapse -f sample1_clean.fastq -o collapse
 
-Here I am only using sequences that had the adapter, meaning that for sure are small fragments.
+Here I am only using sequences that had the adapter, meaning that for sure are small fragments. The output will be named as ``sample1_clean_trimmed.fastq``
 
 **MIRALIGNER**
 
@@ -40,7 +40,7 @@ You can map the miRNAs with.
 
 ::
 
-     java -jar miraligner.jar -sub 1 -trim 3 -add 3 -s hsa -i test.fa -db DB  -o output_prefix 
+     java -jar miraligner.jar -sub 1 -trim 3 -add 3 -s hsa -i sample1_clean_trimmed.fastq -db DB  -o output_prefix 
 
 **Analyze with R**
 
