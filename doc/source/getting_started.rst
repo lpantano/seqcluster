@@ -149,8 +149,10 @@ where `$GENOME_FASTA_PATH` is the path to the genome fasta file used in the alig
 Easy start with seqcluster-helper.py
 --------
 
+Command::
 
-`seqcluster-helper.py --sample-map config.csv --aligner-index /path/2/star_index --gtf-file /path/2/gtf_annotation --species hsa --reference /path/2/genome/genome.fasta`
+	seqcluster-helper.py --sample-map config.csv --aligner-index /path/2/star_index --gtf-file /path/2/gtf_annotation --species hsa --reference /path/2/genome/genome.fasta
+
 
 * `sample-map` file should be a csv file with: `name,/path/2/fastq,group` for each sample
 * `genome.fasta` needs to have the FAI file. You can create this with: `samtools faidx genome.fasta`
@@ -159,7 +161,6 @@ Easy start with seqcluster-helper.py
 * `DB` is the path to `harpin.fa` and `miRNAstr`, like this https://github.com/lpantano/seqbuster/tree/master/modules/miraligner/DB
 
 **Options to run in a cluster**
-
 
 It uses ipython-cluster-helper to send jobs to nodes in the cluster
 
@@ -170,7 +171,9 @@ It uses ipython-cluster-helper to send jobs to nodes in the cluster
 * `--resources` allows to set any special parameter for the cluster, such as, email in sge system: `M=my@email.com`
 
 Read complete usability here: https://github.com/roryk/ipython-cluster-helper
-An examples in slurm system is `--parallel ipython --scheduler slurm --num-jobs 4 --queue general`
+An examples in slurm system is::
+
+	--parallel ipython --scheduler slurm --num-jobs 4 --queue general
 
 **Output**
 
@@ -179,5 +182,5 @@ An examples in slurm system is `--parallel ipython --scheduler slurm --num-jobs 
  * align: BAM file results from align `trimmed.fastq`
  * miraligner: file with miRNA anotation 
  * qc: `*_fastqc.html` is the fastqc results from the uncollapse fastq file
-* seqcluster: is the result of running seqcluster. See its [documentation](http://seqcluster.readthedocs.org/getting_started.html#clustering-of-small-rna-sequences) for further information.
+* seqcluster: is the result of running seqcluster. See its `documentation <http://seqcluster.readthedocs.org/getting_started.html#clustering-of-small-rna-sequences>`_ for further information.
 * `report-ready.Rmd`: template to create a quick html report with exploration and differential expression analysis.

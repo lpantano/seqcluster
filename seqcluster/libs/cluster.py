@@ -4,14 +4,17 @@ from progressbar import ProgressBar
 
 import pysam
 import pybedtools
-from pypeaks import Data
+try:
+    from pypeaks import Data
+except ImportError:
+    None
 import numpy as np
 
 from bcbio.utils import file_exists
 
 import logger as mylog
 from classes import *
-from seqcluster.function.peakdetect import peakdetect as peakdetect
+# from seqcluster.function.peakdetect import peakdetect as peakdetect
 from tool import _get_seqs_from_cluster
 
 
@@ -92,7 +95,7 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
     for line in c.features():
         c, start, end, name, score, strand, c_id = line
         name = int(name.replace('seq_', ''))
-        pos = start if strand == "+" else end
+        pos = int(start) if strand == "+" else int(end)
         if name not in current_seq:
             continue
         if c.find('Un_gl') > -1 and non_un_gl:
@@ -114,6 +117,8 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
         # update locus, sequences in each line
         current_loci[lindex].end = int(end)
         current_loci[lindex].coverage[pos] += 1
+        size = range(pos, pos + current_seq[name].len)
+        current_loci[lindex].counts.update(dict(zip(size, [current_seq[name].total()] * current_seq[name].len)))
         current_clus[eindex].idmembers[name] = 1
         current_clus[eindex].add_id_member([name], lindex)
         current_seq[name].add_pos(lindex, pos)
@@ -234,30 +239,33 @@ def peak_calling(clus_obj):
         cluster.update()
         logger.debug("peak calling for %s" % cid)
         bigger = cluster.locimaxid
-        s, e, st = clus_obj.loci[bigger].start, clus_obj.loci[bigger].end, clus_obj.loci[bigger].strand
-        scale = min(s, e)
-        logger.debug("bigger %s at %s-%s" % (bigger, s, e))
-        seqs = cluster.loci2seq[bigger]
-        dt = np.array([0] * (e - s + 12))
-        for seq in seqs:
-            ss = int(clus_obj.seq[seq].pos[bigger]) - scale + 5
-            l = clus_obj.seq[seq].len
-            se = ss + l
-            if st == "-":
-                se, ss = ss, ss - l
-            dt[ss:se] += clus_obj.seq[seq].total()
+        if bigger in clus_obj.loci:
+            s, e = min(clus_obj.loci[bigger].counts.keys()), max(clus_obj.loci[bigger].counts.keys())
+            scale = min(s, e)
+            logger.debug("bigger %s at %s-%s" % (bigger, s, e))
+            seqs = cluster.loci2seq[bigger]
+            dt = np.array([0] * (e - s + 12))
+            for pos in clus_obj.loci[bigger].counts:
+                ss = int(pos) - scale + 5
+                # l = clus_obj.seq[seq].len
+                # if st == "-":
+                #    se, ss = ss, ss - l
+                dt[ss] += clus_obj.loci[bigger].counts[pos]
         x = np.array(range(0, len(dt)))
         logger.debug("x %s and y %s" % (x, dt))
 
         if len(x) > 35 + 12:
-            profile = Data(x, dt, smoothness=3)
-            pickle.dump(profile, open("xy.pickle", 'w'))
-            profile.normalize()
-            profile.get_peaks(method='slope', lookahead=4, avg_interval=20)
-            peaks = list(profile.peaks['peaks'][0])
-            # print profile.peaks
-            # peaks = peakdetect(dt, x, lookahead=5)[0]
-            logger.debug(peaks)
+            try:
+                profile = Data(x, dt, smoothness=3)
+                pickle.dump(profile, open("xy.pickle", 'w'))
+                profile.normalize()
+                windows = range(min(x), max(x), 3)
+                profile.get_peaks(method='intervals', intervals=windows)
+                peaks = list(profile.peaks['peaks'][0])
+                # peaks = peakdetect(dt, x, lookahead=5)[0]
+                logger.debug(peaks)
+            except ValueError:
+                peaks = [[s], [e], ['short']]
         else:
             peaks = [[s], [e], ['short']]
         cluster.peaks = peaks

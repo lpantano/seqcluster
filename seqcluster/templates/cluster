@@ -32,7 +32,14 @@ jQuery(document).ready(function()
     <p>$annotation</p>
 </div>
 
-<div id="table">
+
+<div class="bs-callout bs-callout-info" id="callout-helper-context-color-specificity">
     <h4>Details</h4><br>
-$table</div>
+
+    <p>Click on a column to sort table</p>
+    <div id="table">
+       $table
+    </div>
+</div>
+
 </html>

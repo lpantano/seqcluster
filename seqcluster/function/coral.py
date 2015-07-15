@@ -30,6 +30,13 @@ def prepare_bam(bam_in, precursors):
     return op.abspath(out_file)
 
 
+def _select_anno(annotation):
+    """
+    Select annotation from multiple elements
+    """
+    options = annotation.split(",")
+    return options[0]
+
 def _reorder_columns(bed_file):
     """
     Reorder columns to be compatible with CoRaL
@@ -39,7 +46,7 @@ def _reorder_columns(bed_file):
         with open(new_bed, 'w') as out_handle:
             for line in in_handle:
                 cols = line.strip().split("\t")
-                cols[3] += "_" + cols[4]
+                cols[3] = _select_anno(cols[3]) + "_" + cols[4]
                 cols[4] = "0"
                 print >>out_handle, "\t".join(cols)
     return new_bed
