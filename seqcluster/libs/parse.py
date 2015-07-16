@@ -5,6 +5,7 @@ import sys
 def parse_cl(in_args):
     sub_cmds = {"prepare": add_subparser_prepare,
                 "cluster": add_subparser_cluster,
+                "seqbuster": add_subparser_mirbuster,
                 "report": add_subparser_report,
                 "predict": add_subparser_predict,
                 "explore": add_subparser_explore,
@@ -42,6 +43,15 @@ def add_subparser_report(subparsers):
             help="dir of output files")
     parser.add_argument("-r", "--reference", dest="ref", required=1,
             help="reference fasta file with index"),
+    parser = _add_debug_option(parser)
+    return parser
+
+
+def add_subparser_mirbuster(subparsers):
+    parser = subparsers.add_parser("seqbuster", help="realign miRNA BAM file")
+    parser.add_argument("files", nargs="*", help="Bam files.")
+    parser.add_argument("-o", "--out", dest="out", required=1,
+                        help="dir of output files")
     parser = _add_debug_option(parser)
     return parser
 
