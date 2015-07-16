@@ -6,8 +6,6 @@ Installation
 
 **Binstar binary**
 
-`seqcluster-helper`_ provides 
-a python framework to run a whole pipeline for small RNA (miRNA + others).
 
 Install first bcbio-nextgen and cutadapter after install conda if you want an isolate env::
 
@@ -69,7 +67,7 @@ For seqcluster-helper pipeline:
 
 * STAR
 
-follow these steps::
+To install dependencies follow these steps::
 
    git clone https://github.com/Homebrew/linuxbrew.git  ~/install/seqcluster/linuxbrew
    cd ~/install/seqcluster/linuxbrew/bin
@@ -85,12 +83,15 @@ follow these steps::
 seqcluster-helper
 ---------
 
+`seqcluster-helper`_ provides 
+a python framework to run a whole pipeline for small RNA (miRNA + others).
+
 You can install the python framework for the full small RNA analysis (`seqcluster-helper`_)::
 
     brew install https://github.com/lpantano/seqcluster-helper/blob/master/seqbuster.rb
     brew install fastqc
 
-And finally clone this repository and type::
+Assuming you installed seqcluster as mentioned before, clone this repository and type::
 
     python setup.py install
     ln -s ~/install/seqcluster/anaconda/bin/seqcluster-helper.py ~/install/seqcluster/linuxbrew/bin/.

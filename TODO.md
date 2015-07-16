@@ -7,8 +7,8 @@
 - [X] create small stats: # of sequences, # in seqs.ma, # in alignment, # in clusters
 - [X] counts of aligned reads
 - [X] load matrix ma after alignment parsed
+- [X] NOW html to connect to sqlite3 db to viz results
 
-- [ ] NOW html to connect to sqlite3 db to viz results
 - [ ] NOW implement tRNA-scan
 - [ ] NOW implement small rna  prediction: CoRaL is an option for everything http://wanglab.pcbi.upenn.edu/coral/  or
 - [ ] NEXT change to python alignment tool
@@ -42,3 +42,8 @@ inputs will be fastq or bam file. Will need to download the mirbase annotation (
 
 - [  ] isomirViz: html code to browse miraligner results for a project: preparation with miraligner module
 - [  ] seqclusteR: will be an object that make easier to retrieve information like counts, rownames, annotations ... tidy tables, and figures
+
+# documentation
+
+- [ ] figure showing general pipeline steps: seqcluster-helper
+- [ ] add documentation for seqclusterViz html reader
