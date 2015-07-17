@@ -7,7 +7,7 @@ import os
 from matplotlib import pyplot as plt
 plt.ioff()
 AXIS_FONT = {'fontname': 'Arial', 'size': '14'}
-from math import log10 as mlog10
+from math import log as mlog2
 # import pylab
 # pylab.rcParams['figure.figsize'] = (25.0, 10.0)
 from collections import Counter, defaultdict
@@ -94,7 +94,7 @@ def _convert_to_df(in_file, freq):
     # df.set_index('positions', inplace=True)
     for s in dat:
         for p in dat[s]:
-            dat[s][p] = mlog10(dat[s][p] + 1)
+            dat[s][p] = mlog2(dat[s][p] + 1)
     return dat
 
 
@@ -168,6 +168,7 @@ def _single_cluster(c, data, out_file, args):
     df = _convert_to_df(out_file, freq)
     if df:
         if not file_exists(figure_file):
+            plt.figure()
             for s in df:
                 plt.plot(df[s].keys(), df[s].values())
             plt.ylabel('Normalized expression', fontsize=15)
