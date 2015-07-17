@@ -25,10 +25,14 @@ Contents:
 
    tools.rst
 
+   literature.rst
+
    documentation.rst
 
    classes.rst
   
+
+Visit `GitHub <http://github.com/lpantano/seqcluster>`_ code
 
 I am in the process to document all classes and methods
 
