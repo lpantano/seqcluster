@@ -24,9 +24,9 @@ before_install:
 	&& P=`pwd` \
 	&& export PATH=${P}/bin:$PATH \
 	&& cd .."
-  - "wget http://downloads.sourceforge.net/samtools/samtools/0.1.19/samtools-0.1.19.tar.bz2 \
-	&& tar -xjvf samtools-0.1.19.tar.bz2 \
-	&& cd samtools-0.1.19 \
+  - "wget  http://github.com/samtools/samtools/releases/download/1.2/samtools-1.2.tar.bz2 \
+	&& tar -xjvf samtools-1.2.tar.bz2 \
+	&& cd samtools-1.2 \
 	&& make \
 	&& P=`pwd` \
 	&& export PATH=${P}/misc:${P}/bcftools:${P}:$PATH \
