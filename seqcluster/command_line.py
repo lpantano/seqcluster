@@ -7,6 +7,7 @@ from create_report import report
 from make_predictions import predictions
 from explore_cluster import explore
 from collapse import collapse_fastq
+from seqbuster import miraligner
 from stats import stats
 import libs.logger as mylog
 import time
@@ -29,6 +30,9 @@ def main(**kwargs):
     elif "predict" in kwargs:
         logger.info("Run predictions")
         predictions(kwargs["args"])
+    elif "seqbuster" in kwargs:
+        logger.info("Run seqbuster")
+        miraligner(kwargs["args"])
     elif "explore" in kwargs:
         logger.info("Run explore")
         explore(kwargs["args"])

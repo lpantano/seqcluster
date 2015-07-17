@@ -22,8 +22,26 @@
   - [ ] figures 5' positions by # unique sequences, this by class: mirna, trna ...
 * report:
   - [ ] add mirna path enrichment to seqcluster-helper in the report
-* report:
   - [ ] limit number of sequences in html, like 1000 top
+
+
+# miraligner
+
+inputs will be fastq or bam file. Will need to download the mirbase annotation (and hairpin.fa) if not given (need version). Species is required (for now).
+
+- [  ] create data set to test module
+- [  ] align with razer3 if option on
+- [  ] fix alignement error: get correct positions and guess additions
+- [  ] decide best hits
+- [  ] compare to mirbase ref: t5 t3 add mism
+- [  ] ouput in SAM/BAM with custom flag for isomiRs
+- [  ] make it compatible with old miraligner output and isomiRs
+
+
+# downstream
+
+- [  ] isomirViz: html code to browse miraligner results for a project: preparation with miraligner module
+- [  ] seqclusteR: will be an object that make easier to retrieve information like counts, rownames, annotations ... tidy tables, and figures
 
 # documentation
 
