@@ -65,7 +65,7 @@ def _set_format(profile):
     for pos in x:
         for sample in profile:
             y = _get_closer(profile[sample], pos)
-            scaled_profile[sample].append(int(profile[sample][y]))
+            scaled_profile[sample].append(profile[sample][y])
     return {'x': list(x), 'y': scaled_profile, 'names': scaled_profile.keys()}
 
 def _insert_data(con, data):
