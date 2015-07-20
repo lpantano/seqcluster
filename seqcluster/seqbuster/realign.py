@@ -23,6 +23,7 @@ class isomir:
         self.subs = []
         self.align = None
         self.start = 0
+        self.mirna = None
 
     def format(self):
         return "subs %s add %s %s %s" % (self.subs, self.add,

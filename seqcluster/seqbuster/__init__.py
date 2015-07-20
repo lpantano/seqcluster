@@ -9,6 +9,13 @@ from realign import *
 
 logger = mylog.getLogger(__name__)
 
+def _download_mirbase(precursor, reference, version="22"):
+    """
+    Download files from mirbase
+    """
+    if not precursors or not reference:
+        print "Working with version %s" % version
+
 def _get_pos(string):
     name = string.split(":")[0][1:]
     pos = string.split(":")[1][:-1].split("-")
@@ -40,13 +47,6 @@ def _read_precursor(precursor, sps):
                 hairpin[name] = line.strip()
     return hairpin
 
-def _download_mirbase(precursor, reference, version="22"):
-    """
-    Download files from mirbase
-    """
-    if not precursors or not reference:
-        print "Working with version %s" % version
-
 def _coord(sequence, start, mirna, precursor, iso):
     """
     Define t5 and t3 isomirs
@@ -58,7 +58,7 @@ def _coord(sequence, start, mirna, precursor, iso):
         iso.t5 = "D" + precursor[mirna[0] - 1:mirna[0] - 1 + dif]
 
     end = start + (len(sequence) - len(iso.add)) - 1
-    print "%s %s %s " % (start, len(sequence), end)
+    logger.debug("%s %s %s " % (start, len(sequence), end))
     dif = abs(mirna[1] - end)
     if dif > 3:
         return None
@@ -73,17 +73,13 @@ def _annotate(reads, mirbase_ref, precursors):
     """
     for r in reads:
         for p in reads[r].precursors:
-            # print r
-            # print reads[r].sequence
             start = reads[r].precursors[p].start + 1 # convert to 1base
             for mature in mirbase_ref[p]:
                 mi = mirbase_ref[p][mature]
                 if start < mi[0] + 4 and start > mi[0] - 4:
-                    # print precursors[p][start - 1:]
-                    # print precursors[p][mi[0]-1:mi[1]]
-                    # print mi
+                    logger.debug(("{r} {start} {s} {mi} {start_mature}").format(s=reads[r].sequence, mature_s=precursors[p][mi[0]-1:mi[1]], **locals()))
                     _coord(reads[r].sequence, start, mi, precursors[p], reads[r].precursors[p])
-                    # print reads[r].precursors[p].format()
+                    reads[r].precursors[p].mirna = mature
                     break
     return reads
 
@@ -91,8 +87,6 @@ def _realign(seq, precursor, start):
     """
     The actual fn that will realign the sequence
     """
-    # print seq
-    # print precursor[start:]
     error = set()
     pattern_addition = [[1, 1, 0], [1, 0, 1], [0, 1, 0], [0, 1, 1], [0, 0, 1], [1, 1, 1]]
     for pos in range(0, len(seq)):
@@ -165,6 +159,14 @@ def _read_bam(bam_fn, precursors):
     reads = _clean_hits(reads)
     return reads
 
+def _tab_output(reads):
+    seen = set()
+    for r, read in reads.iteritems():
+        for p, iso in read.precursors.iteritems():
+            if (r, iso.mirna) not in seen:
+                seen.add((r, iso.mirna))
+                print ("{r} {mirna} {format}").format(mirna=iso.mirna, format=iso.format(), **locals())
+
 def miraligner(args):
     """
     Realign BAM hits to miRBAse to get better accuracy and annotation
@@ -179,3 +181,4 @@ def miraligner(args):
         pysam.sort("-n", bam_fn, bam_sort_by_n)
         reads = _read_bam(bam_sort_by_n + ".bam", precursors)
         _annotate(reads, matures, precursors)
+        _tab_output(reads)
