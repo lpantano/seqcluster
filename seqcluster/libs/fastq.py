@@ -2,6 +2,7 @@ import os
 from collections import Counter
 from classes import quality
 from itertools import product
+import gzip
 
 
 def collapse(in_file):
@@ -55,3 +56,13 @@ def splitext_plus(f):
         base, ext2 = os.path.splitext(base)
         ext = ext2 + ext
     return base, ext
+
+def write_output(out_file, seqs):
+    idx =0
+    with open(out_file, 'w') as handle:
+        for seq in seqs:
+            idx += 1
+            qual = "".join(seqs[seq].get())
+            counts = seqs[seq].times
+            handle.write(("@seq_{idx}_x{counts}\n{seq}\n+\n{qual}\n").format(**locals()))
+    return out_file
