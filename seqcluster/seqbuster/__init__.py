@@ -9,12 +9,20 @@ from realign import *
 
 logger = mylog.getLogger(__name__)
 
-def _download_mirbase(precursor, reference, version="22"):
+def _download_mirbase(args, version="latest"):
     """
     Download files from mirbase
     """
-    if not precursors or not reference:
-        print "Working with version %s" % version
+    if not args.hairpin or not args.mirna:
+        logger.info("Working with version %s" % version)
+        hairpin_fn = op.join(op.abspath(args.out), "hairpin.fa")
+        mirna_fn = op.join(op.abspath(args.out), "miRNA.str")
+        if not file_exists(hairpin_fn):
+            cmd_h = "wget http://........ -O %s" % hairpin_fn
+        if not file_exists(mirna_fn):
+            cmd_m = "wget http://........ -O %s" % mirna_fn
+    else:
+        return args.hairpin, args.mirna
 
 def _get_pos(string):
     name = string.split(":")[0][1:]
@@ -73,11 +81,11 @@ def _annotate(reads, mirbase_ref, precursors):
     """
     for r in reads:
         for p in reads[r].precursors:
-            start = reads[r].precursors[p].start + 1 # convert to 1base
+            start = reads[r].precursors[p].start + 1  # convert to 1base
             for mature in mirbase_ref[p]:
                 mi = mirbase_ref[p][mature]
                 if start < mi[0] + 4 and start > mi[0] - 4:
-                    logger.debug(("{r} {start} {s} {mi} {start_mature}").format(s=reads[r].sequence, mature_s=precursors[p][mi[0]-1:mi[1]], **locals()))
+                    logger.debug(("{r} {start} {start} {mi} {mature_s}").format(s=reads[r].sequence, mature_s=precursors[p][mi[0]-1:mi[1]], **locals()))
                     _coord(reads[r].sequence, start, mi, precursors[p], reads[r].precursors[p])
                     reads[r].precursors[p].mirna = mature
                     break
@@ -159,26 +167,48 @@ def _read_bam(bam_fn, precursors):
     reads = _clean_hits(reads)
     return reads
 
-def _tab_output(reads):
+def _get_freq(name):
+    """
+    Check if name read contains counts (_xNumber)
+    """
+    try:
+        counts = name.split("_x")[1]
+    except:
+        return "NA"
+    return counts
+
+def _tab_output(reads, out_file):
     seen = set()
-    for r, read in reads.iteritems():
-        for p, iso in read.precursors.iteritems():
-            if (r, iso.mirna) not in seen:
-                seen.add((r, iso.mirna))
-                print ("{r} {mirna} {format}").format(mirna=iso.mirna, format=iso.format(), **locals())
+    with open(out_file, 'w') as out_handle:
+        print >>out_handle, "name\tfreq\tchrom\tsubs\tadd\tt5\tt3"
+        for r, read in reads.iteritems():
+            hits = set()
+            [hits.add(mature.mirna) for mature in read.precursors.values() if mature.mirna]
+            hits = len(hits)
+            for p, iso in read.precursors.iteritems():
+                if (r, iso.mirna) not in seen:
+                    seen.add((r, iso.mirna))
+                    chrom = iso.mirna
+                    if not chrom:
+                        chrom = p
+                    count = _get_freq(r)
+                    res = ("{r}\t{count}\t{chrom}\t{format}\t{hits}")
+                    print >>out_handle, res.format(format=iso.format(), **locals())
 
 def miraligner(args):
     """
     Realign BAM hits to miRBAse to get better accuracy and annotation
     """
     config = {"algorithm": {"num_cores": 1}}
+    hairpin, mirna = _download_mirbase(args)
     precursors = _read_precursor(args.hairpin, args.sps)
     matures = _read_mature(args.mirna, args.sps)
     for bam_fn in args.files:
         logger.info("Reading %s" % bam_fn)
+        out_file = op.join(args.out, op.splitext(op.basename(bam_fn))[0] + ".mirna")
         bam_fn = bam.sam_to_bam(bam_fn, config)
         bam_sort_by_n = op.splitext(bam_fn)[0] + "_sort"
         pysam.sort("-n", bam_fn, bam_sort_by_n)
         reads = _read_bam(bam_sort_by_n + ".bam", precursors)
         _annotate(reads, matures, precursors)
-        _tab_output(reads)
+        _tab_output(reads, out_file)
