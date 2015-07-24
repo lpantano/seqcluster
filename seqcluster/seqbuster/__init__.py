@@ -3,24 +3,26 @@ import os.path as op
 
 import pysam
 from bcbio import bam
-
+from bcbio.provenance import do
 import seqcluster.libs.logger as mylog
 from realign import *
 
 logger = mylog.getLogger(__name__)
 
-def _download_mirbase(args, version="latest"):
+def _download_mirbase(args, version="CURRENT"):
     """
     Download files from mirbase
     """
     if not args.hairpin or not args.mirna:
         logger.info("Working with version %s" % version)
-        hairpin_fn = op.join(op.abspath(args.out), "hairpin.fa")
-        mirna_fn = op.join(op.abspath(args.out), "miRNA.str")
+        hairpin_fn = op.join(op.abspath(args.out), "hairpin.fa.gz")
+        mirna_fn = op.join(op.abspath(args.out), "miRNA.str.gz")
         if not file_exists(hairpin_fn):
-            cmd_h = "wget http://........ -O %s" % hairpin_fn
+            cmd_h = "wget ftp://mirbase.org/pub/mirbase/%s/hairpin.fa.gz -O %s &&  gunzip -f !$" % (version, hairpin_fn)
+            do.run(cmd_h, "download hairpin")
         if not file_exists(mirna_fn):
-            cmd_m = "wget http://........ -O %s" % mirna_fn
+            cmd_m = "wget ftp://mirbase.org/pub/mirbase/%s/miRNA.str.gz -O %s && gunzip -f !$" % (version, mirna_fn)
+            do.run(cmd_m, "download mirna")
     else:
         return args.hairpin, args.mirna
 
