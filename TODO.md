@@ -11,7 +11,7 @@
 
 - [ ] NOW implement tRNA-scan
 - [ ] NOW implement small rna  prediction: CoRaL is an option for everything http://wanglab.pcbi.upenn.edu/coral/  or
-- [ ] NEXT change to python alignment tool
+- [ ] NOW change to python alignment tool
 - [ ] implement mirna prediction http://evryrna.ibisc.univ-evry.fr/miRBoost/index.html
 - [ ] implement submire target prediction module http://research.nhgri.nih.gov/software/SubmiRine/user_guide.shtml
 - [ ] Add to report: https://github.com/pkerpedjiev/forna/
@@ -29,13 +29,13 @@
 
 inputs will be fastq or bam file. Will need to download the mirbase annotation (and hairpin.fa) if not given (need version). Species is required (for now).
 
-- [  ] create data set to test module
+- [X] create data set to test module
 - [  ] align with razer3 if option on
-- [  ] fix alignement error: get correct positions and guess additions
-- [  ] decide best hits
-- [  ] compare to mirbase ref: t5 t3 add mism
+- [X] fix alignement error: get correct positions and guess additions
+- [ X] decide best hits
+- [ X] compare to mirbase ref: t5 t3 add mism
 - [  ] ouput in SAM/BAM with custom flag for isomiRs
-- [  ] make it compatible with old miraligner output and isomiRs
+- [ X] make it compatible with old miraligner output and isomiRs
 
 
 # downstream
