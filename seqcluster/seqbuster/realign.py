@@ -25,13 +25,13 @@ class isomir:
         self.start = 0
         self.mirna = None
 
-    def format(self):
+    def format(self, sep="\t"):
         subs = "".join(["".join(map(str, mism)) for mism in self.subs])
         if not subs:
             subs = "NA"
         add = "NA" if not self.add else self.add
-        return "%s\t%s\t%s\t%s" % (subs, add,
-                                   self.t5, self.t3)
+        return "%s%s%s%s%s%s%s" % (subs, sep, add, sep,
+                                   self.t5, sep, self.t3)
 
     def get_score(self, sc):
         for a in self.add:

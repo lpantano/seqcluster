@@ -1,6 +1,6 @@
 # Re-aligner small RNA sequence from SAM/BAM file (miRBase annotation)
 import os.path as op
-
+import pandas as pd
 import pysam
 from bcbio import bam
 from bcbio.provenance import do
@@ -179,8 +179,9 @@ def _get_freq(name):
         return "NA"
     return counts
 
-def _tab_output(reads, out_file):
+def _tab_output(reads, out_file, sample):
     seen = set()
+    lines = []
     with open(out_file, 'w') as out_handle:
         print >>out_handle, "name\tfreq\tchrom\tsubs\tadd\tt5\tt3"
         for r, read in reads.iteritems():
@@ -195,7 +196,25 @@ def _tab_output(reads, out_file):
                         chrom = p
                     count = _get_freq(r)
                     res = ("{r}\t{count}\t{chrom}\t{format}\t{hits}")
+                    annotation = "%s:%s" % (chrom, iso.format(":"))
+                    lines.append([annotation, count, sample, hits])
                     print >>out_handle, res.format(format=iso.format(), **locals())
+    dt = pd.DataFrame(lines)
+    dt.columns = ["isomir", "counts", "sample", "hits"]
+    return out_file, dt
+
+def _merge(dts):
+    """
+    merge multiple samples in one matrix
+    """
+    df = None
+    for dt in dts:
+        if not df:
+            df = dt
+        else:
+            df.join(dt)
+
+    return df.pivot(index='isomir', columns='sample', values='counts')
 
 def miraligner(args):
     """
@@ -205,12 +224,18 @@ def miraligner(args):
     hairpin, mirna = _download_mirbase(args)
     precursors = _read_precursor(args.hairpin, args.sps)
     matures = _read_mature(args.mirna, args.sps)
+    out_dts = []
     for bam_fn in args.files:
         logger.info("Reading %s" % bam_fn)
-        out_file = op.join(args.out, op.splitext(op.basename(bam_fn))[0] + ".mirna")
+        sample = op.splitext(op.basename(bam_fn))[0]
+        out_file = op.join(args.out, sample + ".mirna")
         bam_fn = bam.sam_to_bam(bam_fn, config)
         bam_sort_by_n = op.splitext(bam_fn)[0] + "_sort"
         pysam.sort("-n", bam_fn, bam_sort_by_n)
         reads = _read_bam(bam_sort_by_n + ".bam", precursors)
         _annotate(reads, matures, precursors)
-        _tab_output(reads, out_file)
+        out_file, dt = _tab_output(reads, out_file, sample)
+        out_dts.append(dt)
+
+    ma = _merge(out_dts)
+    # _summarize(out_dts)
