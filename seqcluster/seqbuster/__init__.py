@@ -197,10 +197,10 @@ def _tab_output(reads, out_file, sample):
                     count = _get_freq(r)
                     res = ("{r}\t{count}\t{chrom}\t{format}\t{hits}")
                     annotation = "%s:%s" % (chrom, iso.format(":"))
-                    lines.append([annotation, count, sample, hits])
+                    lines.append([annotation, chrom, count, sample, hits])
                     print >>out_handle, res.format(format=iso.format(), **locals())
     dt = pd.DataFrame(lines)
-    dt.columns = ["isomir", "counts", "sample", "hits"]
+    dt.columns = ["isomir", "chrom", "counts", "sample", "hits"]
     return out_file, dt
 
 def _merge(dts):
@@ -214,7 +214,12 @@ def _merge(dts):
         else:
             df.join(dt)
 
-    return df.pivot(index='isomir', columns='sample', values='counts')
+    ma = df.pivot(index='isomir', columns='sample', values='counts')
+    ma_mirna = ma
+    ma_mirna['mirna'] = [m.split(":")[0] for m in ma.index.values]
+    ma_mirna = ma_mirna.groupby(['mirna']).sum()
+
+    return ma
 
 def miraligner(args):
     """
@@ -238,4 +243,6 @@ def miraligner(args):
         out_dts.append(dt)
 
     ma = _merge(out_dts)
+    out_ma = op.join(args.out, "counts.tsv")
+    ma.to_csv(out_ma, sep="\t")
     # _summarize(out_dts)
