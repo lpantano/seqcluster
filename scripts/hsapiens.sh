@@ -42,8 +42,8 @@ if [ ! -e refGene.txt.gz ] ; then
 fi
 
     zcat refGene.txt.gz | awk '{print $3"\t.\tgene\t"$5"\t"$6"\t.\t"$4"\t.\tname "$13";"}' >> $FINAL
-
-if [ ! piR_hg19_v1.0.bed.gz ] ; then
+ 
+if [ ! -e piR_hg19_v1.0.bed.gz ] ; then
 
     wget http://www.regulatoryrna.org/database/piRNA/download/archive/v1.0/bed/piR_hg19_v1.0.bed.gz
 
