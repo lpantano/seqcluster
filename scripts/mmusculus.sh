@@ -3,6 +3,13 @@
 
 FINAL="mmusculus.gtf"
 
+if [ -e $FINAL ] ; then
+
+    rm $FINAL
+
+fi
+
+
 if [ ! -e mmu.gff3 ] ; then 
 
     wget ftp://mirbase.org/pub/mirbase/20/genomes/mmu.gff3
@@ -29,7 +36,7 @@ fi
 
 if [ ! -e rmsk.txt.gz ] ; then
 
-    wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/rmsk.txt.gz
+    wget http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/rmsk.txt.gz
     
 fi
 
@@ -38,7 +45,7 @@ fi
 
 if [ ! -e refGene.txt.gz ] ; then
 
-    wget http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/refGene.txt.gz
+    wget http://hgdownload.soe.ucsc.edu/goldenPath/mm10/database/refGene.txt.gz
     
 fi
 
