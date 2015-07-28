@@ -2,6 +2,12 @@
 
 FINAL="hsapiens.gtf"
 
+if [ -e $FINAL ] ; then
+
+    rm $FINAL
+
+fi
+
 if [ ! -e hsa.gff3 ] ; then 
 
     wget ftp://mirbase.org/pub/mirbase/20/genomes/hsa.gff3
