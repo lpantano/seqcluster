@@ -3,6 +3,7 @@ import sys
 
 
 def parse_cl(in_args):
+    print in_args
     sub_cmds = {"prepare": add_subparser_prepare,
                 "cluster": add_subparser_cluster,
                 "seqbuster": add_subparser_mirbuster,
@@ -122,7 +123,7 @@ def add_subparser_cluster(subparsers):
                        "\nchr1    157783  157886  snRNA   0       -")
     parser.add_argument("-o", "--out",
                        dest="out", help="output dir", required=1)
-    parser.add_argument("-ref",
+    parser.add_argument("-ref", required=1,
                        dest="ref", help="reference fasta")
     parser.add_argument("--mask",
                         help="bed file with regions to mask")

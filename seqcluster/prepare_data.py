@@ -32,9 +32,10 @@ def prepare(args):
     except IOError as e:
         logger.error("I/O error({0}): {1}".format(e.errno, e.strerror))
         raise "Can not create output files"
-    logger.info("reading sequeces")
+    logger.info("Reading sequeces")
     seq_l, sample_l = _read_fastq_files(f, args)
-    logger.info("creating matrix with unique sequences")
+    logger.info("Creating matrix with unique sequences")
+    logger.info("Filtering: min counts %s, min size %s, max size %s, min shared %s" % (args.minc, args.minl, args.maxl, args.min_shared))
     _create_matrix_uniq_seq(sample_l, seq_l, ma_out, seq_out, args.min_shared)
     logger.info("Finish preprocessing. Get an SAM file of seqs.fa and run seqcluster cluster.")
 

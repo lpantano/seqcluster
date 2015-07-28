@@ -57,6 +57,7 @@ def splitext_plus(f):
         ext = ext2 + ext
     return base, ext
 
+
 def write_output(out_file, seqs):
     idx =0
     with open(out_file, 'w') as handle:
