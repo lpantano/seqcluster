@@ -73,8 +73,8 @@ To install dependencies follow these steps::
    cd ~/install/seqcluster/linuxbrew/bin
    ln -s `which gcc gcc-4.4`
    PATH = ~/install/seqcluster/linuxbrew/bin:$PATH
-   brew tab homebrew/science
-   brew tab chapmanb/homebre-cbl
+   brew tap homebrew/science
+   brew tap chapmanb/homebre-cbl
    brew install bedtools
    brew install samtools
    brew install star-rna
