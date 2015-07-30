@@ -4,6 +4,10 @@
 Installation
 ============
 
+**With bcbio installed**
+
+If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_, just clone the repository or use pip for installat it with `bcbio` python.
+
 **Binstar binary**
 
 
@@ -53,6 +57,8 @@ Link binary to brew installation or to any folder is already in your path::
 
 Tools dependecies
 ---------
+
+If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_ you only need to install `seqbuster` as showed bellow.
 
 For cluster command:
 
