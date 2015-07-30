@@ -30,12 +30,12 @@
 inputs will be fastq or bam file. Will need to download the mirbase annotation (and hairpin.fa) if not given (need version). Species is required (for now).
 
 - [X] create data set to test module
-- [  ] align with razer3 if option on
+- [ ] align with razer3 if option on
 - [X] fix alignement error: get correct positions and guess additions
-- [ X] decide best hits
-- [ X] compare to mirbase ref: t5 t3 add mism
-- [  ] ouput in SAM/BAM with custom flag for isomiRs
-- [ X] make it compatible with old miraligner output and isomiRs
+- [X] decide best hits
+- [X] compare to mirbase ref: t5 t3 add mism
+- [ ] ouput in SAM/BAM with custom flag for isomiRs
+- [X] make it compatible with old miraligner output and isomiRs
 
 
 # downstream
