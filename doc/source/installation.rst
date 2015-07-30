@@ -4,6 +4,10 @@
 Installation
 ============
 
+**With bcbio installed**
+
+If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_, just clone the repository or use pip for installat it with `bcbio` python.
+
 **Binstar binary**
 
 
@@ -15,7 +19,7 @@ Install first bcbio-nextgen and cutadapter after install conda if you want an is
 
 You can install directly from binstar (only for linux)::
 
-    ~/install/seqcluster/anaconda/conda install -c  https://conda.binstar.org/lpantano seqcluster -c  https://conda.binstar.org/bcbio
+    ~/install/seqcluster/anaconda/conda install -c  https://conda.anaconda.org/lpantano seqcluster -c  https://conda.binstar.org/bcbio
 
 With that you will have everything you need for the python package. 
 The last step is to add seqcluster to your PATH (see below).
@@ -25,12 +29,9 @@ Go to Tools dependecies below to continue with the installation.
 
 If you want to install step by step from a new conda environment::    
 
-    ~/install/seqcluster/anaconda/conda install pip
-    ~/install/seqcluster/anaconda/conda install -c https://conda.binstar.org/bcbio bcbio-nextgen
-    ~/install/seqcluster/anaconda/pip install cutadapt
-    ~/install/seqcluster/anaconda/pip install matplotlib
-    ~/install/seqcluster/anaconda/pip install -U cython
-
+    ~/install/seqcluster/anaconda/bin/conda install pip
+    ~/install/seqcluster/anaconda/bin/conda install -c https://conda.binstar.org/bcbio bcbio-nextgen
+    ~/install/seqcluster/anaconda/bin/pip install cutadapt
 
 Remember to add the new python into your path every time you want to use seqcluster. 
 If you already have `conda` in your system, just type::
@@ -39,13 +40,13 @@ If you already have `conda` in your system, just type::
 
 Then you can get seqcluster::
 
-    ~/install/seqcluster/anaconda/pip install seqcluster
+    ~/install/seqcluster/anaconda/bin/pip install seqcluster
 
 or the developement version::
 
     git clone https://github.com/lpantano/seqcluster
     cd seqcluster
-    ~/install/seqcluster/anaconda/python setup.py install
+    ~/install/seqcluster/anaconda/bin/python setup.py install
 
 Link binary to brew installation or to any folder is already in your path::
 
@@ -53,6 +54,10 @@ Link binary to brew installation or to any folder is already in your path::
 
 Tools dependecies
 ---------
+
+If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_ you only need to install `seqbuster` as showed bellow::
+
+    brew install seqbuster
 
 For cluster command:
 
@@ -73,8 +78,8 @@ To install dependencies follow these steps::
    cd ~/install/seqcluster/linuxbrew/bin
    ln -s `which gcc gcc-4.4`
    PATH = ~/install/seqcluster/linuxbrew/bin:$PATH
-   brew tab homebrew/science
-   brew tab chapmanb/homebre-cbl
+   brew tap homebrew/science
+   brew tap chapmanb/homebrew-cbl
    brew install bedtools
    brew install samtools
    brew install star-rna
@@ -88,7 +93,7 @@ a python framework to run a whole pipeline for small RNA (miRNA + others).
 
 You can install the python framework for the full small RNA analysis (`seqcluster-helper`_)::
 
-    brew install https://github.com/lpantano/seqcluster-helper/blob/master/seqbuster.rb
+    brew install seqbuster
     brew install fastqc
 
 Assuming you installed seqcluster as mentioned before, clone this repository and type::
