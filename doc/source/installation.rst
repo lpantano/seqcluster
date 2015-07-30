@@ -25,11 +25,11 @@ Go to Tools dependecies below to continue with the installation.
 
 If you want to install step by step from a new conda environment::    
 
-    ~/install/seqcluster/anaconda/conda install pip
-    ~/install/seqcluster/anaconda/conda install -c https://conda.binstar.org/bcbio bcbio-nextgen
-    ~/install/seqcluster/anaconda/pip install cutadapt
-    ~/install/seqcluster/anaconda/pip install matplotlib
-    ~/install/seqcluster/anaconda/pip install -U cython
+    ~/install/seqcluster/anaconda/bin/conda install pip
+    ~/install/seqcluster/anaconda/bin/conda install -c https://conda.binstar.org/bcbio bcbio-nextgen
+    ~/install/seqcluster/anaconda/bin/pip install cutadapt
+    ~/install/seqcluster/anaconda/bin/pip install matplotlib
+    ~/install/seqcluster/anaconda/bin/pip install -U cython
 
 
 Remember to add the new python into your path every time you want to use seqcluster. 
@@ -88,7 +88,7 @@ a python framework to run a whole pipeline for small RNA (miRNA + others).
 
 You can install the python framework for the full small RNA analysis (`seqcluster-helper`_)::
 
-    brew install https://github.com/lpantano/seqcluster-helper/blob/master/seqbuster.rb
+    brew install seqbuster
     brew install fastqc
 
 Assuming you installed seqcluster as mentioned before, clone this repository and type::
