@@ -40,10 +40,11 @@ inputs will be fastq or bam file. Will need to download the mirbase annotation (
 
 # downstream
 
-- [  ] isomirViz: html code to browse miraligner results for a project: preparation with miraligner module
-- [  ] seqclusteR: will be an object that make easier to retrieve information like counts, rownames, annotations ... tidy tables, and figures
+- [ ] isomirViz: html code to browse miraligner results for a project: preparation with miraligner module
+- [ ] seqclusteR: will be an object that make easier to retrieve information like counts, rownames, annotations ... tidy tables, and figures
 
 # documentation
 - [ ] add install subcommand for mirbase installation/genomes
+- [ ] add html report link to documentation
 - [ ] figure showing general pipeline steps: seqcluster-helper
 - [ ] add documentation for seqclusterViz html reader
