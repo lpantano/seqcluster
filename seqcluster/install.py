@@ -44,11 +44,11 @@ def main(args):
             subprocess.check_call(["gunzip", "-f", out_file])
     if "hg19" in db:
         with chdir("hg19"):
-            subprocess.check_call(["wget", "--no-check-certificate", "-p", "https://raw.githubusercontent.com/lpantano/seqcluster/master/scripts/hsapiens.sh", "-O", "hg19.sh", ])
+            subprocess.check_call(["wget", "--no-check-certificate", "-p", "https://raw.githubusercontent.com/lpantano/seqcluster/master/scripts/hg19.sh", "-O", "hg19.sh", ])
             subprocess.check_call(["bash", "hg19.sh"])
     if "mm10" in db:
         with chdir("mm10"):
-            subprocess.check_call(["wget", "--no-check-certificate", "-p", "https://raw.githubusercontent.com/lpantano/seqcluster/master/scripts/mmusculus.sh", "-O", "mm10.sh", ])
+            subprocess.check_call(["wget", "--no-check-certificate", "-p", "https://raw.githubusercontent.com/lpantano/seqcluster/master/scripts/mm10.sh", "-O", "mm10.sh", ])
             subprocess.check_call(["bash", "mm10.sh"])
 
 
