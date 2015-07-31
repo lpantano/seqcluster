@@ -50,14 +50,24 @@ or the developement version::
 
 Link binary to brew installation or to any folder is already in your path::
 
-    ln -s ~/install/seqcluster/anaconda/bin/seqcluster ~/install/seqcluster/linuxbrew/bin/.
+    ln -s ~/install/seqcluster/anaconda/bin/seqcluster* ~/install/seqcluster/linuxbrew/bin/.
 
 Tools dependecies
 ---------
 
-If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_ you only need to install `seqbuster` as showed bellow::
+**easy installation**
+
+Strongly recommend use `bcbio <https://bcbio-nextgen.readthedocs.org/en/latest/contents/installation.html>`_ installation if you work with sequencing data. But if you want a minimal installation::
+
+    seqcluster_install --tools $TARGET_PATH
+
+After that you will need to add to your path: $TARGET_PATH/bin
+
+If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_  or you used ``seqcluster_install``, you only need to install `seqbuster` as showed bellow::
 
     brew install seqbuster
+
+**step by step**
 
 For cluster command:
 
