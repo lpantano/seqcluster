@@ -11,7 +11,7 @@ with open("requirements.txt", "r") as f:
 
 
 setup(name='seqcluster',
-      version='1.1.04',
+      version='1.1.05',
       description='Small RNA-seq pipeline',
       long_description=readme(),
       classifiers=[
@@ -28,7 +28,7 @@ setup(name='seqcluster',
       install_requires=install_requires,
       test_suite='nose',
       entry_points={
-          'console_scripts': ['seqcluster=seqcluster.command_line:main'],
+          'console_scripts': ['seqcluster=seqcluster.command_line:main', 'seqcluster_install=seqcluster.install:main'],
       },
       package_data={'seqclsuter.templates': ['*']},
       include_package_data=True,

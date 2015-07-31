@@ -3,6 +3,7 @@ Some commands to install common databases like mirbase and some human/mouse anno
 """
 import os.path as op
 import os
+import shutil
 import sys
 from argparse import ArgumentParser
 import subprocess
@@ -32,38 +33,49 @@ def chdir(new_dir):
     finally:
         os.chdir(cur_dir)
 
+def _get_flavor():
+    """
+    Download flavor for cloudbiolinux
+    """
+    target = op.join("seqcluster", "flavor")
+    if not os.path.exists(target):
+        url = "https://github.com/lpantano/seqcluster.git"
+        subprocess.check_call(["git", "clone","-b", "flavor", "--single-branch", url])
+    return op.abspath(target)
 
 def _install(path):
     """
     small helper for installation in case outside bcbio
     """
     try:
-       import bcbio.install as bcb
-       s = {"fabricrc_overrides": {"system_install": path,
-                                    "local_install": os.path.join(path, "local_install"),
-                                    "use_sudo": "false",
-                                    "edition": "minimal"}}
-       s = {"flavor": "ngs_pipeline_minimal",
-            "vm_provider": "novm",
-            "hostname": "localhost",
-            "fabricrc_overrides": {"edition": "minimal",
-                                   "use_sudo": "false",
-                                   "keep_isolated": "true",
-                                   "distribution": "__auto__",
-                                   "dist_name": "__auto__"}}
-
-
-       s["actions"] = ["install_biolinux"]
-       s["fabricrc_overrides"]["system_install"] = path
-       s["fabricrc_overrides"]["local_install"] = os.path.join(path, "local_install")
-       cbl = bcb.get_cloudbiolinux("https://github.com/chapmanb/cloudbiolinux.git")
-       sys.path.insert(0, cbl["dir"])
-       cbl_deploy = __import__("cloudbio.deploy", fromlist=["deploy"])
-       cbl_deploy.deploy(s)
+       from bcbio import install as bcb
     except:
         raise ImportError("It needs bcbio to do the quick installation.")
 
-def main(args):
+    s = {"fabricrc_overrides": {"system_install": path,
+                                "local_install": os.path.join(path, "local_install"),
+                                "use_sudo": "false",
+                                "edition": "minimal"}}
+    s = {"flavor": _get_flavor(),
+         "target": "brew",
+         "vm_provider": "novm",
+         "hostname": "localhost",
+         "fabricrc_overrides": {"edition": "minimal",
+                                "use_sudo": "false",
+                                "keep_isolated": "true",
+                                "distribution": "__auto__",
+                                "dist_name": "__auto__"}}
+
+
+    s["actions"] = ["install_biolinux"]
+    s["fabricrc_overrides"]["system_install"] = path
+    s["fabricrc_overrides"]["local_install"] = os.path.join(path, "local_install")
+    cbl = bcb.get_cloudbiolinux(bcb.REMOTES)
+    sys.path.insert(0, cbl["dir"])
+    cbl_deploy = __import__("cloudbio.deploy", fromlist=["deploy"])
+    cbl_deploy.deploy(s)
+
+def actions(args):
     if args.data:
         db = set(args.data)
         if "mirbase" in db:
@@ -83,11 +95,11 @@ def main(args):
                 subprocess.check_call(["wget", "--no-check-certificate", "-p", "https://raw.githubusercontent.com/lpantano/seqcluster/master/scripts/mm10.sh", "-O", "mm10.sh", ])
                 subprocess.check_call(["bash", "mm10.sh"])
     if args.tools:
-        _install(ip.abspath(args.tools))
+        _install(op.abspath(args.tools))
 
-if __name__ == "__main__":
+def main():
     parser = ArgumentParser(description="small RNA analysis installer")
     parser.add_argument("--tools", help="tools")
     parser.add_argument("--data", help="data")
     args = parser.parse_args()
-    main(args)
+    actions(args)
