@@ -1,6 +1,6 @@
 # create hsapiends annotation for small rna analisis
 
-FINAL="hsapiens.gtf"
+FINAL="srna-transcripts.gtf"
 
 if [ -e $FINAL ] ; then
 

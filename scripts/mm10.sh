@@ -1,7 +1,7 @@
 # create hsapiends annotation for small rna analisis
 # mm10
 
-FINAL="mmusculus.gtf"
+FINAL="srna-transcripts.gtf"
 
 if [ -e $FINAL ] ; then
 
