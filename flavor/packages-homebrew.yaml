@@ -1,0 +1,20 @@
+# Packages available in the Homebrew and Linuxbrew package manager
+---
+minimal:
+  - cmake
+  - p7zip
+  - pkg-config
+srnaseq:
+  alignment:
+    - bowtie2 
+    - rna-star
+  utilities:
+    - bamtools
+    - bedtools
+    - fastqc
+  analysis:
+    - samtools;--without-curses
+    - samtools-library-0.1
+    - htslib
+    - bcftools
+    - seqbuster
