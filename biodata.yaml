@@ -22,7 +22,9 @@ genomes:
 # Global set of indexes to include for each genome.
 # Available choices are in GENOMES_INDEXES_SUPPORTED in cloudbio/biodata/genomes.py
 genome_indexes:
-  - bwa
+  - bowtie2
+  - star
+  
 
 # Additional data targets
 install_liftover: false
