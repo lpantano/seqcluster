@@ -4,6 +4,7 @@ Some commands to install common databases like mirbase and some human/mouse anno
 import os.path as op
 import os
 import sys
+from argparse import ArgumentParser
 import subprocess
 import contextlib
 
@@ -32,25 +33,61 @@ def chdir(new_dir):
         os.chdir(cur_dir)
 
 
-def main(args):
-    db = set(args)
-    if "mirbase" in db:
-        for fn in ["hairpin.fa.gz", "miRNA.str.gz"]:
-            out_file = op.join("mirbase", fn)
-            _mkdir("mirbase")
-            url = "ftp://mirbase.org/pub/mirbase/CURRENT/%s" % fn
-            cmd = ["wget", "-O", out_file, "--no-check-certificate", url]
-            subprocess.check_call(cmd)
-            subprocess.check_call(["gunzip", "-f", out_file])
-    if "hg19" in db:
-        with chdir("hg19"):
-            subprocess.check_call(["wget", "--no-check-certificate", "-p", "https://raw.githubusercontent.com/lpantano/seqcluster/master/scripts/hg19.sh", "-O", "hg19.sh", ])
-            subprocess.check_call(["bash", "hg19.sh"])
-    if "mm10" in db:
-        with chdir("mm10"):
-            subprocess.check_call(["wget", "--no-check-certificate", "-p", "https://raw.githubusercontent.com/lpantano/seqcluster/master/scripts/mm10.sh", "-O", "mm10.sh", ])
-            subprocess.check_call(["bash", "mm10.sh"])
+def _install(path):
+    """
+    small helper for installation in case outside bcbio
+    """
+    try:
+       import bcbio.install as bcb
+       s = {"fabricrc_overrides": {"system_install": path,
+                                    "local_install": os.path.join(path, "local_install"),
+                                    "use_sudo": "false",
+                                    "edition": "minimal"}}
+       s = {"flavor": "ngs_pipeline_minimal",
+            "vm_provider": "novm",
+            "hostname": "localhost",
+            "fabricrc_overrides": {"edition": "minimal",
+                                   "use_sudo": "false",
+                                   "keep_isolated": "true",
+                                   "distribution": "__auto__",
+                                   "dist_name": "__auto__"}}
 
+
+       s["actions"] = ["install_biolinux"]
+       s["fabricrc_overrides"]["system_install"] = path
+       s["fabricrc_overrides"]["local_install"] = os.path.join(path, "local_install")
+       cbl = bcb.get_cloudbiolinux("https://github.com/chapmanb/cloudbiolinux.git")
+       sys.path.insert(0, cbl["dir"])
+       cbl_deploy = __import__("cloudbio.deploy", fromlist=["deploy"])
+       cbl_deploy.deploy(s)
+    except:
+        raise ImportError("It needs bcbio to do the quick installation.")
+
+def main(args):
+    if args.data:
+        db = set(args.data)
+        if "mirbase" in db:
+            for fn in ["hairpin.fa.gz", "miRNA.str.gz"]:
+                out_file = op.join("mirbase", fn)
+                _mkdir("mirbase")
+                url = "ftp://mirbase.org/pub/mirbase/CURRENT/%s" % fn
+                cmd = ["wget", "-O", out_file, "--no-check-certificate", url]
+                subprocess.check_call(cmd)
+                subprocess.check_call(["gunzip", "-f", out_file])
+        if "hg19" in db:
+            with chdir("hg19"):
+                subprocess.check_call(["wget", "--no-check-certificate", "-p", "https://raw.githubusercontent.com/lpantano/seqcluster/master/scripts/hg19.sh", "-O", "hg19.sh", ])
+                subprocess.check_call(["bash", "hg19.sh"])
+        if "mm10" in db:
+            with chdir("mm10"):
+                subprocess.check_call(["wget", "--no-check-certificate", "-p", "https://raw.githubusercontent.com/lpantano/seqcluster/master/scripts/mm10.sh", "-O", "mm10.sh", ])
+                subprocess.check_call(["bash", "mm10.sh"])
+    if args.tools:
+        _install(ip.abspath(args.tools))
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    parser = ArgumentParser(description="small RNA analysis installer")
+    parser.add_argument("--tools", help="tools")
+    parser.add_argument("--data", help="data")
+    args = parser.parse_args()
+    main(args)
