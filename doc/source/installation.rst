@@ -4,6 +4,9 @@
 Installation
 ============
 
+Seqcluster
+---------
+
 **With bcbio installed**
 
 If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_, just clone the repository or use pip for installat it with `bcbio` python.
@@ -130,9 +133,36 @@ To install all packages used by the Rmd report::
 **check installation**
 
 ::
-
     
     seqcluster-installer.py --check 
 
 will tell you if all dependencies are installed and ready to use the framework
 
+Data
+---------
+
+Easy way to install your small RNA seq data with `cloudbiolinux <https://github.com/chapmanb/cloudbiolinux>`_.
+
+An exmaple of hg19 human version it will be:
+
+Prepare code::
+
+    pip install fabric
+    git clone git://github.com/chapmanb/cloudbiolinux.git
+
+Prepare config files (change the path in ``fabric.txt`` for non_testing data)::
+
+    wget http://raw.githubusercontent.com/lpantano/seqcluster/flavor/fabric.txt
+    wget http://raw.githubusercontent.com/lpantano/seqcluster/flavor/biodata.yaml
+
+Download GTF annotation (data will be inside ``biodata/hg19/srnaseq``)::
+
+    fab -f cloudbiolinux/data_fabfile.py -H localhost -c fabric.txt install_data_ggd:srnaseq,hg19
+
+Download genome data::
+
+    fab -f cloudbiolinux/data_fabfile.py -H localhost -c fabric.txt install_data_s3:biodata.yaml
+
+If you want to install STAR since gets kind of better results than bowtie2 (warning, 40GB memory RAM needed)::
+
+    fab -f cloudbiolinux/data_fabfile.py -H localhost -c fabric.txt install_data:biodata.yaml
