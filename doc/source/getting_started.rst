@@ -113,7 +113,7 @@ Example of a bed file for annotation (the fourth column should be the name of th
 
     chr1    157783  157886  snRNA   0       -
     
-Strongly recommend gtf format. Bed annotation is deprecated.
+Strongly recommend gtf format. Bed annotation is deprecated. Go `here <http://seqcluster.readthedocs.org/installation.html#data>`_ to know how to download data from hg19 and mm10.
 
 Example of a gtf file for annotation (the **third** column should be the name of the feature and
 the value after `gene name` attribute is the specific annotation): 
