@@ -9,12 +9,11 @@ Seqcluster
 
 **With bcbio installed**
 
-If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_, just clone the repository or use pip for installat it with `bcbio` python.
+If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_, just clone the repository or use pip for installa it with the python installed by `bcbio`.
 
 **Binstar binary**
 
-
-Install first bcbio-nextgen and cutadapter after install conda if you want an isolate env::
+install conda if you want an isolate env::
 
     wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
     bash Miniconda-latest-Linux-x86_64.sh -b -p ~/install/seqcluster/anaconda
@@ -26,6 +25,7 @@ You can install directly from binstar (only for linux)::
 
 With that you will have everything you need for the python package. 
 The last step is to add seqcluster to your PATH (see below).
+
 Go to Tools dependecies below to continue with the installation.
 
 **Step by step**
@@ -58,6 +58,22 @@ Link binary to brew installation or to any folder is already in your path::
 Tools dependecies
 ---------
 
+For cluster command:
+
+* bedtools
+* samtools
+
+For report command:
+
+* bowtie2
+
+For seqcluster-helper pipeline:
+
+* STAR
+* fastqc
+* cutadapt (install with ``pip`` using the same ``python`` env than seqcluster. 
+You will need to link the ``cutadapt`` binary to your ``PATH``)
+
 **easy installation**
 
 Strongly recommend use `bcbio <https://bcbio-nextgen.readthedocs.org/en/latest/contents/installation.html>`_ installation if you work with sequencing data. But if you want a minimal installation::
@@ -72,20 +88,7 @@ If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_  or you
 
 **step by step**
 
-For cluster command:
-
-* bedtools
-* samtools
-
-For report command:
-
-* bowtie2
-
-For seqcluster-helper pipeline:
-
-* STAR
-
-To install dependencies follow these steps::
+To install dependencies using ``homebrew`` follow these steps::
 
    git clone https://github.com/Homebrew/linuxbrew.git  ~/install/seqcluster/linuxbrew
    cd ~/install/seqcluster/linuxbrew/bin
@@ -104,19 +107,25 @@ seqcluster-helper
 `seqcluster-helper`_ provides 
 a python framework to run a whole pipeline for small RNA (miRNA + others).
 
-You can install the python framework for the full small RNA analysis (`seqcluster-helper`_)::
-
-    brew install seqbuster
-    brew install fastqc
-
 Assuming you installed seqcluster as mentioned before, clone this repository and type::
 
     python setup.py install
     ln -s ~/install/seqcluster/anaconda/bin/seqcluster-helper.py ~/install/seqcluster/linuxbrew/bin/.
     ln -s ~/install/seqcluster/anaconda/bin/seqcluster-installer.py ~/install/seqcluster/linuxbrew/bin/.
 
-
 if you get problem with pythonpy: `pip install pythonpy`
+
+**check installation**
+
+::
+    
+    seqcluster-installer.py --check 
+
+will tell you if all dependencies are installed and ready to use the framework
+
+
+R pakcage
+--------
 
 Install isomiRs package for R using devtools:: 
 
@@ -129,14 +138,6 @@ To install all packages used by the Rmd report::
     
 .. _seqcluster-helper: https://github.com/lpantano/seqcluster-helper/blob/master/README.md
 
-
-**check installation**
-
-::
-    
-    seqcluster-installer.py --check 
-
-will tell you if all dependencies are installed and ready to use the framework
 
 Data
 ---------
