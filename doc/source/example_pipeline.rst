@@ -1,4 +1,4 @@
-_ ..exmaples
+_ ..examples
 
 ***************
 Examples of small RNA analysis
