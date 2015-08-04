@@ -20,3 +20,5 @@ Techonolgy
 `Important features affecting the detection of small RNA biomarkers <http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4487992/>`_: How the sample can affect the detection of biomarkers (like RIN value, concentration, ...)
 
 `Comparison of alignment and normalization <http://bib.oxfordjournals.org/content/early/2015/04/17/bib.bbv019.full>`_ . I will take the message that TMM and DESeq/2 normalization are the best to avoid strong bias if we consider to have a small proportion of DE miRNAs. For the alignments, here you have another comparison for miRNAs annotation: https://rawgit.com/lpantano/tools-mixer/master/mirna/mirannotation/stats.html
+
+`review of tools for detect miRNA-disease network <http://bib.oxfordjournals.org.ezp-prod1.hul.harvard.edu/content/early/2015/06/08/bib.bbv033.full>`_.
