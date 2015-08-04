@@ -113,7 +113,7 @@ Example of a bed file for annotation (the fourth column should be the name of th
 
     chr1    157783  157886  snRNA   0       -
     
-Strongly recommend gtf format. Bed annotation is deprecated.
+Strongly recommend gtf format. Bed annotation is deprecated. Go `here <http://seqcluster.readthedocs.org/installation.html#data>`_ to know how to download data from hg19 and mm10.
 
 Example of a gtf file for annotation (the **third** column should be the name of the feature and
 the value after `gene name` attribute is the specific annotation): 
@@ -125,7 +125,17 @@ the value after `gene name` attribute is the specific annotation):
 
 hint: scripts to generate human and mouse annotation are inside `seqcluster/scripts` folder. 
 
-**REPORT**
+**OUTPUTS**
+
+* ``counts.tsv``: count matrix that can be input of downstream analyses
+* ``size_counts.tsv``: size distribution of the small RNA by annotation group
+* ``seqcluster.json``: json file containing all information 
+* ``log/run.log``: all messages at debug level
+* ``log/trace.log``: to keep trace of algorithm decisions
+
+
+Report
+--------
 
 This will create html report using the following command assuming the output of `seqcluster cluster` is at `res`::
 
@@ -133,16 +143,9 @@ This will create html report using the following command assuming the output of 
 
 where `$GENOME_FASTA_PATH` is the path to the genome fasta file used in the alignment.
 
-**OUTPUTS**
-
-* counts.tsv: count matrix that can be input of downstream analyses
-* size_counts.tsv: size distribution of the small RNA by annotation group
-* seqcluster.json: json file containing all information
-* log/run.log: all messages at debug level
-* log/trace.log: to keep trace of algorithm decision
-* report/html/index.html: table with all clusters and the annotation with sorting option
-* report/html/[0-9]/maps.html: `summary`_ of the cluster with expression profile, annotation, and all sequences inside
-* report/html/[0-9]/maps.fa: putative precursor
+* ``report/html/index.html``: table with all clusters and the annotation with sorting option
+* ``report/html/[0-9]/maps.html``: `summary`_ of the cluster with expression profile, annotation, and all sequences inside
+* ``report/html/[0-9]/maps.fa``: putative precursor
 
 .. _summary: https://rawgit.com/lpantano/seqcluster/master/data/examples_report/html/1/maps.html
 

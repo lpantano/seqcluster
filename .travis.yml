@@ -1,3 +1,4 @@
+sudo: false
 language: python
 python:
   - "2.7"
@@ -12,7 +13,6 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
   - "echo `pwd`"
   - "echo $PATH"
-  - "sudo apt-get install bedtools"
   - "pip install conda"
   - "conda create --yes -n seqcluster python ipython pip distribute setuptools nose numpy pysam scipy pandas"
   - "source activate seqcluster "
