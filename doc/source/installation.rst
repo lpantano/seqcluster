@@ -65,7 +65,12 @@ For cluster command:
 
 For report command:
 
-* bowtie2
+* razers3: you will need to install this manually for now until imported into the installation script::
+
+     wget https://github.com/seqan/seqan/releases/download/seqan-v1.4.2/seqan-apps-1.4.2-Linux-x86_64.tar.bz2
+    tar xjfv seqan-apps-1.4.2-Linux-x86_64.tar.bz2
+    PATH=`pwd`/seqan-apps-1.4.2-Linux-x86_64/bin:$PATH
+  
 
 For seqcluster-helper pipeline:
 
