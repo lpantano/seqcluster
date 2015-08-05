@@ -19,11 +19,12 @@ def processSAM(line):
 def makeBED(samFields):
     samFlag = int(samFields.flag)
     # Only create a BED entry if the read was aligned
-    if (not (samFlag & 0x0004)):
+    if (not (samFlag & 0x0004)) and samFields.pos:
+            name = samFields.qname
+            seq = name.split("-")[1]
             chrom = samFields.rname
             start = str(int(samFields.pos))
-            end = str(int(samFields.pos) + len(samFields.seq) - 1)
-            name = samFields.qname
+            end = str(int(samFields.pos) + len(seq) - 1)
             strand = getStrand(samFlag)
             # Write out the BED entry
             return bedaligned("%s\t%s\t%s\t%s\t.\t%s\n" %  (chrom, start, end, name, strand))
