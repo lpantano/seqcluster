@@ -12,7 +12,7 @@ def read_gtf_line(cols):
         group = cols[2]
         attrs = cols[8].split(";")
         name = [attr.strip().split(" ")[1] for attr in attrs if attr.strip().split(" ")[0].lower().endswith("name")]
-        biotype = [attr.strip().split(" ")[1] for attr in attrs if attr.strip().split(" ")[0].lower().endswith("byotype")]
+        biotype = [attr.strip().split(" ")[1] for attr in attrs if attr.strip().split(" ")[0].lower().endswith("biotype")]
         if biotype:
             group = biotype[0]
         c = cols[0]
