@@ -45,6 +45,6 @@ inputs will be fastq or bam file. Will need to download the mirbase annotation (
 
 # documentation
 - [ ] add install subcommand for mirbase installation/genomes
-- [ ] add html report link to documentation
+- [X] add html report link to documentation
 - [ ] figure showing general pipeline steps: seqcluster-helper
-- [ ] add documentation for seqclusterViz html reader
+- [X] add documentation for seqclusterViz html reader

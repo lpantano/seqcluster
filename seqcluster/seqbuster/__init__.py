@@ -176,7 +176,7 @@ def _get_freq(name):
     try:
         counts = name.split("_x")[1]
     except:
-        return "NA"
+        return 0
     return counts
 
 def _tab_output(reads, out_file, sample):
@@ -219,7 +219,7 @@ def _merge(dts):
     ma_mirna['mirna'] = [m.split(":")[0] for m in ma.index.values]
     ma_mirna = ma_mirna.groupby(['mirna']).sum()
 
-    return ma
+    return ma, ma_mirna
 
 def miraligner(args):
     """
@@ -242,7 +242,9 @@ def miraligner(args):
         out_file, dt = _tab_output(reads, out_file, sample)
         out_dts.append(dt)
 
-    ma = _merge(out_dts)
+    ma, ma_mirna = _merge(out_dts)
     out_ma = op.join(args.out, "counts.tsv")
+    out_ma_mirna = op.join(args.out, "counts_mirna.tsv")
     ma.to_csv(out_ma, sep="\t")
+    ma_mirna.to_csv(out_ma_mirna, sep="\t")
     # _summarize(out_dts)

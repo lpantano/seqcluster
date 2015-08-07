@@ -75,17 +75,20 @@ def _install(path):
     cbl_deploy = __import__("cloudbio.deploy", fromlist=["deploy"])
     cbl_deploy.deploy(s)
 
+def install_mirbase():
+    for fn in ["hairpin.fa.gz", "miRNA.str.gz"]:
+        out_file = op.join("mirbase", fn)
+        _mkdir("mirbase")
+        url = "ftp://mirbase.org/pub/mirbase/CURRENT/%s" % fn
+        cmd = ["wget", "-O", out_file, "--no-check-certificate", url]
+        subprocess.check_call(cmd)
+        subprocess.check_call(["gunzip", "-f", out_file])
+
 def actions(args):
     if args.data:
         db = set(args.data)
         if "mirbase" in db:
-            for fn in ["hairpin.fa.gz", "miRNA.str.gz"]:
-                out_file = op.join("mirbase", fn)
-                _mkdir("mirbase")
-                url = "ftp://mirbase.org/pub/mirbase/CURRENT/%s" % fn
-                cmd = ["wget", "-O", out_file, "--no-check-certificate", url]
-                subprocess.check_call(cmd)
-                subprocess.check_call(["gunzip", "-f", out_file])
+            _install_mirbase()
         if "hg19" in db:
             with chdir("hg19"):
                 subprocess.check_call(["wget", "--no-check-certificate", "-p", "https://raw.githubusercontent.com/lpantano/seqcluster/master/scripts/hg19.sh", "-O", "hg19.sh", ])
