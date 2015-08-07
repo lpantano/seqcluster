@@ -46,6 +46,22 @@ def get_precursors_from_cluster(c1, c2, data):
 
 
 def map_to_precursors(seqs, names, loci, out_file, args):
+    """map sequences to precursors with razers3"""
+    with make_temp_directory() as temp:
+        pre_fasta = os.path.join(temp, "pre.fa")
+        seqs_fasta = os.path.join(temp, "seqs.fa")
+        out_sam = os.path.join(temp, "out.sam")
+        pre_fasta = get_loci_fasta(loci, pre_fasta, args.ref)
+        out_precursor_file = out_file.replace("tsv", "fa")
+        seqs_fasta = get_seqs_fasta(seqs, names, seqs_fasta)
+        if find_cmd("razers3"):
+            cmd = "razers3 -dr 2 -i 80 -rr 90 -f -o {out_sam} {temp}/pre.fa  {seqs_fasta}"
+            run(cmd.format(**locals()))
+            out_file = read_alignment(out_sam, loci, seqs, out_file)
+            shutil.copy(pre_fasta, out_precursor_file)
+    return out_file
+
+def deprecated_map_to_precursors(seqs, names, loci, out_file, args):
     """map sequences to precursors with bowtie"""
     with make_temp_directory() as temp:
         pre_fasta = os.path.join(temp, "pre.fa")
@@ -104,6 +120,8 @@ def read_alignment(out_sam, loci, seqs, out_file):
             if not a.is_unmapped:
                 nm = int([t[1] for t in a.tags if t[0] == "NM"][0])
                 a = makeBED(a)
+                if not a:
+                    continue
                 ref, locus = get_loci(samfile.getrname(int(a.chr)), loci)
                 hits[a.name].append((nm, "%s %s %s %s %s %s" % (a.name, a.name.split("-")[0], locus, ref, a.start, a.end)))
         for hit in hits.values():

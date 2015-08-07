@@ -18,8 +18,8 @@ Web-servers
 
 `chimira`_: Web tool to analyze isomiR. It gives you a quick idea of you samples.
 
-
 `MicroCosm`_: MiRNA target database. Updated and download option.
+
 
 .. _TFmiR: http://service.bioinformatik.uni-saarland.de/tfmir/
 

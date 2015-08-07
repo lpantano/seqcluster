@@ -14,6 +14,8 @@ Contents:
    installation.rst
    
    getting_started.rst
+   
+   example_pipeline.rst 
 
    mirna_annotation.rst
    

@@ -16,7 +16,6 @@ def _mkdir(path):
         if not os.path.isdir(path):
             raise
 
-
 @contextlib.contextmanager
 def chdir(new_dir):
     """
@@ -75,7 +74,7 @@ def _install(path):
     cbl_deploy = __import__("cloudbio.deploy", fromlist=["deploy"])
     cbl_deploy.deploy(s)
 
-def install_mirbase():
+def _install_mirbase():
     for fn in ["hairpin.fa.gz", "miRNA.str.gz"]:
         out_file = op.join("mirbase", fn)
         _mkdir("mirbase")
@@ -83,6 +82,7 @@ def install_mirbase():
         cmd = ["wget", "-O", out_file, "--no-check-certificate", url]
         subprocess.check_call(cmd)
         subprocess.check_call(["gunzip", "-f", out_file])
+    return "mirbase/hairpin.fa", "mirbase/miRNA.str"
 
 def actions(args):
     if args.data:

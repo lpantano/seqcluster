@@ -168,12 +168,13 @@ def _single_cluster(c, data, out_file, args):
     df = _convert_to_df(out_file, freq)
     if df:
         if not file_exists(figure_file):
-            plt.figure()
+            fig = plt.figure()
             for s in df:
                 plt.plot(df[s].keys(), df[s].values())
             plt.ylabel('Normalized expression', fontsize=15)
             plt.xlabel('Position', fontsize=15)
             plt.savefig(figure_file)
+            plt.close(fig)
         valid, ann = _make_html(data[0][c], html_file, figure_file, prefix)
 
     return valid, ann, df
