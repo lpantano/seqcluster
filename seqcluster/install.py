@@ -86,7 +86,7 @@ def _install_mirbase():
 
 def actions(args):
     if args.data:
-        db = set(args.data)
+        db = set(args.data) if isinstance(args.data, list) else [args.data]
         if "mirbase" in db:
             _install_mirbase()
         if "hg19" in db:
@@ -103,6 +103,6 @@ def actions(args):
 def main():
     parser = ArgumentParser(description="small RNA analysis installer")
     parser.add_argument("--tools", help="tools")
-    parser.add_argument("--data", help="data")
+    parser.add_argument("--data", help="data", default=[])
     args = parser.parse_args()
     actions(args)
