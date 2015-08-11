@@ -3,5 +3,5 @@
 # scipy>=0.15.1
 # pandas>=0.14.1
 # bcbio-nextgen>=0.8.7
-progressbar>=2.3.0
+progressbar2>=2.7.0
 # colorlog
