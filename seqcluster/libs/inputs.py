@@ -63,7 +63,7 @@ def parse_ma_file_raw(in_file):
     name = ""
     index = 1
     total = defaultdict(int)
-    seq_obj = defaultdict(sequences)
+    seq_obj = defaultdict(sequence)
     with open(in_file) as handle_in:
         line = handle_in.readline().strip()
         cols = line.split("\t")
@@ -78,9 +78,9 @@ def parse_ma_file_raw(in_file):
                 exp[samples[i]] = int(cols[i+2])
                 total[samples[i]] += int(cols[i+2])
             index = index+1
+            if name not in seq_obj:
+                seq_obj[name] = sequence(name)
             seq_obj[name].set_freq(exp)
             seq_obj[name].set_seq(seq)
-            # new_s = sequence(seq, exp, index)
-            # seq_l[name] = new_s
     seq_obj = _normalize_seqs(seq_obj, total)
     return seq_obj, total, index

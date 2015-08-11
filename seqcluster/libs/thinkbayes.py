@@ -26,8 +26,11 @@ import math
 import numpy
 import random
 
-import scipy.stats
-from scipy.special import erf, erfinv
+try:
+    import scipy.stats
+    from scipy.special import erf, erfinv
+except:
+    pass
 
 ROOT2 = math.sqrt(2)
 

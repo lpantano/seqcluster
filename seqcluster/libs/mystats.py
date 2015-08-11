@@ -1,5 +1,7 @@
-import scipy.stats as stat
-
+try:
+    import scipy.stats as stat
+except:
+    pass
 
 def up_threshold(x, s, p):
     """function to decide if similarity is

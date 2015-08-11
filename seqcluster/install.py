@@ -9,6 +9,11 @@ from argparse import ArgumentParser
 import subprocess
 import contextlib
 
+REMOTES = {
+            "requirements": "https://raw.github.com/lpantano/seqcluster/master/requirements.txt",
+            "gitrepo": "https://github.com/lpantano/seqcluster.git",
+           }
+
 def _mkdir(path):
     try:
         os.makedirs(path)
@@ -84,7 +89,20 @@ def _install_mirbase():
         subprocess.check_call(["gunzip", "-f", out_file])
     return "mirbase/hairpin.fa", "mirbase/miRNA.str"
 
+def _upgrade():
+    conda_dir = os.path.join(os.path.dirname(sys.executable))
+    try:
+        import bcbio.install as install
+        install._set_pip_ssl(conda_dir)
+    except ImportError:
+        pass
+    pip_bin = os.path.join(conda_dir, "pip")
+    subprocess.check_call([pip_bin, "install", "--upgrade", "--no-deps",
+                           "git+%s#egg=seqcluster" % REMOTES["gitrepo"]])
+
 def actions(args):
+    if args.upgrade:
+        _upgrade()
     if args.data:
         db = set(args.data) if isinstance(args.data, list) else [args.data]
         if "mirbase" in db:
@@ -102,7 +120,8 @@ def actions(args):
 
 def main():
     parser = ArgumentParser(description="small RNA analysis installer")
-    parser.add_argument("--tools", help="tools")
-    parser.add_argument("--data", help="data", default=[])
+    parser.add_argument("--tools", help="install tools")
+    parser.add_argument("--data", help="install data", default=[])
+    parser.add_argument("--upgrade", action="store_true", help="upgrade seqcluster", default=[])
     args = parser.parse_args()
     actions(args)
