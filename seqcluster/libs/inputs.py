@@ -53,3 +53,34 @@ def parse_ma_file(seq_obj, in_file):
             # seq_l[name] = new_s
     seq_obj = _normalize_seqs(seq_obj, total)
     return seq_obj, total, index
+
+
+def parse_ma_file_raw(in_file):
+    """
+    read seqs.ma file and create dict with
+    sequence object
+    """
+    name = ""
+    index = 1
+    total = defaultdict(int)
+    seq_obj = defaultdict(sequences)
+    with open(in_file) as handle_in:
+        line = handle_in.readline().strip()
+        cols = line.split("\t")
+        samples = cols[2:]
+        for line in handle_in:
+            line = line.strip()
+            cols = line.split("\t")
+            name = int(cols[0].replace("seq_", ""))
+            seq = cols[1]
+            exp = {}
+            for i in range(len(samples)):
+                exp[samples[i]] = int(cols[i+2])
+                total[samples[i]] += int(cols[i+2])
+            index = index+1
+            seq_obj[name].set_freq(exp)
+            seq_obj[name].set_seq(seq)
+            # new_s = sequence(seq, exp, index)
+            # seq_l[name] = new_s
+    seq_obj = _normalize_seqs(seq_obj, total)
+    return seq_obj, total, index
