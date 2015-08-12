@@ -48,13 +48,17 @@ def _read_precursor(precursor, sps):
     """
     read precurso file for that species
     """
-    hairpin = {}
+    hairpin = defaultdict(str)
+    name = None
     with open(precursor) as in_handle:
         for line in in_handle:
             if line.startswith(">"):
+                if hairpin[name]:
+                    hairpin[name] = hairpin[name] + "NNNNNNNNNNNN"
                 name = line.strip().replace(">", " ").split()[0]
             else:
-                hairpin[name] = line.strip()
+                hairpin[name] += line.strip()
+        hairpin[name] = hairpin[name] + "NNNNNNNNNNNN"
     return hairpin
 
 def _coord(sequence, start, mirna, precursor, iso):
@@ -66,16 +70,25 @@ def _coord(sequence, start, mirna, precursor, iso):
         iso.t5 = "I" + sequence[:dif]
     elif start > mirna[0]:
         iso.t5 = "D" + precursor[mirna[0] - 1:mirna[0] - 1 + dif]
-
-    end = start + (len(sequence) - len(iso.add)) - 1
-    logger.debug("%s %s %s " % (start, len(sequence), end))
-    dif = abs(mirna[1] - end)
+    elif start == mirna[0]:
+        iso.t5 = "NA"
     if dif > 3:
         return None
+
+    end = start + (len(sequence) - len(iso.add)) - 1
+    dif = abs(mirna[1] - end)
+    # if dif > 3:
+    #    return None
     if end > mirna[1]:
         iso.t3 = "I" + sequence[-dif:]
     elif end < mirna[1]:
         iso.t3 = "D" + precursor[mirna[1] - dif:mirna[1]]
+    elif end == mirna[1]:
+        iso.t3 = "NA"
+    if dif > 3:
+        return None
+    logger.debug("%s %s %s %s %s %s" % (start, len(sequence), end, dif, mirna, iso.format()))
+    return True
 
 def _annotate(reads, mirbase_ref, precursors):
     """
@@ -84,11 +97,12 @@ def _annotate(reads, mirbase_ref, precursors):
     for r in reads:
         for p in reads[r].precursors:
             start = reads[r].precursors[p].start + 1  # convert to 1base
+            end = start + len(reads[r].sequence)
             for mature in mirbase_ref[p]:
                 mi = mirbase_ref[p][mature]
-                if start < mi[0] + 4 and start > mi[0] - 4:
-                    logger.debug(("{r} {start} {start} {mi} {mature_s}").format(s=reads[r].sequence, mature_s=precursors[p][mi[0]-1:mi[1]], **locals()))
-                    _coord(reads[r].sequence, start, mi, precursors[p], reads[r].precursors[p])
+                is_iso = _coord(reads[r].sequence, start, mi, precursors[p], reads[r].precursors[p])
+                logger.debug(("{r} {p} {start} {is_iso} {mi} {mature_s}").format(s=reads[r].sequence, mature_s=precursors[p][mi[0]-1:mi[1]], **locals()))
+                if is_iso:
                     reads[r].precursors[p].mirna = mature
                     break
     return reads
@@ -106,7 +120,7 @@ def _realign(seq, precursor, start):
     subs, add = [], []
     for e in error:
         if e < len(seq) - 3:
-            subs.append([e, precursor[start + e]])
+            subs.append([e, seq[e]])
 
     pattern, error_add = [], []
     for e in range(len(seq) - 3, len(seq)):
@@ -121,7 +135,7 @@ def _realign(seq, precursor, start):
             break
     if not add and error_add:
         for e in error_add:
-            subs.append([e, precursor[start + e]])
+            subs.append([e, seq[e]])
 
     return subs, add
 
@@ -139,6 +153,7 @@ def _clean_hits(reads):
                 sc = world[p]
         new_reads[r] = reads[r]
         for p in world:
+            logger.debug("remove %s %s %s" % (r, p, world[p]))
             if sc != world[p]:
                 new_reads[r].remove_precursor(p)
 
@@ -189,6 +204,8 @@ def _tab_output(reads, out_file, sample):
             [hits.add(mature.mirna) for mature in read.precursors.values() if mature.mirna]
             hits = len(hits)
             for p, iso in read.precursors.iteritems():
+                if len(iso.subs) > 3 or not iso.mirna:
+                    continue
                 if (r, iso.mirna) not in seen:
                     seen.add((r, iso.mirna))
                     chrom = iso.mirna
@@ -214,6 +231,8 @@ def _merge(dts):
         else:
             df.join(dt)
 
+    # print df
+    df = df[df['hits']>0]
     ma = df.pivot(index='isomir', columns='sample', values='counts')
     ma_mirna = ma
     ma_mirna['mirna'] = [m.split(":")[0] for m in ma.index.values]
