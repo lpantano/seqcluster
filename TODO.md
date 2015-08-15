@@ -44,7 +44,7 @@ inputs will be fastq or bam file. Will need to download the mirbase annotation (
 - [ ] seqclusteR: will be an object that make easier to retrieve information like counts, rownames, annotations ... tidy tables, and figures
 
 # documentation
-- [ ] add install subcommand for mirbase installation/genomes
+- [X] add install subcommand for mirbase installation/genomes
 - [X] add html report link to documentation
 - [ ] figure showing general pipeline steps: seqcluster-helper
 - [X] add documentation for seqclusterViz html reader
