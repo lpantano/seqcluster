@@ -48,3 +48,4 @@ inputs will be fastq or bam file. Will need to download the mirbase annotation (
 - [X] add html report link to documentation
 - [ ] figure showing general pipeline steps: seqcluster-helper
 - [X] add documentation for seqclusterViz html reader
+
