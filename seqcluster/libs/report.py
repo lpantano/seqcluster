@@ -2,14 +2,10 @@ import logging
 import string
 import os
 
-# import matplotlib
-# matplotlib.use('Agg', force=True)
 from matplotlib import pyplot as plt
 plt.ioff()
 AXIS_FONT = {'fontname': 'Arial', 'size': '14'}
 from math import log as mlog2
-# import pylab
-# pylab.rcParams['figure.figsize'] = (25.0, 10.0)
 from collections import Counter, defaultdict
 
 from read import map_to_precursors
@@ -47,15 +43,17 @@ def make_profile(data, out_dir, args):
     header = ['id', 'ann']
     html_file = os.path.join(out_dir, "index.html")
     n = len(data[0])
-    with ProgressBar(maxval=n, redirect_stdout=True) as p:
-        for itern, c in enumerate(data[0]):
-            p.update(itern)
-            logger.debug("creating cluser: {}".format(c))
-            safe_dirs(os.path.join(out_dir, c))
-            valid, ann, pos_structure = _single_cluster(c, data, os.path.join(out_dir, c, "maps.tsv"), args)
-            data[0][c].update({'profile': pos_structure})
-            if valid:
-                main_table.append([_get_link(c), _get_ann(valid, ann)])
+    bar = ProgressBar(maxval=n)
+    bar.start()
+    bar.update(0)
+    for itern, c in enumerate(data[0]):
+        bar.update(itern)
+        logger.debug("creating cluser: {}".format(c))
+        safe_dirs(os.path.join(out_dir, c))
+        valid, ann, pos_structure = _single_cluster(c, data, os.path.join(out_dir, c, "maps.tsv"), args)
+        data[0][c].update({'profile': pos_structure})
+        if valid:
+            main_table.append([_get_link(c), _get_ann(valid, ann)])
 
     main_html = HTML.table(main_table, header_row=header, attribs={'id': 'keywords'})
     html_template = os.path.normpath(os.path.join(os.path.dirname(os.path.realpath(templates.__file__)), "main"))

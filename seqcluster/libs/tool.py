@@ -272,20 +272,22 @@ def reduceloci(clus_obj,  path):
     large = 0
     current = clus_obj.clusid
     logger.info("Number of loci: %s" % len(clus_obj.loci.keys()))
-    with ProgressBar(maxval=len(current), redirect_stdout=True) as p:
-        for itern, idmc in enumerate(current):
-            p.update(itern)
-            logger.debug("_reduceloci: cluster %s" % idmc)
-            c = copy.deepcopy(list(current[idmc]))
+    bar = ProgressBar(maxval=len(current))
+    bar.start()
+    bar.update(0)
+    for itern, idmc in enumerate(current):
+        bar.update(itern)
+        logger.debug("_reduceloci: cluster %s" % idmc)
+        c = copy.deepcopy(list(current[idmc]))
 
-            n_loci = len(c)
-            if n_loci < 1000:
-                filtered, n_cluster = _iter_loci(c, clus_obj.clus, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
-            else:
-                large += 1
-                n_cluster += 1
-                _write_cluster(c, clus_obj.clus, clus_obj.loci, n_cluster, path)
-                filtered[n_cluster] = _add_complete_cluster(n_cluster, c, clus_obj.clus)
+        n_loci = len(c)
+        if n_loci < 1000:
+            filtered, n_cluster = _iter_loci(c, clus_obj.clus, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
+        else:
+            large += 1
+            n_cluster += 1
+            _write_cluster(c, clus_obj.clus, clus_obj.loci, n_cluster, path)
+            filtered[n_cluster] = _add_complete_cluster(n_cluster, c, clus_obj.clus)
     clus_obj.clus = filtered
 
     seqs = 0
