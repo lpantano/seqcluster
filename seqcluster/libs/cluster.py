@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 
 from bcbio.utils import file_exists
+from bcbio import bam
 
 import logger as mylog
 from classes import *
@@ -49,7 +50,7 @@ def clean_bam_file(bam_in, mask=None):
             pybedtools.BedTool(bam_file).intersect(b=mask, v=True).saveas(mask_file)
         bam_in = mask_file
     out_file = op.splitext(bam_in)[0] + "_rmlw.bam"
-    pysam.index(bam_in, catch_stdout=False)
+    bam.index(bam_in, {'algorithm':{}})
     bam = pysam.AlignmentFile(bam_in, "rb")
     with pysam.AlignmentFile(out_file, "wb", template=bam) as out_handle:
         for read in bam.fetch():
