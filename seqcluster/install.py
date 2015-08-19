@@ -118,7 +118,7 @@ def actions(args):
     if args.tools:
         _install(op.abspath(args.tools))
 
-def main():
+def main(**kwargs):
     parser = ArgumentParser(description="small RNA analysis installer")
     parser.add_argument("--tools", help="install tools")
     parser.add_argument("--data", help="install data", default=[])

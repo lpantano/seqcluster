@@ -51,9 +51,9 @@ def clean_bam_file(bam_in, mask=None):
         bam_in = mask_file
     out_file = op.splitext(bam_in)[0] + "_rmlw.bam"
     bam.index(bam_in, {'algorithm':{}})
-    bam = pysam.AlignmentFile(bam_in, "rb")
-    with pysam.AlignmentFile(out_file, "wb", template=bam) as out_handle:
-        for read in bam.fetch():
+    bam_handle = pysam.AlignmentFile(bam_in, "rb")
+    with pysam.AlignmentFile(out_file, "wb", template=bam_handle) as out_handle:
+        for read in bam_handle.fetch():
             seq_name = int(read.query_name.replace('seq_', ''))
             match_size = [nts for oper, nts in read.cigartuples if oper == 0]
             subs_size = [nts for oper, nts in read.cigartuples if oper == 4]
