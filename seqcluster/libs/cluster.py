@@ -9,8 +9,10 @@ try:
 except ImportError:
     None
 import numpy as np
+import pandas as pd
 
 from bcbio.utils import file_exists
+from bcbio import bam
 
 import logger as mylog
 from classes import *
@@ -48,10 +50,10 @@ def clean_bam_file(bam_in, mask=None):
             pybedtools.BedTool(bam_file).intersect(b=mask, v=True).saveas(mask_file)
         bam_in = mask_file
     out_file = op.splitext(bam_in)[0] + "_rmlw.bam"
-    pysam.index(bam_in)
-    bam = pysam.AlignmentFile(bam_in, "rb")
-    with pysam.AlignmentFile(out_file, "wb", template=bam) as out_handle:
-        for read in bam.fetch():
+    bam.index(bam_in, {'algorithm':{}})
+    bam_handle = pysam.AlignmentFile(bam_in, "rb")
+    with pysam.AlignmentFile(out_file, "wb", template=bam_handle) as out_handle:
+        for read in bam_handle.fetch():
             seq_name = int(read.query_name.replace('seq_', ''))
             match_size = [nts for oper, nts in read.cigartuples if oper == 0]
             subs_size = [nts for oper, nts in read.cigartuples if oper == 4]
@@ -151,26 +153,28 @@ def _find_metaclusters(clus_obj, sequence2clusters, current_seq, min_seqs):
     c_index = len(sequence2clusters)
     logger.info("Creating meta-clusters based on shared sequences: %s" % c_index)
     meta_idx = 1
-    with ProgressBar(maxval=c_index, redirect_stdout=True) as p:
-        for itern, name in enumerate(sequence2clusters):
-            clusters = sequence2clusters[name]
-            if len(clusters) == 0:
-                c_index -= 1
-                continue
-            current_seq[name].align = 1
-            meta_idx += 1
-            p.update(itern)
-            already_in = _common(clusters, seen)
-            _update(clusters, meta_idx, seen)
-            metacluster[meta_idx] = metacluster[meta_idx].union(clusters)
+    bar = ProgressBar(maxval=c_index)
+    bar.start()
+    bar.update()
+    for itern, name in enumerate(sequence2clusters):
+        clusters = sequence2clusters[name]
+        if len(clusters) == 0:
+            c_index -= 1
+            continue
+        current_seq[name].align = 1
+        meta_idx += 1
+        bar.update(itern)
+        already_in = _common(clusters, seen)
+        _update(clusters, meta_idx, seen)
+        metacluster[meta_idx] = metacluster[meta_idx].union(clusters)
 
-            if already_in:
-                for seen_metacluster in already_in:
-                    clusters2merge = metacluster[seen_metacluster]
-                    metacluster[meta_idx] = metacluster[meta_idx].union(clusters2merge)
-                    _update(clusters2merge, meta_idx, seen)
-                    # metacluster[seen_metacluster] = 0
-                    del metacluster[seen_metacluster]
+        if already_in:
+            for seen_metacluster in already_in:
+                clusters2merge = metacluster[seen_metacluster]
+                metacluster[meta_idx] = metacluster[meta_idx].union(clusters2merge)
+                _update(clusters2merge, meta_idx, seen)
+                # metacluster[seen_metacluster] = 0
+                del metacluster[seen_metacluster]
     logger.info("%s metaclusters from %s sequences" % (len(metacluster), c_index))
 
     return metacluster, seen
@@ -253,7 +257,8 @@ def peak_calling(clus_obj):
                 dt[ss] += clus_obj.loci[bigger].counts[pos]
         x = np.array(range(0, len(dt)))
         logger.debug("x %s and y %s" % (x, dt))
-
+        tab = pd.DataFrame({'x': x, 'y': dt})
+        # tab.to_csv( str(cid) + "peaks.csv", mode='w', header=False, index=False)
         if len(x) > 35 + 12:
             try:
                 profile = Data(x, dt, smoothness=3)
@@ -264,7 +269,7 @@ def peak_calling(clus_obj):
                 peaks = list(profile.peaks['peaks'][0])
                 # peaks = peakdetect(dt, x, lookahead=5)[0]
                 logger.debug(peaks)
-            except ValueError:
+            except:
                 peaks = [[s], [e], ['short']]
         else:
             peaks = [[s], [e], ['short']]

@@ -1,0 +1,673 @@
+ 	Landgraf et al. (2007) [hg 17]			
+miRNA				
+name	Chromosome	Strand	Start TSS	End TSS
+hsa-let-7a-1				
+hsa-let-7a-2	11	-	121404242	121798789
+hsa-let-7a-3				
+hsa-let-7b				
+hsa-let-7c	21	+	16364712	16921587
+hsa-let-7c	21	+	16364712	16921587
+hsa-let-7c	21	+	16364712	16921587
+hsa-let-7d				
+hsa-let-7e	19	+	56882673	56907452
+hsa-let-7f-1				
+hsa-let-7f-2				
+hsa-let-7g	3	-	52263491	52308358
+hsa-let-7i	12	+	61278728	61296959
+hsa-mir-100	11	-	121404242	121798789
+hsa-mir-100871				
+hsa-mir-101-1				
+hsa-mir-101-2	9	+	4782833	4875917
+hsa-mir-101-2	9	+	4782833	4875917
+hsa-mir-103-1				
+hsa-mir-103-2				
+hsa-mir-105-1				
+hsa-mir-105-2				
+hsa-mir-106a				
+hsa-mir-106b				
+hsa-mir-107	10	-	91331175	91451169
+hsa-mir-10a	17	-	43982245	44037353
+hsa-mir-10b				
+hsa-mir-1-1	20	+	60556954	60578409
+hsa-mir-1-2	18	-	17654661	17668044
+hsa-mir-122	18	+	54264290	54274367
+hsa-mir-124-1	8	-	9793311	9803387
+hsa-mir-124-2	8	+	65448438	65459350
+hsa-mir-124-3	20	+	61275303	61285378
+hsa-mir-124-3	20	+	61275303	61285378
+hsa-mir-125a	19	+	56882673	56907452
+hsa-mir-125b-1	11	-	121404242	121798789
+hsa-mir-125b-1	11	-	121404242	121798789
+hsa-mir-125b-2	21	+	16364712	16921587
+hsa-mir-125b-2	21	+	16364712	16921587
+hsa-mir-125b-2	21	+	16364712	16921587
+hsa-mir-125b-2	21	+	16364712	16921587
+hsa-mir-126				
+hsa-mir-126				
+hsa-mir-127	14	+	100315499	100472074
+hsa-mir-128-1	2	+	136122756	136316370
+hsa-mir-128-2	3	+	35655440	35810980
+hsa-mir-128a	 	 	 	 
+hsa-mir-128b	 	 	 	 
+hsa-mir-129-1				
+hsa-mir-129-2	11	+	43534561	43834736
+hsa-mir-130a	11	+	57160251	57176839
+hsa-mir-130b	22	+	20326824	20377104
+hsa-mir-132	17	-	1893518	1905404
+hsa-mir-133a-1	18	-	17654661	17668044
+hsa-mir-133a-2	20	+	60556954	60578409
+hsa-mir-133b	6	+	52112110	52126776
+hsa-mir-134	14	+	100553151	100609127
+hsa-mir-135a-1	3	-	52263491	52308358
+hsa-mir-135a-2				
+hsa-mir-135b				
+hsa-mir-136	14	+	100315499	100472074
+hsa-mir-137				
+hsa-mir-138-1	3	+	44125720	44138861
+hsa-mir-138-2	16	+	55444930	55455018
+hsa-mir-139	11	-	71964833	72069271
+hsa-mir-140	16	+	68524485	68524584
+hsa-mir-141	12	+	6925886	69524584
+hsa-mir-142	17	-	53733592	53768673
+hsa-mir-143	5	+	148766588	1487955487
+hsa-mir-144	17	-	24207517	24217757
+hsa-mir-145	5	+	148766588	148795487
+hsa-mir-146a	5	+	159827852	159850024
+hsa-mir-146a	5	+	159827852	159850024
+hsa-mir-146b	10	+	1014181257	1014191335
+hsa-mir-147a				
+hsa-mir-147b	15	+	43507540	43517619
+hsa-mir-147b	15	+	43507540	43517619
+hsa-mir-148a				
+hsa-mir-148b	12	+	52981252	53031901
+hsa-mir-148b	12	+	52981252	53031901
+hsa-mir-148b	12	+	52981252	53031901
+hsa-mir-149				
+hsa-mir-149				
+hsa-mir-149				
+hsa-mir-150	19	-	54690857	54700932
+hsa-mir-151	8	-	141737671	142081497
+hsa-mir-152	17	-	43458531	43474607
+hsa-mir-153-1				
+hsa-mir-153-1				
+hsa-mir-153-2	7	-	156831226	157879970
+hsa-mir-153-2	7	-	156813226	157879970
+hsa-mir-154	14	+	100553151	100609127
+hsa-mir-155	21	+	25856327	25873236
+hsa-mir-155	21	+	25856327	25873236
+hsa-mir-15a	13	-	49454685	49597857
+hsa-mir-15a	13	-	49454685	49597857
+hsa-mir-15b	3	+	161599793	161635444
+hsa-mir-16-1	13	-	49454685	49597857
+hsa-mir-16-1	13	-	49454685	49597857
+hsa-mir-16-2	3	+	161600124	161635433
+hsa-mir-17	13	+	90795863	90806647
+hsa-mir-181a-1				
+hsa-mir-181a-2				
+hsa-mir-181b-1				
+hsa-mir-181b-2				
+hsa-mir-181c	19	+	13833876	13852573
+hsa-mir-181d	19	+	13833876	13852573
+hsa-mir-182				
+hsa-mir-183				
+hsa-mir-184	15	+	77289185	77289268
+hsa-mir-185	22	+	18379090	18473952
+hsa-mir-185	22	+	18379090	18473952
+hsa-mir-185	22	+	18379090	18473952
+hsa-mir-186				
+hsa-mir-187	18	-	31733786	31743863
+hsa-mir-188				
+hsa-mir-18a	13	+	90795863	90806647
+hsa-mir-18b				
+hsa-mir-190	15	+	60640855	60920743
+hsa-mir-190b				
+hsa-mir-191	3	-	49027586	49106832
+hsa-mir-191	3	-	49027586	49106832
+hsa-mir-192	11	-	64376781	64441298
+hsa-mir-193a	17	+	26906138	26931641
+hsa-mir-193a	17	+	26906138	26931641
+hsa-mir-193b	16	+	14300328	14327726
+hsa-mir-194-1				
+hsa-mir-194-2	11	-	64376781	64441298
+hsa-mir-195	17	-	6720677	6867052
+hsa-mir-196a-1	17	-	44039595	44079381
+hsa-mir-196a-2	12	+	52665115	52736080
+hsa-mir-196b				
+hsa-mir-196b				
+hsa-mir-197				
+hsa-mir-198				
+hsa-mir-199a-1	19	-	10789102	10789172
+hsa-mir-199a-2				
+hsa-mir-199b				
+hsa-mir-19a	13	+	90795863	90806647
+hsa-mir-19b-1	13	+	90795863	90806647
+hsa-mir-19b-2				
+hsa-mir-200a				
+hsa-mir-200b				
+hsa-mir-200c	12	+	6925886	6948610
+hsa-mir-202				
+hsa-mir-203	14	+	103621768	103658590
+hsa-mir-204				
+hsa-mir-205				
+hsa-mir-206	6	+	52112110	52126776
+hsa-mir-208	14	-	22921030	22974710
+hsa-mir-208	14	-	22921030	22974710
+hsa-mir-208b	14	-	22921030	22974710
+hsa-mir-208b	14	-	22921030	22974710
+hsa-mir-20a	13	+	90795863	90806647
+hsa-mir-20b				
+hsa-mir-21	17	+	54539353	55278485
+hsa-mir-210	11	-	553102	563181
+hsa-mir-211	15	-	29080828	29181221
+hsa-mir-211	15	-	29080828	29181221
+hsa-mir-212	17	-	1893518	1905404
+hsa-mir-214				
+hsa-mir-215				
+hsa-mir-216a				
+hsa-mir-216b				
+hsa-mir-217				
+hsa-mir-218-1	4	+	19931151	20298453
+hsa-mir-218-2	5	-	168025683	1686623276
+hsa-mir-219-1	6	+	33276580	33288682
+hsa-mir-219-2				
+hsa-mir-22	17	-	1555810	1569027
+hsa-mir-220				
+hsa-mir-220b	19	+	6441959	6452045
+hsa-mir-220c	19	-	53750341	53760423
+hsa-mir-221				
+hsa-mir-222				
+hsa-mir-223				
+hsa-mir-224				
+hsa-mir-23a				
+hsa-mir-23a	19	-	13803093	13813473
+hsa-mir-23b				
+hsa-mir-23b				
+hsa-mir-24-1				
+hsa-mir-24-1				
+hsa-mir-24-2	19	-	13803093	13813473
+hsa-mir-24-2	19	-	13803093	13813473
+hsa-mir-25				
+hsa-mir-26a-1	3	+	37878128	38000964
+hsa-mir-26a-1	3	+	37878128	38000964
+hsa-mir-26a-2	12	-	56499660	56526981
+hsa-mir-26b				
+hsa-mir-27a	19	-	13803093	13813473
+hsa-mir-27a	19	-	13803093	13813473
+hsa-mir-27b				
+hsa-mir-27b				
+hsa-mir-28	3	+	189353510	190078534
+hsa-mir-296	20	-	56821066	56859353
+hsa-mir-298	20	-	56821066	56859353
+hsa-mir-299	14	+	100553151	100609127
+hsa-mir-29a	7	-	130013752	130252190
+hsa-mir-29b-1	7	-	130013752	130252190
+hsa-mir-29b-2				
+hsa-mir-29c				
+hsa-mir-300	14	+	100553151	100609127
+hsa-mir-301a	17	-	54542097	54588359
+hsa-mir-301b	22	+	20326824	20377104
+hsa-mir-302a				
+hsa-mir-302b				
+hsa-mir-302c				
+hsa-mir-302d				
+hsa-mir-30a	6	-	71987880	72187169
+hsa-mir-30b	8	-	135873444	135891375
+hsa-mir-30c-1				
+hsa-mir-30c-1				
+hsa-mir-30c-2	6	-	71987880	72187169
+hsa-mir-30d	8	-	135873444	135891375
+hsa-mir-30e				
+hsa-mir-30e				
+hsa-mir-31	9	-	21410423	21549859
+hsa-mir-32				
+hsa-mir-320	8	-	22153423	22163496
+hsa-mir-320-d				
+hsa-mir-322				
+hsa-mir-323	14	+	100553151	100609127
+hsa-mir-324	17	-	7033935	7078805
+hsa-mir-325				
+hsa-mir-326	11	-	74654241	74740436
+hsa-mir-328	16	-	65788721	65818452
+hsa-mir-329-1	14	+	100553151	100609127
+hsa-mir-329-2	14	+	100553151	100609127
+hsa-mir-330	19	-	50804353	50840699
+hsa-mir-330	19	-	50804353	50840699
+hsa-mir-331				
+hsa-mir-335				
+hsa-mir-335				
+hsa-mir-337	14	+	100315499	100472074
+hsa-mir-338	17	-	76705692	76754472
+hsa-mir-339				
+hsa-mir-339				
+hsa-mir-339				
+hsa-mir-339				
+hsa-mir-33a	22	+	40553608	40627811
+hsa-mir-33b	17	-	17652886	17681061
+hsa-mir-33b	17	-	17652886	17681061
+hsa-mir-340	5	-	179279943	179431724
+hsa-mir-342	14	+	99507511	99680333
+hsa-mir-342	14	+	99507511	99680333
+hsa-mir-345	14	+	99838956	99849033
+hsa-mir-346	10	-	87349291	88116929
+hsa-mir-346	10	-	87349291	88116929
+hsa-mir-346	10	-	87349291	88116929
+hsa-mir-34a				
+hsa-mir-34b	11	+	110883876	110913193
+hsa-mir-34c	11	+	110883876	110913193
+hsa-mir-361	X	-	84922330	85108714
+hsa-mir-362				
+hsa-mir-363				
+hsa-mir-365-1	16	+	14300328	14327726
+hsa-mir-365-1	16	+	14300328	14327726
+hsa-mir-365-1	16	+	14300328	14327726
+hsa-mir-365-2	17	+	26906138	26931641
+hsa-mir-365-2	17	+	26906138	26931641
+hsa-mir-367				
+hsa-mir-368				
+hsa-mir-369	14	+	100553151	100609127
+hsa-mir-370	14	+	100315499	100472074
+hsa-mir-371	19	+	58856748	58988846
+hsa-mir-371	19	+	58856748	58988846
+hsa-mir-372	19	+	58856748	58988846
+hsa-mir-372	19	+	58856748	58988846
+hsa-mir-373	19	+	58856748	58988846
+hsa-mir-373	19	+	58856748	58988846
+hsa-mir-374a				
+hsa-mir-374b				
+hsa-mir-375				
+hsa-mir-376a-1				
+hsa-mir-376a-2				
+hsa-mir-376c				
+hsa-mir-376b				
+hsa-mir-377	14	+	100553151	100609127
+hsa-mir-378	5	+	149087576	149207783
+hsa-mir-379	14	+	100553151	100609127
+hsa-mir-380	14	+	100553151	100609127
+hsa-mir-381	14	+	100553151	100609127
+hsa-mir-382	14	+	100553151	100609127
+hsa-mir-383	8	-	14750313	14760394
+hsa-mir-384				
+hsa-mir-409	14	+	100553151	100609127
+hsa-mir-410	14	+	100553151	100609127
+hsa-mir-411	14	+	100553151	100609127
+hsa-mir-412	14	+	100553151	100609127
+hsa-mir-421				
+hsa-mir-422a	15	-	61945185	61955272
+hsa-mir-423	17	+	25463229	25537617
+hsa-mir-424				
+hsa-mir-425	X	-	49027586	49106832
+hsa-mir-425	X	-	49027586	49106832
+hsa-mir-429				
+hsa-mir-431	14	+	100315499	100472074
+hsa-mir-432	14	+	100315499	100472074
+hsa-mir-433	14	+	100315499	100472074
+hsa-mir-448	X	-	113641530	113967604
+hsa-mir-449a	5	-	54444579	54507322
+hsa-mir-449b	5	-	54444579	54507322
+hsa-mir-450a-1				
+hsa-mir-450a-2				
+hsa-mir-450b				
+hsa-mir-451	17	-	24207517	24217757
+hsa-mir-452				
+hsa-mir-453	14	+	100553151	100609127
+hsa-mir-454	17	-	54542097	54588359
+hsa-mir-455				
+hsa-mir-483	11	-	2106923	2139286
+hsa-mir-483	11	-	2106923	2139286
+hsa-mir-483	11	-	2106923	2139286
+hsa-mir-484	16	+	15639614	15727707
+hsa-mir-485	14	+	100553151	100609127
+hsa-mir-486__os	8	+	41630874	41873437
+hsa-mir-487a	14	+	100553151	100609127
+hsa-mir-487b	14	+	100553151	100609127
+hsa-mir-488				
+hsa-mir-489				
+hsa-mir-490				
+hsa-mir-491	9	-	20648307	20985954
+hsa-mir-491	9	-	20648307	20985954
+hsa-mir-491	9	-	20648307	20985954
+hsa-mir-492				
+hsa-mir-493				
+hsa-mir-494				
+hsa-mir-495				
+hsa-mir-496				
+hsa-mir-497				
+hsa-mir-498				
+hsa-mir-499				
+hsa-mir-500				
+hsa-mir-501				
+hsa-mir-502				
+hsa-mir-503				
+hsa-mir-504				
+hsa-mir-505				
+hsa-mir-506				
+hsa-mir-507				
+hsa-mir-508				
+hsa-mir-509-1				
+hsa-mir-509-2				
+hsa-mir-509-3				
+hsa-mir-510				
+hsa-mir-511-1				
+hsa-mir-511-2				
+hsa-mir-512-1				
+hsa-mir-512-2				
+hsa-mir-513-1				
+hsa-mir-513-2				
+hsa-mir-514-1				
+hsa-mir-514-2				
+hsa-mir-514-3				
+hsa-mir-515-1				
+hsa-mir-515-2				
+hsa-mir-516a-1				
+hsa-mir-516a-2				
+hsa-mir-516b-1				
+hsa-mir-516b-2				
+hsa-mir-517a-1				
+hsa-mir-517a-2				
+hsa-mir-517c				
+hsa-mir-518a-1				
+hsa-mir-518a-2				
+hsa-mir-518b				
+hsa-mir-518c				
+hsa-mir-518d				
+hsa-mir-518e				
+hsa-mir-518f				
+hsa-mir-519a-1				
+hsa-mir-519a-2				
+hsa-mir-519b				
+hsa-mir-519c				
+hsa-mir-519d				
+hsa-mir-519e				
+hsa-mir-520a				
+hsa-mir-520c-1				
+hsa-mir-520c-2				
+hsa-mir-520d				
+hsa-mir-520e				
+hsa-mir-520f				
+hsa-mir-520g				
+hsa-mir-520h				
+hsa-mir-521-1				
+hsa-mir-521-2				
+hsa-mir-522				
+hsa-mir-523				
+hsa-mir-524				
+hsa-mir-525				
+hsa-mir-526a-1				
+hsa-mir-526a-2				
+hsa-mir-526b				
+hsa-mir-527				
+hsa-mir-532				
+hsa-mir-539				
+hsa-mir-541				
+hsa-mir-542				
+hsa-mir-543				
+hsa-mir-544				
+hsa-mir-545				
+hsa-mir-548a-1				
+hsa-mir-548a-2				
+hsa-mir-548a-3				
+hsa-mir-548b				
+hsa-mir-548b				
+hsa-mir-548c				
+hsa-mir-548d-1				
+hsa-mir-548d-2				
+hsa-mir-548m				
+hsa-mir-548i-2				
+hsa-mir-548i-4				
+hsa-mir-548q				
+hsa-mir-549__os				
+hsa-mir-550-1				
+hsa-mir-550-2				
+hsa-mir-550-2				
+hsa-mir-551a				
+hsa-mir-551b				
+hsa-mir-552				
+hsa-mir-553				
+hsa-mir-554				
+hsa-mir-555				
+hsa-mir-556				
+hsa-mir-557				
+hsa-mir-558				
+hsa-mir-559				
+hsa-mir-561				
+hsa-mir-562				
+hsa-mir-563				
+hsa-mir-564				
+hsa-mir-565				
+hsa-mir-566				
+hsa-mir-567				
+hsa-mir-568				
+hsa-mir-569				
+hsa-mir-570				
+hsa-mir-571				
+hsa-mir-572				
+hsa-mir-573				
+hsa-mir-574				
+hsa-mir-575				
+hsa-mir-576				
+hsa-mir-577				
+hsa-mir-578				
+hsa-mir-579				
+hsa-mir-580				
+hsa-mir-581				
+hsa-mir-582				
+hsa-mir-582				
+hsa-mir-583				
+hsa-mir-584				
+hsa-mir-585				
+hsa-mir-586				
+hsa-mir-587				
+hsa-mir-588				
+hsa-mir-589				
+hsa-mir-590				
+hsa-mir-591				
+hsa-mir-592				
+hsa-mir-593				
+hsa-mir-594				
+hsa-mir-595				
+hsa-mir-596				
+hsa-mir-597				
+hsa-mir-598				
+hsa-mir-600				
+hsa-mir-601				
+hsa-mir-602				
+hsa-mir-603				
+hsa-mir-603				
+hsa-mir-604				
+hsa-mir-605				
+hsa-mir-605				
+hsa-mir-606				
+hsa-mir-607				
+hsa-mir-608				
+hsa-mir-609				
+hsa-mir-610				
+hsa-mir-611				
+hsa-mir-611				
+hsa-mir-612				
+hsa-mir-613				
+hsa-mir-614				
+hsa-mir-615				
+hsa-mir-615				
+hsa-mir-615				
+hsa-mir-616				
+hsa-mir-617				
+hsa-mir-618				
+hsa-mir-619				
+hsa-mir-620				
+hsa-mir-621				
+hsa-mir-622				
+hsa-mir-623				
+hsa-mir-623				
+hsa-mir-623				
+hsa-mir-623				
+hsa-mir-624				
+hsa-mir-625				
+hsa-mir-625				
+hsa-mir-626				
+hsa-mir-626				
+hsa-mir-627				
+hsa-mir-628				
+hsa-mir-629				
+hsa-mir-630				
+hsa-mir-631				
+hsa-mir-632				
+hsa-mir-632				
+hsa-mir-633				
+hsa-mir-634				
+hsa-mir-635				
+hsa-mir-636				
+hsa-mir-637				
+hsa-mir-638				
+hsa-mir-639				
+hsa-mir-639				
+hsa-mir-640				
+hsa-mir-640				
+hsa-mir-641				
+hsa-mir-642				
+hsa-mir-643				
+hsa-mir-644				
+hsa-mir-645				
+hsa-mir-646				
+hsa-mir-647				
+hsa-mir-648				
+hsa-mir-648				
+hsa-mir-649				
+hsa-mir-650				
+hsa-mir-651				
+hsa-mir-652				
+hsa-mir-653				
+hsa-mir-654				
+hsa-mir-655				
+hsa-mir-656				
+hsa-mir-668				
+hsa-mir-657				
+hsa-mir-658				
+hsa-mir-659				
+hsa-mir-660				
+hsa-mir-661				
+hsa-mir-661				
+hsa-mir-662				
+hsa-mir-665				
+hsa-mir-671				
+hsa-mir-708				
+hsa-mir-7-1				
+hsa-mir-7-2				
+hsa-mir-7-3				
+hsa-mir-744				
+hsa-mir-758				
+hsa-mir-759				
+hsa-mir-760				
+hsa-mir-770				
+hsa-mir-802				
+hsa-mir-873				
+hsa-mir-874				
+hsa-mir-875				
+hsa-mir-876				
+hsa-mir-877				
+hsa-mir-877				
+hsa-mir-885				
+hsa-mir-887				
+hsa-mir-888				
+hsa-mir-889				
+hsa-mir-890				
+hsa-mir-891a				
+hsa-mir-891b				
+hsa-mir-892a				
+hsa-mir-892b				
+hsa-mir-9-1				
+hsa-mir-9-1				
+hsa-mir-9-2				
+hsa-mir-9-2				
+hsa-mir-92a-1				
+hsa-mir-92a-2				
+hsa-mir-92b				
+hsa-mir-920				
+hsa-mir-924				
+hsa-mir-93				
+hsa-mir-9-3				
+hsa-mir-95				
+hsa-mir-96				
+hsa-mir-98				
+hsa-mir-99a				
+hsa-mir-99a				
+hsa-mir-99a				
+hsa-mir-99b				
+hsa-mir-940				
+hsa-mir-1184-3				
+hsa-mir-1302-8				
+hsa-mir-3178				
+hsa-mir-3179-2				
+hsa-mir-3180-2				
+hsa-mir-320d-1				
+hsa-mir-769				
+hsa-mir-1251				
+hsa-mir-3202-2				
+hsa-mir-3179-3				
+hsa-mir-3180-3				
+hsa-mir-3159				
+hsa-mir-4323				
+hsa-mir-4267				
+hsa-mir-1246				
+hsa-mir-1274b				
+hsa-mir-1247				
+hsa-mir-1253				
+hsa-mir-3158-2				
+hsa-mir-320d-1				
+hsa-mir-769				
+hsa-mir-1285-2				
+hsa-mir-3168				
+hsa-mir-1973				
+hsa-mir-4309				
+hsa-mir-3187				
+hsa-mir-1244-3				
+hsa-mir-1826				
+hsa-mir-3149				
+hsa-mir-3154				
+hsa-mir-1184-2				
+hsa-mir-1827				
+hsa-mir-4283-2				
+hsa-mir-3195				
+hsa-mir-1538				
+hsa-mir-4283-1				
+hsa-mir-4256				
+hsa-mir-3166				
+hsa-mir-320b-1				
+hsa-mir-1283-1				
+hsa-mir-520-b				
+hsa-mir-1283-2				
+hsa-mir-3147				
+hsa-mir-1268				
+hsa-mir-4316				
+hsa-mir-1302-1				
+hsa-mir-1979				
+hsa-mir-2052				
+hsa-mir-4311				
+hsa-mir-3118-6				
+hsa-mir-3118-4				
+hsa-mir-297				
+hsa-mir-1471				
+hsa-mir-514b				
+hsa-mir-513a-1				
+hsa-mir-513a-2				
+hsa-mir-513b				
+hsa-mir-513c				
+hsa-mir-4277				
+hsa-mir-320c-2				
+hsa-mir-4305				
+hsa-mir-3118-5				
+hsa-mir-3141				
+hsa-mir-4266				
+hsa-mir-4280				
+hsa-mir-548g				
+hsa-mir-1302-10				
+hsa-mir-3197				
+hsa-mir-1197				
+hsa-mir-1193				
+hsa-mir-1185-1				
+hsa-mir-1185-2				
+hsa-mir-4278				
+hsa-mir-3116-2				
+hsa-mir-1324				
+hsa-mir-2117				
+hsa-mir-2114				
+hsa-mir-3119-1				

@@ -1,4 +1,3 @@
-include doc *
 recursive-include seqcluster/templates *
 include README.rst
 include LICENSE
