@@ -78,7 +78,7 @@ def cluster(args):
         logger.info("Creating sequences alignment to precursor")
         clusLred = show_seq(clusLred, args.index)
 
-    # clusLred = peak_calling(clusLred)
+    clusLred = peak_calling(clusLred)
 
     clusLred = _annotate(args, clusLred)
     logger.info("Creating json and count matrix")

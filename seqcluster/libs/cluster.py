@@ -4,10 +4,7 @@ from progressbar import ProgressBar
 
 import pysam
 import pybedtools
-try:
-    from pypeaks import Data
-except ImportError:
-    None
+from  seqcluster.libs import pysen
 import numpy as np
 import pandas as pd
 
@@ -257,22 +254,13 @@ def peak_calling(clus_obj):
                 dt[ss] += clus_obj.loci[bigger].counts[pos]
         x = np.array(range(0, len(dt)))
         logger.debug("x %s and y %s" % (x, dt))
-        tab = pd.DataFrame({'x': x, 'y': dt})
+        # tab = pd.DataFrame({'x': x, 'y': dt})
         # tab.to_csv( str(cid) + "peaks.csv", mode='w', header=False, index=False)
         if len(x) > 35 + 12:
-            try:
-                profile = Data(x, dt, smoothness=3)
-                pickle.dump(profile, open("xy.pickle", 'w'))
-                profile.normalize()
-                windows = range(min(x), max(x), 3)
-                profile.get_peaks(method='intervals', intervals=windows)
-                peaks = list(profile.peaks['peaks'][0])
-                # peaks = peakdetect(dt, x, lookahead=5)[0]
-                logger.debug(peaks)
-            except:
-                peaks = [[s], [e], ['short']]
+            peaks = pysen.pysenMMean(x, dt)
+            logger.debug(peaks)
         else:
-            peaks = [[s], [e], ['short']]
+            peaks =  peaks + ['short']
         cluster.peaks = peaks
         new_cluster[cid] = cluster
     clus_obj.clus = new_cluster
