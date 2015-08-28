@@ -9,7 +9,7 @@
 - [X] load matrix ma after alignment parsed
 - [X] NOW html to connect to sqlite3 db to viz results
 
-- [ ] NOW implement tRNA-scan
+- [X] implement tRNA-scan
 - [ ] NOW implement small rna  prediction: CoRaL is an option for everything http://wanglab.pcbi.upenn.edu/coral/  or
 - [ ] NOW change to python alignment tool
 - [ ] implement mirna prediction http://evryrna.ibisc.univ-evry.fr/miRBoost/index.html
