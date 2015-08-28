@@ -2,7 +2,7 @@ import os
 import logging
 
 from libs.read import load_data
-from function.predictions import make_predictions, run_coral
+from function.predictions import is_tRNA, run_coral
 from libs.utils import safe_dirs
 
 logger = logging.getLogger('predictions')
@@ -19,7 +19,7 @@ def predictions(args):
     safe_dirs(out_dir)
 
     logger.info("make predictions")
-    # make_predictions(data, out_dir, args)
+    is_tRNA(data, out_dir, args)
 
     if args.coral:
         logger.info("make CoRaL predictions")
