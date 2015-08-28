@@ -61,22 +61,6 @@ def add_subparser_mirbuster(subparsers):
     return parser
 
 
-def add_subparser_predict(subparsers):
-    parser = subparsers.add_parser("predict", help="predict smallRNA types")
-    parser.add_argument("-j", "--json", dest="json", required=1,
-            help="json file from seqcluster")
-    parser.add_argument("--bed", help="BED ouput from cluster to clean BAM file")
-    parser.add_argument("--bam", help="BAM file used in cluster subcmd.")
-    parser.add_argument("-o", "--out", dest="out", required=1,
-            help="dir of output files")
-    parser.add_argument("-r", "--reference", dest="ref", required=1,
-            help="reference fasta file with index")
-    parser.add_argument("--coral", action='store_true',
-            help="Run CoRaL pipeline")
-    parser = _add_debug_option(parser)
-    return parser
-
-
 def add_subparser_explore(subparsers):
     parser = subparsers.add_parser("explore", help="explore data")
     parser.add_argument("-j", "--json", dest="json", required=1,
@@ -178,7 +162,7 @@ def add_subparser_predict(subparsers):
     parser.add_argument("--bam", help="BAM file used in cluster subcmd.")
     parser.add_argument("-o", "--out", dest="out", required=1,
             help="dir of output files")
-    parser.add_argument("-r", "--reference", dest="ref", required=1,
+    parser.add_argument("--reference", required=1,
             help="reference fasta file with index")
     parser.add_argument("--coral", action='store_true',
             help="Run CoRaL pipeline")

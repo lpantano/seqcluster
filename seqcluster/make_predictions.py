@@ -13,10 +13,10 @@ def predictions(args):
     Create predictions of clusters
     """
 
+    logger.info(args)
     logger.info("reading sequeces")
     data = load_data(args.json)
-    out_dir = os.path.join(args.out, "predictions")
-    safe_dirs(out_dir)
+    out_dir = os.path.abspath(safe_dirs(os.path.join(args.out, "predictions")))
 
     logger.info("make predictions")
     is_tRNA(data, out_dir, args)
