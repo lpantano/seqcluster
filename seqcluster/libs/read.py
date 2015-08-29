@@ -22,6 +22,10 @@ def load_data(in_file):
     with open(in_file) as in_handle:
         return json.load(in_handle)
 
+def write_data(data, out_file):
+    """write json file from seqcluster cluster"""
+    with open(out_file, 'w') as handle_out:
+        handle_out.write(json.dumps([data], skipkeys=True, indent=2))
 
 def get_sequences_from_cluster(c1, c2, data):
     """get all sequences from on cluster"""
