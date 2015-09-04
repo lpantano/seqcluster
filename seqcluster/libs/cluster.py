@@ -260,7 +260,7 @@ def peak_calling(clus_obj):
             peaks = pysen.pysenMMean(x, dt)
             logger.debug(peaks)
         else:
-            peaks =  peaks + ['short']
+            peaks =  ['short']
         cluster.peaks = peaks
         new_cluster[cid] = cluster
     clus_obj.clus = new_cluster

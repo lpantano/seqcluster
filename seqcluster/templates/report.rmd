@@ -183,7 +183,7 @@ ggplot(reads_stats, aes(x=V2, y=V1, fill=V3)) +
 
 
 ```{r cluster}
-clus <- read.table(files[1,"clusters"],header=T,sep="\t",row.names=1, check.names = FALSE)
+clus <- read.table(file.path(root_path, "seqcluster", "cluster", "counts.tsv"),header=T,sep="\t",row.names=1, check.names = FALSE)
 ann <- clus[,2]
 toomany <- clus[,1]
 clus_ma <- clus[,3:ncol(clus)]
