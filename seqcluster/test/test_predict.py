@@ -7,7 +7,7 @@ import seqcluster.libs.logger as mylog
 
 from seqcluster.libs.do import find_cmd
 from seqcluster.libs.read import load_data
-from seqcluster.function.predictions import make_predictions
+from seqcluster.function.predictions import is_tRNA
 from seqcluster.libs.logger import initialize_logger
 
 
@@ -25,5 +25,5 @@ class TestPredict(TestCase):
             logger.info("Reading data")
             data = load_data(args.json)
             logger.info("Start prediction")
-            make_predictions(data, out_dir, args)
+            is_tRNA(data, out_dir, args)
         # self.assertTrue()

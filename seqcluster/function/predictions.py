@@ -36,7 +36,7 @@ def run_coral(clus_obj, out_dir, args):
         coral.create_features(bam_clean, loci_file, reference, out_dir)
 
 
-def make_predictions(clus_obj, out_dir, args):
+def is_tRNA(clus_obj, out_dir, args):
     """
     Iterates through cluster precursors to predict sRNA types
     """

@@ -9,8 +9,8 @@
 - [X] load matrix ma after alignment parsed
 - [X] NOW html to connect to sqlite3 db to viz results
 
-- [ ] NOW implement tRNA-scan
-- [ ] NOW implement small rna  prediction: CoRaL is an option for everything http://wanglab.pcbi.upenn.edu/coral/  or
+- [X] implement tRNA-scan
+- [ ] NOW implement small rna prediction: CoRaL is an option for everything http://wanglab.pcbi.upenn.edu/coral/  or
 - [ ] NOW change to python alignment tool
 - [ ] implement mirna prediction http://evryrna.ibisc.univ-evry.fr/miRBoost/index.html
 - [ ] implement submire target prediction module http://research.nhgri.nih.gov/software/SubmiRine/user_guide.shtml
@@ -22,7 +22,7 @@
   - [ ] figures 5' positions by # unique sequences, this by class: mirna, trna ...
 * report:
   - [ ] add mirna path enrichment to seqcluster-helper in the report
-  - [ ] limit number of sequences in html, like 1000 top
+  - [X] limit number of sequences in html, like 1000 top
 
 
 # miraligner
@@ -46,6 +46,6 @@ inputs will be fastq or bam file. Will need to download the mirbase annotation (
 # documentation
 - [X] add install subcommand for mirbase installation/genomes
 - [X] add html report link to documentation
-- [ ] figure showing general pipeline steps: seqcluster-helper
+- [ ] figure showing general pipeline steps: seqcluster-helper/bcbio-nextgen
 - [X] add documentation for seqclusterViz html reader
 

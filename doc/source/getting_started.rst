@@ -139,9 +139,11 @@ Report
 
 This will create html report using the following command assuming the output of `seqcluster cluster` is at `res`::
 
-	seqcluster report -j res/seqcluster.json -o report -r $GENONE_FASTA_PATH
+	seqcluster report -j res/seqcluster.json -o report -r $GENONE_FASTA_PATH 
 
 where `$GENOME_FASTA_PATH` is the path to the genome fasta file used in the alignment.
+
+**Note**: you can try our new `visualization tool <http://seqcluster.readthedocs.org/more_outputs.html#report>`_!
 
 * ``report/html/index.html``: table with all clusters and the annotation with sorting option
 * ``report/html/[0-9]/maps.html``: `summary`_ of the cluster with expression profile, annotation, and all sequences inside
@@ -151,6 +153,8 @@ where `$GENOME_FASTA_PATH` is the path to the genome fasta file used in the alig
 
 Easy start with seqcluster-helper.py
 --------
+
+**Note**:If you already are using bcbio, visit `bcbio <http://github.com/chapmanb/bcbio>`_ to run the pipeline there. seqcluster-helper has been ported to ``bcbio`` and will be abandoned.
 
 Command::
 
