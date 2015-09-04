@@ -85,9 +85,9 @@ Strongly recommend use `bcbio <https://bcbio-nextgen.readthedocs.org/en/latest/c
 
     seqcluster_install --tools $TARGET_PATH
 
-After that you will need to add to your path: $TARGET_PATH/bin
+After that you will need to add to your path: ``export PATH=$TARGET_PATH/bin:$PATH``
 
-If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_  or you used ``seqcluster_install``, you only need to install `seqbuster` as showed bellow::
+If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_ , you only need to install `seqbuster` as showed bellow::
 
     brew install seqbuster
 
