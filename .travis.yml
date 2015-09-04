@@ -33,7 +33,7 @@ before_install:
 	&& cd ../.."
   - "echo $PATH"
   - "pip install -U cython"
-  - "conda install pysam pybedtools -c bcbio"
+  - "conda install pysam pybedtools --yes -c bcbio "
   - "pip install colorlog"
   - "conda install --yes -c https://conda.binstar.org/bcbio bcbio-nextgen"
 install:
