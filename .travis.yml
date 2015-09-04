@@ -14,7 +14,7 @@ before_install:
   - "echo `pwd`"
   - "echo $PATH"
   - "pip install conda"
-  - "conda create --yes -n seqcluster python ipython pip distribute setuptools nose numpy pysam scipy pandas"
+  - "conda create --yes -n seqcluster python ipython pip distribute setuptools nose numpy scipy pandas"
   - "source activate seqcluster "
   - "mkdir -p deps && cd deps "
   - "wget https://github.com/arq5x/bedtools2/releases/download/v2.22.0/bedtools-2.22.0.tar.gz \
@@ -33,7 +33,7 @@ before_install:
 	&& cd ../.."
   - "echo $PATH"
   - "pip install -U cython"
-  - "pip install pybedtools"
+  - "conda install pysam pybedtools -c bcbio"
   - "pip install colorlog"
   - "conda install --yes -c https://conda.binstar.org/bcbio bcbio-nextgen"
 install:
