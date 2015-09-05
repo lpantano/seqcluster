@@ -15,6 +15,7 @@ import logger as mylog
 from classes import *
 # from seqcluster.function.peakdetect import peakdetect as peakdetect
 from tool import _get_seqs_from_cluster
+from do import run
 
 
 logger = mylog.getLogger(__name__)
@@ -47,7 +48,10 @@ def clean_bam_file(bam_in, mask=None):
             pybedtools.BedTool(bam_file).intersect(b=mask, v=True).saveas(mask_file)
         bam_in = mask_file
     out_file = op.splitext(bam_in)[0] + "_rmlw.bam"
-    bam.index(bam_in, {'algorithm':{}})
+    # bam.index(bam_in, {'algorithm':{}})
+    run("samtools index %s" % bam_in)
+    if not file_exists(bam_in + ".bai"):
+        raise IOError("Failed to created bam index of %s. Try to do it manually" % bam_in)
     bam_handle = pysam.AlignmentFile(bam_in, "rb")
     with pysam.AlignmentFile(out_file, "wb", template=bam_handle) as out_handle:
         for read in bam_handle.fetch():

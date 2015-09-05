@@ -8,6 +8,7 @@ from make_predictions import predictions
 from explore_cluster import explore
 from collapse import collapse_fastq
 from seqbuster import miraligner
+from libs.simulator import simulate
 from stats import stats
 import libs.logger as mylog
 import time
@@ -44,5 +45,5 @@ def main(**kwargs):
         collapse_fastq(kwargs["args"])
     elif "simulator" in kwargs:
         logger.info("Run simulator")
-        # function to simulator
+        simulate(kwargs["args"])
     logger.info('It took %.3f minutes' % ((time.time()-start)/60))
