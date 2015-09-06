@@ -9,7 +9,7 @@ Seqcluster
 
 **With bcbio installed**
 
-If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_, just clone the repository or use pip for installa it with the python installed by `bcbio`.
+If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_, seqcluster comes with it. If you want the last development version just clone the repository.
 
 **Binstar binary**
 
@@ -85,9 +85,9 @@ Strongly recommend use `bcbio <https://bcbio-nextgen.readthedocs.org/en/latest/c
 
     seqcluster_install --tools $TARGET_PATH
 
-After that you will need to add to your path: $TARGET_PATH/bin
+After that you will need to add to your path: ``export PATH=$TARGET_PATH/bin:$PATH``
 
-If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_  or you used ``seqcluster_install``, you only need to install `seqbuster` as showed bellow::
+If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_ , you only need to install `seqbuster` as showed bellow::
 
     brew install seqbuster
 
@@ -108,6 +108,8 @@ To install dependencies using ``homebrew`` follow these steps::
    
 seqcluster-helper
 ---------
+
+**Note: be aware that we moved to bcbio and seqcluster-helper is deprecated.**
 
 `seqcluster-helper`_ provides 
 a python framework to run a whole pipeline for small RNA (miRNA + others).
