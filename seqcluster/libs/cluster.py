@@ -65,7 +65,7 @@ def clean_bam_file(bam_in, mask=None):
                     continue
             try:
                 nh = read.get_tag('NH')
-            except ValueError:
+            except KeyError:
                 nh = 1
             seq_obj[seq_name] = sequence(seq_name)
             seq_obj[seq_name].align = nh

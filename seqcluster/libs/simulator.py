@@ -30,6 +30,7 @@ def _generate_reads(seq):
         reads.update(_mature(seq[:40], 0))
         reads.update(_mature(seq[-40:], len(seq) - 40))
         reads.update(_noise(seq))
+        reads.update(_noise(seq, 20))
     return reads
 
 
