@@ -395,7 +395,6 @@ def _iter_loci(meta, clusters, s2p, filtered, n_cluster):
         if (cicle % 1) == 0:
             logger.debug("_iter_loci:number of cicle: %s with n_loci %s" % (cicle, n_loci))
         loci_similarity = _calculate_similarity(loci)
-        loci_similarity = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
         internal_cluster = _merge_similar(loci, loci_similarity)
         n_loci = len(internal_cluster)
         loci = internal_cluster
@@ -453,7 +452,7 @@ def _calculate_similarity(c):
     ma = {}
     for idc in c:
         set1 = _get_seqs(c[idc])
-        [ma.update({(idc, idc2): _common(set1, _get_seqs(c[idc2]))}) for idc2 in c if idc != idc2 and (idc2, idc) not in ma]
+        [ma.update({(idc, idc2): _common(set1, _get_seqs(c[idc2]), idc, idc2)}) for idc2 in c if idc != idc2 and (idc2, idc) not in ma]
     # logger.debug("_calculate_similarity_ %s" % ma)
     return ma
 
@@ -468,14 +467,29 @@ def _get_seqs(list_idl):
     return seqs
 
 
-def _common(s1, s2):
+def _common(s1, s2, i1, i2):
     """calculate the common % percentage of sequences"""
     c = len(set(s1).intersection(s2))
     t = min(len(s1), len(s2))
-    return 1.0 * c / t
+    pct = 1.0 * c / t * t
+    is_gt = up_threshold(pct, t * 1.0, parameters.similar)
+    logger.debug("_common: pct %s of clusters:%s %s = %s" % (1.0 * c / t, i1, i2, is_gt))
+    if pct < parameters.similar and is_gt:
+        pct = parameters.similar
+    return pct / t
 
 
-def _merge_similar(loci, locilen_sorted):
+def _is_consistent(common, clus_seen, loci_similarity):
+    """
+    Check if loci shared that match sequences with all
+    clusters seen until now.
+    """
+    all_true1 = all([all([common and loci_similarity[(p, c)] > parameters.similar  for p in pairs if (p, c) in loci_similarity]) for c in clus_seen])
+    all_true2 = all([all([common and loci_similarity[(c, p)] > parameters.similar  for p in pairs if (c, p) in loci_similarity]) for c in clus_seen])
+    return all_true1 * all_true2
+
+
+def _merge_similar(loci, loci_similarity):
     """internal function to reduce loci complexity
 
     :param loci: class cluster
@@ -487,14 +501,20 @@ def _merge_similar(loci, locilen_sorted):
     n_cluster = 0
     internal_cluster = {}
     clus_seen = {}
-    for pairs, common in locilen_sorted:
+    loci_sorted = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
+    for pairs, sim in loci_sorted:
+        common = sim > parameters.similar
         n_cluster += 1
         logger.debug("_merge_similar:try new cluster %s" % n_cluster)
         new_c = cluster(n_cluster)
-        logger.debug("_merge_similar:id %s  common %s" % (pairs, common))
         p_seen, p_unseen = [], []
         size = min(len(_get_seqs(loci[pairs[0]])), len(_get_seqs(loci[pairs[1]])))
-        if up_threshold(common * size, size, parameters.similar):
+        if common:
+            consistent = _is_consistent(common, clus_seen, loci_similarity)
+            logger.debug("_merge_similar: clusters seen: %s" % clus_seen)
+            logger.debug("_merge_similar: id %s common %s|%s total  %s consistent %s" % (pairs, sim, common, size, consistent))
+            if not consistent:
+                continue
             if pairs[0] in clus_seen:
                 p_seen.append(pairs[0])
                 p_unseen.append(pairs[1])
@@ -511,6 +531,7 @@ def _merge_similar(loci, locilen_sorted):
                 internal_cluster[idc_seen] = _merge_cluster(loci[p_unseen[0]], internal_cluster[idc_seen])
                 clus_seen[p_unseen[0]] = idc_seen
         else:
+            logger.debug("_merge_similar: id %s %s  are different" % pairs)
             continue
     internal_cluster.update(_add_unseen(loci, clus_seen, n_cluster))
     logger.debug("_merge_similar: total clus %s" %
@@ -521,8 +542,8 @@ def _merge_similar(loci, locilen_sorted):
 def _merge_cluster(old, new):
     """merge one cluster to another"""
     logger.debug("_merge_cluster: %s to %s" % (old.id, new.id))
+    logger.debug("_merge_cluster: add idls %s" % old.loci2seq.keys())
     for idl in old.loci2seq:
-        logger.debug("_merge_cluster: add idl %s" % idl)
         # if idl in new.loci2seq:
         #    new.loci2seq[idl] = list(set(new.loci2seq[idl] + old.loci2seq[idl]))
         # new.loci2seq[idl] = old.loci2seq[idl]
