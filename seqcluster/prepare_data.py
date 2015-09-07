@@ -95,23 +95,26 @@ def _read_fastq_files(f, args):
         for line1 in f:
             line1 = line1.strip()
             cols = line1.split("\t")
-            if not is_fastq(cols[0]):
-                raise ValueError("file is not fastq: %s" % cols[0])
+            # if not is_fastq(cols[0]):
+            #    raise ValueError("file is not fastq: %s" % cols[0])
             with open_fastq(cols[0]) as handle:
                 sample_l.append(cols[1])
                 total = added = 0
 
                 for line in handle:
-                    if line.startswith("@"):
+                    if line.startswith("@") or line.startswith(">"):
                         idx += 1
                         total += 1
                         keep = {}
                         counts = int(re.search("x([0-9]+)", line.strip()).group(1))
                         seq = handle.next().strip()
-                        handle.next().strip()
-                        qual = handle.next().strip()
-                        seq = seq[0:int(args.maxl)] if len(seq) > int(args.maxl) else seq
+                        if is_fastq(cols[0]):
+                            handle.next().strip()
+                            qual = handle.next().strip()
+                        else:
+                            qual = "A" * len(seq)
                         qual = qual[0:int(args.maxl)] if len(qual) > int(args.maxl) else qual
+                        seq = seq[0:int(args.maxl)] if len(seq) > int(args.maxl) else seq
                         if counts > int(args.minc) and len(seq) > int(args.minl):
                             added += 1
                             if seq in keep:
