@@ -479,7 +479,7 @@ def _common(s1, s2, i1, i2):
     return pct / t
 
 
-def _is_consistent(common, clus_seen, loci_similarity):
+def _is_consistent(pairs, common, clus_seen, loci_similarity):
     """
     Check if loci shared that match sequences with all
     clusters seen until now.
@@ -510,7 +510,7 @@ def _merge_similar(loci, loci_similarity):
         p_seen, p_unseen = [], []
         size = min(len(_get_seqs(loci[pairs[0]])), len(_get_seqs(loci[pairs[1]])))
         if common:
-            consistent = _is_consistent(common, clus_seen, loci_similarity)
+            consistent = _is_consistent(pairs, common, clus_seen, loci_similarity)
             logger.debug("_merge_similar: clusters seen: %s" % clus_seen)
             logger.debug("_merge_similar: id %s common %s|%s total  %s consistent %s" % (pairs, sim, common, size, consistent))
             if not consistent:
