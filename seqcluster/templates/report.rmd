@@ -29,14 +29,14 @@ knitr::opts_chunk$set(tidy=TRUE, highlight=TRUE, dev="png", fig.width=6,fig.heig
                message=FALSE, prompt=TRUE, comment='', fig.cap='', bootstrap.show.code=FALSE)
 
 root_path = "$path_abs"
-root_file = paste0(root_path,"/report/")
+root_file = file.path(root_path,"report")
 
 condition = "condition"
 ```
 ```{r render,eval=FALSE, echo=FALSE}
 library(rmarkdown)
 library(knitrBootstrap)
-# render("report.rmd")
+render("report.rmd")
 ```
 
 ```{r load}
@@ -77,6 +77,7 @@ reads_adapter = tab %>% group_by(sample, group) %>% summarise(total=sum(V2))
 ggplot(reads_adapter, aes(x=sample,y=total,fill=group)) +
     geom_bar(stat="identity", position = "dodge") +
     ggtitle("total number of reads with adapter") +
+    ylab("# reads") +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
 
@@ -84,6 +85,7 @@ ggplot(tab, aes(x=V1,y=V2,fill=sample)) +
     geom_bar(stat="identity", position = "dodge") +
     facet_wrap(~group, ncol=2)+
     ggtitle("size distribution") +
+    ylab("# reads") + xlab=("size") +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
@@ -118,7 +120,6 @@ ggplot(melt(counts(obj))) +
 ### cumulative distribution of miRNAs
 
 ```{r cum}
-
 cs <- as.data.frame(apply(counts(obj),2,function(x){cumsum(sort(x, decreasing = T))}))
 cs$pos <- 1:nrow(cs)
 
@@ -133,7 +134,7 @@ Number of miRNAs with > 3 counts.
 
 ```{r complexity}
 
-kable(as.data.frame(colSums(counts(obj)>3)))
+kable(as.data.frame(colSums(counts(obj)>10)))
 
 ```
 
@@ -155,9 +156,9 @@ In this table 1 means % of the genome with at least 1 read, and 0 means %
 of the genome without reads.
 
 ```{r genome-covered, results='asis'}
-cov_stats <- read.table(file.path(root_path, "align", "seqs_clean_rmlw.bam_cov.tsv"),sep="\t",check.names = F)
+cov_stats <- read.table(file.path(root_path, "..", "align", "seqs_rmlw.bam_cov.tsv"),sep="\t",check.names = F)
 
-kable(cov_stats[cov_stats$V1=="genome",] %>% select(coverage=V2,ratio_genome=V5))
+kable(cov_stats[cov_stats$V1=="genome",] %>%  dplyr::select(coverage=V2,ratio_genome=V5))
 
 ```
 
@@ -173,7 +174,7 @@ Number of reads in the data after each step:
 * multimap: after meta-cluster detection
 
 ```{r reads-track}
-reads_stats <- read.table(file.path(root_path, "seqcluster", "cluster", "read_stats.tsv"),sep="\t",check.names = F)
+reads_stats <- read.table(file.path(root_path, "..","seqcluster", "cluster", "read_stats.tsv"),sep="\t",check.names = F)
 ggplot(reads_stats, aes(x=V2, y=V1, fill=V3)) + 
     geom_bar(stat = 'identity', position = 'dodge') +
     labs(list(x="samples", y="reads")) +
@@ -183,7 +184,7 @@ ggplot(reads_stats, aes(x=V2, y=V1, fill=V3)) +
 
 
 ```{r cluster}
-clus <- read.table(file.path(root_path, "seqcluster", "cluster", "counts.tsv"),header=T,sep="\t",row.names=1, check.names = FALSE)
+clus <- read.table(file.path(root_path, "..", "seqcluster", "cluster", "counts.tsv"),header=T,sep="\t",row.names=1, check.names = FALSE)
 ann <- clus[,2]
 toomany <- clus[,1]
 clus_ma <- clus[,3:ncol(clus)]
@@ -247,7 +248,7 @@ ggplot(melt(dd_norm[,1:5])) +
 ```
 
 ```{r clus-size-by-class}
-size_clus <- read.table(file.path(root_path, "seqcluster", "cluster", "size_counts.tsv"),sep="\t",check.names = F)
+size_clus <- read.table(file.path(root_path, "..", "seqcluster", "cluster", "size_counts.tsv"),sep="\t",check.names = F)
 ```
 
 
