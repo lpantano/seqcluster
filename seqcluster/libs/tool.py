@@ -474,7 +474,7 @@ def _common(s1, s2, i1, i2):
     pct = 1.0 * c / t * t
     is_gt = up_threshold(pct, t * 1.0, parameters.similar)
     logger.debug("_common: pct %s of clusters:%s %s = %s" % (1.0 * c / t, i1, i2, is_gt))
-    if pct < parameters.similar and is_gt:
+    if pct < parameters.similar and is_gt and pct > 0:
         pct = parameters.similar
     return pct / t
 
@@ -566,11 +566,12 @@ def _solve_conflict(list_c, s2p, n_cluster):
     loci_similarity = _calculate_similarity(list_c)
     loci_similarity = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
     common = sum([score for p, score in loci_similarity])
-    while common:
+    while common > 0:
         n_cluster += 1
         logger.debug("_solve_conflict: ma %s" % loci_similarity)
-        logger.debug("_solve_conflict: common %s, new %s" % (common, n_cluster))
         pairs = loci_similarity[0][0]
+        score = loci_similarity[0][1]
+        logger.debug("_solve_conflict: common %s, new %s" % (score, n_cluster))
         if parameters.decision_cluster.startswith("most-voted"):
             list_c = _split_cluster_by_most_vote(list_c, pairs)
         else:
@@ -619,7 +620,7 @@ def _split_cluster_by_most_vote(c, p):
     old, new = c[p[0]], c[p[1]]
     old_size = _get_seqs(old)
     new_size = _get_seqs(new)
-    logger.debug("_most_vote: size of %s %s - %s %s" % (old.id, len(old_size), new.id, len(new_size)))
+    logger.debug("_most_vote: size of %s with %s - %s with %s" % (old.id, len(old_size), new.id, len(new_size)))
     if len(old_size) > len(new_size):
         keep, remove = old, new
     else:
