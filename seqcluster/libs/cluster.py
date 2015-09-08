@@ -248,7 +248,7 @@ def peak_calling(clus_obj):
             s, e = min(clus_obj.loci[bigger].counts.keys()), max(clus_obj.loci[bigger].counts.keys())
             scale = min(s, e)
             logger.debug("bigger %s at %s-%s" % (bigger, s, e))
-            seqs = cluster.loci2seq[bigger]
+            # seqs = cluster.loci2seq[bigger]
             dt = np.array([0] * (e - s + 12))
             for pos in clus_obj.loci[bigger].counts:
                 ss = int(pos) - scale + 5

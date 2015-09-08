@@ -178,6 +178,7 @@ class cluster:
             self.id = id
         # self.idmembers = defaultdict(int)
         seen = set()
+        self.locimax = 0
         for idl in self.loci2seq:
             l = len(self.loci2seq[idl])
             # self.idmembers.update(dict(zip(self.loci2seq[idl], [1] * l)))

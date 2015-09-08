@@ -10,14 +10,12 @@ def _scan(positions):
     #get index max score (check ties)
     #return enriched region(give up to two region)
 
-
 def _enrichment(resgion, flank_a, flank_b):
     return True
 
 def _get_locus(cluster):
     """get the bigger locus"""
     return True
-
 
 def _get_position_in_loci(locus_id, seqs, loci):
     """get position in locus of all sequences"""

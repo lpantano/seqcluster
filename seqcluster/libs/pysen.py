@@ -1,4 +1,3 @@
-import string
 
 def pysenMMean (x, y):
         ymf = []
