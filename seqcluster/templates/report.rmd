@@ -85,7 +85,7 @@ ggplot(tab, aes(x=V1,y=V2,fill=sample)) +
     geom_bar(stat="identity", position = "dodge") +
     facet_wrap(~group, ncol=2)+
     ggtitle("size distribution") +
-    ylab("# reads") + xlab=("size") +
+    ylab("# reads") + xlab("size") +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
@@ -208,7 +208,7 @@ head(clus_ma_norm[toomany>0,])
 
 Number of miRNAs with > 10 counts.
 
-```{r complexity}
+```{r complexity-clus}
 
 kable(as.data.frame(colSums(clus_ma>10)))
 
