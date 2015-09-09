@@ -12,7 +12,7 @@ from seqcluster.libs.cluster import detect_clusters, peak_calling
 from seqcluster.libs.logger import initialize_logger
 from seqcluster.libs.inputs import parse_ma_file
 from seqcluster.make_clusters import _create_json
-
+from seqcluster.align import pyMatch
 
 class TestCluster(TestCase):
     def test_cluster(self):
@@ -34,3 +34,7 @@ class TestCluster(TestCase):
         # logger.info("Write output")
         # _create_json(clus_red, args)
         # self.assertTrue()
+
+class TestAlign(TestCase):
+    def test_align(self):
+        pyMatch.Match("UAUACCGAGAGCCCAGCUGAUUUCGUCUUGGUAAUAAGCUCGUCAUUGAGAUUAUCACCG", "UCUUGGUAAUAAGCUCGUCA", 2)
