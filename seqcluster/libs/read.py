@@ -3,10 +3,14 @@ from __future__ import print_function
 from collections import defaultdict
 import json, itertools
 import tempfile, os, contextlib, shutil
+
 from sam2bed import makeBED
 import logging
 from do import find_cmd, run
+
 import pysam
+import pybedtools
+from seqcluster.align import pyMatch
 
 logger = logging.getLogger('read')
 
@@ -58,12 +62,32 @@ def map_to_precursors(seqs, names, loci, out_file, args):
         pre_fasta = get_loci_fasta(loci, pre_fasta, args.ref)
         out_precursor_file = out_file.replace("tsv", "fa")
         seqs_fasta = get_seqs_fasta(seqs, names, seqs_fasta)
+
+        # print(open(pre_fasta).read().split("\n")[1])
         if find_cmd("razers3"):
             cmd = "razers3 -dr 2 -i 80 -rr 90 -f -o {out_sam} {temp}/pre.fa  {seqs_fasta}"
             run(cmd.format(**locals()))
             out_file = read_alignment(out_sam, loci, seqs, out_file)
             shutil.copy(pre_fasta, out_precursor_file)
     return out_file
+
+
+def map_to_precursors_on_fly(seqs, names, loci, args):
+    """map sequences to precursors with franpr algorithm to avoid writting in disk"""
+    region = "%s\t%s\t%s\t.\t.\t%s" % (loci[1], loci[2], loci[3], loci[4])
+    precursor = pybedtools.BedTool(str(region), from_string=True).sequence(fi=args.ref, s=True)
+    precursor = open(precursor.seqfn).read().split("\n")[1]
+    # print(precursor)
+    # seqs_fasta = get_seqs_fasta(seqs, names, seqs_fasta)
+    dat = dict()
+    for s, n in itertools.izip(seqs, names):
+        # name_frmt = "cx{1}-{0}\n{0}".format(s, n)
+        res = pyMatch.Match(precursor, str(s), 4)
+        if res > -1:
+            dat[n] = [res, res + len(s)]
+
+    return dat
+
 
 def deprecated_map_to_precursors(seqs, names, loci, out_file, args):
     """map sequences to precursors with bowtie"""

@@ -45,6 +45,8 @@ def add_subparser_report(subparsers):
             help="dir of output files")
     parser.add_argument("-r", "--reference", dest="ref", required=1,
             help="reference fasta file with index"),
+    parser.add_argument("--razer", action="store_true",
+            help="map sequences with razer3")
     parser = _add_debug_option(parser)
     return parser
 

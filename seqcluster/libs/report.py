@@ -8,7 +8,7 @@ AXIS_FONT = {'fontname': 'Arial', 'size': '14'}
 from math import log as mlog2
 from collections import Counter, defaultdict
 
-from read import map_to_precursors
+from read import map_to_precursors, map_to_precursors_on_fly
 from utils import safe_dirs
 from progressbar import ProgressBar
 
@@ -80,12 +80,18 @@ def _convert_to_df(in_file, freq):
     convert data frame into table with pandas
     """
     dat = defaultdict(Counter)
-    with open(in_file) as in_handle:
-        for line in in_handle:
-            cols = line.strip().split(" ")
-            name = cols[1].replace("cx", "")
+    if isinstance(in_file, (str, unicode)):
+        with open(in_file) as in_handle:
+            for line in in_handle:
+                cols = line.strip().split(" ")
+                name = cols[1].replace("cx", "")
+                counts = freq[name]
+                dat = _expand(dat, counts, int(cols[4]), int(cols[5]))
+    else:
+        for name in in_file:
             counts = freq[name]
-            dat = _expand(dat, counts, int(cols[4]), int(cols[5]))
+            dat = _expand(dat, counts, in_file[name][0], in_file[name][1])
+
     # dat = {'positions': dat.keys(), 'expression': dat.values()}
     # df = pd.DataFrame(data=dat)
     # print df
@@ -159,8 +165,12 @@ def _single_cluster(c, data, out_file, args):
         logger.info("locus bigger > 500 nt, skipping: %s" % loci)
         return valid, ann, {}
     if not file_exists(out_file):
-        logger.debug("map all sequences to all loci %s " % loci)
-        map_to_precursors(seqs, names, {loci[0][0]: [loci[0][0:5]]}, out_file, args)
+        if args.razer:
+            logger.debug("map with razer all sequences to all loci %s " % loci)
+            map_to_precursors(seqs, names, {loci[0][0]: [loci[0][0:5]]}, out_file, args)
+        else:
+            logger.debug("map with C fn all sequences to all loci %s " % loci)
+            out_file = map_to_precursors_on_fly(seqs, names, loci[0][0:5], args)
 
     logger.debug("plot sequences on loci")
     df = _convert_to_df(out_file, freq)
