@@ -73,19 +73,15 @@ def map_to_precursors(seqs, names, loci, out_file, args):
 
 
 def map_to_precursors_on_fly(seqs, names, loci, args):
-    """map sequences to precursors with franpr algorithm to avoid writting in disk"""
+    """map sequences to precursors with franpr algorithm to avoid writting on disk"""
     region = "%s\t%s\t%s\t.\t.\t%s" % (loci[1], loci[2], loci[3], loci[4])
     precursor = pybedtools.BedTool(str(region), from_string=True).sequence(fi=args.ref, s=True)
     precursor = open(precursor.seqfn).read().split("\n")[1]
-    # print(precursor)
-    # seqs_fasta = get_seqs_fasta(seqs, names, seqs_fasta)
     dat = dict()
     for s, n in itertools.izip(seqs, names):
-        # name_frmt = "cx{1}-{0}\n{0}".format(s, n)
         res = pyMatch.Match(precursor, str(s), 4)
         if res > -1:
             dat[n] = [res, res + len(s)]
-
     return dat
 
 
