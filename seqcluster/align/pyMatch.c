@@ -37,9 +37,8 @@ int Match(char *strl, char *strs, int err) {
 }
 
 int main(int argc, char *argv) {
-	printf("\nResult: %d", Match("Hola Como Estas", "Como", 0));
-	printf("\nResult: %d", Match("Hola Como Estas", "Camo", 1));
-	printf("\nResult: %d", Match("Hola Como Estas", "Estas", 0));
+	printf("\nResult: %d", Match("CUCCGGUGCCUACUGAGCUGAUAUCAGUUCUCAUUUUACACACUGGCUCAGUUCAGCAGGAACAGGAG", "UACACACUGGCUCAGUUCAGCAGGAA", 0));
+	printf("\nResult: %d", Match("CUCCGGUGCCUACUGAGCUGAUAUCAGUUCUCAUUUUACACACUGGCUCAGUUCAGCAGGAACAGGAG", "UACACACUGGCUCAGUUCAGGAGGAA", 1));
 	printf("\n");
 	
 	return 1;
