@@ -7,8 +7,8 @@ import pybedtools
 import seqcluster.libs.parameters
 import seqcluster.libs.logger as mylog
 
-from seqcluster.libs.tool import reduceloci
-from seqcluster.libs.cluster import detect_clusters, peak_calling
+from seqcluster.detect.metacluster import reduceloci
+from seqcluster.detect.cluster import detect_clusters, peak_calling
 from seqcluster.libs.logger import initialize_logger
 from seqcluster.libs.inputs import parse_ma_file
 from seqcluster.make_clusters import _create_json
