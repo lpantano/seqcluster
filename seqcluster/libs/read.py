@@ -10,7 +10,10 @@ from do import find_cmd, run
 
 import pysam
 import pybedtools
-from seqcluster.align import pyMatch
+try:
+    from seqcluster.align import pyMatch
+except:
+    pass
 
 logger = logging.getLogger('read')
 
