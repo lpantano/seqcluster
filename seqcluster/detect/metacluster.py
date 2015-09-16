@@ -12,11 +12,11 @@ import math
 
 from bcbio.distributed.transaction import file_transaction
 
-import logger as mylog
-from classes import *
-from mystats import up_threshold
-from bayes import decide_by_bayes
-import parameters
+import seqcluster.libs.logger as mylog
+from seqcluster.libs.classes import *
+from seqcluster.libs.mystats import up_threshold
+from seqcluster.libs.bayes import decide_by_bayes
+import seqcluster.libs.parameters
 
 logger = mylog.getLogger(__name__)
 

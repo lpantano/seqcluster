@@ -11,11 +11,11 @@ import pandas as pd
 from bcbio.utils import file_exists
 from bcbio import bam
 
-import logger as mylog
-from classes import *
+import seqcluster.libs.logger as mylog
+from seqcluster.libs.classes import *
 # from seqcluster.function.peakdetect import peakdetect as peakdetect
-from tool import _get_seqs_from_cluster
-from do import run
+from seqcluster.libs.tool import _get_seqs_from_cluster
+from seqcluster.libs.do import run
 
 
 logger = mylog.getLogger(__name__)
