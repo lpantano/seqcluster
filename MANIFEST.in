@@ -1,4 +1,5 @@
 recursive-include seqcluster/templates *
+recursive-include seqcluster/align *so
 include README.rst
 include LICENSE
 include requirements.txt
