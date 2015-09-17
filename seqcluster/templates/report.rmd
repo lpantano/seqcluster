@@ -29,7 +29,7 @@ knitr::opts_chunk$set(tidy=TRUE, highlight=TRUE, dev="png", fig.width=6,fig.heig
                message=FALSE, prompt=TRUE, comment='', fig.cap='', bootstrap.show.code=FALSE)
 
 root_path = "$path_abs"
-root_file = file.path(root_path,"report")
+root_file = file.path(root_path)
 
 condition = "condition"
 ```
@@ -158,7 +158,7 @@ of the genome without reads.
 ```{r genome-covered, results='asis'}
 cov_stats <- read.table(file.path(root_path, "..", "align", "seqs_rmlw.bam_cov.tsv"),sep="\t",check.names = F)
 
-kable(cov_stats[cov_stats$V1=="genome",] %>%  dplyr::select(coverage=V2,ratio_genome=V5))
+kable(cov_stats[cov_stats$V1=="genome",] %>%  dplyr::select(coverage=V2,ratio_genome=V5), row.names = FALSE)
 
 ```
 
@@ -340,7 +340,7 @@ do_norm(dds, root_path, "mirna_")
 all_results = handle_deseq2(dds, design, condition)
 plot_MA(all_results)
 
-kable(head(all_results$ko_vs_wt))
+kable(head(all_results[[1]]))
 
 ```
 
@@ -366,7 +366,7 @@ do_norm(dds, root_path, "isomirs_")
 all_results = handle_deseq2(dds, design, condition)
 plot_MA(all_results)
 
-kable(head(all_results$ko_vs_wt))
+kable(head(all_results[[1]]))
 
 ```
 
@@ -391,7 +391,7 @@ do_norm(dds, root_path, "clusters_")
 all_results = handle_deseq2(dds, design, condition)
 plot_MA(all_results)
 
-clust_des = head(all_results$ko_vs_wt)
+clust_des = head(all_results[[1]])
 ann_des = clus[rownames(clust_des),]
 
 kable(cbind(clust_des, ann_des))
