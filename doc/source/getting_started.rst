@@ -190,4 +190,4 @@ An examples in slurm system is::
  * miraligner: file with miRNA anotation 
  * qc: `*_fastqc.html` is the fastqc results from the uncollapse fastq file
 * seqcluster: is the result of running seqcluster. See its `documentation <http://seqcluster.readthedocs.org/getting_started.html#clustering-of-small-rna-sequences>`_ for further information.
-* `report-ready.Rmd`: template to create a quick html report with exploration and differential expression analysis.
+* `report-ready.Rmd`: template to create a quick html report with exploration and differential expression analysis. See `example here <https://github.com/lpantano/mypubs/blob/master/srnaseq/mirqc/ready_report.md>`_
