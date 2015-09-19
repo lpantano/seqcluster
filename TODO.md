@@ -11,7 +11,7 @@
 
 - [X] implement tRNA-scan
 - [ ] NOW implement small rna prediction: CoRaL is an option for everything http://wanglab.pcbi.upenn.edu/coral/  or
-- [ ] NOW change to python alignment tool
+- [X] NOW change to python alignment tool
 - [ ] implement mirna prediction http://evryrna.ibisc.univ-evry.fr/miRBoost/index.html
 - [ ] implement submire target prediction module http://research.nhgri.nih.gov/software/SubmiRine/user_guide.shtml
 - [ ] Add to report: https://github.com/pkerpedjiev/forna/
@@ -21,7 +21,7 @@
 * QC: 
   - [ ] figures 5' positions by # unique sequences, this by class: mirna, trna ...
 * report:
-  - [ ] add mirna path enrichment to seqcluster-helper in the report
+  - [ ] add mirna path enrichment to report
   - [X] limit number of sequences in html, like 1000 top
 
 
@@ -44,6 +44,7 @@ inputs will be fastq or bam file. Will need to download the mirbase annotation (
 - [ ] seqclusteR: will be an object that make easier to retrieve information like counts, rownames, annotations ... tidy tables, and figures
 
 # documentation
+
 - [X] add install subcommand for mirbase installation/genomes
 - [X] add html report link to documentation
 - [ ] figure showing general pipeline steps: seqcluster-helper/bcbio-nextgen
