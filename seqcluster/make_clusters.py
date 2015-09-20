@@ -14,11 +14,11 @@ from bcbio.utils import file_exists
 import libs.logger as mylog
 from libs.read import load_data
 from libs.mystats import up_threshold
-from libs.cluster import detect_clusters, clean_bam_file, peak_calling, detect_complexity
+from detect.cluster import detect_clusters, clean_bam_file, peak_calling, detect_complexity
 from libs.annotation import anncluster
 from libs.inputs import parse_ma_file, parse_align_file
-from libs.tool import reduceloci, show_seq, \
-    generate_position_bed, _get_seqs
+from detect.metacluster import reduceloci,_get_seqs
+from libs.tool import generate_position_bed
 from libs.classes import *
 import libs.parameters as param
 from db import make_database

@@ -1,20 +1,17 @@
 import os.path as op
-import pickle
 from progressbar import ProgressBar
 
 import pysam
 import pybedtools
 from  seqcluster.libs import pysen
 import numpy as np
-import pandas as pd
 
 from bcbio.utils import file_exists
-from bcbio import bam
 
 import seqcluster.libs.logger as mylog
 from seqcluster.libs.classes import *
 # from seqcluster.function.peakdetect import peakdetect as peakdetect
-from seqcluster.libs.tool import _get_seqs_from_cluster
+from seqcluster.detect.metacluster import _get_seqs_from_cluster
 from seqcluster.libs.do import run
 
 
