@@ -126,7 +126,10 @@ def _get_seqs_from_cluster(seqs, seen):
 
 
 def reduceloci(clus_obj,  path):
-    """reduce number of loci a cluster has"""
+    """reduce number of loci a cluster has
+    :param clus_obj: cluster object object
+    :param path: output path
+    """
     filtered = {}
     n_cluster = 0
     large = 0
@@ -187,45 +190,9 @@ def _add_complete_cluster(idx, meta, clusters):
     return c
 
 
-def _iter_loci_deprecated(c, filtered, n_cluster, min_seq):
-    """Go through all locus and decide if they are part
-    of the same TU or not.
-
-    :param idx: int cluster id
-    :param filtered: dict with clusters object
-    :param n_cluster: int cluster id
-    :param min_seq: int min number of sequences inside
-    cluster
-
-    :return:
-        * filtered: dict of cluster objects
-        * n_cluster: int cluster id"""
-    n_loci = len(c.loci2seq)
-    n_loci_prev = n_loci + 1
-    total_seqs = list()
-    cicle = 0
-    while n_loci < n_loci_prev and n_loci != 0:
-        n_loci_prev = n_loci
-        cicle += 1
-        ma = _calculate_similarity(c)
-        if (cicle % 1) == 0:
-            logger.debug("_iter_loci:number of cicle: %s with n_loci %s" % (cicle, n_loci))
-        locilen_sorted = sorted(c.locilen.iteritems(), key=operator.itemgetter(1), reverse=True)
-        maxseq = locilen_sorted[0][1]*1.0
-        if maxseq > min_seq:
-            logger.debug("_iter_loci:maxseq: %s" % maxseq)
-            c, total_seqs, filtered, n_cluster = _solve_loci(c, locilen_sorted, total_seqs, filtered, maxseq, n_cluster)
-        else:
-            for (idl, lenl) in locilen_sorted:
-                logger.debug("_iter_loci:remove locus %s with len %s:" % (idl, lenl))
-                c.loci2seq.pop(idl, "None")
-                c.locilen.pop(idl, "None")
-        n_loci = len(c.loci2seq)
-    return filtered, n_cluster
-
-
 def _iter_loci(meta, clusters, s2p, filtered, n_cluster):
-    """Go through all locus and decide if they are part
+    """
+    Go through all locus and decide if they are part
     of the same TU or not.
 
     :param idx: int cluster id
@@ -235,7 +202,8 @@ def _iter_loci(meta, clusters, s2p, filtered, n_cluster):
 
     :return:
         * filtered: dict of cluster objects
-        * n_cluster: int cluster id"""
+        * n_cluster: int cluster id
+    """
     loci = dict(zip(meta, [clusters[idc] for idc in meta]))
 
     n_loci = len(meta)
@@ -350,7 +318,8 @@ def _is_consistent(pairs, common, clus_seen, loci_similarity):
 
 
 def _merge_similar(loci, loci_similarity):
-    """internal function to reduce loci complexity
+    """
+    Internal function to reduce loci complexity
 
     :param loci: class cluster
     :param locilen_sorted: list of loci sorted by size
@@ -412,14 +381,16 @@ def _merge_cluster(old, new):
 
 
 def _solve_conflict(list_c, s2p, n_cluster):
-    """make sure sequences are counts once.
+    """
+    Make sure sequences are counts once.
     Resolve by most-vote or exclussion
 
     :params list_c: dict of objects cluster
     :param s2p: dict of [loci].coverage = # num of seqs
     :param n_cluster: number of clusters
 
-    return dict: new set of clusters"""
+    return dict: new set of clusters
+    """
     logger.debug("_solve_conflict: count once")
     if parameters.decision_cluster == "bayes":
         return decide_by_bayes(list_c, s2p)
