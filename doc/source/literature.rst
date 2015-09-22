@@ -12,6 +12,11 @@ IsomiRs
 `miR-142-3p isomiR <http://rnajournal.cshlp.org/content/early/2015/07/02/rna.048876.114>`_:  "We furthermore demonstrate that miRNA 5′-end variation 
 leads to differential targeting and can thus broaden the target range of miRNAs." 
 
+A highly expressed `miR-101 isomiR <http://www.ncbi.nlm.nih.gov/pubmed/23414127>`_ is a functional silencing small RNA.
+
+
+A challenge for miRNA: multiple isomiRs in `miRNAomics. <http://www.ncbi.nlm.nih.gov/pubmed/24768184>`_
+
 Techonolgy
 -----------
 
