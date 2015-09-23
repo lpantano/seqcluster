@@ -1,0 +1,13 @@
+samplename,description,group
+SRR950884,liver_miR-302a,Homo_sapiens_liver
+SRR950885,liver_miR-302b,Homo_sapiens_liver
+SRR950886,liver_miR-302c,Homo_sapiens_liver
+SRR950887,liver_miR-302d,Homo_sapiens_liver
+SRR950888,MS2_let-7a-5p,Enterobacterio_phage_MS2
+SRR950889,MS2_let-7b-5p,Enterobacterio_phage_MS2
+SRR950890,MS2_let-7c,Enterobacterio_phage_MS2
+SRR950891,MS2_let-7d-5p,Enterobacterio_phage_MS2
+SRR950892,serum_spiked_miRs_constant,Homo_sapiens_serum
+SRR950893,serum_spiked_miRs_constant_repeat,Homo_sapiens_serum
+SRR950894,serum_spiked_miRs_variable,Homo_sapiens_serum
+SRR950895,serum_spiked_miRs_variable_repeat,Homo_sapiens_serum

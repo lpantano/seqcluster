@@ -1,0 +1,10 @@
+upload:
+  dir: upload
+details:
+  - analysis: smallRNA-seq
+    algorithm:
+      aligner: star
+      adapters: ["TGGAATTCTCGGGTGC"]
+      species: hsa
+    description: miRQCa
+    genome_build: hg19

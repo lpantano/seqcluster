@@ -1,2 +1,11 @@
+set -o pipefail
 
-seqcluster-helper.py --sample-map config.txt  --db ~/groups/seqcluster/data/mirbase --aligner-index ~/groups/bcbio/genomes/Hsapiens/hg19/star --gtf-file ~/groups/seqcluster/data/annotation/hsapiens.gtf --species hsa --adapter TGGAATTCTCGGGTGC --reference ~/groups/bcbio/genomes/Hsapiens/hg19/seq/hg19.fa
+bcbio_nextgen.py -w template template.yaml mirqc_bcbio.csv raw/* --only-metadata
+bcbio_nextgen.py -w template template.yaml non_mirqc_bcbio.csv raw/* --only-metadata
+
+
+cd mirqc_bcbio/work
+bcbio_nextgen.py ../config/mirqc_bcbio.yaml
+
+cd non_mirqc_bcbio/work
+bcbio_nextgen.py ../config/non_mirqc_bcbio.yaml
