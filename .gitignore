@@ -7,6 +7,7 @@ data/test_collapse/prepare/*
 data/examples/database/*
 data/test_cluster/predictions/*
 data/test_cluster/coral/*
+data/test_cluster/test*
 data/simulated/sim*
 # Byte-compiled / optimized / DLL files
 __pycache__/
