@@ -73,6 +73,14 @@ except AttributeError:
 def Match(*args):
   return _pyMatch.Match(*args)
 Match = _pyMatch.Match
+
+def MMatch(*args):
+  return _pyMatch.MMatch(*args)
+MMatch = _pyMatch.MMatch
+
+def Miraligner(*args):
+  return _pyMatch.Miraligner(*args)
+Miraligner = _pyMatch.Miraligner
 # This file is compatible with both classic and new-style classes.
 
 
