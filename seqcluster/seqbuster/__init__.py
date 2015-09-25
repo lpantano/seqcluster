@@ -2,9 +2,12 @@
 import os.path as op
 import pandas as pd
 import pysam
+
 from bcbio import bam
 from bcbio.provenance import do
+
 import seqcluster.libs.logger as mylog
+from seqcluster.align import pyMatch
 from realign import *
 
 logger = mylog.getLogger(__name__)
@@ -250,20 +253,25 @@ def miraligner(args):
     matures = _read_mature(args.mirna, args.sps)
     out_dts = []
     for bam_fn in args.files:
-        logger.info("Reading %s" % bam_fn)
-        sample = op.splitext(op.basename(bam_fn))[0]
-        out_file = op.join(args.out, sample + ".mirna")
-        bam_fn = bam.sam_to_bam(bam_fn, config)
-        bam_sort_by_n = op.splitext(bam_fn)[0] + "_sort"
-        pysam.sort("-n", bam_fn, bam_sort_by_n)
-        reads = _read_bam(bam_sort_by_n + ".bam", precursors)
-        _annotate(reads, matures, precursors)
-        out_file, dt = _tab_output(reads, out_file, sample)
-        out_dts.append(dt)
+        if bam_fn.endswith("bam"):
+            logger.info("Reading %s" % bam_fn)
+            sample = op.splitext(op.basename(bam_fn))[0]
+            out_file = op.join(args.out, sample + ".mirna")
+            bam_fn = bam.sam_to_bam(bam_fn, config)
+            bam_sort_by_n = op.splitext(bam_fn)[0] + "_sort"
+            pysam.sort("-n", bam_fn, bam_sort_by_n)
+            reads = _read_bam(bam_sort_by_n + ".bam", precursors)
+            _annotate(reads, matures, precursors)
+            out_file, dt = _tab_output(reads, out_file, sample)
+            out_dts.append(dt)
+        elif bam_fn.endswith("fasta") or bam_fn.endswith("fa"):
+            logger.info("Aligning %s" % bam_fn)
+            pyMatch.Miraligner(hairpin, bam_fn, bam_fn + ".mirna", 1, 3)
 
-    ma, ma_mirna = _merge(out_dts)
-    out_ma = op.join(args.out, "counts.tsv")
-    out_ma_mirna = op.join(args.out, "counts_mirna.tsv")
-    ma.to_csv(out_ma, sep="\t")
-    ma_mirna.to_csv(out_ma_mirna, sep="\t")
-    # _summarize(out_dts)
+    if out_dts:
+        ma, ma_mirna = _merge(out_dts)
+        out_ma = op.join(args.out, "counts.tsv")
+        out_ma_mirna = op.join(args.out, "counts_mirna.tsv")
+        ma.to_csv(out_ma, sep="\t")
+        ma_mirna.to_csv(out_ma_mirna, sep="\t")
+        # _summarize(out_dts)
