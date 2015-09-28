@@ -14,6 +14,8 @@ Web-servers
 
 `StarScan`_: Database to browse the targets of miRNAs from degradome data. It has a fancy interface, and many species and data from GEO.
 
+`miRtex <http://research.bioinformatics.udel.edu/miRTex/>`_ gives targets from literature. Good for finding validated targets to help discussion in papers or further functional experiment based on new hypothesis.
+
 `piRBase`_: Database for piRNA annotation and function. Published last year, for now the best I can find out there.
 
 `chimira`_: Web tool to analyze isomiR. It gives you a quick idea of you samples.
