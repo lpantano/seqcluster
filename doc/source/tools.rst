@@ -20,6 +20,11 @@ Web-servers
 
 `MicroCosm`_: MiRNA target database. Updated and download option.
 
+Command-lines
+-----------
+
+`miRVaS <http://nar.oxfordjournals.org/content/early/2015/09/17/nar.gkv921.full>`_ : tools to predict the functional changed due to nt changes in the miRNA sequence.
+
 
 .. _TFmiR: http://service.bioinformatik.uni-saarland.de/tfmir/
 
