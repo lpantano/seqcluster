@@ -3,6 +3,19 @@
 #include <malloc.h>
 
 
+int EvalError(char *str0, char *str1, int len) {
+	int i;
+	int err;
+	
+	err = 0;
+	for (i=0; i<len; i++) {
+		if (str0[i] != str1[i]) err++;
+	}
+
+	return err;
+}
+
+
 int Match(char *strl, char *strs, int err, int err2) {
 
 	int lenl,lens;
@@ -39,14 +52,23 @@ int Match(char *strl, char *strs, int err, int err2) {
 
 
 
-int MMatch (int len, char **ls, char *ss, int err, int err2) {
+int MMatch (char **ls, char *ss, int err, int err2) {
 	int i;
 	int j;
+	int len;
 	
-	for (i = 0; i<len; i++) {
+	len = 0;
+	while (ls[len]) {
+		len++;	
+	}
+	
+	i = 0;
+	while (ls[i]) {
 		j = Match (ls[i], ss, err, err2);
 		
 		if (j != -1) break;
+		
+		i++;
 	}
 
 	if (i == len) i = -1;
@@ -134,6 +156,8 @@ int Miraligner (char *lfn, char *sfn, char *rfn, int err, int err2) {
 	nbLSeqs = j;
 	////////////////////////////////////////////////////////////////////////
 	
+	
+	
 	////////////////////////////////////////////////////////////////////////
 	if ((psf = fopen(sfn, "r")) == NULL) {
 		printf("\nError opening file %s", sfn);
@@ -192,17 +216,7 @@ int Miraligner (char *lfn, char *sfn, char *rfn, int err, int err2) {
 	
 	nbSSeqs = j;
 	////////////////////////////////////////////////////////////////////////
-	
-	//printf("\nfsize %ld nbLSeqs %d", size, nbLSeqs);
-	//printf("\nseq 100 name %s", ppln[100]);
-	//printf("\nseq 100 seqs %s", ppls[100]);
-	
-	//printf("\nfsize %ld nbSSeqs %d", size, nbSSeqs);
-	//printf("\nseq 100 name %s", ppsn[100]);
-	//printf("\nseq 100 seqs %s", ppss[100]);
-	
-	//printf("\n\n");
-	
+
 	////////////////////////////////////////////////////////////////////////
 	if ((prf = fopen(rfn, "w")) == NULL) {
 		printf("\nError opening file %s", rfn);
@@ -222,7 +236,9 @@ int Miraligner (char *lfn, char *sfn, char *rfn, int err, int err2) {
 		
 		for (j = 0; j<nbLSeqs; j++) {
 			if ((k = Match(ppls[j], ppss[i], err, err2)) != -1) {
-				fprintf(prf ,"%s %s %d %d\n", ppsn[i], ppln[j], k, k+l-1);
+				fprintf(prf ,"%s %s %d %d %d %d\n", ppsn[i], ppln[j], k, k+l-1, EvalError(ppls[j]+k, ppss[i], strlen(ppss[i])),
+				                                                                EvalError(ppls[j]+k, ppss[i], strlen(ppss[i])-err2)
+					   );
 			}
 			//printf("\n%d", k);
 		}		
@@ -230,8 +246,6 @@ int Miraligner (char *lfn, char *sfn, char *rfn, int err, int err2) {
 	
 	
 	fclose(prf);
-	
-	////////////////////////////////////////////////////////////////////////
 	free(pls);	
 	free(ppln);	
 	free(ppls);	
@@ -239,10 +253,7 @@ int Miraligner (char *lfn, char *sfn, char *rfn, int err, int err2) {
 	free(ppsn);	
 	free(ppss);	
 	
-
 	return 1;
 }
 
 
-
-// Miraligner("hairpin.hsa.fa", "sim.fasta", "results.res", 1, 3);
