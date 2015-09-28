@@ -14,8 +14,14 @@ leads to differential targeting and can thus broaden the target range of miRNAs.
 
 A highly expressed `miR-101 isomiR <http://www.ncbi.nlm.nih.gov/pubmed/23414127>`_ is a functional silencing small RNA.
 
-
 A challenge for miRNA: multiple isomiRs in `miRNAomics. <http://www.ncbi.nlm.nih.gov/pubmed/24768184>`_
+
+`miR-183-5p isomiR changes in breast cancer <http://nar.oxfordjournals.org/content/early/2015/09/22/nar.gkv922.full>`_. Validated target regulation of new genes different from the reference miRNA.
+
+non-miRNAs
+-----------
+
+`A novel piRNA mechanism <http://nar.oxfordjournals.org/content/early/2015/09/23/nar.gkv954.short?rss=1>`_ in regulating gene expression in highly differentiated somatic cells.
 
 Techonolgy
 -----------
