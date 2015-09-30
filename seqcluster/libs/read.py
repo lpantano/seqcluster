@@ -82,7 +82,7 @@ def map_to_precursors_on_fly(seqs, names, loci, args):
     precursor = open(precursor.seqfn).read().split("\n")[1]
     dat = dict()
     for s, n in itertools.izip(seqs, names):
-        res = pyMatch.Match(precursor, str(s), 4)
+        res = pyMatch.Match(precursor, str(s), 1, 3)
         if res > -1:
             dat[n] = [res, res + len(s)]
     return dat
