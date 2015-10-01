@@ -5,6 +5,7 @@ import pysam
 
 from bcbio import bam
 from bcbio.provenance import do
+from bcbio.utils import file_exists
 
 import seqcluster.libs.logger as mylog
 from seqcluster.align import pyMatch
@@ -38,7 +39,7 @@ def _read_mature(matures, sps):
     mature = defaultdict(dict)
     with open(matures) as in_handle:
         for line in in_handle:
-            if line.startswith(">"):
+            if line.startswith(">") and line.find(sps) > 0:
                 name = line.strip().replace(">", " ").split()
                 mir5p = _get_pos(name[2])
                 if len(name) > 3:
@@ -223,7 +224,7 @@ def _tab_output(reads, out_file, sample):
     seen = set()
     lines = []
     with open(out_file, 'w') as out_handle:
-        print >>out_handle, "name\tfreq\tchrom\tsubs\tadd\tt5\tt3"
+        print >>out_handle, "name\tseq\tfreq\tprecursor\tchrom\tsubs\tadd\tt5\tt3"
         for r, read in reads.iteritems():
             hits = set()
             [hits.add(mature.mirna) for mature in read.precursors.values() if mature.mirna]
@@ -237,12 +238,14 @@ def _tab_output(reads, out_file, sample):
                     if not chrom:
                         chrom = p
                     count = _get_freq(r)
-                    res = ("{r}\t{count}\t{p}\t{chrom}\t{format}\t{hits}")
+                    seq = reads[r].sequence
+                    res = ("{r}\t{seq}\t{count}\t{p}\t{chrom}\t{format}\t{hits}")
                     annotation = "%s:%s" % (chrom, iso.format(":"))
                     lines.append([annotation, chrom, count, sample, hits])
                     print >>out_handle, res.format(format=iso.format(), **locals())
     dt = pd.DataFrame(lines)
     dt.columns = ["isomir", "chrom", "counts", "sample", "hits"]
+    dt.to_csv(out_file + "_summary")
     return out_file, dt
 
 def _merge(dts):
@@ -285,7 +288,8 @@ def miraligner(args):
         elif bam_fn.endswith("fasta") or bam_fn.endswith("fa"):
             out_file = op.join(args.out, sample + ".premirna")
             logger.info("Aligning %s" % bam_fn)
-            pyMatch.Miraligner(hairpin, bam_fn, out_file, 1, 3)
+            if not file_exists(out_file):
+                pyMatch.Miraligner(hairpin, bam_fn, out_file, 1, 3)
             reads = _read_pyMatch(out_file, precursors)
 
         _annotate(reads, matures, precursors)
