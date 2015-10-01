@@ -39,13 +39,13 @@ def _read_mature(matures, sps):
     mature = defaultdict(dict)
     with open(matures) as in_handle:
         for line in in_handle:
-            if line.startswith(">") and line.find(sps) > 0:
+            if line.startswith(">") and line.find(sps) > -1:
                 name = line.strip().replace(">", " ").split()
                 mir5p = _get_pos(name[2])
+                mature[name[0]] = {mir5p[0]: map(int, mir5p[1])}
                 if len(name) > 3:
                     mir3p = _get_pos(name[3])
-                mature[name[0]] = {mir5p[0]: map(int, mir5p[1]),
-                                   mir3p[0]: map(int, mir3p[1])}
+                    mature[name[0]].update({mir3p[0]: map(int, mir3p[1])})
     return mature
 
 def _read_precursor(precursor, sps):
@@ -105,7 +105,7 @@ def _annotate(reads, mirbase_ref, precursors):
             for mature in mirbase_ref[p]:
                 mi = mirbase_ref[p][mature]
                 is_iso = _coord(reads[r].sequence, start, mi, precursors[p], reads[r].precursors[p])
-                logger.debug(("{r} {p} {start} {is_iso} {mi} {mature_s}").format(s=reads[r].sequence, mature_s=precursors[p][mi[0]-1:mi[1]], **locals()))
+                logger.debug(("{r} {p} {start} {is_iso} {mature} {mi} {mature_s}").format(s=reads[r].sequence, mature_s=precursors[p][mi[0]-1:mi[1]], **locals()))
                 if is_iso:
                     reads[r].precursors[p].mirna = mature
                     break
@@ -223,6 +223,7 @@ def _get_freq(name):
 def _tab_output(reads, out_file, sample):
     seen = set()
     lines = []
+    seen_ann = {}
     with open(out_file, 'w') as out_handle:
         print >>out_handle, "name\tseq\tfreq\tprecursor\tchrom\tsubs\tadd\tt5\tt3"
         for r, read in reads.iteritems():
@@ -239,10 +240,15 @@ def _tab_output(reads, out_file, sample):
                         chrom = p
                     count = _get_freq(r)
                     seq = reads[r].sequence
-                    res = ("{r}\t{seq}\t{count}\t{p}\t{chrom}\t{format}\t{hits}")
+
                     annotation = "%s:%s" % (chrom, iso.format(":"))
+                    res = ("{r}\t{seq}\t{count}\t{p}\t{chrom}\t{format}\t{hits}").format(format=iso.format(), **locals())
+                    if annotation in seen_ann:
+                        raise ValueError("Same isomir %s from different sequence: %s and %s" % (annotation, res, seen_ann[annotation]))
+                    seen_ann[annotation] = res
                     lines.append([annotation, chrom, count, sample, hits])
-                    print >>out_handle, res.format(format=iso.format(), **locals())
+                    print >>out_handle, res
+
     dt = pd.DataFrame(lines)
     dt.columns = ["isomir", "chrom", "counts", "sample", "hits"]
     dt.to_csv(out_file + "_summary")
@@ -292,7 +298,7 @@ def miraligner(args):
                 pyMatch.Miraligner(hairpin, bam_fn, out_file, 1, 3)
             reads = _read_pyMatch(out_file, precursors)
 
-        _annotate(reads, matures, precursors)
+        reads = _annotate(reads, matures, precursors)
         out_file = op.join(args.out, sample + ".mirna")
         out_file, dt = _tab_output(reads, out_file, sample)
         out_dts.append(dt)
