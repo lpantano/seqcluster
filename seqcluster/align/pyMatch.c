@@ -216,7 +216,21 @@ int Miraligner (char *lfn, char *sfn, char *rfn, int err, int err2) {
 	
 	nbSSeqs = j;
 	////////////////////////////////////////////////////////////////////////
-
+	
+	
+	
+	//printf("\nfsize %ld nbLSeqs %d", size, nbLSeqs);
+	//printf("\nseq 100 name %s", ppln[100]);
+	//printf("\nseq 100 seqs %s", ppls[100]);
+	
+	//printf("\nfsize %ld nbSSeqs %d", size, nbSSeqs);
+	//printf("\nseq 100 name %s", ppsn[100]);
+	//printf("\nseq 100 seqs %s", ppss[100]);
+	
+	//printf("\n\n");
+	
+	
+	
 	////////////////////////////////////////////////////////////////////////
 	if ((prf = fopen(rfn, "w")) == NULL) {
 		printf("\nError opening file %s", rfn);
@@ -236,8 +250,8 @@ int Miraligner (char *lfn, char *sfn, char *rfn, int err, int err2) {
 		
 		for (j = 0; j<nbLSeqs; j++) {
 			if ((k = Match(ppls[j], ppss[i], err, err2)) != -1) {
-				fprintf(prf ,"%s %s %d %d %d %d\n", ppsn[i], ppln[j], k, k+l-1, EvalError(ppls[j]+k, ppss[i], strlen(ppss[i])),
-				                                                                EvalError(ppls[j]+k, ppss[i], strlen(ppss[i])-err2)
+				fprintf(prf ,"%s %s %s %d %d %d %d\n", ppsn[i], ppss[i], ppln[j], k, k+l-1, EvalError(ppls[j]+k, ppss[i], strlen(ppss[i])),
+				                                                                            EvalError(ppls[j]+k, ppss[i], strlen(ppss[i])-err2)
 					   );
 			}
 			//printf("\n%d", k);
@@ -246,6 +260,20 @@ int Miraligner (char *lfn, char *sfn, char *rfn, int err, int err2) {
 	
 	
 	fclose(prf);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	////////////////////////////////////////////////////////////////////////
 	free(pls);	
 	free(ppln);	
 	free(ppls);	
@@ -253,6 +281,9 @@ int Miraligner (char *lfn, char *sfn, char *rfn, int err, int err2) {
 	free(ppsn);	
 	free(ppss);	
 	
+	
+	
+
 	return 1;
 }
 

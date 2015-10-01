@@ -187,6 +187,28 @@ def _read_bam(bam_fn, precursors):
     reads = _clean_hits(reads)
     return reads
 
+def _read_pyMatch(fn, precursors):
+    """
+    read pyMatch file and perform realignment of hits
+    """
+    with open(fn) as handle:
+        reads = defaultdict(realign)
+        for line in handle:
+            query_name, seq, chrom, reference_start, end, mism, add = line.split()
+            reference_start = int(reference_start)
+            # chrom = handle.getrname(cols[1])
+            # print "%s %s %s %s" % (line.query_name, line.reference_start, line.query_sequence, chrom)
+            if query_name not in reads:
+                reads[query_name].sequence = seq
+            iso = isomir()
+            iso.align = line
+            iso.start = reference_start
+            iso.subs, iso.add = _realign(reads[query_name].sequence, precursors[chrom], reference_start)
+            reads[query_name].set_precursor(chrom, iso)
+
+        reads = _clean_hits(reads)
+    return reads
+
 def _get_freq(name):
     """
     Check if name read contains counts (_xNumber)
@@ -215,7 +237,7 @@ def _tab_output(reads, out_file, sample):
                     if not chrom:
                         chrom = p
                     count = _get_freq(r)
-                    res = ("{r}\t{count}\t{chrom}\t{format}\t{hits}")
+                    res = ("{r}\t{count}\t{p}\t{chrom}\t{format}\t{hits}")
                     annotation = "%s:%s" % (chrom, iso.format(":"))
                     lines.append([annotation, chrom, count, sample, hits])
                     print >>out_handle, res.format(format=iso.format(), **locals())
@@ -253,20 +275,23 @@ def miraligner(args):
     matures = _read_mature(args.mirna, args.sps)
     out_dts = []
     for bam_fn in args.files:
-        if bam_fn.endswith("bam"):
+        sample = op.splitext(op.basename(bam_fn))[0]
+        if bam_fn.endswith("bam") or bam_fn.endswith("sam"):
             logger.info("Reading %s" % bam_fn)
-            sample = op.splitext(op.basename(bam_fn))[0]
-            out_file = op.join(args.out, sample + ".mirna")
             bam_fn = bam.sam_to_bam(bam_fn, config)
             bam_sort_by_n = op.splitext(bam_fn)[0] + "_sort"
             pysam.sort("-n", bam_fn, bam_sort_by_n)
             reads = _read_bam(bam_sort_by_n + ".bam", precursors)
-            _annotate(reads, matures, precursors)
-            out_file, dt = _tab_output(reads, out_file, sample)
-            out_dts.append(dt)
         elif bam_fn.endswith("fasta") or bam_fn.endswith("fa"):
+            out_file = op.join(args.out, sample + ".premirna")
             logger.info("Aligning %s" % bam_fn)
-            pyMatch.Miraligner(hairpin, bam_fn, bam_fn + ".mirna", 1, 3)
+            pyMatch.Miraligner(hairpin, bam_fn, out_file, 1, 3)
+            reads = _read_pyMatch(out_file, precursors)
+
+        _annotate(reads, matures, precursors)
+        out_file = op.join(args.out, sample + ".mirna")
+        out_file, dt = _tab_output(reads, out_file, sample)
+        out_dts.append(dt)
 
     if out_dts:
         ma, ma_mirna = _merge(out_dts)
