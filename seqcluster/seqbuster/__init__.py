@@ -76,7 +76,8 @@ def _coord(sequence, start, mirna, precursor, iso):
         iso.t5 = "D" + precursor[mirna[0] - 1:mirna[0] - 1 + dif]
     elif start == mirna[0]:
         iso.t5 = "NA"
-    if dif > 3:
+    if dif > 4:
+        logger.debug("start > 3 %s %s %s %s %s" % (start, len(sequence), dif, mirna, iso.format()))
         return None
 
     end = start + (len(sequence) - len(iso.add)) - 1
@@ -89,7 +90,8 @@ def _coord(sequence, start, mirna, precursor, iso):
         iso.t3 = "D" + precursor[mirna[1] - dif:mirna[1]]
     elif end == mirna[1]:
         iso.t3 = "NA"
-    if dif > 3:
+    if dif > 4:
+        logger.debug("end > 3 %s %s %s %s %s" % (len(sequence), end, dif, mirna, iso.format()))
         return None
     logger.debug("%s %s %s %s %s %s" % (start, len(sequence), end, dif, mirna, iso.format()))
     return True
@@ -157,8 +159,9 @@ def _clean_hits(reads):
                 sc = world[p]
         new_reads[r] = reads[r]
         for p in world:
-            logger.debug("remove %s %s %s" % (r, p, world[p]))
+            logger.debug("score %s %s %s" % (r, p, world[p]))
             if sc != world[p]:
+                logger.debug("remove %s %s %s" % (r, p, world[p]))
                 new_reads[r].remove_precursor(p)
 
     return new_reads
@@ -295,7 +298,7 @@ def miraligner(args):
             out_file = op.join(args.out, sample + ".premirna")
             logger.info("Aligning %s" % bam_fn)
             if not file_exists(out_file):
-                pyMatch.Miraligner(hairpin, bam_fn, out_file, 1, 3)
+                pyMatch.Miraligner(hairpin, bam_fn, out_file, 1, 4)
             reads = _read_pyMatch(out_file, precursors)
 
         reads = _annotate(reads, matures, precursors)
