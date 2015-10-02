@@ -4,7 +4,6 @@ import os
 import re
 import random
 import numpy
-from libs.objectsSim import *
 
 def createMirna(string):
         cols = string.split("[")
@@ -24,8 +23,25 @@ def createMirna(string):
                         obj.addp3(chrom,start,end)
         return obj
 
+class pos:
+	def __init__(self,n,s,e):
+		self.s=s
+		self.e=e
+		self.id=n
+
+class mirna:
+	def __init__(self):
+		self.p5=0
+		self.p3=0
+	def addp5(self,n,s,e):
+		#print "adding p5"
+		self.p5=pos(n,s,e)
+		#print self.p5
+	def addp3(self,n,s,e):
+		self.p3=pos(n,s,e)
 
 usagetxt = "usage: %prog  -f precurso.fa -m miRNA.str -n 10 -s hsa"
+
 parser = OptionParser(usage=usagetxt, version="%prog 1.0")
 parser.add_option("-f", "--fa", dest="fasta",
                   help="", metavar="FILE")
@@ -45,15 +61,15 @@ if len(sys.argv)<4:
 (options, args) = parser.parse_args()
 species=options.species
 
-pos=open(options.strfile,'r')
+pos_mirna=open(options.strfile,'r')
 listmirna={}
-for line in pos:
+for line in pos_mirna:
         if line.find("[")>0:
                 line = line.strip()
                 name = line.split(" ")
                 name = name[0].replace(">","")
                 listmirna[name]=createMirna(line)
-pos.close()
+pos_mirna.close()
 
 data = {}
 fas = open(options.fasta, 'r')
@@ -67,8 +83,8 @@ for line in fas:
                         mir=listmirna[name].p5
                         if mir!=0 and name.find(species)>=0:
                                 for rand in range(int(options.numsim)):
-                                        randS=random.randint(mir.s-3,mir.s+3)+1
-                                        randE=random.randint(mir.e-3,mir.e+3)+1
+                                        randS=random.randint(mir.s-3,mir.s+3)
+                                        randE=random.randint(mir.e-3,mir.e+3)
                                         if randS<1:
                                                 randS=1
                                         if randE>mir.e:
