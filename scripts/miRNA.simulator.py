@@ -83,8 +83,8 @@ for line in fas:
                         mir=listmirna[name].p5
                         if mir!=0 and name.find(species)>=0:
                                 for rand in range(int(options.numsim)):
-                                        randS=random.randint(mir.s-3,mir.s+3)
-                                        randE=random.randint(mir.e-3,mir.e+3)
+                                        randS=random.randint(mir.s-2,mir.s+2)+1
+                                        randE=random.randint(mir.e-2,mir.e+2)+1
                                         if randS<1:
                                                 randS=1
                                         if randE>mir.e:
