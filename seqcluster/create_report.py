@@ -38,4 +38,4 @@ def report(args):
     if not os.path.exists(css):
         shutil.copy(css_template, css)
         shutil.copy(js_template, js)
-    logger.info("Done")
+    logger.info("Done. Download https://github.com/lpantano/seqclusterViz/archive/master.zip to browse the output.")
