@@ -95,7 +95,7 @@ int Miraligner (char *lfn, char *sfn, char *rfn, int err, int err2) {
 	
 	int i;
 	int j;
-	int k;
+	int k, k2;
 	int l;
 	
 	int nbLSeqs;
@@ -253,6 +253,16 @@ int Miraligner (char *lfn, char *sfn, char *rfn, int err, int err2) {
 				fprintf(prf ,"%s %s %s %d %d %d %d\n", ppsn[i], ppss[i], ppln[j], k, k+l-1, EvalError(ppls[j]+k, ppss[i], strlen(ppss[i])),
 				                                                                            EvalError(ppls[j]+k, ppss[i], strlen(ppss[i])-err2)
 					   );
+				
+				if (strlen(ppls[j])-k-strlen(ppss[i])*2 > 0) {
+					if ((k2 = Match(ppls[j]+k+strlen(ppss[i]), ppss[i], err, err2)) != -1) {
+						k2 += k+strlen(ppss[i]);
+						fprintf(prf ,"%s %s %s %d %d %d %d\n", ppsn[i], ppss[i], ppln[j], k2, k2+l-1, EvalError(ppls[j]+k, ppss[i], strlen(ppss[i])),
+						                                                                              EvalError(ppls[j]+k, ppss[i], strlen(ppss[i])-err2)
+					   		   );
+					}
+				}
+				
 			}
 			//printf("\n%d", k);
 		}		
@@ -286,5 +296,4 @@ int Miraligner (char *lfn, char *sfn, char *rfn, int err, int err2) {
 
 	return 1;
 }
-
 
