@@ -208,6 +208,7 @@ def _read_pyMatch(fn, precursors):
             iso.align = line
             iso.start = reference_start
             iso.subs, iso.add = _realign(reads[query_name].sequence, precursors[chrom], reference_start)
+            logger.debug("%s %s %s %s %s" % (query_name, reference_start, chrom, iso.subs, iso.add))
             reads[query_name].set_precursor(chrom, iso)
 
         reads = _clean_hits(reads)

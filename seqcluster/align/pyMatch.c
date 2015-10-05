@@ -23,17 +23,33 @@ int Match(char *strl, char *strs, int err, int err2) {
 	int i,j;
 	int pos = -1;
 	
-	lenl = strlen (strl);
+	char strll[256];
+	
+	if (strlen(strl) > 250) {return -1;}
+	
+	
+	i = 0;
+	while (strl[i] != '\0') {
+		strll[i] = strl[i];
+		i++;
+	}
+	strll[i] = 'N'; i++;
+	strll[i] = 'N'; i++;
+	strll[i] = 'N'; i++;
+	strll[i] = '\0';
+
+
+	lenl = strlen (strll);
 	lens = strlen (strs);
-	
+
 	error = -1;
-	
+
 	i = 0;
 	while (error < err && (i + lens) <= lenl) {
 		j = 0;
 		
 		while (error < err && j < lens-err2+err) {
-			if (strl[i+j] != strs[j]) error++;
+			if (strll[i+j] != strs[j]) error++;
 			j++;
 		}
 		
@@ -254,7 +270,7 @@ int Miraligner (char *lfn, char *sfn, char *rfn, int err, int err2) {
 				                                                                            EvalError(ppls[j]+k, ppss[i], strlen(ppss[i])-err2)
 					   );
 				
-				if (strlen(ppls[j])-k-strlen(ppss[i])*2 > 0) {
+				if (strlen(ppls[j])-k-strlen(ppss[i])*2 >= 0) {
 					if ((k2 = Match(ppls[j]+k+strlen(ppss[i]), ppss[i], err, err2)) != -1) {
 						k2 += k+strlen(ppss[i]);
 						fprintf(prf ,"%s %s %s %d %d %d %d\n", ppsn[i], ppss[i], ppln[j], k2, k2+l-1, EvalError(ppls[j]+k, ppss[i], strlen(ppss[i])),
