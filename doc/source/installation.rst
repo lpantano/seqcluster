@@ -55,6 +55,10 @@ Link binary to brew installation or to any folder is already in your path::
 
     ln -s ~/install/seqcluster/anaconda/bin/seqcluster* ~/install/seqcluster/linuxbrew/bin/.
 
+**Note**: After installation you can get the last updated versoin doing::
+
+    seqcluster_install.py --upgrade
+
 Tools dependecies
 ---------
 
