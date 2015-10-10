@@ -241,6 +241,9 @@ def peak_calling(clus_obj):
         cluster.update()
         logger.debug("peak calling for %s" % cid)
         bigger = cluster.locimaxid
+        # fn to get longer > 30 < 100 precursor
+        # iterate by them mapping reads, detect peak, descart, start_again
+        # give quantification of 'matures'
         if bigger in clus_obj.loci:
             s, e = min(clus_obj.loci[bigger].counts.keys()), max(clus_obj.loci[bigger].counts.keys())
             scale = min(s, e)
