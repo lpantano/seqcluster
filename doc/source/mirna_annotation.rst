@@ -5,6 +5,8 @@
 miRNA annotation
 ***************
 
+miRNA annotation is running inside `bcbio small RNAseq pipeline <https://bcbio-nextgen.readthedocs.org/en/latest/contents/pipelines.html#smallrna-seq>`_ together with other tools to do a complete
+small RNA analysis.
 
 **REMOVE ADAPTER**
 
@@ -49,6 +51,23 @@ Use the outputs to do differential expression, clustering and descriptive analys
 **Cite**
 
 SeqBuster is a bioinformatic tool for the processing and analysis of small RNAs datasets, reveals ubiquitous miRNA modifications in human embryonic cells. Pantano L, Estivill X, Martí E. *Nucleic Acids Res. 2010 Mar;38(5):e34. Epub 2009 Dec 11.*
+
+**miraligner inside seqcluster**
+
+New function to annotate miRNA sequences using BAM files aligned to miRBase precursors or fastq files to align from scratch::
+
+	seqcluster seqbuster --out results --hairpin hairpin.fa --mirna miRNA.str --species hsa input_file.fastq ...
+
+If the input file is BAM will parse it to produce miRNA annotation, including isomiRs. If the input is FASTQ
+file will map with the new C implementation of miraligner and annotate miRNAs and isomiRs. 
+
+Multiple files can be given to analyze all of them serially. Inside the output folder:
+
+* raw mirna annotation to all posible mirnas
+* count file for miRNAs
+* count file for isomiRs
+
+**NOTE:** `Check comparison of multiple tools <https://github.com/lpantano/mypubs/blob/master/mirna/mirannotation/stats.md>`_ for miRNA annotation.
 
 **MANUAL**
 
