@@ -37,7 +37,7 @@ def prepare(args):
     logger.info("Creating matrix with unique sequences")
     logger.info("Filtering: min counts %s, min size %s, max size %s, min shared %s" % (args.minc, args.minl, args.maxl, args.min_shared))
     _create_matrix_uniq_seq(sample_l, seq_l, ma_out, seq_out, args.min_shared)
-    logger.info("Finish preprocessing. Get an SAM file of seqs.fa and run seqcluster cluster.")
+    logger.info("Finish preprocessing. Get a sorted BAM file of seqs.fa and run seqcluster cluster.")
 
 
 def _read_fasta_files(f, args):
