@@ -128,6 +128,15 @@ ggplot((melt(cs,id.vars = "pos")))+
     scale_y_log10()
 ```
 
+### Clustering
+```{r mirna-clustering}
+obj <- isoNorm(obj)
+ma = counts(obj, norm=T)
+ma = ma[rowSums(ma>2)>3,]
+pheatmap(ma, show_rownames = F, clustering_method = "ward.D")
+```
+
+
 ### complexity
 
 Number of miRNAs with > 3 counts.
