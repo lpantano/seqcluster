@@ -16,7 +16,7 @@ import seqcluster.libs.logger as mylog
 from seqcluster.libs.classes import *
 from seqcluster.libs.mystats import up_threshold
 from seqcluster.libs.bayes import decide_by_bayes
-import seqcluster.libs.parameters
+from  seqcluster.libs import parameters
 
 logger = mylog.getLogger(__name__)
 
