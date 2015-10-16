@@ -8,6 +8,11 @@ miRNA annotation
 miRNA annotation is running inside `bcbio small RNAseq pipeline <https://bcbio-nextgen.readthedocs.org/en/latest/contents/pipelines.html#smallrna-seq>`_ together with other tools to do a complete
 small RNA analysis.
 
+For some comparison with other tools go `here <https://github.com/lpantano/mypubs/blob/master/mirna/mirannotation/stats.md>`_.
+
+Processing of reads
+----------------
+
 **REMOVE ADAPTER**
 
 I am currently using ``cutadapt``.
@@ -26,6 +31,10 @@ Like removing sequences that appear only once.
    seqcluster collapse -f sample1_clean.fastq -o collapse
 
 Here I am only using sequences that had the adapter, meaning that for sure are small fragments. The output will be named as ``sample1_clean_trimmed.fastq``
+
+
+miRNA/isomiR annotation
+----------------
 
 **MIRALIGNER**
 
@@ -52,35 +61,37 @@ Use the outputs to do differential expression, clustering and descriptive analys
 
 SeqBuster is a bioinformatic tool for the processing and analysis of small RNAs datasets, reveals ubiquitous miRNA modifications in human embryonic cells. Pantano L, Estivill X, Martí E. *Nucleic Acids Res. 2010 Mar;38(5):e34. Epub 2009 Dec 11.*
 
-**miraligner inside seqcluster**
+miraligner inside seqcluster
+--------------------------
 
-New function to annotate miRNA sequences using BAM files aligned to miRBase precursors or fastq files to align from scratch::
+A new function to annotate miRNA/isomiR sequences using BAM files aligned to miRBase precursors or fastq files to align from scratch has been added to ``seqcluster``::
 
 	seqcluster seqbuster --out results --hairpin hairpin.fa --mirna miRNA.str --species hsa input_file.fastq ...
 
-If the input file is BAM will parse it to produce miRNA annotation, including isomiRs. If the input is FASTQ
-file will map with the new C implementation of miraligner and annotate miRNAs and isomiRs. 
+If the input file is a BAM file, seqcluster will parse it to produce miRNA annotation, including isomiRs. If the input is FASTQ
+file, seqcluster will map with the new C implementation of miraligner and annotate miRNAs and isomiRs as before. 
 
-Multiple files can be given to analyze all of them serially. Inside the output folder:
+Multiple files can be given to analyze all of them serially. Files inside the output folder are:
 
-* raw mirna annotation to all posible mirnas
-* count file for miRNAs
-* count file for isomiRs
+* raw mirna annotation to all posible mirnas (``*.premirna``) 
+* count file for miRNAs (``counts_mirna.tsv``) 
+* count file for isomiRs (``counts.tsv``) 
 
 **NOTE:** `Check comparison of multiple tools <https://github.com/lpantano/mypubs/blob/master/mirna/mirannotation/stats.md>`_ for miRNA annotation.
 
-**MANUAL**
+Manual of miraligner(JAVA)
+--------------------------
 
-***options***
+**options**
 
-Add `-freq` if you have your fasta/fastq file with this format and you want a third column with the frequency (normally value after x character)::
+Add ``-freq`` if you have your fasta/fastq file with this format and you want a third column with the frequency (normally value after x character)::
 
 
     >seq_1_x4
     CACCGCTGTCGGGGAACCGCGCCAATTT
 
 
-Add `-pre` if you want also sequences that map to the precursor but outside the mature miRNA
+Add ``-pre`` if you want also sequences that map to the precursor but outside the mature miRNA
 
 
 * Parameter `-sub`: mismatches allowed (0/1)
@@ -93,7 +104,7 @@ Add `-pre` if you want also sequences that map to the precursor but outside the 
 * Parameter `-freq`: add frequency of the sequence to the output (just where input is fasta file with name matching this patter: >seq_3_x67)
 * Parameter `-pre`: add sequences mapping to precursors as well
 
-***input***
+**input**
 
 A fasta/fastq file reads::
 
@@ -104,7 +115,7 @@ or tabular file with counts information::
 
 CACCGCTGTCGGGGAACCGCGCCAATTT 45
 
-***output***
+**output**
 
 Track file *.mirna.opt: information about the process
 
