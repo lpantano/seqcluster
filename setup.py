@@ -6,7 +6,7 @@ def readme():
     with open('README.rst') as f:
         return f.read()
 
-with open("requirements.txt", "r") as f:
+with open("reqs.txt", "r") as f:
         install_requires = [x.strip() for x in f.readlines() if not x.startswith("#")]
 
 
