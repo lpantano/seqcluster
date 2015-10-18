@@ -34,7 +34,6 @@ If you want to install step by step from a new conda environment::
 
     ~/install/seqcluster/anaconda/bin/conda install pip
     ~/install/seqcluster/anaconda/bin/conda install -c https://conda.binstar.org/bcbio bcbio-nextgen
-    ~/install/seqcluster/anaconda/bin/pip install cutadapt
 
 Remember to add the new python into your path every time you want to use seqcluster. 
 If you already have `conda` in your system, just type::
@@ -43,45 +42,32 @@ If you already have `conda` in your system, just type::
 
 Then you can get seqcluster::
 
-    ~/install/seqcluster/anaconda/bin/pip install seqcluster
-
-or the developement version::
-
-    git clone https://github.com/lpantano/seqcluster
-    cd seqcluster
-    ~/install/seqcluster/anaconda/bin/python setup.py install
+    ~/install/seqcluster/anaconda/conda install -c  https://conda.anaconda.org/lpantano seqcluster -c  https://conda.binstar.org/bcbio
 
 Link binary to brew installation or to any folder is already in your path::
 
     ln -s ~/install/seqcluster/anaconda/bin/seqcluster* ~/install/seqcluster/linuxbrew/bin/.
 
-**Note**: After installation you can get the last updated versoin doing::
+**Note**: After installation is highly recommended to get the last updated version doing::
 
     seqcluster_install.py --upgrade
 
 Tools dependecies
 ---------
 
-For cluster command:
+For seqcluster command:
 
 * bedtools
 * samtools
 
-For report command:
-
-* razers3: you will need to install this manually for now until imported into the installation script::
-
-     wget https://github.com/seqan/seqan/releases/download/seqan-v1.4.2/seqan-apps-1.4.2-Linux-x86_64.tar.bz2
-    tar xjfv seqan-apps-1.4.2-Linux-x86_64.tar.bz2
-    PATH=`pwd`/seqan-apps-1.4.2-Linux-x86_64/bin:$PATH
-  
-
-For seqcluster-helper pipeline:
+For seqcluster-helper pipeline (this framework is deprecated, please use `bcbio`_ ):
 
 * STAR
 * fastqc
 * cutadapt (install with ``pip`` using the same ``python`` env than seqcluster. 
-You will need to link the ``cutadapt`` binary to your ``PATH``)
+You will need to link the ``cutadapt`` binary to your ``PATH``)::
+    
+    ~/install/seqcluster/anaconda/bin/pip install cutadapt
 
 **easy installation**
 
@@ -113,7 +99,7 @@ To install dependencies using ``homebrew`` follow these steps::
 seqcluster-helper
 ---------
 
-**Note: be aware that we moved to bcbio and seqcluster-helper is deprecated.**
+**Note: be aware that we moved to `bcbio`_ and seqcluster-helper is deprecated.**
 
 `seqcluster-helper`_ provides 
 a python framework to run a whole pipeline for small RNA (miRNA + others).
@@ -178,3 +164,6 @@ Download genome data::
 If you want to install STAR since gets kind of better results than bowtie2 (warning, 40GB memory RAM needed)::
 
     fab -f cloudbiolinux/data_fabfile.py -H localhost -c fabric.txt install_data:biodata.yaml
+
+
+.. _bcbio: https://github.com/chapmanb/bcbio-nextgen
