@@ -18,8 +18,8 @@ samples overview:
 
 **commands**
 
-Data was download from GEO web with this `script <https://github.com/lpantano/seqcluster/blob/master/data/pipeline_example/mirqc/download.sh>`_. The following `config <https://github.com/lpantano/seqcluster/blob/master/data/pipeline_example/mirqc/config.txt>`_  file was used with `seqcluster-helper <http://seqcluster.readthedocs.org>`_ to analysis the data with the following command::
-  
-  seqcluster-helper.py --sample-map config.txt  --db ~/groups/seqcluster/data/mirbase --aligner-index ~/groups/bcbio/genomes/Hsapiens/hg19/star --gtf-file ~/groups/seqcluster/data/annotation/hsapiens.gtf --species hsa --adapter TGGAATTCTCGGGTGC --reference ~/groups/bcbio/genomes/Hsapiens/hg19/seq/hg19.fa`.
+Data was download from GEO web with this `script <https://github.com/lpantano/seqcluster/blob/master/data/pipeline_example/mirqc/download.sh>`_. The following 2 configs were used for the two sets: `mirqc samples <https://github.com/lpantano/seqcluster/blob/master/data/pipeline_example/mirqc/mirqc_bcbio.csv>`_  and `non mirqc samples <https://github.com/lpantano/seqcluster/blob/master/data/pipeline_example/mirqc/non_mirqc_bcbio.csv>`_. Samples were analyzed with `bcbio <http://bcbio-nextgen.readthedocs.org>`_ to analysis the data with the following `commands <https://github.com/lpantano/seqcluster/blob/master/data/pipeline_example/mirqc/run.sh>`_
 
-* Note: `bcbio <http://github.com/chapmanb/bcbio-nextgen>`_ will wrap seqcluster-helper in the next month. Follow @seqbuster to know the exact date.
+**report**
+
+Report showing part of the output report of bcbio pipelines together with some validations are `here <https://github.com/lpantano/mypubs/blob/master/srnaseq/mirqc/ready_report.md>`_.
