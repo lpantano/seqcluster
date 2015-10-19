@@ -10,7 +10,7 @@ Best practices are implemented in a `python framework`_.
 .. _python framework: https://github.com/lpantano/seqcluster-helper/blob/master/README.md
 
 clustering of small RNA sequences
--------- 
+---------------------------------
 
 seqcluster generates a list of clusters of small RNA sequences, their genome location, their annotation and the abundance in all the sample of the project
 
@@ -68,8 +68,8 @@ The fastq files should be like this:
 
 Where _x[09]  indicate the abundance of that sequence, and the middle number is the index of the sequence.
 
-This script will generate: seqs.fa and seqs.ma. 
-* seqs.fa: have unique sequences and unique ids
+This script will generate: ``seqs.fastq`` and ``seqs.ma``. 
+* seqs.fastq: have unique sequences and unique ids
 * seqs.ma: is the abundance matrix of all unique sequences in all samples
 
 **ALIGNMENT**
@@ -80,7 +80,7 @@ VERY IMPORTANT: the BAM file should be sorted
 
 ::
 
-    bowtie -a --best --strata -m 5000 -f INDEX seqs.fa -S | samtools view -Sbh /dev/stdin | samtools sort -o /dev/stdout temp > seqs.sort.bam
+    bowtie -a --best --strata -m 5000 INDEX seqs.fastq -S | samtools view -Sbh /dev/stdin | samtools sort -o /dev/stdout temp > seqs.sort.bam
 
 
 or 
@@ -152,7 +152,7 @@ where `$GENOME_FASTA_PATH` is the path to the genome fasta file used in the alig
 .. _summary: https://rawgit.com/lpantano/seqcluster/master/data/examples_report/html/1/maps.html
 
 Easy start with seqcluster-helper.py
---------
+------------------------------------
 
 **Note**:If you already are using bcbio, visit `bcbio <http://github.com/chapmanb/bcbio>`_ to run the pipeline there. seqcluster-helper has been ported to ``bcbio`` and will be abandoned.
 
