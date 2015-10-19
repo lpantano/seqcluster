@@ -94,7 +94,7 @@ or
 
 ::
 
-    seqcluster cluster -a res/Aligned.sortedByCoord.out.bam  -m res/seqs.ma -g $GTF_FILE  -o res/cluster --db example
+    seqcluster cluster -a res/Aligned.sortedByCoord.out.bam  -m res/seqs.ma -g $GTF_FILE  -o res/cluster -ref PATH_TO_GENOME_FASTA --db example
 
 
 * `-a` is the SAM file generated after mapped with your tool, which input has been seqs.fa
@@ -103,6 +103,7 @@ or
 * `-g` annotation files in gtf format (see below examples) [recommended]
 * `-i` genome fasta file used in the mapping step (only needed if -s active)
 * `-o` output folder
+* `-ref` genome fasta file. Needs ``fai`` file as well there. (i.e ``hg19.fa``, ``hg19.fa.fai``)
 * `-d` create debug logging
 * `-s` construction of putative precursor (NOT YET IMPLEMENTED)
 * `--db` (optional) will create sqlite3 database with results that will be used to browse data with html web page (under development)
