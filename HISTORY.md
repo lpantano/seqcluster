@@ -1,5 +1,6 @@
-- current
+- current `1.1.1*`
 
+* select best precursor based on size
 * parse pyMAtch to be compatible with other tools
 * add C function working as miraligner by @franpantano (pyMatch)
 

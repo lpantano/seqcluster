@@ -15,6 +15,7 @@ import libs.logger as mylog
 from libs.read import load_data
 from libs.mystats import up_threshold
 from detect.cluster import detect_clusters, clean_bam_file, peak_calling, detect_complexity
+from detect.description import best_precursor, sort_precursor
 from libs.annotation import anncluster
 from libs.inputs import parse_ma_file, parse_align_file
 from detect.metacluster import reduceloci,_get_seqs
@@ -136,27 +137,21 @@ def _create_json(clusL, args):
         for cid in clus:
             seqList = []
             c = clus[cid]
-            data_loci = map(lambda (x): [x, loci[x].chr, int(loci[x].start), int(loci[x].end), loci[x].strand, len(c.loci2seq[x])], c.loci2seq.keys())
-            data_loci = sorted(data_loci, key=itemgetter(5), reverse=True)
             seqList = _get_seqs(c)
             logger.debug("_json_: %s" % seqList)
             data_ann, valid_ann = _get_annotation(c, loci)
-
+            data_loci = best_precursor(c, loci)
             idloci, chrom, s, e, st, size = data_loci[0]
             annotation = valid_ann[0] if valid_ann else "none"
 
             bed_line = "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (chrom, s, e, annotation, cid, st, len(seqList))
             out_bed.write(bed_line)
 
-
             data_seqs = map(lambda (x): {x: seqs[x].seq}, seqList)
-            # data_freq = map(lambda (x): seqs[x].freq, seqList)
             scaled_seqs = _get_counts(seqList, seqs, c.idmembers)
             data_freq = map(lambda (x): scaled_seqs[x].freq, seqList)
             data_freq_w_id = map(lambda (x): {x: scaled_seqs[x].norm_freq}, seqList)
             data_len = map(lambda (x): seqs[x].len, seqList)
-            # data_freq_values = map(lambda (x): map(int, scaled_seqs[x].freq.values()), seqList)
-            # sum_freq = _sum_by_samples(data_freq_values)
             sum_freq = _sum_by_samples(scaled_seqs, samples_order)
 
             data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
@@ -167,7 +162,6 @@ def _create_json(clusL, args):
             data_string = {'seqs': data_seqs, 'freq': data_freq_w_id,
                     'loci': data_loci, 'ann': data_ann, 'valid': valid_ann, 'peaks': clus[cid].peaks}
             data_clus[cid] = data_string
-
 
     out_file = os.path.join(args.dir_out, "seqcluster.json")
     with open(out_file, 'w') as handle_out:

@@ -9,6 +9,7 @@ from explore_cluster import explore
 from collapse import collapse_fastq
 from seqbuster import miraligner
 from libs.simulator import simulate
+from seqcluster.function.target import targets_enrichment
 from stats import stats
 import libs.logger as mylog
 import time
@@ -31,6 +32,9 @@ def main(**kwargs):
     elif "predict" in kwargs:
         logger.info("Run predictions")
         predictions(kwargs["args"])
+    elif "target" in kwargs:
+        logger.info("Run target annotation")
+        targets_enrichment(kwargs["args"])
     elif "seqbuster" in kwargs:
         logger.info("Run seqbuster")
         miraligner(kwargs["args"])
