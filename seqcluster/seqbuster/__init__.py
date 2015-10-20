@@ -90,9 +90,9 @@ def _coord(sequence, start, mirna, precursor, iso):
     """
     dif = abs(mirna[0] - start)
     if start < mirna[0]:
-        iso.t5 = "I" + sequence[:dif]
+        iso.t5 = sequence[:dif].upper()
     elif start > mirna[0]:
-        iso.t5 = "D" + precursor[mirna[0] - 1:mirna[0] - 1 + dif]
+        iso.t5 = precursor[mirna[0] - 1:mirna[0] - 1 + dif].lower()
     elif start == mirna[0]:
         iso.t5 = "NA"
     if dif > 4:
@@ -106,9 +106,9 @@ def _coord(sequence, start, mirna, precursor, iso):
     # if dif > 3:
     #    return None
     if end > mirna[1]:
-        iso.t3 = "I" + sequence[-dif:]
+        iso.t3 = sequence[-dif:].upper()
     elif end < mirna[1]:
-        iso.t3 = "D" + precursor[mirna[1] - dif:mirna[1]]
+        iso.t3 = precursor[mirna[1] - dif:mirna[1]].lower()
     elif end == mirna[1]:
         iso.t3 = "NA"
     if dif > 4:
