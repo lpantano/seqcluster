@@ -30,6 +30,25 @@ def _download_mirbase(args, version="CURRENT"):
     else:
         return args.hairpin, args.mirna
 
+def _convert_to_fasta(fn):
+    out_file = op.splitext(fn)[0] + ".fa"
+    with open(out_file, 'w') as out_handle:
+        with open(fn) as in_handle:
+            for line in in_handle:
+                if line.startswith("@"):
+                    seq = in_handle.next()
+                    _ = in_handle.next()
+                    qual = in_handle.next()
+                elif line.startswith(">"):
+                    seq = in_handle.next()
+                count = 2
+                if line.find("_x"):
+                    count = int(line.strip().split("_x")[1])
+                if count > 1:
+                    print >>out_handle, ">%s" % line.strip()[1:]
+                    print >>out_handle, seq.strip()
+    return out_file
+
 def _get_pos(string):
     name = string.split(":")[0][1:]
     pos = string.split(":")[1][:-1].split("-")
@@ -82,6 +101,8 @@ def _coord(sequence, start, mirna, precursor, iso):
 
     end = start + (len(sequence) - len(iso.add)) - 1
     dif = abs(mirna[1] - end)
+    if iso.add:
+        sequence = sequence[:-len(iso.add)]
     # if dif > 3:
     #    return None
     if end > mirna[1]:
@@ -295,12 +316,15 @@ def miraligner(args):
             bam_sort_by_n = op.splitext(bam_fn)[0] + "_sort"
             pysam.sort("-n", bam_fn, bam_sort_by_n)
             reads = _read_bam(bam_sort_by_n + ".bam", precursors)
-        elif bam_fn.endswith("fasta") or bam_fn.endswith("fa"):
+        elif bam_fn.endswith("fasta") or bam_fn.endswith("fa") or bam_fn.endswith("fastq"):
             out_file = op.join(args.out, sample + ".premirna")
+            bam_fn = _convert_to_fasta(bam_fn)
             logger.info("Aligning %s" % bam_fn)
             if not file_exists(out_file):
                 pyMatch.Miraligner(hairpin, bam_fn, out_file, 1, 4)
             reads = _read_pyMatch(out_file, precursors)
+        else:
+            raise ValueError("Format not recognized.")
 
         reads = _annotate(reads, matures, precursors)
         out_file = op.join(args.out, sample + ".mirna")
