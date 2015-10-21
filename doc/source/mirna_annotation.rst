@@ -10,8 +10,20 @@ small RNA analysis.
 
 For some comparison with other tools go `here <https://github.com/lpantano/mypubs/blob/master/mirna/mirannotation/stats.md>`_.
 
+You can run samples after processing the reads as shown below.
+Currently there are two version: JAVA and PYTHON/C. 
+
+**Naming**
+
+It is a working process, but since 10-21-2015 isomiR naming has changed to:
+
+* Changes at 5' end: ``0/NA`` means no modification. ``UPPER CASE LETTER`` means nucleotide insertions (sequence starts before miRBase mature position). ``LOWWER CASE LETTER`` means nucleotide deletions (sequence starts after miRBase mature position).
+* Changes at 3' end: ``0/NA`` means no modification. ``UPPER CASE LETTER`` means nucleotide insertions (sequence ends after miRBase mature position). ``LOWWER CASE LETTER`` means nucleotide deletions (sequence ends before miRBase mature position).
+* Additions at 3' end: ``0/NA`` means no modification. ``UPPER CASE LETTER`` means addition at the end. Note these nucleotides don't match the precursor. So they are post-transcriptional modification.
+* Nucleotide substitution: ``NUMBER|NUCLEOTIDE_ISOMIR|NUCLEOTIDE_REFERENCE`` means at the position giving by the number the nucleotide in the sequence has substituted the nucleotide in the reference. This, as well, is a post-transcriptional modification.
+
 Processing of reads
-----------------
+-------------------
 
 **REMOVE ADAPTER**
 
@@ -33,8 +45,13 @@ Like removing sequences that appear only once.
 Here I am only using sequences that had the adapter, meaning that for sure are small fragments. The output will be named as ``sample1_clean_trimmed.fastq``
 
 
-miRNA/isomiR annotation
-----------------
+Prepare databases
+-----------------
+
+For human or mouse, follows `this instruction <http://seqcluster.readthedocs.org/installation.html#data>`_ to download easily miRBase files. For other species you only need hairpin.fa and miRNA.str from miRBase site. **Highly recommended to filer hairpin.hsa to contain only the desired species.**
+
+miRNA/isomiR annotation with JAVA
+---------------------------------
 
 **MIRALIGNER**
 
@@ -53,22 +70,19 @@ You can map the miRNAs with.
 
      java -jar miraligner.jar -sub 1 -trim 3 -add 3 -s hsa -i sample1_clean_trimmed.fastq -db DB  -o output_prefix 
 
-**Analyze with R**
-
-Use the outputs to do differential expression, clustering and descriptive analysis with this package: `isomiRs <https://github.com/lpantano/isomiRs>`_
 
 **Cite**
 
 SeqBuster is a bioinformatic tool for the processing and analysis of small RNAs datasets, reveals ubiquitous miRNA modifications in human embryonic cells. Pantano L, Estivill X, Martí E. *Nucleic Acids Res. 2010 Mar;38(5):e34. Epub 2009 Dec 11.*
 
-miraligner inside seqcluster
---------------------------
+miRNA/isomiRs annotation with python
+------------------------------------
 
 A new function to annotate miRNA/isomiR sequences using BAM files aligned to miRBase precursors or fastq files to align from scratch has been added to ``seqcluster``::
 
 	seqcluster seqbuster --out results --hairpin hairpin.fa --mirna miRNA.str --species hsa input_file.fastq ...
 
-If the input file is a BAM file, seqcluster will parse it to produce miRNA annotation, including isomiRs. If the input is FASTQ
+If the input file is a BAM file, seqcluster will parse it to produce miRNA annotation, including isomiRs. If the input is FASTQ/FASTA
 file, seqcluster will map with the new C implementation of miraligner and annotate miRNAs and isomiRs as before. 
 
 Multiple files can be given to analyze all of them serially. Files inside the output folder are:
@@ -78,6 +92,11 @@ Multiple files can be given to analyze all of them serially. Files inside the ou
 * count file for isomiRs (``counts.tsv``) 
 
 **NOTE:** `Check comparison of multiple tools <https://github.com/lpantano/mypubs/blob/master/mirna/mirannotation/stats.md>`_ for miRNA annotation.
+
+Post-analysis with R
+--------------------
+
+Use the outputs to do differential expression, clustering and descriptive analysis with this package: `isomiRs <https://github.com/lpantano/isomiRs>`_
 
 Manual of miraligner(JAVA)
 --------------------------
