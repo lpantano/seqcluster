@@ -8,6 +8,7 @@ def parse_cl(in_args):
                 "cluster": add_subparser_cluster,
                 "seqbuster": add_subparser_mirbuster,
                 "report": add_subparser_report,
+                "target": add_subparser_target,
                 "predict": add_subparser_predict,
                 "explore": add_subparser_explore,
                 "collapse": add_subparser_collapse,
@@ -147,9 +148,13 @@ def add_subparser_stats(subparsers):
 def add_subparser_collapse(subparsers):
     parser = subparsers.add_parser("collapse", help="collapse data")
     parser.add_argument("-f", "--fastq", dest="fastq", required=1,
-                        help="fastq file"),
+                         help="fastq file"),
+    parser.add_argument("-m", "--min", dest="minimum", default=1,
+                         help="Minimum number of counts required."
+                              "Not recomended > 1. Could bias downstream"
+                              "Analysis.")
     parser.add_argument("-o", "--out",
-                        dest="out", help="output file", required=1)
+                         dest="out", help="output file", required=1)
     parser = _add_debug_option(parser)
     return parser
 
@@ -169,6 +174,20 @@ def add_subparser_predict(subparsers):
             help="reference fasta file with index")
     parser.add_argument("--coral", action='store_true',
             help="Run CoRaL pipeline")
+    parser = _add_debug_option(parser)
+    return parser
+
+
+def add_subparser_target(subparsers):
+    parser = subparsers.add_parser("target", help="Annotate miRNA targets.")
+    parser.add_argument("--input", required=1,
+                        help="list of miRNAs in 1 column format")
+    parser.add_argument("--sps", required=1,
+                        help="species")
+    parser.add_argument("-o", "--out", dest="out", required=1,
+                        help="dir of output files")
+    parser.add_argument("--annotation", required=1,
+                        help="Folder with tarets annotation. If bcbio installed would be the srnaseq ffolder")
     parser = _add_debug_option(parser)
     return parser
 
@@ -249,16 +268,6 @@ def add_subparser_stats(subparsers):
             help="aligned file")
     parser.add_argument("-o", "--out",
                        dest="out", help="output dir", required=1)
-    parser = _add_debug_option(parser)
-    return parser
-
-
-def add_subparser_collapse(subparsers):
-    parser = subparsers.add_parser("collapse", help="collapse data")
-    parser.add_argument("-f", "--fastq", dest="fastq", required=1,
-                        help="fastq file"),
-    parser.add_argument("-o", "--out",
-                        dest="out", help="output file", required=1)
     parser = _add_debug_option(parser)
     return parser
 
