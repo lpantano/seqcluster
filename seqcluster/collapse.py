@@ -17,4 +17,4 @@ def collapse_fastq(args):
         raise "Can not read file"
     logger.info("writing output")
     out_file = os.path.join(args.out, out_file)
-    write_output(out_file, seqs)
+    write_output(out_file, seqs, args.minimum)
