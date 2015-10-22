@@ -61,6 +61,8 @@ def add_subparser_mirbuster(subparsers):
                         help="species")
     parser.add_argument("--hairpin", help="hairpin.fa")
     parser.add_argument("--mirna", help="miRNA.str")
+    parser.add_argument("--miraligner", action="store_true",
+                        help="align with JAVA version.", default=False)
     parser = _add_debug_option(parser)
     return parser
 

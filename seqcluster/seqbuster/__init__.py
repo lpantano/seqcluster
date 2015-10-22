@@ -1,5 +1,6 @@
 # Re-aligner small RNA sequence from SAM/BAM file (miRBase annotation)
 import os.path as op
+import shutil
 import pandas as pd
 import pysam
 
@@ -9,6 +10,7 @@ from bcbio.utils import file_exists
 
 import seqcluster.libs.logger as mylog
 from seqcluster.align import pyMatch
+from seqcluster.install import _get_miraligner
 from realign import *
 
 logger = mylog.getLogger(__name__)
@@ -235,6 +237,48 @@ def _read_pyMatch(fn, precursors):
         reads = _clean_hits(reads)
     return reads
 
+def _parse_mut(subs):
+    """
+    Parse mutation tag from miraligner output
+    """
+    if subs!="0":
+        subs = [subs.replace(subs[-2:], ""),subs[-2], subs[-1]]
+    return subs
+
+def _read_miraligner(fn):
+    """Read ouput of miraligner and create compatible output."""
+    reads = defaultdict(realign)
+    with open(fn) as in_handle:
+        in_handle.next()
+        for line in in_handle:
+            cols = line.strip().split("\t")
+            iso = isomir()
+            query_name, seq = cols[1], cols[0]
+            chrom, reference_start = cols[-2], cols[3]
+            iso.mirna = cols[2]
+            subs, add, iso.t5, iso.t3 = cols[5:9]
+            if query_name not in reads:
+                reads[query_name].sequence = seq
+            iso.align = line
+            iso.start = reference_start
+            iso.subs, iso.add = _parse_mut(subs), add
+            logger.debug("%s %s %s %s %s" % (query_name, reference_start, chrom, iso.subs, iso.add))
+            reads[query_name].set_precursor(chrom, iso)
+    return reads
+
+def _cmd_miraligner(fn, out_file, species, hairpin):
+    """
+    Run miraligner for miRNA annotation
+    """
+    tool = _get_miraligner()
+    path_db = op.dirname(op.abspath(hairpin))
+    opts = "-Xms750m -Xmx4g"
+    cmd = "{tool} -i {fn} -o {out_file} -s {species} -db {path_db} -sub 1 -trim 3 -add 3"
+    if not file_exists(out_file):
+        do.run(cmd.format(**locals()), "miraligner with %s" % fn)
+        shutil.move(out_file + ".mirna", out_file)
+    return out_file
+
 def _get_freq(name):
     """
     Check if name read contains counts (_xNumber)
@@ -250,7 +294,7 @@ def _tab_output(reads, out_file, sample):
     lines = []
     seen_ann = {}
     with open(out_file, 'w') as out_handle:
-        print >>out_handle, "name\tseq\tfreq\tprecursor\tchrom\tsubs\tadd\tt5\tt3"
+        print >>out_handle, "name\tseq\tfreq\tchrom\tstart\tend\tsubs\tadd\tt5\tt3\ts5\ts3\tDB\tprecursor\thits"
         for r, read in reads.iteritems():
             hits = set()
             [hits.add(mature.mirna) for mature in read.precursors.values() if mature.mirna]
@@ -267,9 +311,9 @@ def _tab_output(reads, out_file, sample):
                     seq = reads[r].sequence
 
                     annotation = "%s:%s" % (chrom, iso.format(":"))
-                    res = ("{r}\t{seq}\t{count}\t{p}\t{chrom}\t{format}\t{hits}").format(format=iso.format(), **locals())
+                    res = ("{seq}\t{r}\t{count}\t{chrom}\tNA\tNA\t{format}\tNA\tNA\tmiRNA\t{p}\t{hits}").format(format=iso.format().replace("NA", "0"), **locals())
                     if annotation in seen_ann:
-                        raise ValueError("Same isomir %s from different sequence: %s and %s" % (annotation, res, seen_ann[annotation]))
+                        raise ValueError("Same isomir %s from different sequence: \n%s and \n%s" % (annotation, res, seen_ann[annotation]))
                     seen_ann[annotation] = res
                     lines.append([annotation, chrom, count, sample, hits])
                     print >>out_handle, res
@@ -318,15 +362,21 @@ def miraligner(args):
             reads = _read_bam(bam_sort_by_n + ".bam", precursors)
         elif bam_fn.endswith("fasta") or bam_fn.endswith("fa") or bam_fn.endswith("fastq"):
             out_file = op.join(args.out, sample + ".premirna")
-            bam_fn = _convert_to_fasta(bam_fn)
-            logger.info("Aligning %s" % bam_fn)
-            if not file_exists(out_file):
-                pyMatch.Miraligner(hairpin, bam_fn, out_file, 1, 4)
-            reads = _read_pyMatch(out_file, precursors)
+            if args.miraligner:
+                _cmd_miraligner(bam_fn, out_file, args.sps, args.hairpin)
+                reads = _read_miraligner(out_file)
+            else:
+                if bam_fn.endswith("fastq"):
+                    bam_fn = _convert_to_fasta(bam_fn)
+                logger.info("Aligning %s" % bam_fn)
+                if not file_exists(out_file):
+                    pyMatch.Miraligner(hairpin, bam_fn, out_file, 1, 4)
+                reads = _read_pyMatch(out_file, precursors)
         else:
             raise ValueError("Format not recognized.")
 
-        reads = _annotate(reads, matures, precursors)
+        if not args.miraligner:
+            reads = _annotate(reads, matures, precursors)
         out_file = op.join(args.out, sample + ".mirna")
         out_file, dt = _tab_output(reads, out_file, sample)
         out_dts.append(dt)

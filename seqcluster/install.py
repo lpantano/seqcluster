@@ -9,6 +9,11 @@ from argparse import ArgumentParser
 import subprocess
 import contextlib
 
+try:
+    import bcbio
+except:
+    pass
+
 REMOTES = {
             "requirements": "https://raw.github.com/lpantano/seqcluster/master/requirements.txt",
             "gitrepo": "https://github.com/lpantano/seqcluster.git",
@@ -36,6 +41,16 @@ def chdir(new_dir):
         yield
     finally:
         os.chdir(cur_dir)
+
+def _get_miraligner():
+    tool = bcbio.pipeline.config_utils.get_program("miraligner", {}, "cmd")
+    if not tool:
+        url = "https://github.com/lpantano/seqbuster/raw/master/modules/miraligner/miraligner.jar"
+        subprocess.check_call(["wget", "-O", "miraligner.jar", "--no-check-certificate", url])
+        tool = "java -jar {opts} %s" % op.abspath("miraligner.jar")
+    else:
+        tool = "%s {opts}" % tool
+    return tool
 
 def _get_flavor():
     """
