@@ -5,7 +5,7 @@ Installation
 ============
 
 Seqcluster
----------
+----------
 
 **With bcbio installed**
 
@@ -122,7 +122,7 @@ will tell you if all dependencies are installed and ready to use the framework
 
 
 R pakcage
---------
+---------
 
 Install isomiRs package for R using devtools:: 
 
@@ -153,7 +153,7 @@ Prepare config files (change the path in ``fabric.txt`` for non_testing data)::
     wget http://raw.githubusercontent.com/lpantano/seqcluster/flavor/fabric.txt
     wget http://raw.githubusercontent.com/lpantano/seqcluster/flavor/biodata.yaml
 
-Download GTF annotation (data will be inside ``biodata/hg19/srnaseq``)::
+Download GTF annotation and miRBase files (data will be inside ``biodata/hg19/srnaseq``)::
 
     fab -f cloudbiolinux/data_fabfile.py -H localhost -c fabric.txt install_data_ggd:srnaseq,hg19
 
@@ -161,7 +161,7 @@ Download genome data::
 
     fab -f cloudbiolinux/data_fabfile.py -H localhost -c fabric.txt install_data_s3:biodata.yaml
 
-If you want to install STAR since gets kind of better results than bowtie2 (warning, 40GB memory RAM needed)::
+If you want to install STAR indexes since gets kind of better results than bowtie2 (warning, 40GB memory RAM needed)::
 
     fab -f cloudbiolinux/data_fabfile.py -H localhost -c fabric.txt install_data:biodata.yaml
 
