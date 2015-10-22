@@ -35,7 +35,7 @@ before_install:
   - "pip install -U cython"
   - "conda install pysam pybedtools --yes -c bcbio "
   - "pip install colorlog"
-  - "conda install --yes -c https://conda.binstar.org/bcbio bcbio-nextgen"
+  - "conda install --yes -c bcbio bcbio-nextgen"
 install:
     - "python setup.py install"
 script: nosetests
