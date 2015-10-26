@@ -3,7 +3,10 @@ import shutil
 import logging
 
 from bcbio import install
-install._set_matplotlib_default_backend()
+try:
+    install._set_matplotlib_default_backend()
+except OSError:
+    pass
 import matplotlib
 matplotlib.use('Agg', force=True)
 
