@@ -255,8 +255,8 @@ def _read_miraligner(fn):
             iso = isomir()
             query_name, seq = cols[1], cols[0]
             chrom, reference_start = cols[-2], cols[3]
-            iso.mirna = cols[2]
-            subs, add, iso.t5, iso.t3 = cols[5:9]
+            iso.mirna = cols[3]
+            subs, add, iso.t5, iso.t3 = cols[6:10]
             if query_name not in reads:
                 reads[query_name].sequence = seq
             iso.align = line
@@ -343,6 +343,14 @@ def _merge(dts):
 
     return ma, ma_mirna
 
+def _create_counts(out_dts, out_dir):
+    """Summarize results into single files."""
+    ma, ma_mirna = _merge(out_dts)
+    out_ma = op.join(out_dir, "counts.tsv")
+    out_ma_mirna = op.join(out_dir, "counts_mirna.tsv")
+    ma.to_csv(out_ma, sep="\t")
+    ma_mirna.to_csv(out_ma_mirna, sep="\t")
+
 def miraligner(args):
     """
     Realign BAM hits to miRBAse to get better accuracy and annotation
@@ -382,9 +390,5 @@ def miraligner(args):
         out_dts.append(dt)
 
     if out_dts:
-        ma, ma_mirna = _merge(out_dts)
-        out_ma = op.join(args.out, "counts.tsv")
-        out_ma_mirna = op.join(args.out, "counts_mirna.tsv")
-        ma.to_csv(out_ma, sep="\t")
-        ma_mirna.to_csv(out_ma_mirna, sep="\t")
+        _create_counts(out_dts, args.out)
         # _summarize(out_dts)
