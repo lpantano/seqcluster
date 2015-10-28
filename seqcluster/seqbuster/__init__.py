@@ -327,14 +327,8 @@ def _merge(dts):
     """
     merge multiple samples in one matrix
     """
-    df = None
-    for dt in dts:
-        if not df:
-            df = dt
-        else:
-            df.join(dt)
+    df= pd.concat(dts)
 
-    # print df
     df = df[df['hits']>0]
     ma = df.pivot(index='isomir', columns='sample', values='counts')
     ma_mirna = ma
@@ -350,6 +344,7 @@ def _create_counts(out_dts, out_dir):
     out_ma_mirna = op.join(out_dir, "counts_mirna.tsv")
     ma.to_csv(out_ma, sep="\t")
     ma_mirna.to_csv(out_ma_mirna, sep="\t")
+    return out_ma_mirna, out_ma
 
 def miraligner(args):
     """
