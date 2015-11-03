@@ -309,7 +309,8 @@ def _tab_output(reads, out_file, sample):
                         chrom = p
                     count = _get_freq(r)
                     seq = reads[r].sequence
-
+                    if iso.subs:
+                        iso.subs = [] if "N" in iso.subs[0] else iso.subs
                     annotation = "%s:%s" % (chrom, iso.format(":"))
                     res = ("{seq}\t{r}\t{count}\t{chrom}\tNA\tNA\t{format}\tNA\tNA\tmiRNA\t{p}\t{hits}").format(format=iso.format().replace("NA", "0"), **locals())
                     if annotation in seen_ann:
@@ -320,6 +321,7 @@ def _tab_output(reads, out_file, sample):
 
     dt = pd.DataFrame(lines)
     dt.columns = ["isomir", "chrom", "counts", "sample", "hits"]
+    dt = dt.groupby(['isomir', 'chrom', 'sample', 'hits'], as_index=False).sum()
     dt.to_csv(out_file + "_summary")
     return out_file, dt
 
