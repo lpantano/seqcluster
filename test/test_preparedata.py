@@ -10,7 +10,7 @@ import seqcluster
 class TestPreparedata(TestCase):
     def test_preparedata(self):
         mod_dir = os.path.dirname(inspect.getfile(seqcluster)).replace("seqcluster/","")
-        os.chdir(os.path.join(mod_dir, "data/test_collapse"))
+        os.chdir(os.path.join(mod_dir, "data/examples/collapse"))
         if os.path.exists("prepare"):
             shutil.rmtree("prepare")
         os.mkdir("prepare")
