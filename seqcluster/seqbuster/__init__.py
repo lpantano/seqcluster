@@ -316,7 +316,7 @@ def _tab_output(reads, out_file, sample):
                         print iso.subs
                         raise
                     res = ("{seq}\t{r}\t{count}\t{chrom}\tNA\tNA\t{format}\tNA\tNA\tmiRNA\t{p}\t{hits}").format(format=iso.format().replace("NA", "0"), **locals())
-                    if annotation in seen_ann and seq.find("N") < 0:
+                    if annotation in seen_ann and seq.find("N") < 0 and seen_ann[annotation].split("\t")[0].find("N") < 0:
                         raise ValueError("Same isomir %s from different sequence: \n%s and \n%s" % (annotation, res, seen_ann[annotation]))
                     seen_ann[annotation] = res
                     lines.append([annotation, chrom, count, sample, hits])
