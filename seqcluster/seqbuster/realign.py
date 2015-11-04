@@ -17,8 +17,8 @@ class realign:
 class isomir:
 
     def __init__(self):
-        self.t5 = "NA"
-        self.t3 = "NA"
+        self.t5 = "0"
+        self.t3 = "0"
         self.add = []
         self.subs = []
         self.align = None
@@ -28,8 +28,8 @@ class isomir:
     def format(self, sep="\t"):
         subs = "".join(["".join(map(str, mism)) for mism in self.subs])
         if not subs:
-            subs = "NA"
-        add = "NA" if not self.add else self.add
+            subs = "0"
+        add = "0" if not self.add else self.add
         return "%s%s%s%s%s%s%s" % (subs, sep, add, sep,
                                    self.t5, sep, self.t3)
 

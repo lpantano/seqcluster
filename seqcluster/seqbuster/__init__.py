@@ -242,7 +242,7 @@ def _parse_mut(subs):
     Parse mutation tag from miraligner output
     """
     if subs!="0":
-        subs = [subs.replace(subs[-2:], ""),subs[-2], subs[-1]]
+        subs = [[subs.replace(subs[-2:], ""),subs[-2], subs[-1]]]
     return subs
 
 def _read_miraligner(fn):
@@ -312,8 +312,11 @@ def _tab_output(reads, out_file, sample):
                     if iso.subs:
                         iso.subs = [] if "N" in iso.subs[0] else iso.subs
                     annotation = "%s:%s" % (chrom, iso.format(":"))
+                    if annotation.find("NA") > -1:
+                        print iso.subs
+                        raise
                     res = ("{seq}\t{r}\t{count}\t{chrom}\tNA\tNA\t{format}\tNA\tNA\tmiRNA\t{p}\t{hits}").format(format=iso.format().replace("NA", "0"), **locals())
-                    if annotation in seen_ann:
+                    if annotation in seen_ann and seq.find("N") < 0:
                         raise ValueError("Same isomir %s from different sequence: \n%s and \n%s" % (annotation, res, seen_ann[annotation]))
                     seen_ann[annotation] = res
                     lines.append([annotation, chrom, count, sample, hits])
