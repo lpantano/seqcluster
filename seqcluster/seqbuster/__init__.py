@@ -335,8 +335,10 @@ def _merge(dts):
 
     ma = df.pivot(index='isomir', columns='sample', values='counts')
     ma_mirna = ma
+    ma = ma.fillna(0)
     ma_mirna['mirna'] = [m.split(":")[0] for m in ma.index.values]
     ma_mirna = ma_mirna.groupby(['mirna']).sum()
+    ma_mirna = ma.fillna(0)
 
     return ma, ma_mirna
 
