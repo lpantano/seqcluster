@@ -284,7 +284,7 @@ def _get_freq(name):
     Check if name read contains counts (_xNumber)
     """
     try:
-        counts = name.split("_x")[1]
+        counts = int(name.split("_x")[1])
     except:
         return 0
     return counts
@@ -321,7 +321,9 @@ def _tab_output(reads, out_file, sample):
 
     dt = pd.DataFrame(lines)
     dt.columns = ["isomir", "chrom", "counts", "sample", "hits"]
-    dt = dt.groupby(['isomir', 'chrom', 'sample', 'hits'], as_index=False).sum()
+    dt = dt[dt['hits']>0]
+    dt = dt.loc[:, "isomir":"sample"]
+    dt = dt.groupby(['isomir', 'chrom', 'sample'], as_index=False).sum()
     dt.to_csv(out_file + "_summary")
     return out_file, dt
 
@@ -331,7 +333,6 @@ def _merge(dts):
     """
     df= pd.concat(dts)
 
-    df = df[df['hits']>0]
     ma = df.pivot(index='isomir', columns='sample', values='counts')
     ma_mirna = ma
     ma_mirna['mirna'] = [m.split(":")[0] for m in ma.index.values]
