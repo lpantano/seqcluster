@@ -135,8 +135,8 @@ hint: scripts to generate human and mouse annotation are inside `seqcluster/scri
 * ``log/trace.log``: to keep trace of algorithm decisions
 
 
-Report
---------
+Interactive HTML Report
+-----------------------
 
 This will create html report using the following command assuming the output of `seqcluster cluster` is at `res`::
 
