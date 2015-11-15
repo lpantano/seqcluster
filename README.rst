@@ -27,10 +27,10 @@ quick start links
 
 See installation at http://seqcluster.readthedocs.org/installation.html
 
-Moreover `seqcluster-helper`_ provides 
+Moreover `bcbio-nextgen`_ provides 
 a python framework to run a whole pipeline for small RNA (miRNA + tRNA + piRNA + others).
 
-.. _seqcluster-helper: http://seqcluster.readthedocs.org/getting_started.html#easy-start-with-seqcluster-helper-py
+.. _bcbio-nextgen: https://bcbio-nextgen.readthedocs.org/en/latest/
 
 Complete tutorial is here: http://seqcluster.readthedocs.org/getting_started.html#clustering-of-small-rna-sequences
 
@@ -50,7 +50,7 @@ Contributors
 * `Lorena Pantano  <https://github.com/lpantano>`_ (Bioinformatic Core, Harvard Chan School, Boston, USA)
 * `Judith Flo Gaya <http://www.seas.harvard.edu/directory/jflo>`_ (School of Engineer and Aplied Science- Harvard University, Boston, USA)
 * `Eulalia Marti Puig <http://www.crg.eu/en/group-members/eul%C3%A0lia-mart%C3%AD-puig>`_ (Genomics and Disease, Center of Genomic Regulation, Barcelona, Spain)
-
+* Francisco Pantano Rubino: Architect
 
 .. image:: https://d2weczhvl823v0.cloudfront.net/lpantano/seqcluster/trend.png
    :alt: Bitdeli badge
