@@ -13,6 +13,8 @@ Contents:
 
    installation.rst
    
+   citation.rst
+   
    getting_started.rst
    
    example_pipeline.rst 
