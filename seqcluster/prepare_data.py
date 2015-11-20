@@ -91,6 +91,7 @@ def _read_fastq_files(f, args):
     seq_l = {}
     sample_l = []
     idx = 1
+    p = re.compile("^[ATCGNU]$")
     with open(op.join(args.out, "stats_prepare.tsv"), 'w') as out_handle:
         for line1 in f:
             line1 = line1.strip()
@@ -103,16 +104,18 @@ def _read_fastq_files(f, args):
 
                 for line in handle:
                     if line.startswith("@") or line.startswith(">"):
+                        seq = handle.next().strip()
+                        if not p.match(seq):
+                            continue
                         idx += 1
                         total += 1
                         keep = {}
                         counts = int(re.search("x([0-9]+)", line.strip()).group(1))
-                        seq = handle.next().strip()
                         if is_fastq(cols[0]):
                             handle.next().strip()
                             qual = handle.next().strip()
                         else:
-                            qual = "A" * len(seq)
+                            qual = "I" * len(seq)
                         qual = qual[0:int(args.maxl)] if len(qual) > int(args.maxl) else qual
                         seq = seq[0:int(args.maxl)] if len(seq) > int(args.maxl) else seq
                         if counts > int(args.minc) and len(seq) > int(args.minl):
