@@ -1,5 +1,6 @@
 # Re-aligner small RNA sequence from SAM/BAM file (miRBase annotation)
 import os.path as op
+import re
 import shutil
 import pandas as pd
 import pysam
@@ -31,6 +32,33 @@ def _download_mirbase(args, version="CURRENT"):
             do.run(cmd_m, "download mirna")
     else:
         return args.hairpin, args.mirna
+
+def _make_unique(name, idx):
+    """Make name unique in case only counts there"""
+    p = re.compile(".[aA-zZ]+_x[0-9]+")
+    if p.match(name):
+        tags = name[1:].split("_x")
+        return ">%s_%s_x%s" % (tags[0], idx, tags[1])
+    return name
+
+def _filter_seqs(fn):
+    """Convert names of sequences to unique ids"""
+    out_file = op.splitext(fn)[0] + "_unique" + op.splitext(fn)[1]
+    idx = 0
+    if not file_exists(out_file):
+        with open(out_file, 'w') as out_handle:
+            with open(fn) as in_handle:
+                for line in in_handle:
+                    if line.startswith("@") or line.startswith(">"):
+                        fixed_name = _make_unique(line.strip(), idx)
+                        seq = in_handle.next().strip()
+                        counts = _get_freq(fixed_name)
+                        if len(seq) < 26 and counts > 1 and counts != 0:
+                            idx += 1
+                            print >>out_handle, fixed_name
+                            print >>out_handle, seq
+
+    return out_file
 
 def _convert_to_fasta(fn):
     out_file = op.splitext(fn)[0] + ".fa"
@@ -85,6 +113,13 @@ def _read_precursor(precursor, sps):
                 hairpin[name] += line.strip()
         hairpin[name] = hairpin[name] + "NNNNNNNNNNNN"
     return hairpin
+
+def _create_vcf(dts):
+    """
+    Create vcf file of changes for all samples.
+    PASS will be ones with > 3 isomiRs supporting the position
+         and > 30% of reads, otherwise LOW
+    """
 
 def _coord(sequence, start, mirna, precursor, iso):
     """
@@ -203,13 +238,14 @@ def _read_bam(bam_fn, precursors):
     for line in handle:
         chrom = handle.getrname(line.reference_id)
         # print "%s %s %s %s" % (line.query_name, line.reference_start, line.query_sequence, chrom)
-        if line.query_name not in reads:
-            reads[line.query_name].sequence = line.query_sequence
+        query_name = line.query_name
+        if query_name not in reads:
+            reads[query_name].sequence = line.query_sequence
         iso = isomir()
         iso.align = line
         iso.start = line.reference_start
-        iso.subs, iso.add = _realign(reads[line.query_name].sequence, precursors[chrom], line.reference_start)
-        reads[line.query_name].set_precursor(chrom, iso)
+        iso.subs, iso.add = _realign(reads[query_name].sequence, precursors[chrom], line.reference_start)
+        reads[query_name].set_precursor(chrom, iso)
 
     reads = _clean_hits(reads)
     return reads
@@ -338,7 +374,7 @@ def _merge(dts):
     ma = ma.fillna(0)
     ma_mirna['mirna'] = [m.split(":")[0] for m in ma.index.values]
     ma_mirna = ma_mirna.groupby(['mirna']).sum()
-    ma_mirna = ma.fillna(0)
+    ma_mirna = ma_mirna.fillna(0)
 
     return ma, ma_mirna
 
@@ -370,6 +406,7 @@ def miraligner(args):
             reads = _read_bam(bam_sort_by_n + ".bam", precursors)
         elif bam_fn.endswith("fasta") or bam_fn.endswith("fa") or bam_fn.endswith("fastq"):
             out_file = op.join(args.out, sample + ".premirna")
+            bam_fn = _filter_seqs(bam_fn)
             if args.miraligner:
                 _cmd_miraligner(bam_fn, out_file, args.sps, args.hairpin)
                 reads = _read_miraligner(out_file)
