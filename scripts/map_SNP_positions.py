@@ -1,11 +1,23 @@
 from argparse import ArgumentParser
+import os
+import gzip
 
 import pybedtools
 
+def _open_file(in_file):
+    """From bcbio code"""
+    _, ext = os.path.splitext(in_file)
+    if ext == ".gz":
+        return gzip.open(in_file, 'rb')
+    if ext in [".fastq", ".fq"]:
+        return open(in_file, 'r')
+    # default to just opening it
+    return open(in_file, "r")
+
 def _lift_positions(line):
-    mi_s, mi_e = line[3], line[4]
+    mi_s, mi_e = line[11], line[12]
     snp_p = [e for e, f in enumerate(line) if f.startswith("rs")][0] - 1
-    if line[6] == "-":
+    if line[14] == "-":
         rel_p = int(mi_e) - int(line[snp_p]) + 1
     else:
         rel_p = int(line[snp_p]) - int(mi_s) + 1
@@ -23,7 +35,7 @@ def _create_header(mirna, snp, out):
     names = set()
     h = []
     last_h = ""
-    with open(snp) as in_handle:
+    with _open_file(snp) as in_handle:
         for line in in_handle:
             if line.startswith("##") and not line.startswith("##contig"):
                 h.append(line.strip())
@@ -33,8 +45,10 @@ def _create_header(mirna, snp, out):
                 break
     with open(mirna) as in_handle:
         for line in in_handle:
-            cols = line.strip().split("\t")
-            names.add(_get_mirna_name(cols[8]))
+            if not line.startswith("#"):
+                cols = line.strip().split("\t")
+                if cols[2] == "miRNA":
+                    names.add(_get_mirna_name(cols[8]))
         for name in names:
             h.append("##contig=<ID=%s>" % name)
     h.append(last_h)
@@ -46,15 +60,20 @@ def select_snps(mirna, snp, out):
     """
     with open(out, 'w') as out_handle:
         print >>out_handle, _create_header(mirna, snp, out)
-        snp_in_mirna = pybedtools.BedTool(mirna).intersect(pybedtools.BedTool(snp), wo=True)
+        snp_in_mirna = pybedtools.BedTool(snp).intersect(pybedtools.BedTool(mirna), wo=True)
         for single in snp_in_mirna:
-            if single[2] == "miRNA" and len(single[12]) + len(single[13]) == 2:
+            if single[10] == "miRNA" and len(single[3]) + len(single[4]) == 2:
+                line = []
                 rel_p = _lift_positions(single)
-                single[10] = str(rel_p)
-                single[12] = _complement(single[12], single[6])
-                single[13] = _complement(single[13], single[6])
-                single[9] = _get_mirna_name(single[8])
-                print >>out_handle, "\t".join(single[9:])
+                line.append(_get_mirna_name(single[16]))
+                line.append(str(rel_p))
+                line.append(single[2])
+                line.append(_complement(single[3], single[14]))
+                line.append(_complement(single[4], single[14]))
+                line.append(single[5])
+                line.append(single[6])
+                line.append(single[7])
+                print >>out_handle, "\t".join(line)
     return out
 
 if __name__ == "__main__":
