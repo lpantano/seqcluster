@@ -39,11 +39,11 @@ def _make_unique(name, idx):
     if p.match(name):
         tags = name[1:].split("_x")
         return ">%s_%s_x%s" % (tags[0], idx, tags[1])
-    return name
+    return name.replace("@", ">")
 
 def _filter_seqs(fn):
     """Convert names of sequences to unique ids"""
-    out_file = op.splitext(fn)[0] + "_unique" + op.splitext(fn)[1]
+    out_file = op.splitext(fn)[0] + "_unique.fa"
     idx = 0
     if not file_exists(out_file):
         with open(out_file, 'w') as out_handle:
@@ -53,7 +53,7 @@ def _filter_seqs(fn):
                         fixed_name = _make_unique(line.strip(), idx)
                         seq = in_handle.next().strip()
                         counts = _get_freq(fixed_name)
-                        if len(seq) < 26 and counts > 1 and counts != 0:
+                        if len(seq) < 26 and (counts > 1 or counts == 0):
                             idx += 1
                             print >>out_handle, fixed_name
                             print >>out_handle, seq
