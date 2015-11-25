@@ -1,47 +1,23 @@
-sudo: false
-language: python
-python:
-  - "2.7"
+sudo: required
+dist: trusty
+language: generic
 notifications:
     email:
         recipients:
             - lorena.pantano@gmail.com
         on_failure: always
-virtualenv:
-    system_site_packages: true
 before_install:
-  - "sh -e /etc/init.d/xvfb start"
-  - "echo `pwd`"
-  - "echo $PATH"
-  - "pip install conda"
-  - "conda create --yes -n seqcluster python ipython pip distribute setuptools nose numpy scipy pandas"
-  - "source activate seqcluster "
-  - "mkdir -p deps && cd deps "
-  - "wget https://github.com/arq5x/bedtools2/releases/download/v2.22.0/bedtools-2.22.0.tar.gz \
-	&& tar -xzvf bedtools-2.22.0.tar.gz \
-	&& cd bedtools2 \
-	&& make \
-	&& P=`pwd` \
-	&& export PATH=${P}/bin:$PATH \
-	&& cd .."
-  - "wget  http://github.com/samtools/samtools/releases/download/1.2/samtools-1.2.tar.bz2 \
-	&& tar -xjvf samtools-1.2.tar.bz2 \
-	&& cd samtools-1.2 \
-	&& make \
-	&& P=`pwd` \
-	&& export PATH=${P}/misc:${P}/bcftools:${P}:$PATH \
-	&& cd ../.."
-  - "echo $PATH"
-  - "pip install -U cython"
-  - "conda install pysam pybedtools --yes -c bcbio "
-  - "pip install colorlog"
-  - "conda install --yes -c bcbio bcbio-nextgen"
+  # - echo "127.0.1.1 "`hostname` | sudo tee /etc/hosts
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
+  - bash Miniconda-latest-Linux-x86_64.sh -b -p ~/install
 install:
-    - "python setup.py install"
-script: nosetests
+  - export PATH=~/install/bin/:$PATH
+  - conda install --yes -c bcbio -c bioconda bcbio-nextgen seqcluster_lite bedtools samtools -q
+script: 
+  - nosetests
 after_script:
-    - "echo $PATH"
-    - "./run_test.sh cluster"
+  - "echo $PATH"
+  - "./run_test.sh cluster"
 branches:
     only:
         - master
