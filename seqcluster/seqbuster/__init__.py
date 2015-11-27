@@ -114,13 +114,6 @@ def _read_precursor(precursor, sps):
         hairpin[name] = hairpin[name] + "NNNNNNNNNNNN"
     return hairpin
 
-def _create_vcf(dts):
-    """
-    Create vcf file of changes for all samples.
-    PASS will be ones with > 3 isomiRs supporting the position
-         and > 30% of reads, otherwise LOW
-    """
-
 def _coord(sequence, start, mirna, precursor, iso):
     """
     Define t5 and t3 isomirs
@@ -329,6 +322,7 @@ def _tab_output(reads, out_file, sample):
     seen = set()
     lines = []
     seen_ann = {}
+    dt = None
     with open(out_file, 'w') as out_handle:
         print >>out_handle, "name\tseq\tfreq\tchrom\tstart\tend\tsubs\tadd\tt5\tt3\ts5\ts3\tDB\tprecursor\thits"
         for r, read in reads.iteritems():
@@ -355,12 +349,13 @@ def _tab_output(reads, out_file, sample):
                     lines.append([annotation, chrom, count, sample, hits])
                     print >>out_handle, res
 
-    dt = pd.DataFrame(lines)
-    dt.columns = ["isomir", "chrom", "counts", "sample", "hits"]
-    dt = dt[dt['hits']>0]
-    dt = dt.loc[:, "isomir":"sample"]
-    dt = dt.groupby(['isomir', 'chrom', 'sample'], as_index=False).sum()
-    dt.to_csv(out_file + "_summary")
+    if lines:
+        dt = pd.DataFrame(lines)
+        dt.columns = ["isomir", "chrom", "counts", "sample", "hits"]
+        dt = dt[dt['hits']>0]
+        dt = dt.loc[:, "isomir":"sample"]
+        dt = dt.groupby(['isomir', 'chrom', 'sample'], as_index=False).sum()
+        dt.to_csv(out_file + "_summary")
     return out_file, dt
 
 def _merge(dts):
@@ -424,7 +419,8 @@ def miraligner(args):
             reads = _annotate(reads, matures, precursors)
         out_file = op.join(args.out, sample + ".mirna")
         out_file, dt = _tab_output(reads, out_file, sample)
-        out_dts.append(dt)
+        if isinstance(dt, pd.DataFrame):
+            out_dts.append(dt)
 
     if out_dts:
         _create_counts(out_dts, args.out)
