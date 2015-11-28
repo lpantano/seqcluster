@@ -33,3 +33,5 @@ Techonolgy
 `Comparison of alignment and normalization <http://bib.oxfordjournals.org/content/early/2015/04/17/bib.bbv019.full>`_ . I will take the message that TMM and DESeq/2 normalization are the best to avoid strong bias if we consider to have a small proportion of DE miRNAs. For the alignments, here you have another comparison for miRNAs annotation: https://rawgit.com/lpantano/tools-mixer/master/mirna/mirannotation/stats.html
 
 `review of tools for detect miRNA-disease network <http://bib.oxfordjournals.org.ezp-prod1.hul.harvard.edu/content/early/2015/06/08/bib.bbv033.full>`_.
+
+`review of tools <http://nar.oxfordjournals.org/content/early/2015/11/16/nar.gkv1221.full>`_  for miRNA de-novo and interaction analysis
