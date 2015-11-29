@@ -12,6 +12,7 @@ from bcbio.utils import file_exists
 import seqcluster.libs.logger as mylog
 from seqcluster.align import pyMatch
 from seqcluster.install import _get_miraligner
+from seqcluster.seqbuster.snps import create_vcf
 from realign import *
 
 logger = mylog.getLogger(__name__)
@@ -356,6 +357,7 @@ def _tab_output(reads, out_file, sample):
         dt = dt.loc[:, "isomir":"sample"]
         dt = dt.groupby(['isomir', 'chrom', 'sample'], as_index=False).sum()
         dt.to_csv(out_file + "_summary")
+        create_vcf(dt)
     return out_file, dt
 
 def _merge(dts):
@@ -370,7 +372,6 @@ def _merge(dts):
     ma_mirna['mirna'] = [m.split(":")[0] for m in ma.index.values]
     ma_mirna = ma_mirna.groupby(['mirna']).sum()
     ma_mirna = ma_mirna.fillna(0)
-
     return ma, ma_mirna
 
 def _create_counts(out_dts, out_dir):
