@@ -13,9 +13,5 @@ srnaseq:
     - bedtools
     - fastqc
   analysis:
-    - samtools;--without-curses
-    - samtools-library-0.1
-    - htslib
-    - bcftools
     - seqbuster
     - trnascan
