@@ -5,13 +5,6 @@ minimal:
   - p7zip
   - pkg-config
 srnaseq:
-  alignment:
-    - bowtie2 
-    - rna-star
-  utilities:
-    - bamtools
-    - bedtools
-    - fastqc
   analysis:
     - seqbuster
     - trnascan
