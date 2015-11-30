@@ -2,8 +2,7 @@
 channels:
   - bcbio
   - bioconda
-minimal:
-bio_nextgen:
+srnaseq:
   - bamtools
   - bcftools
   - bedtools=2.24.0
