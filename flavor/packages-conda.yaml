@@ -1,0 +1,21 @@
+---
+channels:
+  - bcbio
+  - bioconda
+minimal:
+bio_nextgen:
+  - bamtools
+  - bcftools
+  - bedtools=2.24.0
+  - biobambam
+  - bowtie2
+  - cutadapt
+  - fastqc
+  - htseq
+  - qualimap
+  - sambamba
+  - samblaster
+  - samtools
+  - star
+  - subread
+  - vcflib
