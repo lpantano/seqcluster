@@ -57,9 +57,10 @@ def _get_flavor():
     Download flavor for cloudbiolinux
     """
     target = op.join("seqcluster", "flavor")
-    if not os.path.exists(target):
-        url = "https://github.com/lpantano/seqcluster.git"
-        subprocess.check_call(["git", "clone","-b", "flavor", "--single-branch", url])
+    if os.path.exists(target):
+        shutil.rmtree("seqcluster")
+    url = "https://github.com/lpantano/seqcluster.git"
+    subprocess.check_call(["git", "clone","-b", "flavor", "--single-branch", url])
     return op.abspath(target)
 
 def _install(path):
