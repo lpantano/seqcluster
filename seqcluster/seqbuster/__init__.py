@@ -357,7 +357,7 @@ def _tab_output(reads, out_file, sample):
         dt = dt.loc[:, "isomir":"sample"]
         dt = dt.groupby(['isomir', 'chrom', 'sample'], as_index=False).sum()
         dt.to_csv(out_file + "_summary")
-        create_vcf(dt)
+        # create_vcf(dt)
     return out_file, dt
 
 def _merge(dts):
@@ -426,3 +426,5 @@ def miraligner(args):
     if out_dts:
         _create_counts(out_dts, args.out)
         # _summarize(out_dts)
+    else:
+        print "No files analyzed!"
