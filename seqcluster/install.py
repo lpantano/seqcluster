@@ -76,12 +76,13 @@ def _install(path):
                                 "use_sudo": "false",
                                 "edition": "minimal"}}
     s = {"flavor": _get_flavor(),
-         "target": "brew",
+         # "target": "[brew, conda]",
          "vm_provider": "novm",
          "hostname": "localhost",
          "fabricrc_overrides": {"edition": "minimal",
                                 "use_sudo": "false",
                                 "keep_isolated": "true",
+                                "conda_cmd": bcb._get_conda_bin(),
                                 "distribution": "__auto__",
                                 "dist_name": "__auto__"}}
 
@@ -89,6 +90,7 @@ def _install(path):
     s["actions"] = ["install_biolinux"]
     s["fabricrc_overrides"]["system_install"] = path
     s["fabricrc_overrides"]["local_install"] = os.path.join(path, "local_install")
+    print s
     cbl = bcb.get_cloudbiolinux(bcb.REMOTES)
     sys.path.insert(0, cbl["dir"])
     cbl_deploy = __import__("cloudbio.deploy", fromlist=["deploy"])
