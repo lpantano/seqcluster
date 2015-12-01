@@ -309,7 +309,7 @@ def _cmd_miraligner(fn, out_file, species, hairpin):
     tool = _get_miraligner()
     path_db = op.dirname(op.abspath(hairpin))
     opts = "-Xms750m -Xmx4g"
-    cmd = "{tool} -i {fn} -o {out_file} -s {species} -db {path_db} -sub 1 -trim 3 -add 3"
+    cmd = "{tool} -freq -i {fn} -o {out_file} -s {species} -db {path_db} -sub 1 -trim 3 -add 3"
     if not file_exists(out_file):
         do.run(cmd.format(**locals()), "miraligner with %s" % fn)
         shutil.move(out_file + ".mirna", out_file)
