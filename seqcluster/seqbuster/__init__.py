@@ -58,6 +58,12 @@ def _filter_seqs(fn):
                             idx += 1
                             print >>out_handle, fixed_name
                             print >>out_handle, seq
+                        try:
+                            if line.startswith("@"):
+                                in_handle.next()
+                                in_handle.next()
+                        except:
+                            pass
 
     return out_file
 
