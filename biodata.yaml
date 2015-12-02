@@ -17,7 +17,7 @@
 genomes:
   - dbkey: hg19
     name: Human (hg19)
-    annotations: [srnaseq]
+    annotations: [mirbase]
 
 # Global set of indexes to include for each genome.
 # Available choices are in GENOMES_INDEXES_SUPPORTED in cloudbio/biodata/genomes.py
