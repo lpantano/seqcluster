@@ -4,7 +4,6 @@
 packages:
   - minimal
   - libraries
-  - python
   - java
   - ruby
   - srnaseq
