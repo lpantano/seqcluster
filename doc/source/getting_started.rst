@@ -15,7 +15,10 @@ clustering of small RNA sequences
 seqcluster generates a list of clusters of small RNA sequences, their genome location, their annotation and the abundance in all the sample of the project
 
 .. image:: seqcluster.png
-
+   :height: 200px
+   :width: 100px
+   :scale: 25%
+   
 **REMOVE ADAPTER**
 
 I am currently using ``cutadapt``:
@@ -151,6 +154,10 @@ where `$GENOME_FASTA_PATH` is the path to the genome fasta file used in the alig
 * ``report/html/[0-9]/maps.fa``: putative precursor
 
 .. _summary: https://rawgit.com/lpantano/seqcluster/master/data/examples_report/html/1/maps.html
+
+An example of the output is below:
+
+.. image:: https://rawgit.com/lpantano/seqcluster/master/doc/slides/seqclusterViz.gif
 
 Easy start with seqcluster-helper.py
 ------------------------------------
