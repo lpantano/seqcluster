@@ -5,6 +5,7 @@ import os.path as op
 import os
 import shutil
 import sys
+import yaml
 from argparse import ArgumentParser
 import subprocess
 import contextlib
@@ -57,13 +58,13 @@ def _get_flavor():
     Download flavor for cloudbiolinux
     """
     target = op.join("seqcluster", "flavor")
-    if os.path.exists(target):
-        shutil.rmtree("seqcluster")
+    # if os.path.exists(target):
+    #   shutil.rmtree("seqcluster")
     url = "https://github.com/lpantano/seqcluster.git"
-    subprocess.check_call(["git", "clone","-b", "flavor", "--single-branch", url])
+    #subprocess.check_call(["git", "clone","-b", "flavor", "--single-branch", url])
     return op.abspath(target)
 
-def _install(path):
+def _install(path, args):
     """
     small helper for installation in case outside bcbio
     """
@@ -72,11 +73,13 @@ def _install(path):
     except:
         raise ImportError("It needs bcbio to do the quick installation.")
 
+    path_flavor = _get_flavor()
+    bio_data = op.join(path_flavor, "../biodata.yaml")
     s = {"fabricrc_overrides": {"system_install": path,
                                 "local_install": os.path.join(path, "local_install"),
                                 "use_sudo": "false",
                                 "edition": "minimal"}}
-    s = {"flavor": _get_flavor(),
+    s = {"flavor": path_flavor,
          # "target": "[brew, conda]",
          "vm_provider": "novm",
          "hostname": "localhost",
@@ -91,11 +94,45 @@ def _install(path):
     s["actions"] = ["install_biolinux"]
     s["fabricrc_overrides"]["system_install"] = path
     s["fabricrc_overrides"]["local_install"] = os.path.join(path, "local_install")
-    print s
     cbl = bcb.get_cloudbiolinux(bcb.REMOTES)
     sys.path.insert(0, cbl["dir"])
     cbl_deploy = __import__("cloudbio.deploy", fromlist=["deploy"])
     cbl_deploy.deploy(s)
+
+def _install_data(data_dir, bio_data, args):
+    """Upgrade required genome data files in place.
+    """
+    try:
+       from bcbio import install as bcb
+    except:
+        raise ImportError("It needs bcbio to do the quick installation.")
+
+    s = {"flavor": "srnaseq",
+         # "target": "[brew, conda]",
+         "vm_provider": "novm",
+         "hostname": "localhost",
+         "fabricrc_overrides": {"edition": "minimal",
+                                "use_sudo": "false",
+                                "keep_isolated": "true",
+                                "conda_cmd": bcb._get_conda_bin(),
+                                "distribution": "__auto__",
+                                "dist_name": "__auto__"}}
+    s["actions"] = ["setup_biodata"]
+    s["fabricrc_overrides"]["data_files"] = data_dir
+    s["fabricrc_overrides"]["galaxy_home"] = os.path.join(data_dir, "galaxy")
+    cbl = bcb.get_cloudbiolinux(bcb.REMOTES)
+    s["genomes"] = _get_biodata(bio_data, args)
+    sys.path.insert(0, cbl["dir"])
+    cbl_deploy = __import__("cloudbio.deploy", fromlist=["deploy"])
+    cbl_deploy.deploy(s)
+
+def _get_biodata(base_file, args):
+    with open(base_file) as in_handle:
+        config = yaml.load(in_handle)
+    config["install_liftover"] = False
+    config["genome_indexes"] = args.aligners
+    config["genomes"] = [g for g in config["genomes"] if g["dbkey"] in args.genomes]
+    return config
 
 def _install_mirbase():
     for fn in ["hairpin.fa.gz", "miRNA.str.gz"]:
@@ -121,7 +158,7 @@ def _upgrade():
 def actions(args):
     if args.upgrade:
         _upgrade()
-    if args.data:
+    if False:
         db = set(args.data) if isinstance(args.data, list) else [args.data]
         if "mirbase" in db:
             _install_mirbase()
@@ -134,12 +171,18 @@ def actions(args):
                 subprocess.check_call(["wget", "--no-check-certificate", "-p", "https://raw.githubusercontent.com/lpantano/seqcluster/master/scripts/mm10.sh", "-O", "mm10.sh", ])
                 subprocess.check_call(["bash", "mm10.sh"])
     if args.tools:
-        _install(op.abspath(args.tools))
+        _install(op.abspath(args.tools), args)
+    if args.data:
+        path_flavor = _get_flavor()
+        bio_data = op.join(path_flavor, "../biodata.yaml")
+        _install_data(args.data, bio_data, args)
 
 def main(**kwargs):
     parser = ArgumentParser(description="small RNA analysis installer")
     parser.add_argument("--tools", help="install tools")
-    parser.add_argument("--data", help="install data", default=[])
+    parser.add_argument("--data", help="path install data")
     parser.add_argument("--upgrade", action="store_true", help="upgrade seqcluster", default=[])
+    parser.add_argument("--genomes", default=[], action="append")
+    parser.add_argument("--aligners", default=[], action="append")
     args = parser.parse_args()
     actions(args)
