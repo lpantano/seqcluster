@@ -64,5 +64,6 @@ coverage.xml
 docs/_build/
 
 # vim
-*swo
-*swp
+.*swo
+.*swp
+.*sw*
