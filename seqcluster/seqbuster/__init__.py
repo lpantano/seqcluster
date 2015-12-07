@@ -89,7 +89,7 @@ def _convert_to_fasta(fn):
 def _get_pos(string):
     name = string.split(":")[0][1:]
     pos = string.split(":")[1][:-1].split("-")
-    return name, pos
+    return name, map(int, pos)
 
 def _read_mature(matures, sps):
     mature = defaultdict(dict)
@@ -98,10 +98,10 @@ def _read_mature(matures, sps):
             if line.startswith(">") and line.find(sps) > -1:
                 name = line.strip().replace(">", " ").split()
                 mir5p = _get_pos(name[2])
-                mature[name[0]] = {mir5p[0]: map(int, mir5p[1])}
+                mature[name[0]] = {mir5p[0]: mir5p[1]}
                 if len(name) > 3:
                     mir3p = _get_pos(name[3])
-                    mature[name[0]].update({mir3p[0]: map(int, mir3p[1])})
+                    mature[name[0]].update({mir3p[0]: mir3p[1]})
     return mature
 
 def _read_precursor(precursor, sps):
@@ -328,6 +328,7 @@ def _get_freq(name):
 def _tab_output(reads, out_file, sample):
     seen = set()
     lines = []
+    lines_pre = []
     seen_ann = {}
     dt = None
     with open(out_file, 'w') as out_handle:
@@ -354,6 +355,7 @@ def _tab_output(reads, out_file, sample):
                         raise ValueError("Same isomir %s from different sequence: \n%s and \n%s" % (annotation, res, seen_ann[annotation]))
                     seen_ann[annotation] = res
                     lines.append([annotation, chrom, count, sample, hits])
+                    lines_pre.append([annotation, chrom, p, count, sample, hits])
                     print >>out_handle, res
 
     if lines:
@@ -363,8 +365,13 @@ def _tab_output(reads, out_file, sample):
         dt = dt.loc[:, "isomir":"sample"]
         dt = dt.groupby(['isomir', 'chrom', 'sample'], as_index=False).sum()
         dt.to_csv(out_file + "_summary")
-        # create_vcf(dt)
-    return out_file, dt
+        dt_pre = pd.DataFrame(lines_pre)
+        dt_pre.columns = ["isomir", "mature", "chrom", "counts", "sample", "hits"]
+        dt_pre = dt_pre[dt_pre['hits']==1]
+        dt_pre = dt_pre.loc[:, "isomir":"sample"]
+        dt_pre = dt_pre.groupby(['isomir', 'chrom', 'mature', 'sample'], as_index=False).sum()
+
+    return out_file, dt, dt_pre
 
 def _merge(dts):
     """
@@ -425,7 +432,11 @@ def miraligner(args):
         if not args.miraligner:
             reads = _annotate(reads, matures, precursors)
         out_file = op.join(args.out, sample + ".mirna")
-        out_file, dt = _tab_output(reads, out_file, sample)
+        out_file, dt, dt_pre= _tab_output(reads, out_file, sample)
+        try:
+            create_vcf(dt_pre, matures)
+        except:
+            pass
         if isinstance(dt, pd.DataFrame):
             out_dts.append(dt)
 
