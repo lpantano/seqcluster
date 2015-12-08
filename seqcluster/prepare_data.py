@@ -91,7 +91,7 @@ def _read_fastq_files(f, args):
     seq_l = {}
     sample_l = []
     idx = 1
-    p = re.compile("^[ATCGNU]$")
+    p = re.compile("^[ATCGNU]+$")
     with open(op.join(args.out, "stats_prepare.tsv"), 'w') as out_handle:
         for line1 in f:
             line1 = line1.strip()
@@ -101,7 +101,6 @@ def _read_fastq_files(f, args):
             with open_fastq(cols[0]) as handle:
                 sample_l.append(cols[1])
                 total = added = 0
-
                 for line in handle:
                     if line.startswith("@") or line.startswith(">"):
                         seq = handle.next().strip()
