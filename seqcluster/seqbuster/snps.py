@@ -1,4 +1,7 @@
 def _parse_mut(mut):
+    """
+    Parse mutation field to get position and nts.
+    """
     multiplier = 1
     if mut.startswith("-"):
         mut = mut[1:]
@@ -8,6 +11,9 @@ def _parse_mut(mut):
     return nt, pos
 
 def _get_reference_position(isomir):
+    """
+    Liftover from mature to reference position
+    """
     mut = isomir.split(":")[1]
     if mut == "0":
         return mut
@@ -19,6 +25,10 @@ def _get_reference_position(isomir):
     return "%s%s" % (pos + off, nt)
 
 def _get_pct(isomirs, mirna):
+    """
+    Get pct of variants respect to the reference
+    using reads and different sequences
+    """
     pass_pos = []
     for isomir in isomirs.iterrows():
         mir = isomir[1]["chrom"]
@@ -48,6 +58,11 @@ def print_vcf(data):
     info = "id=%s" % data['mature']
     frmt = "%s:%s:%s" % (data["counts"], data["diff"], _genotype(data))
     print "\t".join(map(str, [chrom, pos, nt_ref, nt_snp, flt, info, frmt]))
+
+def _make_header():
+    """
+    Make vcf header for SNPs in miRs
+    """
 
 def liftover(pass_pos, matures):
     """Make position at precursor"""
