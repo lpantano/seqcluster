@@ -21,7 +21,7 @@ install conda if you want an isolate env::
 
 You can install directly from binstar (only for linux)::
 
-    ~/install/seqcluster/anaconda/conda install -c  https://conda.anaconda.org/lpantano seqcluster -c  https://conda.binstar.org/bcbio
+    ~/install/seqcluster/anaconda/conda install -c lpantano seqcluster -c bcbio
 
 With that you will have everything you need for the python package. 
 The last step is to add seqcluster to your PATH (see below).
@@ -73,13 +73,15 @@ You will need to link the ``cutadapt`` binary to your ``PATH``)::
 
 Strongly recommend use `bcbio <https://bcbio-nextgen.readthedocs.org/en/latest/contents/installation.html>`_ installation if you work with sequencing data. But if you want a minimal installation::
 
-    seqcluster_install --tools $TARGET_PATH
 
-After that you will need to add to your path: ``export PATH=$TARGET_PATH/bin:$PATH``
+    pip install fabric
+    seqcluster_install --upgrade
+    mkdir -p $PATH_TO_TOOLS/bin
+    seqcluster_install --tools $PATH_TO_TOOLS
 
-If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_ , you only need to install `seqbuster` as showed bellow::
 
-    brew install seqbuster
+After that you will need to add to your path: ``export PATH=$PATH_TO_TOOLS/bin:$PATH``
+
 
 **step by step**
 
@@ -95,7 +97,24 @@ To install dependencies using ``homebrew`` follow these steps::
    brew install samtools
    brew install star-rna
    brew install bowtie2
-   
+
+Data
+---------
+
+Easy way to install your small RNA seq data with `cloudbiolinux <https://github.com/chapmanb/cloudbiolinux>`_.
+Seqcluster has snipped code to do that for you.
+
+An exmaple of hg19 human version it will be (another well annotated supported genome is mm10):
+
+Download genome data::
+
+    seqcluster_install --data $PATH_TO_DATA --genomes hg19 --aligners bowtie2
+
+If you want to install STAR indexes since gets kind of better results than bowtie2 (warning, 40GB memory RAM needed)::
+
+    seqcluster_install --data $PATH_TO_DATA --genomes hg19 --aligners star
+
+
 seqcluster-helper
 ---------
 
@@ -134,36 +153,4 @@ To install all packages used by the Rmd report::
     
     
 .. _seqcluster-helper: https://github.com/lpantano/seqcluster-helper/blob/master/README.md
-
-
-Data
----------
-
-Easy way to install your small RNA seq data with `cloudbiolinux <https://github.com/chapmanb/cloudbiolinux>`_.
-
-An exmaple of hg19 human version it will be:
-
-Prepare code::
-
-    pip install fabric
-    git clone git://github.com/chapmanb/cloudbiolinux.git
-
-Prepare config files (change the path in ``fabric.txt`` for non_testing data)::
-
-    wget http://raw.githubusercontent.com/lpantano/seqcluster/flavor/fabric.txt
-    wget http://raw.githubusercontent.com/lpantano/seqcluster/flavor/biodata.yaml
-
-Download GTF annotation and miRBase files (data will be inside ``biodata/hg19/srnaseq``)::
-
-    fab -f cloudbiolinux/data_fabfile.py -H localhost -c fabric.txt install_data_ggd:srnaseq,hg19
-
-Download genome data::
-
-    fab -f cloudbiolinux/data_fabfile.py -H localhost -c fabric.txt install_data_s3:biodata.yaml
-
-If you want to install STAR indexes since gets kind of better results than bowtie2 (warning, 40GB memory RAM needed)::
-
-    fab -f cloudbiolinux/data_fabfile.py -H localhost -c fabric.txt install_data:biodata.yaml
-
-
 .. _bcbio: https://github.com/chapmanb/bcbio-nextgen
