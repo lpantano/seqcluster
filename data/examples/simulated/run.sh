@@ -6,6 +6,6 @@ samtools view -Sbh sim.sam > sim.bam
 samtools sort  sim.bam sim_sort
 
 rm -rf res sim_sort_*
-seqcluster cluster -a sim_sort.bam -m sim.ma -o res -r ~/soft/bcbio/genomes/Hsapiens/hg19/seq/hg19.fa
+seqcluster cluster -a sim_sort.bam -m sim.ma -o test_out_res -r ~/soft/bcbio/genomes/Hsapiens/hg19/seq/hg19.fa
 # seqcluster predict -j res/seqcluster.json -o predict --reference  ~/orch/groups/bcbio/genomes/Hsapiens/hg19/seq/hg19.fa
 # seqcluster report -j res/seqcluster.json -o report -r  ~/orch/groups/bcbio/genomes/Hsapiens/hg19/seq/hg19.fa
