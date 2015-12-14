@@ -1,6 +1,6 @@
 """This directory is setup with configurations to run the main functional test.
 
-It exercises a full analysis pipeline on a smaller subset of data.
+Inspired in bcbio-nextgen code
 """
 import os
 import subprocess
