@@ -77,5 +77,5 @@ class AutomatedAnalysisTest(unittest.TestCase):
                   "-a", "../../data/examples/clusters/seqs.bam",
                   "-gtf", "../../data/examples/cluster/annotation_red.gtf",
                   "-o", "test_out_res"]
-            subprocess.check_call(cl)
+            # subprocess.check_call(cl)
 
