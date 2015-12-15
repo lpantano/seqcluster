@@ -13,28 +13,28 @@ def simulate(args):
             for line in in_handle:
                 if line.startswith(">"):
                     if name:
-                        reads.update(_generate_reads(seq))
+                        reads.update(_generate_reads(seq, name))
                     seq = ""
                     name = line[1:-1]
                 else:
                     seq += line.strip()
 
-        reads.update(_generate_reads(seq))
+        reads.update(_generate_reads(seq, name))
     _write_reads(reads, args.out)
 
 
-def _generate_reads(seq):
+def _generate_reads(seq, name):
     """Main function that create reads from precursors"""
     reads = dict()
     if len(seq) < 130 and len(seq) > 70:
-        reads.update(_mature(seq[:40], 0))
-        reads.update(_mature(seq[-40:], len(seq) - 40))
-        reads.update(_noise(seq))
-        reads.update(_noise(seq, 20))
+        reads.update(_mature(seq[:40], 0, name))
+        reads.update(_mature(seq[-40:], len(seq) - 40, name))
+        reads.update(_noise(seq, name))
+        reads.update(_noise(seq, name, 25))
     return reads
 
 
-def _mature(subseq, absolute, size=33, total=5000):
+def _mature(subseq, absolute, c,  size=33, total=5000):
     """Create mature sequences around start/end"""
     reads = dict()
     probs = [0.1, 0.2, 0.4, 0.2, 0.1]
@@ -46,12 +46,12 @@ def _mature(subseq, absolute, size=33, total=5000):
             e = end - error3
             seen = subseq[s:e]
             counts = int(probs[error5 + 2] * probs[error3 + 2] * total) + 1
-            name = "seq_%s_%s_x%s" % (s, e, counts)
+            name = "seq_%s_%s_%s_x%s" % (c, s + absolute, e + absolute, counts)
             reads[name] = (seen, counts)
     return reads
 
 
-def _noise(seq, size=33, total=1000):
+def _noise(seq, c, size=33, total=1000):
     """Create mature sequences around start/end"""
     reads = dict()
     seen = 0
@@ -61,7 +61,7 @@ def _noise(seq, size=33, total=1000):
         p = random.uniform(0, 0.1)
         counts = int(p * total) + 1
         seen += counts
-        name = "seq_%s_%s_x%s" % (s, e, counts)
+        name = "seq_%s_%s_%s_x%s" % (c, s, e, counts)
         reads[name] = (seq[s:e], counts)
     return reads
 
@@ -78,9 +78,10 @@ def _write_reads(reads, prefix):
         with open(out_fasta, 'w') as fa_handle:
             with open(out_real, 'w') as read_handle:
                 for idx, r in enumerate(reads):
+                    info = r.split("_")
                     print >>ma_handle, "seq_%s\t%s\t%s" % (idx, reads[r][0], reads[r][1])
                     print >>fa_handle, ">seq_%s\n%s" % (idx, reads[r][0])
-                    print >>read_handle, "%s\t%s\t%s\t%s" % (idx, r, reads[r][0], reads[r][1])
+                    print >>read_handle, "%s\t%s\t%s\t%s\t%s\t%s\t%s" % (idx, r, reads[r][0], reads[r][1], info[1], info[2], info[3])
 
 
 def _get_precursor(bed_file, reference, out_fa):
