@@ -31,6 +31,8 @@ Contents:
 
    literature.rst
 
+   presentations.rst
+
    documentation.rst
 
    classes.rst

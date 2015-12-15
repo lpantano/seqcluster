@@ -1,4 +1,5 @@
 # test
+data/examples/*/test_out*
 data/test_c*/report/*
 data/test_c*/res/*
 data/res/*
