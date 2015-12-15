@@ -22,7 +22,7 @@ A non-biased framework for the annotation and classification of the non-miRNA sm
 Pantano L1, Estivill X, Martí E. Bioinformatics. 2011 Nov 15;27(22):3202-3. doi: 10.1093/bioinformatics/btr527. Epub 2011 Oct 5.
 PMID: 21976421
 
-quick start links
+Quick start links
 ---------
 
 See installation at http://seqcluster.readthedocs.org/installation.html
@@ -32,9 +32,11 @@ a python framework to run a whole pipeline for small RNA (miRNA + tRNA + piRNA +
 
 .. _bcbio-nextgen: https://bcbio-nextgen.readthedocs.org/en/latest/
 
-Complete tutorial is here: http://seqcluster.readthedocs.org/getting_started.html#clustering-of-small-rna-sequences
+An example of how to run with bcbio is here: http://seqcluster.readthedocs.org/example_pipeline.html#mirqc-data
 
-report
+In case you want to use seqcluster alone, a complete tutorial is here: http://seqcluster.readthedocs.org/getting_started.html#clustering-of-small-rna-sequences
+
+Report
 ---------
 
 Seqcluster creates html report that looks like `this`_. That is a table of all cluster detected, and you 
