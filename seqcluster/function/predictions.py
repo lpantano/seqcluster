@@ -4,9 +4,7 @@ from os import path as op
 import os
 import shutil
 
-from bcbio.distributed import transaction
-from bcbio.utils import chdir, safe_makedir
-
+from seqcluster.libs.utils import chdir, safe_dirs
 from seqcluster.libs import utils, logger as mylog
 # import logger as mylog
 from seqcluster.libs.read import get_loci_fasta, make_temp_directory
@@ -23,14 +21,14 @@ def run_coral(clus_obj, out_dir, args):
     if not args.bed:
         raise ValueError("This module needs the bed file output from cluster subcmd.")
     workdir = op.abspath(op.join(args.out, 'coral'))
-    safe_makedir(workdir)
+    safe_dirs(workdir)
     bam_in = op.abspath(args.bam)
     bed_in = op.abspath(args.bed)
     reference = op.abspath(args.ref)
     with chdir(workdir):
         bam_clean = coral.prepare_bam(bam_in, bed_in)
         out_dir = op.join(workdir, "regions")
-        safe_makedir(out_dir)
+        safe_dirs(out_dir)
         prefix = "seqcluster"
         loci_file = coral.detect_regions(bam_clean, bed_in, out_dir, prefix)
         coral.create_features(bam_clean, loci_file, reference, out_dir)

@@ -1,13 +1,11 @@
 """
 Wrap RNAfold command
 """
-
+import os
 import subprocess
 import pybedtools
 
-from bcbio.utils import splitext_plus
-from bcbio.distributed.transaction import file_transaction
-
+from seqcluster.libs.utils import safe_run
 from seqcluster.libs import do
 
 def run_rnafold(seqs):
@@ -24,8 +22,8 @@ def calculate_structure(loci_file, genome):
     """
     Get fasta sequence for each loci and calculate structure
     """
-    structure_file = splitext_plus(loci_file)[0] + "-fold.tsv"
-    with file_transaction(structure_file) as out_tx:
+    structure_file = os.path.splitext(loci_file)[0] + "-fold.tsv"
+    with safe_run(structure_file) as out_tx:
         with open(out_tx, 'w') as out_handle:
             loci_bed = pybedtools.BedTool(loci_file)
             print >>out_handle, "id\tfold"

@@ -4,6 +4,15 @@ import shutil
 
 import contextlib
 
+@contextlib.contextmanager
+def chdir(p):
+    cur_dir =  os.getcwd()
+    os.chdir(p)
+    try:
+        yield
+    finally:
+        os.chdir(cur_dir)
+
 def safe_dirs(dirs):
     if not os.path.exists(dirs):
         os.makedirs(dirs)

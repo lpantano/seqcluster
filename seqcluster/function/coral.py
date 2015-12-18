@@ -3,9 +3,7 @@ import os.path as op
 from collections import Counter
 import pybedtools
 
-from bcbio import utils
-from bcbio.distributed.transaction import tx_tmpdir
-
+from seqcluster.libs import utils
 from seqcluster.libs.do import run, find_cmd
 from seqcluster.function.rnafold import calculate_structure
 
@@ -36,6 +34,7 @@ def _select_anno(annotation):
     """
     options = annotation.split(",")
     return options[0]
+
 
 def _reorder_columns(bed_file):
     """
