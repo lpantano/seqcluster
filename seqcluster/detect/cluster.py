@@ -6,8 +6,7 @@ import pybedtools
 from  seqcluster.libs import pysen
 import numpy as np
 
-from bcbio.utils import file_exists
-
+from seqcluster.libs.utils import file_exists
 import seqcluster.libs.logger as mylog
 from seqcluster.libs.classes import *
 # from seqcluster.function.peakdetect import peakdetect as peakdetect
