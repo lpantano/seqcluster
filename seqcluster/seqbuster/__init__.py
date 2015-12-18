@@ -10,10 +10,7 @@ from seqcluster.libs.utils import file_exists
 from seqcluster.libs import do
 import seqcluster.libs.logger as mylog
 from seqcluster.align import pyMatch
-try:
-    from seqcluster.install import _get_miraligner
-except ImportError:
-    pass
+from seqcluster.install import _get_miraligner
 from seqcluster.seqbuster.snps import create_vcf
 from realign import *
 

@@ -3,18 +3,17 @@ Some commands to install common databases like mirbase and some human/mouse anno
 """
 import os.path as op
 import os
-import shutil
 import sys
-import yaml
 from argparse import ArgumentParser
 import subprocess
 import contextlib
+import yaml
 
 try:
     import bcbio
 except:
     print ("Probably this will fail, you need bcbio-nextgen "
-          "for many installation functions.")
+           "for many installation functions.")
     pass
 
 REMOTES = {
@@ -47,7 +46,11 @@ def chdir(new_dir):
         os.chdir(cur_dir)
 
 def _get_miraligner():
-    tool = bcbio.pipeline.config_utils.get_program("miraligner", {}, "cmd")
+    try:
+        tool = bcbio.pipeline.config_utils.get_program("miraligner", {}, "cmd")
+    except ImportError:
+        tool = None
+        pass
     if not tool:
         url = "https://github.com/lpantano/seqbuster/raw/master/modules/miraligner/miraligner.jar"
         subprocess.check_call(["wget", "-O", "miraligner.jar", "--no-check-certificate", url])
