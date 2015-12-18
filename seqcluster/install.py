@@ -13,8 +13,8 @@ import contextlib
 try:
     import bcbio
 except:
-    print "Probably this will fail, you need bcbio-nextgen "
-    "for many installation functions."
+    print ("Probably this will fail, you need bcbio-nextgen "
+          "for many installation functions.")
     pass
 
 REMOTES = {
