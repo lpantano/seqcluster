@@ -14,5 +14,8 @@ srnaseq:
   - sambamba
   - samblaster
   - samtools
+  - seqbuster
   - star
+  - tdrmapper
   - vcflib
+  - viennarna
