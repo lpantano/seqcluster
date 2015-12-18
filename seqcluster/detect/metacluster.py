@@ -10,16 +10,15 @@ import math
 # import numpy as np
 # import pybedtools
 
-from bcbio.distributed.transaction import file_transaction
 
 import seqcluster.libs.logger as mylog
+from seqcluster.libs import utils
+from seqcluster.libs import parameters
 from seqcluster.libs.classes import *
 from seqcluster.libs.mystats import up_threshold
 from seqcluster.libs.bayes import decide_by_bayes
-from  seqcluster.libs import parameters
 
 logger = mylog.getLogger(__name__)
-
 
 REMOVED = 0
 
@@ -93,8 +92,8 @@ def _write_cluster(metacluster, cluster, loci, idx, path):
     For complex meta-clusters, write all the loci for further debug
     """
     out_file = op.join(path, 'log', str(idx) + '.bed')
-    with file_transaction(out_file) as out_tx:
-        with open(out_tx, 'w') as out_handle:
+    with utils.safe_run(out_file):
+        with open(out_file, 'w') as out_handle:
             for idc in metacluster:
                 for idl in cluster[idc].loci2seq:
                     pos = loci[idl].list()
