@@ -4,8 +4,6 @@ import os.path as op
 from collections import defaultdict
 import gzip
 
-from bcbio import utils
-
 
 def targets_enrichment(args):
     if args.sps not in ["hsa"]:

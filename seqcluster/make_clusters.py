@@ -9,8 +9,7 @@ import pandas as pd
 
 import pybedtools
 
-from bcbio.utils import file_exists
-
+from seqcluster.libs.utils import file_exists
 import libs.logger as mylog
 from libs.read import load_data
 from libs.mystats import up_threshold

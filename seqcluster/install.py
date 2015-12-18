@@ -13,11 +13,14 @@ import contextlib
 try:
     import bcbio
 except:
+    print "Probably this will fail, you need bcbio-nextgen "
+    "for many installation functions."
     pass
 
 REMOTES = {
             "requirements": "https://raw.github.com/lpantano/seqcluster/master/requirements.txt",
             "gitrepo": "https://github.com/lpantano/seqcluster.git",
+            "gitrepo-bcbio": "https://github.com/chapmanb/bcbio-nextgen.git"
            }
 
 def _mkdir(path):
@@ -154,6 +157,8 @@ def _upgrade():
     pip_bin = os.path.join(conda_dir, "pip")
     subprocess.check_call([pip_bin, "install", "--upgrade", "--no-deps",
                            "git+%s#egg=seqcluster" % REMOTES["gitrepo"]])
+    subprocess.check_call([pip_bin, "install", "--upgrade", "--no-deps",
+                           "git+%s#egg=bcbio-nextgen" % REMOTES["gitrepo-bcbio"]])
 
 def actions(args):
     if args.upgrade:

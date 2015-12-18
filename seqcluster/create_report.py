@@ -2,9 +2,9 @@ import os
 import shutil
 import logging
 
-from bcbio import install
 try:
-    install._set_matplotlib_default_backend()
+    from bcbio.install import _set_matplotlib_default_backend
+    _set_matplotlib_default_backend()
 except OSError:
     pass
 import matplotlib

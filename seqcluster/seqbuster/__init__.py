@@ -5,10 +5,9 @@ import shutil
 import pandas as pd
 import pysam
 
-from bcbio import bam
-from bcbio.provenance import do
-from bcbio.utils import file_exists
-
+from seqcluster.libs import do
+from seqcluster.libs.utils import file_exists
+from seqcluster.libs import do
 import seqcluster.libs.logger as mylog
 from seqcluster.align import pyMatch
 from seqcluster.install import _get_miraligner
@@ -229,11 +228,20 @@ def _sort_by_name(bam_fn):
     sort bam file by name sequence
     """
 
+def _sam_to_bam(bam_fn):
+    if bam_fn.endswith("bam"):
+        bam_out = "%s.bam" % os.path.splitext(bam_fn)[0]
+        cmd = "samtools view -Sbh {bam_fn} -o {bam_out}"
+        do.run(cmd)
+        return bam_out
+    return bam_fn
+
 def _read_bam(bam_fn, precursors):
     """
     read bam file and perform realignment of hits
     """
-    handle = bam.open_samfile(bam_fn)
+    mode = "r" if bam_fn.endswith("sam") else "rb"
+    handle = pysam.Samfile(bam_fn, mode)
     reads = defaultdict(realign)
     for line in handle:
         chrom = handle.getrname(line.reference_id)
@@ -400,7 +408,6 @@ def miraligner(args):
     """
     Realign BAM hits to miRBAse to get better accuracy and annotation
     """
-    config = {"algorithm": {"num_cores": 1}}
     hairpin, mirna = _download_mirbase(args)
     precursors = _read_precursor(args.hairpin, args.sps)
     matures = _read_mature(args.mirna, args.sps)
@@ -409,7 +416,7 @@ def miraligner(args):
         sample = op.splitext(op.basename(bam_fn))[0]
         if bam_fn.endswith("bam") or bam_fn.endswith("sam"):
             logger.info("Reading %s" % bam_fn)
-            bam_fn = bam.sam_to_bam(bam_fn, config)
+            bam_fn = _sam_to_bam(bam_fn)
             bam_sort_by_n = op.splitext(bam_fn)[0] + "_sort"
             pysam.sort("-n", bam_fn, bam_sort_by_n)
             reads = _read_bam(bam_sort_by_n + ".bam", precursors)

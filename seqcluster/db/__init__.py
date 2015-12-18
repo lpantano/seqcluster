@@ -7,7 +7,7 @@ import json
 
 from collections import defaultdict
 
-from bcbio.utils import safe_makedir
+from seqcluster.libs.utils import safe_dirs
 
 
 def _create_db(name):
@@ -98,7 +98,7 @@ def _close(con):
         con.close()
 
 def make_database(data, name="seqcluster.db", out_dir="database"):
-    out_dir = safe_makedir(out_dir)
+    out_dir = safe_dirs(out_dir)
     op.abspath(out_dir)
     con = _create_db(op.join(out_dir, name))
     _insert_data(con, data)

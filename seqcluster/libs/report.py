@@ -12,8 +12,7 @@ from read import map_to_precursors, map_to_precursors_on_fly
 from utils import safe_dirs
 from progressbar import ProgressBar
 
-from bcbio.utils import file_exists
-
+from seqcluster.libs.utils import file_exists
 from seqcluster.html import HTML
 from seqcluster import templates
 
