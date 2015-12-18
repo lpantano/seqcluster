@@ -5,7 +5,7 @@ import logging
 try:
     from bcbio.install import _set_matplotlib_default_backend
     _set_matplotlib_default_backend()
-except OSError:
+except (ImportError, OSError):
     pass
 import matplotlib
 matplotlib.use('Agg', force=True)
