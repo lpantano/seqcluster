@@ -1,5 +1,7 @@
 set -e
 
+mkdir -p test_res
+cd test_res
 # seqcluster simulator --fasta origin.fa --out sim
 bowtie -f -a --best --strata ~/soft/bcbio/genomes/Hsapiens/hg19/bowtie/hg19 sim.fasta -S sim.sam
 samtools view -Sbh sim.sam > sim.bam
@@ -10,3 +12,5 @@ eqcluster cluster -a sim_sort.bam -m sim.ma -o test_out_res -r ~/soft/bcbio/geno
 rm -rf res_bayes
 seqcluster cluster -a sim_sort.bam -m sim.ma -o res_bayes -r ~/soft/bcbio/genomes/Hsapiens/hg19/seq/hg19.fa --method bayes
 # seqcluster report -j res/seqcluster.json -o report -r  ~/orch/groups/bcbio/genomes/Hsapiens/hg19/seq/hg19.fa
+
+cd -

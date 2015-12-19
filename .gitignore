@@ -1,8 +1,9 @@
 # test
 data/examples/*/test_out*
-data/test_c*/report/*
-data/test_c*/res/*
+data/test_*/report/*
+data/test_*/res/*
 data/res/*
+data/examples/*/test_*
 data/test_collapse/collapse/res/*
 data/test_collapse/prepare/*
 data/examples/database/*

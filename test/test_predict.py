@@ -16,7 +16,7 @@ class TestPredict(TestCase):
         if find_cmd("tRNAscan-SE"):
             mod_dir = os.path.dirname(inspect.getfile(seqcluster)).replace("seqcluster/", "")
             os.chdir(os.path.join(mod_dir, "data/examples"))
-            out_dir = os.path.join(mod_dir, "data/examples/predictions")
+            out_dir = os.path.join(mod_dir, "data/examples/test_out_predictions")
             arg = namedtuple('args', 'debug print_debug MIN_SEQ json reference')
             args = arg(True, True, 1, "seqcluster.json", "../genomes/genome.fa")
             initialize_logger(".", args.debug, args.print_debug)

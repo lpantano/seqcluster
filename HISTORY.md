@@ -1,11 +1,16 @@
-- current `1.1.1*`
+- current `1.1.14`
 
+- 1.1.13
+
+* Improve miRNA annotation function and add first functions
+  to allow SNP detections
+* remove bcbio funtions to simpler to avoid circular dependency
 * add function to get targets from targetscan for human
 * select best precursor based on size
 * parse pyMAtch to be compatible with other tools
 * add C function working as miraligner by @franpantano (pyMatch)
 
-- 1.1.14
+- 1.1.11
 
 * first version of simulator of 33 nt long sRNA from fasta
 * add Rmd template for bcbio pipeline
