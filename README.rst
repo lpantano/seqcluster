@@ -18,7 +18,11 @@ small RNA analysis from NGS data
 Cite
 ---------
 
-A non-biased framework for the annotation and classification of the non-miRNA small RNA transcriptome.
+**Specific small-RNA signatures in the amygdala at premotor and motor stages of Parkinson's disease revealed by deep sequencing analysis**. Pantano L, Friedländer MR, Escaramís G, Lizano E, Pallarès-Albanell J, Ferrer I, Estivill X, Martí E.
+Bioinformatics. 2015 Nov 2. pii: btv632. [Epub ahead of print]
+PMID: `26530722 <http://www.ncbi.nlm.nih.gov/pubmed/26530722>`_
+
+**A non-biased framework for the annotation and classification of the non-miRNA small RNA transcriptome.**
 Pantano L1, Estivill X, Martí E. Bioinformatics. 2011 Nov 15;27(22):3202-3. doi: 10.1093/bioinformatics/btr527. Epub 2011 Oct 5.
 PMID: 21976421
 
