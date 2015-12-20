@@ -23,7 +23,7 @@ install conda if you want an isolate env::
 
 You can install directly from binstar (only for linux)::
 
-    ~/install/seqcluster/anaconda/conda install seqcluster_lite bcbio-nextgen -c lpantano -c bcbio
+    ~/install/seqcluster/anaconda/conda install seqcluster bcbio-nextgen -c bioconda -c bcbio
 
 With that you will have everything you need for the python package. 
 The last step is to add seqcluster to your PATH (see below).
