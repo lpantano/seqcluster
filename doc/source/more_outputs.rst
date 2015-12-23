@@ -8,7 +8,7 @@ More outputs
 Report
 ========
 
-Beside the static HTML report that you can get using ``report`` `subcommand <http://seqcluster.readthedocs.org/getting_started.html#report>`_, you can download `this <https://github.com/lpantano/seqclusterViz/archive/v0.99.zip>`_ HTML. (watch the repository to get notifications of new releases.)
+Beside the static HTML report that you can get using ``report`` `subcommand <http://seqcluster.readthedocs.org/getting_started.html#report>`_, you can download `this <https://github.com/lpantano/seqclusterViz/archive/v0.0.1.zip>`_ HTML. (watch the repository to get notifications of new releases.)
 
 * Go inside ``seqclusterViz`` folder
 * Open ``reader.html``
