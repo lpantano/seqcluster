@@ -90,7 +90,7 @@ If you want to install STAR indexes since gets kind of better results than bowti
     seqcluster_install --data $PATH_TO_DATA --genomes hg19 --aligners star
 
 
-R pakcage
+R package
 ---------
 
 Install isomiRs package for R using devtools:: 
