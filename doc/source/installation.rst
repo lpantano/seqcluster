@@ -58,7 +58,7 @@ For some steps of a typical small RNA-seq pipeline (recommended to use directly 
 * STAR, bowtie
 * fastqc
 * cutadapt (install with ``pip`` using the same ``python`` env than seqcluster. 
-You will need to link the ``cutadapt`` binary to your ``PATH``)::
+You will need to link the ``cutadapt`` binary to your ``PATH``)
     
 **easy installation**
 
