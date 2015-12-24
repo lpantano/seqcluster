@@ -9,7 +9,7 @@ Seqcluster
 
 **With bcbio installed**
 
-If you already have `bcbio <https://github.com/chapmanb/bcbio-nextgen>`_, seqcluster comes with it. If you want the last development version::
+If you already have `bcbio`_, seqcluster comes with it. If you want the last development version::
 
 /bcbio_anaconda_bin_path/seqcluster_install.py --upgrade
 
