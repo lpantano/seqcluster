@@ -183,7 +183,7 @@ def _realign(seq, precursor, start):
     subs, add = [], []
     for e in error:
         if e < len(seq) - 3:
-            subs.append([e, seq[e]])
+            subs.append([e, seq[e], precursor[start + e]])
 
     pattern, error_add = [], []
     for e in range(len(seq) - 3, len(seq)):

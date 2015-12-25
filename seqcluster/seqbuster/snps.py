@@ -7,7 +7,7 @@ def _parse_mut(mut):
         mut = mut[1:]
         multiplier = -1
     nt = mut.strip('0123456789')
-    pos = int(mut[:len(nt)-1]) * multiplier
+    pos = int(mut[:1]) * multiplier
     return nt, pos
 
 def _get_reference_position(isomir):
@@ -48,16 +48,35 @@ def _genotype(data):
         return "1/1"
     return "1/0"
 
+def _print_header(data):
+    """
+    Create vcf header to make
+    a valid vcf.
+    """
+    print "##fileformat=VCFv4.2"
+    print "##source=seqbuster2.3"
+    print "##reference=mirbase"
+    for pos in data:
+        print "##contig=<ID=%s>" % pos["chrom"]
+    print '##INFO=<ID=ID,Number=1,Type=String,Description="miRNA name">'
+    print '##FORMAT=<ID=GT,Number=1,Type=Integer,Description="Genotype">'
+    print '##FORMAT=<ID=NR,Number=A,Type=Integer,Description="Total reads supporting the variant">'
+    print '##FORMAT=<ID=NS,Number=A,Type=Float,Description="Total number of different sequences supporting the variant">'
+    print "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMP001"
+
 def print_vcf(data):
     """Print vcf line following rules."""
+    id_name = "."
+    qual = "."
     chrom = data['chrom']
     pos = data['pre_pos']
     nt_ref = data['nt'][1]
     nt_snp = data['nt'][0]
     flt = "PASS"
-    info = "id=%s" % data['mature']
-    frmt = "%s:%s:%s" % (data["counts"], data["diff"], _genotype(data))
-    print "\t".join(map(str, [chrom, pos, nt_ref, nt_snp, flt, info, frmt]))
+    info = "ID=%s" % data['mature']
+    frmt = "GT:NR:NS"
+    gntp = "%s:%s:%s" % (_genotype(data), data["counts"], data["diff"])
+    print "\t".join(map(str, [chrom, pos, id_name, nt_ref, nt_snp, qual, flt, info, frmt, gntp]))
 
 def _make_header():
     """
@@ -67,6 +86,7 @@ def _make_header():
 def liftover(pass_pos, matures):
     """Make position at precursor"""
     fixed_pos = []
+    _print_header(pass_pos)
     for pos in pass_pos:
         mir = pos["mature"]
         db_pos = matures[pos["chrom"]]
