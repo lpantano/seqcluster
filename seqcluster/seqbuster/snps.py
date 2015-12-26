@@ -1,3 +1,7 @@
+import sys
+
+STDOUT = sys.stdout
+
 def _parse_mut(mut):
     """
     Parse mutation field to get position and nts.
@@ -53,16 +57,16 @@ def _print_header(data):
     Create vcf header to make
     a valid vcf.
     """
-    print "##fileformat=VCFv4.2"
-    print "##source=seqbuster2.3"
-    print "##reference=mirbase"
+    print >>STDOUT, "##fileformat=VCFv4.2"
+    print >>STDOUT, "##source=seqbuster2.3"
+    print >>STDOUT, "##reference=mirbase"
     for pos in data:
-        print "##contig=<ID=%s>" % pos["chrom"]
-    print '##INFO=<ID=ID,Number=1,Type=String,Description="miRNA name">'
-    print '##FORMAT=<ID=GT,Number=1,Type=Integer,Description="Genotype">'
-    print '##FORMAT=<ID=NR,Number=A,Type=Integer,Description="Total reads supporting the variant">'
-    print '##FORMAT=<ID=NS,Number=A,Type=Float,Description="Total number of different sequences supporting the variant">'
-    print "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMP001"
+        print >>STDOUT, "##contig=<ID=%s>" % pos["chrom"]
+    print >>STDOUT, '##INFO=<ID=ID,Number=1,Type=String,Description="miRNA name">'
+    print >>STDOUT, '##FORMAT=<ID=GT,Number=1,Type=Integer,Description="Genotype">'
+    print >>STDOUT, '##FORMAT=<ID=NR,Number=A,Type=Integer,Description="Total reads supporting the variant">'
+    print >>STDOUT, '##FORMAT=<ID=NS,Number=A,Type=Float,Description="Total number of different sequences supporting the variant">'
+    print >>STDOUT, "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMP001"
 
 def print_vcf(data):
     """Print vcf line following rules."""
@@ -76,7 +80,7 @@ def print_vcf(data):
     info = "ID=%s" % data['mature']
     frmt = "GT:NR:NS"
     gntp = "%s:%s:%s" % (_genotype(data), data["counts"], data["diff"])
-    print "\t".join(map(str, [chrom, pos, id_name, nt_ref, nt_snp, qual, flt, info, frmt, gntp]))
+    print >>STDOUT, "\t".join(map(str, [chrom, pos, id_name, nt_ref, nt_snp, qual, flt, info, frmt, gntp]))
 
 def _make_header():
     """
@@ -97,7 +101,7 @@ def liftover(pass_pos, matures):
         print_vcf(pos)
     return fixed_pos
 
-def create_vcf(isomirs, matures):
+def create_vcf(isomirs, matures, stdout=None):
     """
     Create vcf file of changes for all samples.
     PASS will be ones with > 3 isomiRs supporting the position
@@ -107,8 +111,7 @@ def create_vcf(isomirs, matures):
     mirna = isomirs.groupby(['chrom']).sum()
     sv = isomirs.groupby(['chrom', 'mature', 'sv'], as_index=False).sum()
     sv["diff"] = isomirs.groupby(['chrom', 'mature', 'sv'], as_index=False).size().reset_index().loc[:,0]
-    # print isomirs
-    # print sv
     pass_pos = _get_pct(sv, mirna)
+    if stdout: #if file
+        STDOUT = stdout
     pass_pos = liftover(pass_pos, matures)
-    # annotate with bedtools? or maybe better another pypackage

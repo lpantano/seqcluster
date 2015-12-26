@@ -442,7 +442,9 @@ def miraligner(args):
         out_file, dt, dt_pre= _tab_output(reads, out_file, sample)
         try:
             create_vcf(dt_pre, matures)
-        except:
+        except Exception as e:
+            logger.info(e.__doc__)
+            logger.info(e.message)
             pass
         if isinstance(dt, pd.DataFrame):
             out_dts.append(dt)
