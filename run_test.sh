@@ -17,12 +17,5 @@ unset PYTHONPATH
 export PYTHONNOUSERSITE=1
 echo $SC_DIR
 
-if [ $1 = "cluster" ] ; then
-    echo "Run cluster report and predic tests."
-    cd data/examples/cluster
-    bash run.sh
-    cd -
-else
-    echo "Run module test."
-    "$SC_DIR/nosetests" -v -s -a "$@"
-fi
+echo "Run module test."
+"$SC_DIR/nosetests" -v -s -a "$@"

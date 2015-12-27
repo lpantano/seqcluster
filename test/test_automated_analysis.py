@@ -73,9 +73,11 @@ class AutomatedAnalysisTest(unittest.TestCase):
         with make_workdir() as workdir:
             cl = ["seqcluster",
                   "cluster",
-                  "-m", "../../data/examples/cluster/seqs.ma",
-                  "-a", "../../data/examples/clusters/seqs.bam",
-                  "-gtf", "../../data/examples/cluster/annotation_red.gtf",
+                  "-m", "../../data/examples/cluster/seqs_set.ma",
+                  "-a", "../../data/examples/cluster/seqs_map.bam",
+                  "--gtf", "../../data/examples/cluster/ann_reduced.gtf",
+                  "-r", "../../data/genomes/genome.fa",
                   "-o", "test_out_res"]
-            # subprocess.check_call(cl)
+            print " ".join(cl)
+            subprocess.check_call(cl)
 
