@@ -441,10 +441,20 @@ def miraligner(args):
         out_file = op.join(args.out, sample + ".mirna")
         out_file, dt, dt_pre= _tab_output(reads, out_file, sample)
         try:
-            create_vcf(dt_pre, matures)
+            vcf_file = op.join(args.out, sample + ".vcf")
+            if not file_exists(vcf_file):
+                with open(vcf_file, 'w') as out_handle:
+                    create_vcf(dt_pre, matures, out_handle)
+            try:
+                import vcf
+                vcf.Reader(filename=vcf_file)
+            except Exception as e:
+                logger.warning(e.__doc__)
+                logger.warning(e.message)
+                pass
         except Exception as e:
-            logger.info(e.__doc__)
-            logger.info(e.message)
+            logger.warning(e.__doc__)
+            logger.warning(e.message)
             pass
         if isinstance(dt, pd.DataFrame):
             out_dts.append(dt)

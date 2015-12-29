@@ -1,6 +1,9 @@
 import sys
 
+import seqcluster.libs.logger as mylog
+
 STDOUT = sys.stdout
+logger = mylog.getLogger(__name__)
 
 def _parse_mut(mut):
     """
@@ -107,6 +110,7 @@ def create_vcf(isomirs, matures, stdout=None):
     PASS will be ones with > 3 isomiRs supporting the position
          and > 30% of reads, otherwise LOW
     """
+    global STDOUT
     isomirs['sv'] = [_get_reference_position(m) for m in isomirs["isomir"]]
     mirna = isomirs.groupby(['chrom']).sum()
     sv = isomirs.groupby(['chrom', 'mature', 'sv'], as_index=False).sum()
