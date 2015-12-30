@@ -1,5 +1,5 @@
 # test
-data/examples/*/test_out*
+*/test_out*
 data/test_*/report/*
 data/test_*/res/*
 data/res/*
