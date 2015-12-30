@@ -95,6 +95,47 @@ def cluster(args):
     logger.info("Finished")
 
 
+def _check_args(args):
+    """
+    check arguments before starting analysis.
+    """
+    logger.info("Checking parameters and files")
+    args.dir_out = args.out
+    args.samplename = "pro"
+    global decision_cluster
+    global similar
+    if not os.path.isdir(args.out):
+        logger.warning("the output folder doens't exists")
+        os.mkdirs(args.out)
+    if args.bed and args.gtf:
+        logger.error("cannot provide -b and -g at the same time")
+        raise SyntaxError
+    if args.debug:
+        logger.info("DEBUG messages will be showed in file.")
+    if args.bed:
+        args.list_files = args.bed
+        args.type_ann = "bed"
+    if args.gtf:
+        args.list_files = args.gtf
+        args.type_ann = "gtf"
+    logger.info("Output dir will be: %s" % args.dir_out)
+    if not all([file_exists(args.ffile), file_exists(args.afile)]):
+        logger.error("I/O error: Seqs.ma or Seqs.bam. ")
+        raise IOError("Seqs.ma or/and Seqs.bam doesn't exists.")
+    if hasattr(args, 'list_files'):
+        beds = args.list_files.split(",")
+        for filebed in beds:
+            if not file_exists(filebed):
+                logger.error("I/O error: {0}".format(filebed))
+                raise IOError("%s  annotation files doesn't exist" % filebed)
+    param.decision_cluster = args.method
+    if args.similar:
+        param.similar = float(args.similar)
+    if args.min_seqs:
+        param.min_seqs = int(args.min_seqs)
+    return args
+
+
 def _total_counts(seqs, seqL, aligned=False):
     """
     Counts total seqs after each step
@@ -120,6 +161,129 @@ def _write_size_table(data_freq, data_len, ann_valid, cluster_id):
     for l in sorted(dd):
         table += "%s\t%s\t%s\t%s\n" % (l, dd[l], ann_valid, cluster_id)
     return table
+
+
+def _get_annotation(c, loci):
+    """get annotation of transcriptional units"""
+    data_ann_temp = {}
+    data_ann = []
+    counts = Counter()
+    for lid in c.loci2seq:
+        for dbi in loci[lid].db_ann.keys():
+            data_ann_temp[dbi] = {dbi: map(lambda (x): loci[lid].db_ann[dbi].ann[x].name, loci[lid].db_ann[dbi].ann.keys())}
+            logger.debug("_json_: data_ann_temp %s %s" % (dbi, data_ann_temp[dbi]))
+            counts[dbi] += 1
+        data_ann = data_ann + map(lambda (x): data_ann_temp[x], data_ann_temp.keys())
+        logger.debug("_json_: data_ann %s" % data_ann)
+    counts = {k: v for k, v in counts.iteritems()}
+    total_loci = sum([counts[db] for db in counts])
+    valid_ann = [k for k, v in counts.iteritems() if up_threshold(v, total_loci, 0.7)]
+    return data_ann, valid_ann
+
+
+def _get_counts(list_seqs, seqs_obj, factor):
+    scaled = {}
+    seq = namedtuple('seq', 'freq norm_freq')
+    for s in list_seqs:
+        if s not in factor:
+            factor[s] = 1
+        samples = seqs_obj[s].norm_freq.keys()
+        corrected_norm = np.array(seqs_obj[s].norm_freq.values()) * factor[s]
+        corrected_raw = np.array(seqs_obj[s].freq.values()) * factor[s]
+        scaled[s] = seq(dict(zip(samples, corrected_raw)), dict(zip(samples, corrected_norm)))
+    return scaled
+
+
+def _sum_by_samples(seqs_freq, samples_order):
+    """
+    Sum sequences of a metacluster by samples.
+    """
+    n = len(seqs_freq[seqs_freq.keys()[0]].freq.keys())
+    y = np.array([0] * n)
+    for s in seqs_freq:
+        x = seqs_freq[s].freq
+        exp = [seqs_freq[s].freq[sam] for sam in samples_order]
+        y = list(np.array(exp) + y)
+    return y
+
+
+def _annotate(args, setclus):
+    """annotate transcriptional units with
+    gtf/bed files provided by -b/g option"""
+    logger.info("Creating bed file")
+    bedfile = generate_position_bed(setclus)
+    a = pybedtools.BedTool(bedfile, from_string=True)
+    beds = []
+    logger.info("Annotating clusters")
+    if hasattr(args, 'list_files'):
+        beds = args.list_files.split(",")
+        for filebed in beds:
+            logger.info("Using %s " % filebed)
+            db = os.path.basename(filebed)
+            b = pybedtools.BedTool(filebed)
+            c = a.intersect(b, wo=True)
+            setclus = anncluster(c, setclus, db, args.type_ann)
+    return setclus
+
+
+def _clean_alignment(args):
+    """
+    Prepare alignment for cluster detection.
+    """
+    logger.info("Clean bam file with highly repetitive reads with low counts. sum(counts)/n_hits > 1%")
+    bam_file, seq_obj = clean_bam_file(args.afile, args.mask)
+    logger.info("Using %s file" % bam_file)
+    detect_complexity(bam_file, args.ref)
+    return bam_file, seq_obj
+
+
+def _create_clusters(seqL, bam_file, args):
+    """
+    Cluster sequences and
+    create metaclusters with multi-mappers.
+    """
+    clus_obj = []
+    logger.info("Parsing aligned file")
+    cluster_file = op.join(args.out, "cluster.bed")
+    if not os.path.exists(args.out + '/list_obj.pk'):
+        logger.info("Merging position")
+        if not file_exists(cluster_file):
+            aligned_bed = parse_align_file(bam_file)
+            a = pybedtools.BedTool(aligned_bed, from_string=True)
+            c = a.cluster(s=True, d=20)
+            c.saveas(cluster_file)
+        else:
+            c = pybedtools.BedTool(cluster_file)
+        logger.info("Creating clusters")
+        clus_obj = detect_clusters(c, seqL, args.min_seqs, args.non_un_gl)
+        with open(args.out + '/list_obj.pk', 'wb') as output:
+            pickle.dump(clus_obj, output, pickle.HIGHEST_PROTOCOL)
+    else:
+        logger.info("Loading previous clusters")
+        with open(args.out + '/list_obj.pk', 'rb') as input:
+            clus_obj = pickle.load(input)
+    # bedfile = pybedtools.BedTool(generate_position_bed(clus_obj), from_string=True)
+    # seqs_2_loci = bedfile.intersect(pybedtools.BedTool(aligned_bed, from_string=True), wo=True, s=True)
+    # seqs_2_position = add_seqs_position_to_loci(seqs_2_loci, seqL)
+    logger.info("%s clusters found" % (len(clus_obj.clusid)))
+    return clus_obj
+
+
+def _cleaning(clusL, path):
+    """
+    Load saved cluster and jump to next step
+    """
+    backup = op.join(path, "list_obj_red.pk")
+    if not op.exists(backup):
+        clus_obj = reduceloci(clusL, path)
+        with open(backup, 'wb') as output:
+            pickle.dump(clus_obj, output, pickle.HIGHEST_PROTOCOL)
+        return clus_obj
+    else:
+        logger.info("Loading previous reduced clusters")
+        with open(backup, 'rb') as in_handle:
+            clus_obj = pickle.load(in_handle)
+        return clus_obj
 
 
 def _create_json(clusL, args):
@@ -167,185 +331,3 @@ def _create_json(clusL, args):
         handle_out.write(json.dumps([data_clus], skipkeys=True, indent=2))
 
     return out_file
-
-
-def _get_annotation(c, loci):
-    """get annotation of transcriptional units"""
-    data_ann_temp = {}
-    data_ann = []
-    counts = Counter()
-    for lid in c.loci2seq:
-        for dbi in loci[lid].db_ann.keys():
-            data_ann_temp[dbi] = {dbi: map(lambda (x): loci[lid].db_ann[dbi].ann[x].name, loci[lid].db_ann[dbi].ann.keys())}
-            logger.debug("_json_: data_ann_temp %s %s" % (dbi, data_ann_temp[dbi]))
-            counts[dbi] += 1
-        data_ann = data_ann + map(lambda (x): data_ann_temp[x], data_ann_temp.keys())
-        logger.debug("_json_: data_ann %s" % data_ann)
-    counts = {k: v for k, v in counts.iteritems()}
-    total_loci = sum([counts[db] for db in counts])
-    valid_ann = [k for k, v in counts.iteritems() if up_threshold(v, total_loci, 0.7)]
-    return data_ann, valid_ann
-
-
-def _get_counts(list_seqs, seqs_obj, factor):
-    scaled = {}
-    seq = namedtuple('seq', 'freq norm_freq')
-    for s in list_seqs:
-        if s not in factor:
-            factor[s] = 1
-        samples = seqs_obj[s].norm_freq.keys()
-        corrected_norm = np.array(seqs_obj[s].norm_freq.values()) * factor[s]
-        corrected_raw = np.array(seqs_obj[s].freq.values()) * factor[s]
-        scaled[s] = seq(dict(zip(samples, corrected_raw)), dict(zip(samples, corrected_norm)))
-    return scaled
-
-
-def _sum_by_samples(seqs_freq, samples_order):
-    n = len(seqs_freq[seqs_freq.keys()[0]].freq.keys())
-    y = np.array([0] * n)
-    for s in seqs_freq:
-        x = seqs_freq[s].freq
-        exp = [seqs_freq[s].freq[sam] for sam in samples_order]
-        y = list(np.array(exp) + y)
-    return y
-
-
-def _annotate(args, setclus):
-    """annotate transcriptional units with
-    gtf/bed files provided by -b/g option"""
-    logger.info("Creating bed file")
-    bedfile = generate_position_bed(setclus)
-    a = pybedtools.BedTool(bedfile, from_string=True)
-    beds = []
-    logger.info("Annotating clusters")
-    if hasattr(args, 'list_files'):
-        beds = args.list_files.split(",")
-        for filebed in beds:
-            logger.info("Using %s " % filebed)
-            db = os.path.basename(filebed)
-            b = pybedtools.BedTool(filebed)
-            c = a.intersect(b, wo=True)
-            setclus = anncluster(c, setclus, db, args.type_ann)
-    return setclus
-
-
-def _clean_alignment(args):
-    """
-    Prepare alignment for cluster detection.
-    """
-    logger.info("Clean bam file with highly repetitive reads with low counts. sum(counts)/n_hits > 1%")
-    bam_file, seq_obj = clean_bam_file(args.afile, args.mask)
-    logger.info("Using %s file" % bam_file)
-    detect_complexity(bam_file, args.ref)
-    return bam_file, seq_obj
-
-
-def _create_clusters(seqL, bam_file, args):
-    clus_obj = []
-    logger.info("Parsing aligned file")
-    cluster_file = op.join(args.out, "cluster.bed")
-    if not os.path.exists(args.out + '/list_obj.pk'):
-        logger.info("Merging position")
-        if not file_exists(cluster_file):
-            aligned_bed = parse_align_file(bam_file)
-            a = pybedtools.BedTool(aligned_bed, from_string=True)
-            # c = a.merge(o="distinct", c="4,5,6", s=True, d=20)
-            c = a.cluster(s=True, d=20)
-            c.saveas(cluster_file)
-        else:
-            c = pybedtools.BedTool(cluster_file)
-        logger.info("Creating clusters")
-        # clus_obj = parse_merge_file(c, seqL, args.MIN_SEQ)
-        clus_obj = detect_clusters(c, seqL, args.min_seqs, args.non_un_gl)
-        with open(args.out + '/list_obj.pk', 'wb') as output:
-            pickle.dump(clus_obj, output, pickle.HIGHEST_PROTOCOL)
-    else:
-        logger.info("Loading previous clusters")
-        with open(args.out + '/list_obj.pk', 'rb') as input:
-            clus_obj = pickle.load(input)
-    # bedfile = pybedtools.BedTool(generate_position_bed(clus_obj), from_string=True)
-    # seqs_2_loci = bedfile.intersect(pybedtools.BedTool(aligned_bed, from_string=True), wo=True, s=True)
-    # seqs_2_position = add_seqs_position_to_loci(seqs_2_loci, seqL)
-    logger.info("%s clusters found" % (len(clus_obj.clusid)))
-    return clus_obj
-
-
-def _cleaning(clusL, path):
-    """
-    Load saved cluster and jump to next step
-    """
-    backup = op.join(path, "list_obj_red.pk")
-    if not op.exists(backup):
-        clus_obj = reduceloci(clusL, path)
-        with open(backup, 'wb') as output:
-            pickle.dump(clus_obj, output, pickle.HIGHEST_PROTOCOL)
-        return clus_obj
-    else:
-        logger.info("Loading previous reduced clusters")
-        with open(backup, 'rb') as in_handle:
-            clus_obj = pickle.load(in_handle)
-        return clus_obj
-
-
-def _check_args(args):
-    logger.info("Checking parameters and files")
-    args.dir_out = args.out
-    args.samplename = "pro"
-    global decision_cluster
-    global similar
-    if not os.path.isdir(args.out):
-        logger.warning("the output folder doens't exists")
-        os.mkdirs(args.out)
-    if args.bed and args.gtf:
-        logger.error("cannot provide -b and -g at the same time")
-        raise SyntaxError
-    if args.debug:
-        logger.info("DEBUG messages will be showed in file.")
-    if args.bed:
-        args.list_files = args.bed
-        args.type_ann = "bed"
-    if args.gtf:
-        args.list_files = args.gtf
-        args.type_ann = "gtf"
-    logger.info("Output dir will be: %s" % args.dir_out)
-    if not all([file_exists(args.ffile), file_exists(args.afile)]):
-        logger.error("I/O error: Seqs.ma or Seqs.bam. ")
-        raise IOError("Seqs.ma or Seqs.bam doesn't exists.")
-    if hasattr(args, 'list_files'):
-        beds = args.list_files.split(",")
-        for filebed in beds:
-            if not file_exists(filebed):
-                logger.error("I/O error: {0}".format(filebed))
-                raise IOError("%s  annotation files doesn't exist" % filebed)
-    param.decision_cluster = args.method
-    if args.similar:
-        param.similar = float(args.similar)
-    if args.min_seqs:
-        param.min_seqs = int(args.min_seqs)
-    return args
-
-
-#    contentDivC += table.make_div(expchart.getExpDiv(), "expseqs", "css_exp")
-#    contentDivC += table.make_div("<pre>" + clus.showseq_plain + "</pre>", "plainseqs", "css_seqs")
-#    tmp_cont, allData, exp = _create_sequences_out(seqListTemp, seq)
-
-#def _create_sequences_out(seqListTemp, clus):
-#    allData = "var allData = [{"
-#    for s in seqListTemp:
-#        allData += '"%s":[' % s
-#        seq = clus.seq[s]
-#        out.write("S %s %s\n" % (seq.seq, seq.len))
-#        #showseq+="S %s %s " % (seq.seq,seq.len)
-#        colseqs = [seq.seq, seq.len]
-#        for sample in samples_list:
-#            allData += '{"sample":"%s","reads":"%s","color":"#FF6600"},' % (sample, int(clus.seq[s].freq[sample]))
-#            colseqs.append(int(clus.seq[s].freq[sample]))
-#            exp += int(clus.seq[s].freq[sample])
-#            if (not freq.has_key(sample)):
-#                freq[sample] = 0
-#            freq[sample] += int(clus.seq[s].freq[sample])
-#        allData = allData[:-1] + "],"
-#        contentDivS += table.make_line("".join(map(table.make_cell, colseqs)))
-#
-#    allData = allData[:-1] + "}];"
-
