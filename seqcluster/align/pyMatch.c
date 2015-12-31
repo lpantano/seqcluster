@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 
 int EvalError(char *str0, char *str1, int len) {
