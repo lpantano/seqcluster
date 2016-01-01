@@ -1,6 +1,7 @@
-- current `1.1.15`
+- development
 
 * Adapt C code to macosx
+* Improve test functions
 
 - 1.1.14
 
