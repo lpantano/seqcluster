@@ -1,6 +1,8 @@
-- current `1.1.14`
+- current `1.1.15`
 
-- 1.1.13
+* Adapt C code to macosx
+
+- 1.1.14
 
 * Improve miRNA annotation function and add first functions
   to allow SNP detections
