@@ -69,7 +69,6 @@ class AutomatedAnalysisTest(unittest.TestCase):
     def test_srnaseq_star(self):
         """Run cluster analysis
         """
-        # self._install_test_files(self.data_dir)
         with make_workdir() as workdir:
             cl = ["seqcluster",
                   "cluster",
@@ -78,6 +77,22 @@ class AutomatedAnalysisTest(unittest.TestCase):
                   "--gtf", "../../data/examples/cluster/ann_reduced.gtf",
                   "-r", "../../data/genomes/genome.fa",
                   "-o", "test_out_res"]
+            print " ".join(cl)
+            subprocess.check_call(cl)
+
+    @attr(complete=True)
+    @attr(miraligner=True)
+    def test_srnaseq_star(self):
+        """Run miraligner analysis
+        """
+        with make_workdir() as workdir:
+            cl = ["seqcluster",
+                  "seqbuster",
+                  "--sps", "hsa",
+                  "--hairpin", "../../data/examples/miraligner/hairpin.fa",
+                  "--mirna", "../../data/examples/miraligner/miRNA.str",
+                  "-o", "test_out_mirs_fasta",
+                  "../../data/examples/miraligner/sim_isomir.fa"]
             print " ".join(cl)
             subprocess.check_call(cl)
 
