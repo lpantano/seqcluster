@@ -8,7 +8,7 @@ AXIS_FONT = {'fontname': 'Arial', 'size': '14'}
 from math import log as mlog2
 from collections import Counter, defaultdict
 
-from read import map_to_precursors, map_to_precursors_on_fly
+from read import map_to_precursors, map_to_precursors_on_fly, precursor_sequence
 from utils import safe_dirs
 from progressbar import ProgressBar
 
@@ -51,6 +51,8 @@ def make_profile(data, out_dir, args):
         safe_dirs(os.path.join(out_dir, c))
         valid, ann, pos_structure = _single_cluster(c, data, os.path.join(out_dir, c, "maps.tsv"), args)
         data[0][c].update({'profile': pos_structure})
+        loci = data[0][c]['loci']
+        data[0][c]['precursor'] = precursor_sequence(loci[0][0:5], args.ref)
         if valid:
             main_table.append([_get_link(c), _get_ann(valid, ann)])
 

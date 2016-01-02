@@ -49,12 +49,10 @@ def get_sequences_from_cluster(c1, c2, data):
             names.append(c2)
     return seqs, names
 
-
 def get_precursors_from_cluster(c1, c2, data):
     loci1 = data[c1]['loci']
     loci2 = data[c2]['loci']
     return {c1:loci1, c2:loci2}
-
 
 def map_to_precursors(seqs, names, loci, out_file, args):
     """map sequences to precursors with razers3"""
@@ -74,19 +72,21 @@ def map_to_precursors(seqs, names, loci, out_file, args):
             shutil.copy(pre_fasta, out_precursor_file)
     return out_file
 
+def precursor_sequence(loci, reference):
+    """Get sequence from genome"""
+    region = "%s\t%s\t%s\t.\t.\t%s" % (loci[1], loci[2], loci[3], loci[4])
+    precursor = pybedtools.BedTool(str(region), from_string=True).sequence(fi=reference, s=True)
+    return open(precursor.seqfn).read().split("\n")[1]
 
 def map_to_precursors_on_fly(seqs, names, loci, args):
     """map sequences to precursors with franpr algorithm to avoid writting on disk"""
-    region = "%s\t%s\t%s\t.\t.\t%s" % (loci[1], loci[2], loci[3], loci[4])
-    precursor = pybedtools.BedTool(str(region), from_string=True).sequence(fi=args.ref, s=True)
-    precursor = open(precursor.seqfn).read().split("\n")[1]
+    precursor = precursor_sequence(loci, args.ref)
     dat = dict()
     for s, n in itertools.izip(seqs, names):
         res = pyMatch.Match(precursor, str(s), 1, 3)
         if res > -1:
             dat[n] = [res, res + len(s)]
     return dat
-
 
 def deprecated_map_to_precursors(seqs, names, loci, out_file, args):
     """map sequences to precursors with bowtie"""
@@ -106,7 +106,6 @@ def deprecated_map_to_precursors(seqs, names, loci, out_file, args):
             shutil.copy(pre_fasta, out_precursor_file)
     return out_file
 
-
 def get_seqs_fasta(seqs, names, out_fa):
     """get fasta from sequences"""
     with open(out_fa, 'w') as fa_handle:
@@ -114,12 +113,10 @@ def get_seqs_fasta(seqs, names, out_fa):
             print(">cx{1}-{0}\n{0}".format(s, n), file=fa_handle)
     return out_fa
 
-
 def get_fasta(bed_file, ref, out_fa):
     """Run bedtools to get fasta from bed file"""
     cmd = "bedtools getfasta -s -fi {ref} -bed {bed_file} -fo {out_fa}"
     run(cmd.format(**locals()))
-
 
 def get_loci_fasta(loci, out_fa, ref):
     """get fasta from precursor"""
@@ -135,7 +132,6 @@ def get_loci_fasta(loci, out_fa, ref):
                     print("{0}\t{1}\t{2}\t{3}\t{3}\t{4}".format(c, s, e, nc, st), file=bed_handle)
                 get_fasta(bed_file, ref, out_fa)
     return out_fa
-
 
 def read_alignment(out_sam, loci, seqs, out_file):
     """read which seqs map to which loci and
@@ -158,14 +154,12 @@ def read_alignment(out_sam, loci, seqs, out_file):
                     print(l[1], file=out_handle)
     return out_file
 
-
 def get_loci(name, loci):
     for nc in loci:
         for l in loci[nc]:
             lname = "{0}:{1}-{2}({3})".format(l[1], l[2], l[3], l[4])
             if name == lname:
                 return nc, l[0]
-
 
 def plot_positions():
 	return True

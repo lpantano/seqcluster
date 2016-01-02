@@ -44,7 +44,7 @@ def _get_sequences(cluster):
     return data
 
 def _take_closest(num,collection):
-    return min(collection,key=lambda x:abs(x-num))
+    return min(collection, key=lambda x:abs(x-num))
 
 def _get_closer(dat, pos):
     if pos in dat:
@@ -80,7 +80,7 @@ def _insert_data(con, data):
     with con:
         cur = con.cursor()
         cur.execute("DROP TABLE IF EXISTS clusters;")
-        cur.execute("CREATE TABLE clusters(Id INT, Description TEXT, Locus TEXT, Annotation TEXT, Sequences TEXT, Profile TXT)")
+        cur.execute("CREATE TABLE clusters(Id INT, Description TEXT, Locus TEXT, Annotation TEXT, Sequences TEXT, Profile TXT, Precursor TXT)")
         for c in data[0]:
             locus = json.dumps(data[0][c]['loci'])
             annotation = json.dumps(data[0][c]['ann'])
@@ -89,9 +89,9 @@ def _insert_data(con, data):
             keys = data[0][c]['freq'][0].values()[0].keys()
             profile = "Not available."
             if 'profile' in data[0][c]:
-                # data[0][c]['profile']['num_lines'] = len(data[0][c]['profile'])
                 profile = json.dumps(_set_format(data[0][c]['profile']))
-            cur.execute("INSERT INTO clusters VALUES(%s, '%s', '%s', '%s', '%s', '%s')" % (c, description, locus, annotation, sequences, profile))
+            precursor = data[0][c].get('precursor')
+            cur.execute("INSERT INTO clusters VALUES(%s, '%s', '%s', '%s', '%s', '%s', '%s')" % (c, description, locus, annotation, sequences, profile, precursor))
 
 def _close(con):
     if con:
