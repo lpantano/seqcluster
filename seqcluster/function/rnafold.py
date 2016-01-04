@@ -7,16 +7,15 @@ import pybedtools
 
 
 def run_rnafold(seqs):
-    out = 0
+    out = structure = 0
     cmd = ("echo {seqs} | RNAfold").format(**locals())
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     for line in iter(process.stdout.readline, ''):
         if line.find(" ") > -1:
-            out = float(line.split(" ")[1][1:7])
-    # print out
-    if not out:
-        return ""
-    return out
+            out = "".join(line.split(" ")[1:]).strip()[1:-1].replace(" ", "")
+            structure = line.split(" ")[0]
+            out = float(out)
+    return {"structure": structure, "e": out}
 
 def calculate_structure(loci_file):
     structure_file = os.path.splitext(loci_file)[0] + "-fold.tsv"

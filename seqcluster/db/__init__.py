@@ -90,7 +90,7 @@ def _insert_data(con, data):
             profile = "Not available."
             if 'profile' in data[0][c]:
                 profile = json.dumps(_set_format(data[0][c]['profile']))
-            precursor = data[0][c].get('precursor')
+            precursor = json.dumps(data[0][c].get('precursor'))
             cur.execute("INSERT INTO clusters VALUES(%s, '%s', '%s', '%s', '%s', '%s', '%s')" % (c, description, locus, annotation, sequences, profile, precursor))
 
 def _close(con):

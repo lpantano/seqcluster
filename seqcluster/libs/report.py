@@ -13,6 +13,7 @@ from utils import safe_dirs
 from progressbar import ProgressBar
 
 from seqcluster.libs.utils import file_exists
+from seqcluster.function.rnafold import run_rnafold
 from seqcluster.html import HTML
 from seqcluster import templates
 
@@ -52,7 +53,8 @@ def make_profile(data, out_dir, args):
         valid, ann, pos_structure = _single_cluster(c, data, os.path.join(out_dir, c, "maps.tsv"), args)
         data[0][c].update({'profile': pos_structure})
         loci = data[0][c]['loci']
-        data[0][c]['precursor'] = precursor_sequence(loci[0][0:5], args.ref)
+        data[0][c]['precursor'] = {"seq": precursor_sequence(loci[0][0:5], args.ref)}
+        data[0][c]['precursor'].update(run_rnafold(data[0][c]['precursor']['seq']))
         if valid:
             main_table.append([_get_link(c), _get_ann(valid, ann)])
 
