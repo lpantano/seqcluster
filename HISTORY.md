@@ -1,5 +1,6 @@
 - development
 
+* Add RNAfold to report for html vis.
 * Adapt C code to macosx
 * Improve test functions
 
