@@ -34,6 +34,12 @@ def _get_ann(dbs, features):
         value += db + ":" + feature
     return value
 
+def _parse(profile, size):
+    total = Counter()
+    for sample in profile:
+        for pos in range(len(size)):
+            total[pos] += profile[sample][pos]
+    return total.values()
 
 def make_profile(data, out_dir, args):
     """
@@ -54,6 +60,7 @@ def make_profile(data, out_dir, args):
         data[0][c].update({'profile': pos_structure})
         loci = data[0][c]['loci']
         data[0][c]['precursor'] = {"seq": precursor_sequence(loci[0][0:5], args.ref)}
+        data[0][c]['precursor']["colors"] = _parse(data[0][c]['profile'], data[0][c]['precursor']["seq"])
         data[0][c]['precursor'].update(run_rnafold(data[0][c]['precursor']['seq']))
         if valid:
             main_table.append([_get_link(c), _get_ann(valid, ann)])
