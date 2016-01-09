@@ -86,6 +86,7 @@ def map_to_precursors_on_fly(seqs, names, loci, args):
         res = pyMatch.Match(precursor, str(s), 1, 3)
         if res > -1:
             dat[n] = [res, res + len(s)]
+    logger.debug("mapped in %s: %s out of %s" % (loci, len(dat), len(seqs)))
     return dat
 
 def deprecated_map_to_precursors(seqs, names, loci, out_file, args):

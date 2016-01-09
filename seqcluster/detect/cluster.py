@@ -256,7 +256,7 @@ def peak_calling(clus_obj):
         # tab = pd.DataFrame({'x': x, 'y': dt})
         # tab.to_csv( str(cid) + "peaks.csv", mode='w', header=False, index=False)
         if len(x) > 35 + 12:
-            peaks = pysen.pysenMMean(x, dt)
+            peaks = list(np.array(pysen.pysenMMean(x, dt)) - 5)
             logger.debug(peaks)
         else:
             peaks =  ['short']

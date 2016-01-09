@@ -34,12 +34,14 @@ def _get_ann(dbs, features):
         value += db + ":" + feature
     return value
 
+
 def _parse(profile, size):
     total = Counter()
     for sample in profile:
         for pos in range(len(size)):
             total[pos] += profile[sample][pos]
     return total.values()
+
 
 def make_profile(data, out_dir, args):
     """
@@ -85,7 +87,7 @@ def _expand(dat, counts, start, end):
     return dat
 
 
-def _convert_to_df(in_file, freq):
+def _convert_to_df(in_file, freq, raw_file):
     """
     convert data frame into table with pandas
     """
@@ -98,8 +100,12 @@ def _convert_to_df(in_file, freq):
                 counts = freq[name]
                 dat = _expand(dat, counts, int(cols[4]), int(cols[5]))
     else:
+        if raw_file:
+            out_handle = open(raw_file, "w")
         for name in in_file:
             counts = freq[name]
+            if raw_file:
+                print >>out_handle, "%s\t%s\t%s\t%s\t%s\t%s" % ("chr", in_file[name][0], in_file[name][1], name, sum(counts.values()), "+")
             dat = _expand(dat, counts, in_file[name][0], in_file[name][1])
 
     # dat = {'positions': dat.keys(), 'expression': dat.values()}
@@ -161,6 +167,7 @@ def _single_cluster(c, data, out_file, args):
     expression profile
     """
     valid, ann = 0, 0
+    raw_file = None
     figure_file = out_file.replace(".tsv", ".png")
     html_file = out_file.replace(".tsv", ".html")
     prefix = os.path.dirname(out_file)
@@ -180,10 +187,12 @@ def _single_cluster(c, data, out_file, args):
             map_to_precursors(seqs, names, {loci[0][0]: [loci[0][0:5]]}, out_file, args)
         else:
             logger.debug("map with C fn all sequences to all loci %s " % loci)
+            if args.debug:
+                raw_file = out_file
             out_file = map_to_precursors_on_fly(seqs, names, loci[0][0:5], args)
 
     logger.debug("plot sequences on loci")
-    df = _convert_to_df(out_file, freq)
+    df = _convert_to_df(out_file, freq, raw_file)
     if df:
         if not file_exists(figure_file):
             fig = plt.figure()
