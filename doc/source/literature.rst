@@ -18,10 +18,12 @@ A challenge for miRNA: multiple isomiRs in `miRNAomics. <http://www.ncbi.nlm.nih
 
 `miR-183-5p isomiR changes in breast cancer <http://nar.oxfordjournals.org/content/early/2015/09/22/nar.gkv922.full>`_. Validated target regulation of new genes different from the reference miRNA.
 
-non-miRNAs
+General
 -----------
 
 `A novel piRNA mechanism <http://nar.oxfordjournals.org/content/early/2015/09/23/nar.gkv954.short?rss=1>`_ in regulating gene expression in highly differentiated somatic cells.
+
+`Differential and coherent processing patterns from small RNAs.<http://www.ncbi.nlm.nih.gov/pubmed/26166713>`_ to detect changes in profiles of processing small RNAs.
 
 Techonolgy
 -----------
