@@ -108,10 +108,6 @@ def _convert_to_df(in_file, freq, raw_file):
                 print >>out_handle, "%s\t%s\t%s\t%s\t%s\t%s" % ("chr", in_file[name][0], in_file[name][1], name, sum(counts.values()), "+")
             dat = _expand(dat, counts, in_file[name][0], in_file[name][1])
 
-    # dat = {'positions': dat.keys(), 'expression': dat.values()}
-    # df = pd.DataFrame(data=dat)
-    # print df
-    # df.set_index('positions', inplace=True)
     for s in dat:
         for p in dat[s]:
             dat[s][p] = mlog2(dat[s][p] + 1)
@@ -175,7 +171,6 @@ def _single_cluster(c, data, out_file, args):
     [freq.update({s.keys()[0]: s.values()[0]}) for s in data[0][c]['freq']]
     names = [s.keys()[0] for s in data[0][c]['seqs']]
     seqs = [s.values()[0] for s in data[0][c]['seqs']]
-
     loci = data[0][c]['loci']
 
     if loci[0][3] - loci[0][2] > 500:

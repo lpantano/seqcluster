@@ -9,7 +9,6 @@ import numpy as np
 from seqcluster.libs.utils import file_exists
 import seqcluster.libs.logger as mylog
 from seqcluster.libs.classes import *
-# from seqcluster.function.peakdetect import peakdetect as peakdetect
 from seqcluster.detect.metacluster import _get_seqs_from_cluster
 from seqcluster.libs.do import run
 
@@ -240,9 +239,6 @@ def peak_calling(clus_obj):
         cluster.update()
         logger.debug("peak calling for %s" % cid)
         bigger = cluster.locimaxid
-        # fn to get longer > 30 < 100 precursor
-        # iterate by them mapping reads, detect peak, descart, start_again
-        # give quantification of 'matures'
         if bigger in clus_obj.loci:
             s, e = min(clus_obj.loci[bigger].counts.keys()), max(clus_obj.loci[bigger].counts.keys())
             scale = min(s, e)
