@@ -105,7 +105,7 @@ def _read_mature(matures, sps):
 
 def _read_precursor(precursor, sps):
     """
-    read precurso file for that species
+    Load precursor file for that species
     """
     hairpin = defaultdict(str)
     name = None
@@ -119,6 +119,20 @@ def _read_precursor(precursor, sps):
                 hairpin[name] += line.strip()
         hairpin[name] = hairpin[name] + "NNNNNNNNNNNN"
     return hairpin
+
+def _read_gtf(gtf):
+    """
+    Load GTF file with precursor positions on genome
+    """
+    db = dict()
+    with open(gtf) as in_handle:
+        for line in in_handle:
+            cols = line.strip().split("\t")
+            name = [n.split("=")[1] for n in cols[-1].split(";") if n.startswith("Name")]
+            chrom, start, end, strand = cols[0], cols[3], cols[4], cols[6]
+            if cols[2] == "miRNA_primary_transcript":
+                db[name[0]] = [chrom, start, end, strand]
+    return db
 
 def _coord(sequence, start, mirna, precursor, iso):
     """

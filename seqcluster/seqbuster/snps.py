@@ -19,7 +19,7 @@ def _parse_mut(mut):
 
 def _get_reference_position(isomir):
     """
-    Liftover from mature to reference position
+    Liftover from isomir to reference mature
     """
     mut = isomir.split(":")[1]
     if mut == "0":
@@ -91,14 +91,14 @@ def _make_header():
     """
 
 def liftover(pass_pos, matures):
-    """Make position at precursor"""
+    """Make position at precursor scale"""
     fixed_pos = []
     _print_header(pass_pos)
     for pos in pass_pos:
         mir = pos["mature"]
         db_pos = matures[pos["chrom"]]
         mut = _parse_mut(pos["sv"])
-        pos['pre_pos'] =  db_pos[mir][0] + mut[1]
+        pos['pre_pos'] = db_pos[mir][0] + mut[1]
         pos['nt'] = list(mut[0])
         fixed_pos.append(pos)
         print_vcf(pos)

@@ -60,6 +60,7 @@ def add_subparser_mirbuster(subparsers):
     parser.add_argument("--sps", required=1,
                         help="species")
     parser.add_argument("--hairpin", help="hairpin.fa")
+    parser.add_argument("--gtf", help="gtf file with precursor position to genome.")
     parser.add_argument("--mirna", help="miRNA.str")
     parser.add_argument("--miraligner", action="store_true",
                         help="align with JAVA version.", default=False)
