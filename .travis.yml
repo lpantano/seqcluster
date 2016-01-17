@@ -10,6 +10,10 @@ before_install:
   # - echo "127.0.1.1 "`hostname` | sudo tee /etc/hosts
   - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
   - bash Miniconda-latest-Linux-x86_64.sh -b -p ~/install
+  - sudo apt-get update && apt-get upgrade && \
+    apt-get install -y build-essential unzip && \
+    apt-get install -y libglu1-mesa && \
+    apt-get install -y curl pigz bsdmainutils
 install:
   - export PATH=~/install/bin/:$PATH
   - conda install --yes -c bioconda bcbio-nextgen seqcluster bedtools samtools pip nose -q
