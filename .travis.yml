@@ -12,12 +12,11 @@ before_install:
   - bash Miniconda-latest-Linux-x86_64.sh -b -p ~/install
 install:
   - export PATH=~/install/bin/:$PATH
-  - conda install --yes -c bioconda bcbio-nextgen seqcluster bedtools samtools=1.3=0 pip nose -q
+  - conda config --add channels r
+  - conda update ncurses -c r
+  - conda install --yes -c bioconda bcbio-nextgen seqcluster bedtools samtools pip nose -q
 script: 
   - nosetests
-after_script:
-  - "echo $PATH"
-  - "./run_test.sh cluster"
 branches:
     only:
         - master
