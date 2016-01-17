@@ -124,6 +124,8 @@ def _read_gtf(gtf):
     """
     Load GTF file with precursor positions on genome
     """
+    if not gtf:
+        return gtf
     db = dict()
     with open(gtf) as in_handle:
         for line in in_handle:
@@ -425,6 +427,7 @@ def miraligner(args):
     hairpin, mirna = _download_mirbase(args)
     precursors = _read_precursor(args.hairpin, args.sps)
     matures = _read_mature(args.mirna, args.sps)
+    gtf = _read_gtf(args.gtf)
     out_dts = []
     for bam_fn in args.files:
         sample = op.splitext(op.basename(bam_fn))[0]
