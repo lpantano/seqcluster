@@ -13,7 +13,7 @@ before_install:
 install:
   - export PATH=~/install/bin/:$PATH
   - conda config --add channels r
-  - conda install ncurses -c r
+  - conda install --yes ncurses -c r
   - conda install --yes -c bioconda bcbio-nextgen seqcluster bedtools samtools pip nose -q
 script: 
   - nosetests
