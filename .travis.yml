@@ -10,9 +10,8 @@ before_install:
   # - echo "127.0.1.1 "`hostname` | sudo tee /etc/hosts
   - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
   - bash Miniconda-latest-Linux-x86_64.sh -b -p ~/install
-  - sudo apt-get update && sudo apt-get install -y libncurses5 libncurses5-dev && \
-    sudo apt-get install -y build-essential && \
-    sudo apt-get install -y libglu1-mesa
+  - sudo apt-get update && sudo apt-get install -y libncurses5 libncurses5-dev
+  - sudo apt-get install -y build-essential
 install:
   - export PATH=~/install/bin/:$PATH
   - conda install --yes -c bioconda bcbio-nextgen seqcluster bedtools samtools pip nose -q
