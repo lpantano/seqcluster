@@ -153,6 +153,7 @@ def add_subparser_collapse(subparsers):
     parser.add_argument("-f", "--fastq", dest="fastq", required=1,
                          help="fastq file"),
     parser.add_argument("-m", "--min", dest="minimum", default=1,
+                        type=int,
                          help="Minimum number of counts required."
                               "Not recomended > 1. Could bias downstream"
                               "Analysis.")
