@@ -20,6 +20,9 @@ def detect_complexity(bam_in, genome):
     """
     genome coverage of small RNA
     """
+    if not genome:
+        logger.info("No genome given. skipping.")
+        return None
     out_file = bam_in + "_cov.tsv"
     if file_exists(out_file):
         return None
