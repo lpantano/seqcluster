@@ -31,6 +31,7 @@ def open_fastq(in_file):
         return gzip.open(in_file, 'rb')
     if ext in [".fastq", ".fq", ".fasta", ".fa"]:
         return open(in_file, 'r')
+    return ValueError("File needs to be fastq|fasta|fq|fa [.gz]")
 
 
 def is_fastq(in_file):
