@@ -18,12 +18,25 @@ A challenge for miRNA: multiple isomiRs in `miRNAomics. <http://www.ncbi.nlm.nih
 
 `miR-183-5p isomiR changes in breast cancer <http://nar.oxfordjournals.org/content/early/2015/09/22/nar.gkv922.full>`_. Validated target regulation of new genes different from the reference miRNA.
 
+`A comprehensive survey of 3' animal miRNA modification <http://www.ncbi.nlm.nih.gov/pubmed/20719920>`_ events and a possible role for 3' adenylation in modulating miRNA targeting effectiveness.
+
+
+PAPD5-mediated 3′ adenylation and subsequent degradation of `miR-21 <http://www.pnas.org/content/111/31/11467.abstract>`_ is disrupted in proliferative disease. 
+
+High-resolution analysis of the human retina miRNome reveals `isomiR <http://www.ncbi.nlm.nih.gov/pubmed/26819412>`_ variations and novel microRNAs.
+
+
 General
 -----------
 
 `A novel piRNA mechanism <http://nar.oxfordjournals.org/content/early/2015/09/23/nar.gkv954.short?rss=1>`_ in regulating gene expression in highly differentiated somatic cells.
 
 `Differential and coherent processing patterns from small RNAs.<http://www.ncbi.nlm.nih.gov/pubmed/26166713>`_ to detect changes in profiles of processing small RNAs.
+
+Targets
+-------
+
+`Identification of factors <http://www.ncbi.nlm.nih.gov/pubmed/26809675>`_ involved in target RNA-directed microRNA degradation.
 
 Techonolgy
 -----------
