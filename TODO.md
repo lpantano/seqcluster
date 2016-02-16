@@ -11,10 +11,10 @@
 
 - [X] implement tRNA-scan
 - [ ] NOW implement small rna prediction: CoRaL is an option for everything http://wanglab.pcbi.upenn.edu/coral/  or
-- [X] NOW change to python alignment tool
+- [X] change to python alignment tool
 - [ ] implement mirna prediction http://evryrna.ibisc.univ-evry.fr/miRBoost/index.html
 - [ ] implement submire target prediction module http://research.nhgri.nih.gov/software/SubmiRine/user_guide.shtml
-- [ ] Add to report: https://github.com/pkerpedjiev/forna/
+- [X] Add to report: https://github.com/pkerpedjiev/forna/
 
 # modules
 
@@ -47,6 +47,6 @@ inputs will be fastq or bam file. Will need to download the mirbase annotation (
 
 - [X] add install subcommand for mirbase installation/genomes
 - [X] add html report link to documentation
-- [ ] figure showing general pipeline steps: seqcluster-helper/bcbio-nextgen
+- [ ] figure showing general pipeline steps: bcbio-nextgen
 - [X] add documentation for seqclusterViz html reader
 
