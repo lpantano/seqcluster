@@ -6,6 +6,10 @@
 Welcome to seqbuster's documentation!
 =====================================
 
+Analysis of small RNA sequencing data. It detect unit of transcription over the genome,
+annotate them and create an HTML interactive report that helps to
+explore the data quickly.
+
 Contents:
 
 .. toctree::

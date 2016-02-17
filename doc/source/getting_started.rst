@@ -7,7 +7,7 @@ Getting started
 
 Best practices are implemented in a `python framework`_.
 
-.. _python framework: https://github.com/lpantano/seqcluster-helper/blob/master/README.md
+.. _python framework: https://github.com/chapmanb/bcbio-nextgen
 
 clustering of small RNA sequences
 ---------------------------------
@@ -15,8 +15,6 @@ clustering of small RNA sequences
 seqcluster generates a list of clusters of small RNA sequences, their genome location, their annotation and the abundance in all the sample of the project
 
 .. image:: seqcluster.png
-   :height: 200px
-   :width: 100px
    :scale: 25%
    
 **REMOVE ADAPTER**
