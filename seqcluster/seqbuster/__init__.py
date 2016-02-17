@@ -1,4 +1,5 @@
 # Re-aligner small RNA sequence from SAM/BAM file (miRBase annotation)
+import traceback
 import os.path as op
 import re
 import shutil
@@ -126,14 +127,16 @@ def _read_gtf(gtf):
     """
     if not gtf:
         return gtf
-    db = dict()
+    db = defaultdict(list)
     with open(gtf) as in_handle:
         for line in in_handle:
+            if line.startswith("#"):
+                continue
             cols = line.strip().split("\t")
             name = [n.split("=")[1] for n in cols[-1].split(";") if n.startswith("Name")]
             chrom, start, end, strand = cols[0], cols[3], cols[4], cols[6]
             if cols[2] == "miRNA_primary_transcript":
-                db[name[0]] = [chrom, start, end, strand]
+                db[name[0]].append([chrom, int(start), int(end), strand])
     return db
 
 def _coord(sequence, start, mirna, precursor, iso):
@@ -394,8 +397,8 @@ def _tab_output(reads, out_file, sample):
         dt_pre = dt_pre[dt_pre['hits']==1]
         dt_pre = dt_pre.loc[:, "isomir":"sample"]
         dt_pre = dt_pre.groupby(['isomir', 'chrom', 'mature', 'sample'], as_index=False).sum()
-
-    return out_file, dt, dt_pre
+        return out_file, dt, dt_pre
+    return None
 
 def _merge(dts):
     """
@@ -460,19 +463,19 @@ def miraligner(args):
         try:
             vcf_file = op.join(args.out, sample + ".vcf")
             if not file_exists(vcf_file):
+            # if True:
                 with open(vcf_file, 'w') as out_handle:
-                    create_vcf(dt_pre, matures, out_handle)
+                    create_vcf(dt_pre, matures, gtf, out_handle)
             try:
                 import vcf
                 vcf.Reader(filename=vcf_file)
             except Exception as e:
                 logger.warning(e.__doc__)
                 logger.warning(e.message)
-                pass
         except Exception as e:
+            # traceback.print_exc()
             logger.warning(e.__doc__)
             logger.warning(e.message)
-            pass
         if isinstance(dt, pd.DataFrame):
             out_dts.append(dt)
 
