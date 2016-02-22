@@ -10,6 +10,9 @@ output:
     highlight: zenburn
 ---
 
+The most recent update of this html document occurred: `r date()`
+
+
 ```{r setup}
 library(knitr)
 
@@ -23,37 +26,28 @@ library(gridExtra)
 library(devtools)
 library(dplyr)
 library(isomiRs)
+library(pheatmap)
 
 knitr::opts_chunk$set(tidy=TRUE, highlight=TRUE, dev="png", fig.width=6,fig.heigh=6,
-               cache=FALSE, highlight=TRUE, autodep=TRUE, warning=FALSE, error=FALSE,
+               cache=FALSE, highlight=TRUE, autodep=TRUE, 
+               warning=FALSE, error=FALSE,
                message=FALSE, prompt=TRUE, comment='', fig.cap='', bootstrap.show.code=FALSE)
 
 root_path = "$path_abs"
-root_file = file.path(root_path)
+root_file = file.path(root_path, "srna_out_files")
+dir.create(root_file, showWarnings = FALSE)
 
+metadata_fn =  list.files(file.path(root_path), pattern = "summary_re.csv",recursive = T, full.names = T)
+metadata = read.csv(metadata_fn, row.names="sample_id")
+metadata = metadata[2:nrow(metadata), ]
 condition = "condition"
+design = data.frame(row.names=rownames(metadata), condition=metadata$group)
 ```
+
 ```{r render,eval=FALSE, echo=FALSE}
 library(rmarkdown)
 library(knitrBootstrap)
 render("report.rmd")
-```
-
-```{r load}
-setwd(root_path)
-files = read.table(file.path(root_path, "summary_re.csv"), sep=",",header=T,colClasses = "character")
-
-samples = files[,"sample_id"]
-
-names_stats = files[,"size_stats"]
-names(names_stats) = samples
-
-groups = files[,"group"]
-names(groups) = samples
-
-summarydata = data.frame(row.names=samples,samples=samples,group=groups)
-design <- data.frame(row.names=files$sample_id, condition=files$group)
-
 ```
 
 # Exploratory analysis
@@ -66,10 +60,17 @@ reads with adapter, reads mapped to miRNAs, reads mapped to other small RNAs.
 After adapter removal, we can plot the size distribution of the small RNAs.
 
 ```{r adapter,fig.width=10}
+files = list.files(file.path(root_path),pattern = "trimming_stats",recursive = T)
+
+names(files) = sapply(files, function(x){
+  gsub("-ready.trimming_stats", "", basename(x))
+})
+
+
 tab = data.frame()
-for (sample in samples){
-    d = read.table(file.path(root_path,names_stats[sample]), sep=" ")
-    tab = rbind(tab, d %>% mutate(sample=sample, group=groups[sample]))
+for (sample in rownames(metadata)) {
+    d = read.table(file.path(root_path, files[sample]), sep=" ")
+    tab = rbind(tab, d %>% mutate(sample=sample, group=metadata[sample, "group"]))
 }
 
 
@@ -81,7 +82,7 @@ ggplot(reads_adapter, aes(x=sample,y=total,fill=group)) +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 
 
-ggplot(tab, aes(x=V1,y=V2,fill=sample)) +
+ggplot(tab, aes(x=V1,y=V2, group=sample)) +
     geom_bar(stat="identity", position = "dodge") +
     facet_wrap(~group, ncol=2)+
     ggtitle("size distribution") +
@@ -89,19 +90,27 @@ ggplot(tab, aes(x=V1,y=V2,fill=sample)) +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
+```{r mirna-load}
+files = list.files(file.path(root_path),pattern = "mirbase-ready",recursive = T,full.names = T)
+ismirbase = length(files) > 0
+mirdeep2_files = list.files(file.path(root_path),pattern = "novel-ready",recursive = T,full.names = T)
+ismirdeep2 = length(mirdeep2_files) > 0
+```
+
 ## miRNA
 
 ### total miRNA expression annotated with mirbase
 
-```{r mirna,results='hide'}
-mi_files = file.path(root_path,files[,"miraligner"])
-row.names(design) = samples
+```{r mirna,results='hide', eval=ismirbase}
+names(files) = sapply(files, function(x){
+  gsub("-mirbase-ready.counts", "", basename(x))
+})
 
-obj <- IsomirDataSeqFromFiles(files = mi_files, design = design ,header = T, cov = 1)
+obj <- IsomirDataSeqFromFiles(files = files, design = design , header = T, cov = 0)
 ```
 
 
-```{r mirna-mirbase}
+```{r mirna-mirbase, eval=ismirbase}
 ggplot( data.frame(sample=colnames(counts(obj)), total=colSums(counts(obj)))) +
     geom_bar(aes(x=sample,y=total), stat='identity')+
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
@@ -110,7 +119,7 @@ mirna_step <- as.data.frame(colSums(counts(obj)))
 
 ### Distribution of mirna expression
 
-```{r depth}
+```{r depth, eval=ismirbase}
 ggplot(melt(counts(obj))) +
     geom_boxplot(aes(x=X2,y=value))+
     scale_y_log10()+
@@ -119,7 +128,7 @@ ggplot(melt(counts(obj))) +
 
 ### cumulative distribution of miRNAs
 
-```{r cum}
+```{r cum, eval=ismirbase}
 cs <- as.data.frame(apply(counts(obj),2,function(x){cumsum(sort(x, decreasing = T))}))
 cs$pos <- 1:nrow(cs)
 
@@ -129,21 +138,96 @@ ggplot((melt(cs,id.vars = "pos")))+
 ```
 
 ### Clustering
-```{r mirna-clustering}
-obj <- isoNorm(obj)
-ma = counts(obj, norm=T)
-ma = ma[rowSums(ma>2)>3,]
-pheatmap(ma, show_rownames = F, clustering_method = "ward.D")
+```{r mirna-clustering, eval=ismirbase}
+counts = counts(obj)
+dds = DESeqDataSetFromMatrix(counts[rowSums(counts>0)>3,], colData=design, design=~1)
+vst = rlog(dds)
+
+pheatmap(assay(vst), annotation_col = design, show_rownames = F, 
+         clustering_distance_cols = "correlation",
+         clustering_method = "ward.D")
 ```
 
+### MDS plot
+```{r pca, eval=ncol(counts) > 1, eval=ismirbase}
+mds(assay(vst), condition = design$condition)
+```
 
 ### complexity
 
 Number of miRNAs with > 3 counts.
 
-```{r complexity}
+```{r complexity, eval=ismirbase}
 
-kable(as.data.frame(colSums(counts(obj)>10)))
+kable(as.data.frame(colSums(counts>10)))
+
+```
+
+## novel miRNA by mirdeep2
+
+### total miRNA expression
+
+```{r mirdeep2,results='hide', eval=ismirdeep2}
+files = mirdeep2_files
+
+names(files) = sapply(files, function(x){
+  gsub("-novel-ready.counts", "", basename(x))
+})
+
+obj_mirdeep <- IsomirDataSeqFromFiles(files = files, design = design , header = T)
+```
+
+
+```{r mirna-mirdeep2, eval=ismirdeep2}
+ggplot( data.frame(sample=colnames(counts(obj_mirdeep)), total=colSums(counts(obj_mirdeep)))) +
+    geom_bar(aes(x=sample,y=total), stat='identity')+
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+mirna_step <- as.data.frame(colSums(counts(obj)))
+```
+
+### Distribution of mirna expression
+
+```{r depth-mirdeep2, eval=ismirdeep2}
+ggplot(melt(counts(obj_mirdeep))) +
+    geom_boxplot(aes(x=X2,y=value))+
+    scale_y_log10()+
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+### cumulative distribution of miRNAs
+
+```{r cum-mirdeep2, eval=ismirdeep2}
+cs <- as.data.frame(apply(counts(obj_mirdeep),2,function(x){cumsum(sort(x, decreasing = T))}))
+cs$pos <- 1:nrow(cs)
+
+ggplot((melt(cs,id.vars = "pos")))+
+    geom_line(aes(x=pos,y=value,color=variable))+
+    scale_y_log10()
+```
+
+### Clustering
+```{r mirna-clustering-mirdeep2, eval=ismirdeep2}
+counts = counts(obj_mirdeep)
+dds = DESeqDataSetFromMatrix(counts[rowSums(counts>0)>3,], colData=design, design=~1)
+vst = rlog(dds)
+
+pheatmap(assay(vst), annotation_col = design, show_rownames = F, 
+         clustering_distance_cols = "correlation",
+         clustering_method = "ward.D")
+```
+
+### MDS plot
+```{r pca-mirdeep2, eval=ncol(counts) > 1, eval=ismirdeep2}
+mds(assay(vst), condition = design$condition)
+```
+
+### complexity
+
+Number of miRNAs with > 3 counts.
+
+```{r complexity-mirdeep2, eval=ismirdeep2}
+
+kable(as.data.frame(colSums(counts>10)))
 
 ```
 
@@ -165,9 +249,12 @@ In this table 1 means % of the genome with at least 1 read, and 0 means %
 of the genome without reads.
 
 ```{r genome-covered, results='asis'}
-cov_stats <- read.table(file.path(root_path, "..", "align", "seqs_rmlw.bam_cov.tsv"),sep="\t",check.names = F)
+fn_json = list.files(file.path(root_path),pattern = "seqcluster.json",recursive = T,full.names = T)
+seq_dir = dirname(fn_json)
 
-kable(cov_stats[cov_stats$V1=="genome",] %>%  dplyr::select(coverage=V2,ratio_genome=V5), row.names = FALSE)
+#cov_stats <- read.table(file.path(root_path, "..", "align", "seqs_rmlw.bam_cov.tsv"),sep="\t",check.names = F)
+
+#kable(cov_stats[cov_stats$V1=="genome",] %>%  dplyr::select(coverage=V2,ratio_genome=V5), row.names = FALSE)
 
 ```
 
@@ -183,7 +270,7 @@ Number of reads in the data after each step:
 * multimap: after meta-cluster detection
 
 ```{r reads-track}
-reads_stats <- read.table(file.path(root_path, "..","seqcluster", "cluster", "read_stats.tsv"),sep="\t",check.names = F)
+reads_stats <- read.table(file.path(seq_dir, "read_stats.tsv"),sep="\t",check.names = F)
 ggplot(reads_stats, aes(x=V2, y=V1, fill=V3)) + 
     geom_bar(stat = 'identity', position = 'dodge') +
     labs(list(x="samples", y="reads")) +
@@ -193,11 +280,13 @@ ggplot(reads_stats, aes(x=V2, y=V1, fill=V3)) +
 
 
 ```{r cluster}
-clus <- read.table(file.path(root_path, "..", "seqcluster", "cluster", "counts.tsv"),header=T,sep="\t",row.names=1, check.names = FALSE)
+
+clus <- read.table(file.path(seq_dir, "counts.tsv"),header=T,sep="\t",row.names=1, check.names = FALSE)
 ann <- clus[,2]
 toomany <- clus[,1]
 clus_ma <- clus[,3:ncol(clus)]
 clus_ma = clus_ma[,row.names(design)]
+
 ```
 
 
@@ -257,7 +346,7 @@ ggplot(melt(dd_norm[,1:5])) +
 ```
 
 ```{r clus-size-by-class}
-size_clus <- read.table(file.path(root_path, "..", "seqcluster", "cluster", "size_counts.tsv"),sep="\t",check.names = F)
+# size_clus <- read.table(file.path(root_path, "..", "seqcluster", "cluster", "size_counts.tsv"),sep="\t",check.names = F)
 ```
 
 
@@ -267,11 +356,16 @@ size_clus <- read.table(file.path(root_path, "..", "seqcluster", "cluster", "siz
 
 ```{r de-setup}
 library(DESeq2)
-library(DEGreport)
+# library(DEGreport)
 library(vsn)
 ```
 
 ```{r deseq2-handler}
+#' save file
+save_file <- function(dat, fn, basedir="."){
+    tab <- cbind(id=data.frame(id=row.names(dat)), as.data.frame(dat))
+    write.table(tab, file.path(basedir, fn), quote=F, sep="\t", row.names=F)
+}
 
 filter_handle <- function(res){
     res_nona <- res[!is.na(res$padj),]
@@ -279,35 +373,24 @@ filter_handle <- function(res){
     res_nona[keep,]
 }
 
-handle_deseq2 = function(dds, summarydata, column) {
-  all_combs = combn(levels(summarydata[,column]), 2, simplify=FALSE)
+handle_deseq2 = function(dds, summarydata, column, prefix, all_combs=NULL) {
+  if ( is.null(all_combs) )
+    all_combs = combn(levels(summarydata[,column]), 2, simplify=FALSE)
   all_results = list()
   contrast_strings = list()
+  rlog = rlog(dds)
   for(comb in all_combs) {
     contrast_string = paste(comb, collapse="_vs_")
+    cat("\n\n## Comparison: ", contrast_string, "\n")
     contrast = c(column, comb)
     res = results(dds, contrast=contrast)
     res = res[order(res$padj),]
     all_results = c(all_results, res)
     contrast_strings = c(contrast_strings, contrast_string)
+    print_out(dds, rlog, res, paste0(prefix, "_", contrast_string))
   }
   names(all_results) = contrast_strings
   return(all_results)
-}
-
-plot_MA = function(res){
-    for(i in seq(length(res))) {
-        DESeq2::plotMA(res[[i]])
-        title(paste("MA plot for contrast", names(res)[i]))
-    }
-}
-
-plot_volcano = function(res){
-    for(i in seq(length(res))) {
-        stats = as.data.frame(res[[i]][,c(2,6)])
-        p = volcano_density_plot(stats, title=names(res)[i], lfc.cutoff=1)
-        print(p)
-    }
 }
 
 do_de = function(raw, summarydata, condition, minc=3){
@@ -315,69 +398,112 @@ do_de = function(raw, summarydata, condition, minc=3){
                        colData = summarydata,
                        design = ~ condition)
     dss = DESeq(dss)
-    plotDispEsts(dss)
     dss
 }
 
-do_norm = function(dss, root_path, prefix){
+do_norm = function(dss, path, prefix){
     rlog_ma = assay(rlog(dss))
     count_ma = counts(dss, normalized=TRUE)
     raw = counts(dss, normalized=FALSE)
-    fn_log = paste0(root_file, prefix, "log_matrix.txt")
-    write.table(rlog_ma,fn_log,sep="\t")
-    fn_count = paste0(root_file, prefix, "count_matrix.txt")
-    write.table(count_ma,fn_count,sep="\t")
-    fn_raw = paste0(root_file, prefix, "raw_matrix.txt")
-    write.table(count_ma,fn_raw,sep="\t")
+    
+    fn_log = paste0(prefix, "_log_matrix.txt")
+    save_file(rlog_ma, fn_log, path)
+    
+    fn_count = paste0(prefix, "_norm_matrix.txt")
+    save_file(count_ma, fn_count, path)
+    
+    fn_raw = paste0(prefix, "_raw_matrix.txt")
+    save_file(raw, fn_raw, path)
+}
+
+print_out = function(dss, rlog=NULL, res=NULL, prefix="standard"){
+  plotDispEsts(dss)
+  if ( is.null(res) )
+    res = results(dss)
+  if ( is.null(rlog))
+    rlog = rlog(dss)
+  
+  rlogmat = assay(rlog)
+  design = as.data.frame(colData(dss)[, names(colData(dss)) != "sizeFactor", drop=FALSE ])
+  
+  out_df = as.data.frame(res)
+  out_df = out_df[!is.na(out_df$padj),]
+  out_df = out_df[order(out_df$padj),]
+  do_norm(dss, root_file, prefix)
+
+  cat("\n",paste(capture.output(summary(res))[1:8], collapse = "<br>"),"\n")
+  cat("\n\n### MA plot plot\n\n")
+  DESeq2::plotMA(res)
+  
+  cat("\n\n### Top DE miRNAs\n\n")
+  print(kable(head(out_df, 20)))
+  fn = paste(prefix, ".tsv", sep="")
+  save_file(out_df, fn, root_file)
+  
+  sign = row.names(out_df)[out_df$padj<0.05 & !is.na(out_df$padj) & abs(out_df$log2FoldChange) > 0.5]
+  
+  cat("\n\n### Heatmap most significand(", length(sign), "), padj<0.05 and log2FC > 0.5\n")
+  if (length(sign)<2){
+    cat("Too few genes to plot.")
+  }else{
+    pheatmap(rlogmat[sign, ], show_rownames = F, 
+             annotation_col = design,
+             clustering_distance_cols = "correlation", 
+             clustering_method = "ward.D2")
+    mds(rlogmat[sign,], condition = design$condition)
+  }
+
 }
 
 ```
 
 ## Analysis for miRNA
 
-```{r de}
-dds = do_de(counts(obj), design, condition)
-```
+```{r de, results='asis'}
 
-```{r tables}
-do_norm(dds, root_path, "mirna_")
-```
-
-### MA-plots
-  
-```{r DESeq-output, results='asis'}
-all_results = handle_deseq2(dds, design, condition)
-plot_MA(all_results)
-
-kable(head(all_results[[1]]))
+counts = counts(obj)
+dss = DESeqDataSetFromMatrix(countData = counts[rowSums(counts>0)>3,],
+                             colData = design,
+                             design = ~ condition)
+dss = DESeq(dss)
+all_results = handle_deseq2(dss, design, condition, "mirna" )
 
 ```
+
 
 ```{r DESeq-confirmation, eval=FALSE}
 DESeq2::plotCounts(dds, put_gene_name_here)
 
 ```
 
+## Analysis for novel miRNA
+
+```{r de-mirdeep2, results='asis'}
+
+counts = counts(obj_mirdeep)
+dss_mirdeep2 = DESeqDataSetFromMatrix(countData = counts[rowSums(counts>0)>3,],
+                             colData = design,
+                             design = ~ condition)
+
+dss = DESeq(dss)
+all_results = handle_deseq2(ddss_mirdeep2, design, condition, "mirdeep2")
+
+```
 
 ## Analysis for isomiRs
 
-```{r de-iso}
-dds = do_de(counts(isoCounts(obj, ref=T, iso5=T, iso3=T, add=T, subs =T)), design, condition, 10)
-```
+```{r de-iso, results='asis'}
 
-```{r tables-iso}
-do_norm(dds, root_path, "isomirs_")
-```
+counts_iso = counts(isoCounts(obj, ref=T, iso5=T, iso3=T, add=T, subs =T))
+dss_iso = DESeqDataSetFromMatrix(countData = counts_iso[rowSums(counts_iso>0)>3,],
+                             colData = design,
+                             design = ~ condition)
 
-### MA-plots
-  
-```{r DESeq-output-iso, results='asis'}
-all_results = handle_deseq2(dds, design, condition)
-plot_MA(all_results)
-
-kable(head(all_results[[1]]))
+dss = DESeq(dss)
+all_results = handle_deseq2(dss_iso, design, condition, "isomirs")
 
 ```
+
 
 ```{r DESeq-confirmation-iso, eval=FALSE}
 DESeq2::plotCounts(dds, put_gene_name_here)
@@ -386,27 +512,26 @@ DESeq2::plotCounts(dds, put_gene_name_here)
 
 ## Analysis for clusters
 
-```{r de-c}
-dds = do_de(clus_ma, design, condition)
-```
+```{r de-c, results='asis'}
 
-```{r tables-c}
-do_norm(dds, root_path, "clusters_")
-```
+dss_clus = DESeqDataSetFromMatrix(countData = clus_ma[rowSums(clus_ma>0)>3,],
+                                 colData = design,
+                                 design = ~ condition)
 
-### MA-plots
-  
-```{r DESeq-output-c, results='asis'}
-all_results = handle_deseq2(dds, design, condition)
-plot_MA(all_results)
-
-clust_des = head(all_results[[1]])
-ann_des = clus[rownames(clust_des),]
-
-kable(cbind(clust_des, ann_des))
+dss = DESeq(dss)
+all_results = handle_deseq2(dss_clus, design, condition, "clusters")
 
 ```
+
 
 # Files
 
 Files generated contains raw count, normalized counts, log2 normalized counts and DESeq2 results.
+
+#R Session Info
+
+(useful if replicating these results)
+
+```{r sessioninfo}
+sessionInfo()
+```
