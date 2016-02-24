@@ -61,13 +61,13 @@ def _get_miraligner():
 
 def _get_flavor():
     """
-    Download flavor for cloudbiolinux
+    Download flavor from github
     """
     target = op.join("seqcluster", "flavor")
-    # if os.path.exists(target):
-    #   shutil.rmtree("seqcluster")
     url = "https://github.com/lpantano/seqcluster.git"
-    #subprocess.check_call(["git", "clone","-b", "flavor", "--single-branch", url])
+    if not os.path.exists(target):
+    #   shutil.rmtree("seqcluster")
+        subprocess.check_call(["git", "clone","-b", "flavor", "--single-branch", url])
     return op.abspath(target)
 
 def _install(path, args):
@@ -80,7 +80,6 @@ def _install(path, args):
         raise ImportError("It needs bcbio to do the quick installation.")
 
     path_flavor = _get_flavor()
-    bio_data = op.join(path_flavor, "../biodata.yaml")
     s = {"fabricrc_overrides": {"system_install": path,
                                 "local_install": os.path.join(path, "local_install"),
                                 "use_sudo": "false",
@@ -105,7 +104,7 @@ def _install(path, args):
     cbl_deploy = __import__("cloudbio.deploy", fromlist=["deploy"])
     cbl_deploy.deploy(s)
 
-def _install_data(data_dir, bio_data, args):
+def _install_data(data_dir, path_flavor, args):
     """Upgrade required genome data files in place.
     """
     try:
@@ -113,7 +112,8 @@ def _install_data(data_dir, bio_data, args):
     except:
         raise ImportError("It needs bcbio to do the quick installation.")
 
-    s = {"flavor": "srnaseq",
+    bio_data = op.join(path_flavor, "../biodata.yaml")
+    s = {"flavor": path_flavor,
          # "target": "[brew, conda]",
          "vm_provider": "novm",
          "hostname": "localhost",
@@ -182,8 +182,7 @@ def actions(args):
         _install(op.abspath(args.tools), args)
     if args.data:
         path_flavor = _get_flavor()
-        bio_data = op.join(path_flavor, "../biodata.yaml")
-        _install_data(args.data, bio_data, args)
+        _install_data(args.data, path_flavor, args)
 
 def main(**kwargs):
     parser = ArgumentParser(description="small RNA analysis installer")
