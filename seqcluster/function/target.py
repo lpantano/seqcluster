@@ -1,15 +1,17 @@
 """Get enrichment of targets doing permutations for significance"""
-import os
 import os.path as op
 from collections import defaultdict
 import gzip
 
+import seqcluster.libs.logger as mylog
+
+logger = mylog.getLogger(__name__)
 
 def targets_enrichment(args):
-    if args.sps not in ["hsa"]:
+    if args.sps not in ["hsa", "mmu"]:
         raise ValueError("Species not supported yet.")
 
-    target, mirna_map, mirna_id = _get_files(args.annotation)
+    target, mirna_map, mirna_id = _get_files(args.annotation, args.sps)
     mirna_id_dict = _get_mirbase_id(mirna_id, args.sps)
     mirna_map_dict = _get_target_id(mirna_map, args.sps)
     mirna_list = _get_mirna_input(args.input)
@@ -24,12 +26,20 @@ def targets_enrichment(args):
                 if mit in mirna_id_dict:
                     mirbase_id = mirna_id_dict[mit]
                     if mirbase_id in mirna_list:
+                        info = map(str, [cols[0], cols[1], cols[4], cols[-3], cols[-1]])
+                        keep = "\t".join(info)
                         if cols[-3] == "NULL":
                             cols[-3] = 0
-                        collect[mirbase_id].append({'info': line, 'score': float(cols[-3])})
+                        if cols[-1] == "NULL":
+                            cols[-1] = -1
+                        score = float(cols[-3])
+                        pt = float(cols[-1]) > 0.1 or cols[-1] == -1
+                        if int(cols[4]) > 0 and pt:
+                            if score < -0.2:
+                                collect[mirbase_id].append({'info': keep, 'score': float(cols[-3])})
     for mir in collect:
         sorted_targets = sorted(collect[mir], key=lambda k: k['score'])
-        for e in range(0, 100):
+        for e in range(0, len(sorted_targets)):
             line = sorted_targets[e]['info']
             cols = line.split()
             name = cols[0].split(".")[0]
@@ -37,11 +47,14 @@ def targets_enrichment(args):
             res[(name, 'mirs')].append(mir)
 
     with open(op.join(args.out, "pairs.tsv"), 'w') as out_handle:
-       for gene, field in res:
-            if field == "info":
-                counts = len(res[(gene, 'mirs')])
-                mirs = ",".join(res[(gene, 'mirs')])
-                print >>out_handle, "%s\t%s\t%s\t%s" %  (mirs, counts,  gene, res[(gene, 'info')])
+        with open(op.join(args.out, "matrix.tsv"), 'w') as ma_handle:
+           for gene, field in res:
+                if field == "info":
+                    counts = len(res[(gene, 'mirs')])
+                    for m in list(set(res[gene, 'mirs'])):
+                        print >>ma_handle, "%s\t%s" % (gene, m)
+                    mirs = ",".join(list(set(res[(gene, 'mirs')])))
+                    print >>out_handle, "%s\t%s\t%s\t%s" %  (mirs, counts,  gene, res[(gene, 'info')])
 
 
 def _get_mirna_input(fn):
@@ -73,8 +86,13 @@ def _get_mirbase_id(fn, sps):
     return mapping
 
 
-def _get_files(path):
-    target = op.join(path, "Summary_Counts_sps.txt")
-    mirna_map = op.join(path, "miR_Family_Info_sps.txt")
-    mirna_id = op.join(path, "mirna_mature.txt.gz")
-    return target, mirna_map, mirna_id
+def _get_files(path, sps):
+    out = []
+    fns = ["Summary_Counts.default_predictions.txt", "miR_Family_Info.txt", "mirna_mature.txt.gz"]
+    for fn in fns:
+        fn = op.join(path, fn)
+        out.append(fn)
+        if not op.exists(fn):
+            raise IOError("Files not installed, please use this command:"
+                          "seqcluster install --data path --genomes mm10")
+    return out
