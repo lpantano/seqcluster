@@ -50,6 +50,6 @@ RUN apt-get update && apt-get install -y build-essential zlib1g-dev wget curl py
     rm -rf /.cpanm && \
     rm -rf /tmp/bcbio-nextgen-install && \
 
-RUN export PATH=/usr/local/bcbio/anaconda/bin:$PATH
+RUN export PATH=/usr/local/bcbio/anaconda/bin:/usr/local/tools:$PATH
 # if you want to install data:
 # seqcluster_install --data /usr/local/bcbio --genomes hg19 --aligners bowtie2
