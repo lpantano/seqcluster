@@ -37,24 +37,23 @@ def targets_enrichment(args):
                         if int(cols[4]) > 0 and pt:
                             if score < -0.2:
                                 collect[mirbase_id].append({'info': keep, 'score': float(cols[-3])})
-    for mir in collect:
-        sorted_targets = sorted(collect[mir], key=lambda k: k['score'])
-        for e in range(0, len(sorted_targets)):
-            line = sorted_targets[e]['info']
-            cols = line.split()
-            name = cols[0].split(".")[0]
-            res[(name, 'info')] = line.strip()
-            res[(name, 'mirs')].append(mir)
+    with open(op.join(args.out, "matrix.tsv"), 'w') as ma_handle:
+        for mir in collect:
+            sorted_targets = sorted(collect[mir], key=lambda k: k['score'])
+            for e in range(0, len(sorted_targets)):
+                line = sorted_targets[e]['info']
+                cols = line.split()
+                name = cols[0].split(".")[0]
+                res[(name, 'info')] = line.strip()
+                res[(name, 'mirs')].append(mir)
+                print >>ma_handle, "%s\t%s\t%s" % (name, mir, sorted_targets[e]['score'])
 
     with open(op.join(args.out, "pairs.tsv"), 'w') as out_handle:
-        with open(op.join(args.out, "matrix.tsv"), 'w') as ma_handle:
-           for gene, field in res:
-                if field == "info":
-                    counts = len(res[(gene, 'mirs')])
-                    for m in list(set(res[gene, 'mirs'])):
-                        print >>ma_handle, "%s\t%s" % (gene, m)
-                    mirs = ",".join(list(set(res[(gene, 'mirs')])))
-                    print >>out_handle, "%s\t%s\t%s\t%s" %  (mirs, counts,  gene, res[(gene, 'info')])
+       for gene, field in res:
+            if field == "info":
+                counts = len(res[(gene, 'mirs')])
+                mirs = ",".join(list(set(res[(gene, 'mirs')])))
+                print >>out_handle, "%s\t%s\t%s\t%s" %  (mirs, counts,  gene, res[(gene, 'info')])
 
 
 def _get_mirna_input(fn):
