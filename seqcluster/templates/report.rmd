@@ -106,7 +106,7 @@ names(files) = sapply(files, function(x){
   gsub("-mirbase-ready.counts", "", basename(x))
 })
 
-obj <- IsomirDataSeqFromFiles(files = files, design = design , header = T, cov = 0)
+obj <- IsomirDataSeqFromFiles(files = files[rownames(design)], design = design , header = T)
 ```
 
 
@@ -174,7 +174,7 @@ names(files) = sapply(files, function(x){
   gsub("-novel-ready.counts", "", basename(x))
 })
 
-obj_mirdeep <- IsomirDataSeqFromFiles(files = files, design = design , header = T)
+obj_mirdeep <- IsomirDataSeqFromFiles(files = files[rownames(design)], design = design , header = T)
 ```
 
 
@@ -416,7 +416,7 @@ do_norm = function(dss, path, prefix){
     save_file(raw, fn_raw, path)
 }
 
-print_out = function(dss, rlog=NULL, res=NULL, prefix="standard"){
+print_out = function(dss, rlog=NULL, res=NULL, prefix="standard_"){
   plotDispEsts(dss)
   if ( is.null(res) )
     res = results(dss)
@@ -466,7 +466,7 @@ dss = DESeqDataSetFromMatrix(countData = counts[rowSums(counts>0)>3,],
                              colData = design,
                              design = ~ condition)
 dss = DESeq(dss)
-all_results = handle_deseq2(dss, design, condition, "mirna" )
+all_results = handle_deseq2(dss, design, condition, "mirna_" )
 
 ```
 
@@ -486,7 +486,7 @@ dss_mirdeep2 = DESeqDataSetFromMatrix(countData = counts[rowSums(counts>0)>3,],
                              design = ~ condition)
 
 dss = DESeq(dss)
-all_results = handle_deseq2(ddss_mirdeep2, design, condition, "mirdeep2")
+all_results = handle_deseq2(ddss_mirdeep2, design, condition, "mirdeep2_")
 
 ```
 
@@ -500,7 +500,7 @@ dss_iso = DESeqDataSetFromMatrix(countData = counts_iso[rowSums(counts_iso>0)>3,
                              design = ~ condition)
 
 dss = DESeq(dss)
-all_results = handle_deseq2(dss_iso, design, condition, "isomirs")
+all_results = handle_deseq2(dss_iso, design, condition, "isomirs_")
 
 ```
 
@@ -519,7 +519,7 @@ dss_clus = DESeqDataSetFromMatrix(countData = clus_ma[rowSums(clus_ma>0)>3,],
                                  design = ~ condition)
 
 dss = DESeq(dss)
-all_results = handle_deseq2(dss_clus, design, condition, "clusters")
+all_results = handle_deseq2(dss_clus, design, condition, "clusters_")
 
 ```
 
