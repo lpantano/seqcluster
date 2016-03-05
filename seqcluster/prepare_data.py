@@ -31,7 +31,7 @@ def prepare(args):
         ma_out = open(op.join(args.out, "seqs.ma"), 'w')
     except IOError as e:
         logger.error("I/O error({0}): {1}".format(e.errno, e.strerror))
-        raise "Can not create output files"
+        raise IOError("Can not create output files: %s, %s " % (op.join(args.out, "seqs.ma"), op.join(args.out, "seqs.fastq")))
     logger.info("Reading sequeces")
     seq_l, sample_l = _read_fastq_files(f, args)
     logger.info("Creating matrix with unique sequences")
