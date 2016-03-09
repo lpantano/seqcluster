@@ -106,7 +106,7 @@ def liftover(pass_pos, matures):
         print_vcf(pos)
     return fixed_pos
 
-def create_vcf(isomirs, matures, gtf, stdout=None):
+def create_vcf(isomirs, matures, gtf, vcf_file=None):
     """
     Create vcf file of changes for all samples.
     PASS will be ones with > 3 isomiRs supporting the position
@@ -118,18 +118,21 @@ def create_vcf(isomirs, matures, gtf, stdout=None):
     sv = isomirs.groupby(['chrom', 'mature', 'sv'], as_index=False).sum()
     sv["diff"] = isomirs.groupby(['chrom', 'mature', 'sv'], as_index=False).size().reset_index().loc[:,0]
     pass_pos = _get_pct(sv, mirna)
-    if stdout: #if file
-        STDOUT = stdout
-    pass_pos = liftover(pass_pos, matures)
-    STDOUT = sys.stdout
-    pass_pos = liftover_to_genome(pass_pos, gtf)
+    if vcf_file:
+        with open(vcf_file, 'w') as out_handle:
+            STDOUT = out_handle
+            pass_pos = liftover(pass_pos, matures)
 
+    if gtf:
+        vcf_genome_file = vcf_file.replace(".vcf", "_genome.vcf")
+        with open(vcf_genome_file, 'w') as out_handle:
+            STDOUT = out_handle
+            pass_pos = liftover_to_genome(pass_pos, gtf)
 
 def liftover_to_genome(pass_pos, gtf):
     """Liftover from precursor to genome"""
 
     fixed_pos = []
-    # _print_header(pass_pos)
     for pos in pass_pos:
         db_pos = gtf[pos["chrom"]][0]
         mut = _parse_mut(pos["sv"])
@@ -140,4 +143,7 @@ def liftover_to_genome(pass_pos, gtf):
         pos['chrom'] = db_pos[0]
         pos['nt'] = list(mut[0])
         fixed_pos.append(pos)
-        # print_vcf(pos)
+
+    _print_header(fixed_pos)
+    for pos in fixed_pos:
+        print_vcf(pos)
