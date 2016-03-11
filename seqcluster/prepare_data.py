@@ -1,6 +1,7 @@
 #import sys
 import os
 import os.path as op
+import traceback
 #from os import listdir
 #from os.path import isfile, join
 import re
@@ -30,8 +31,8 @@ def prepare(args):
         seq_out = open(op.join(args.out, "seqs.fastq"), 'w')
         ma_out = open(op.join(args.out, "seqs.ma"), 'w')
     except IOError as e:
-        logger.error("I/O error({0}): {1}".format(e.errno, e.strerror))
-        raise IOError("Can not create output files: %s, %s " % (op.join(args.out, "seqs.ma"), op.join(args.out, "seqs.fastq")))
+        traceback.print_exc()
+        raise IOError("Can not create output files: %s, %s or read %s" % (op.join(args.out, "seqs.ma"), op.join(args.out, "seqs.fastq"), args.config))
     logger.info("Reading sequeces")
     seq_l, sample_l = _read_fastq_files(f, args)
     logger.info("Creating matrix with unique sequences")
