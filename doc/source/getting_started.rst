@@ -157,21 +157,14 @@ An example of the output is below:
 
 .. image:: https://rawgit.com/lpantano/seqcluster/master/doc/slides/seqclusterViz.gif
 
-Easy start with seqcluster-helper.py
+Easy start with bcbio-nextgen.py
 ------------------------------------
 
-**Note**:If you already are using bcbio, visit `bcbio <http://github.com/chapmanb/bcbio>`_ to run the pipeline there. seqcluster-helper has been ported to ``bcbio`` and will be abandoned.
+**Note**:If you already are using bcbio, visit `bcbio <http://github.com/chapmanb/bcbio>`_ to run the pipeline there. 
 
-Command::
+To install the small RNA data::
 
-	seqcluster-helper.py --sample-map config.csv --aligner-index /path/2/star_index --gtf-file /path/2/gtf_annotation --species hsa --reference /path/2/genome/genome.fasta
-
-
-* `sample-map` file should be a csv file with: `name,/path/2/fastq,group` for each sample
-* `genome.fasta` needs to have the FAI file. You can create this with: `samtools faidx genome.fasta`
-* `gtf-file` is used for annotation. The 3 column is the group of sRNA and the `gene_name` attribute the annotation
-* `species` should be compatible with miRBase notation
-* `DB` is the path to `harpin.fa` and `miRNAstr`, like this https://github.com/lpantano/seqbuster/tree/master/modules/miraligner/DB
+	bcbio_nextgen.py upgrade -u development --tools --datatarget smallrna
 
 **Options to run in a cluster**
 
@@ -190,10 +183,11 @@ An examples in slurm system is::
 
 **Output**
 
-* one folder for each sample
+* one folder for each analysys, and inside one per sample
  * adapter: `*clean.fastq` is the file after adapter removal, `*clean_trimmed.fastq` is the collapse `clean.fastq`, `*fragments.fastq` is file without adapter, `*short.fastq` is file with reads < 16 nt.
  * align: BAM file results from align `trimmed.fastq`
- * miraligner: file with miRNA anotation 
+ * mirbase: file with miRNA anotation and novel miRNA discovery with mirdeep2
+ * tRNA: analysis done with tdrmapper [citation needed]
  * qc: `*_fastqc.html` is the fastqc results from the uncollapse fastq file
 * seqcluster: is the result of running seqcluster. See its `documentation <http://seqcluster.readthedocs.org/getting_started.html#clustering-of-small-rna-sequences>`_ for further information.
-* `report-ready.Rmd`: template to create a quick html report with exploration and differential expression analysis. See `example here <https://github.com/lpantano/mypubs/blob/master/srnaseq/mirqc/ready_report.md>`_
+* `report/srna-report.Rmd`: template to create a quick html report with exploration and differential expression analysis. See `example here <https://github.com/lpantano/mypubs/blob/master/srnaseq/mirqc/ready_report.md>`_
