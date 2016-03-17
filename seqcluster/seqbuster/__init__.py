@@ -464,8 +464,7 @@ def miraligner(args):
             vcf_file = op.join(args.out, sample + ".vcf")
             if not file_exists(vcf_file):
             # if True:
-                with open(vcf_file, 'w') as out_handle:
-                    create_vcf(dt_pre, matures, gtf, out_handle)
+                create_vcf(dt_pre, matures, gtf, vcf_file)
             try:
                 import vcf
                 vcf.Reader(filename=vcf_file)
