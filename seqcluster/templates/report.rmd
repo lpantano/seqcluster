@@ -37,11 +37,12 @@ root_path = "$path_abs"
 root_file = file.path(root_path, "srna_out_files")
 dir.create(root_file, showWarnings = FALSE)
 
-metadata_fn =  list.files(file.path(root_path), pattern = "summary_re.csv",recursive = T, full.names = T)
+metadata_fn =  list.files(file.path(root_path), pattern = "summary.csv",recursive = T, full.names = T)
 metadata = read.csv(metadata_fn, row.names="sample_id")
 metadata = metadata[2:nrow(metadata), ]
-condition = "condition"
-design = data.frame(row.names=rownames(metadata), condition=metadata$group)
+condition = names(metadata)[1]
+design = metadata
+formula = ~ condition # modify this to get your own formula
 ```
 
 ```{r render,eval=FALSE, echo=FALSE}
@@ -70,7 +71,7 @@ names(files) = sapply(files, function(x){
 tab = data.frame()
 for (sample in rownames(metadata)) {
     d = read.table(file.path(root_path, files[sample]), sep=" ")
-    tab = rbind(tab, d %>% mutate(sample=sample, group=metadata[sample, "group"]))
+    tab = rbind(tab, d %>% mutate(sample=sample, group=metadata[sample, condition]))
 }
 
 
@@ -150,7 +151,7 @@ pheatmap(assay(vst), annotation_col = design, show_rownames = F,
 
 ### MDS plot
 ```{r pca, eval=ncol(counts) > 1, eval=ismirbase}
-mds(assay(vst), condition = design$condition)
+mds(assay(vst), condition = design[,condition])
 ```
 
 ### complexity
@@ -218,7 +219,7 @@ pheatmap(assay(vst), annotation_col = design, show_rownames = F,
 
 ### MDS plot
 ```{r pca-mirdeep2, eval=ncol(counts) > 1, eval=ismirdeep2}
-mds(assay(vst), condition = design$condition)
+mds(assay(vst), condition = designi[,condition])
 ```
 
 ### complexity
@@ -450,7 +451,7 @@ print_out = function(dss, rlog=NULL, res=NULL, prefix="standard_"){
              annotation_col = design,
              clustering_distance_cols = "correlation", 
              clustering_method = "ward.D2")
-    mds(rlogmat[sign,], condition = design$condition)
+    mds(rlogmat[sign,], condition = design[,condition])
   }
 
 }
@@ -464,7 +465,7 @@ print_out = function(dss, rlog=NULL, res=NULL, prefix="standard_"){
 counts = counts(obj)
 dss = DESeqDataSetFromMatrix(countData = counts[rowSums(counts>0)>3,],
                              colData = design,
-                             design = ~ condition)
+                             design = formula)
 dss = DESeq(dss)
 all_results = handle_deseq2(dss, design, condition, "mirna_" )
 
@@ -483,7 +484,7 @@ DESeq2::plotCounts(dds, put_gene_name_here)
 counts = counts(obj_mirdeep)
 dss_mirdeep2 = DESeqDataSetFromMatrix(countData = counts[rowSums(counts>0)>3,],
                              colData = design,
-                             design = ~ condition)
+                             design = formula)
 
 dss = DESeq(dss)
 all_results = handle_deseq2(ddss_mirdeep2, design, condition, "mirdeep2_")
@@ -497,7 +498,7 @@ all_results = handle_deseq2(ddss_mirdeep2, design, condition, "mirdeep2_")
 counts_iso = counts(isoCounts(obj, ref=T, iso5=T, iso3=T, add=T, subs =T))
 dss_iso = DESeqDataSetFromMatrix(countData = counts_iso[rowSums(counts_iso>0)>3,],
                              colData = design,
-                             design = ~ condition)
+                             design = formula)
 
 dss = DESeq(dss)
 all_results = handle_deseq2(dss_iso, design, condition, "isomirs_")
@@ -516,7 +517,7 @@ DESeq2::plotCounts(dds, put_gene_name_here)
 
 dss_clus = DESeqDataSetFromMatrix(countData = clus_ma[rowSums(clus_ma>0)>3,],
                                  colData = design,
-                                 design = ~ condition)
+                                 design = formula)
 
 dss = DESeq(dss)
 all_results = handle_deseq2(dss_clus, design, condition, "clusters_")
