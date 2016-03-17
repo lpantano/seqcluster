@@ -22,6 +22,8 @@ Web-servers
 
 `MicroCosm`_: MiRNA target database. Updated and download option.
 
+`IsomiR Bank <http://mcg.ustc.edu.cn/bsc/isomir>`_: isomiR database from many species and tissues. For single queries is useful.
+
 Command-lines
 -----------
 

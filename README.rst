@@ -27,7 +27,7 @@ PMID: `26530722 <http://www.ncbi.nlm.nih.gov/pubmed/26530722>`_
 
 **A non-biased framework for the annotation and classification of the non-miRNA small RNA transcriptome.**
 Pantano L1, Estivill X, Martí E. Bioinformatics. 2011 Nov 15;27(22):3202-3. doi: 10.1093/bioinformatics/btr527. Epub 2011 Oct 5.
-PMID: 21976421
+PMID: `21976421 <http://www.ncbi.nlm.nih.gov/pubmed/21976421>`_
 
 Quick start links
 ---------
@@ -48,7 +48,8 @@ Report
 
 Seqcluster creates html report that looks like `this`_. That is a table of all cluster detected, and you 
 can go into each of them and get a complete `description`_ with profile expression figures, annotation details and
-sequences counts for each sample.
+sequences counts for each sample. An interactive report is as well available to explore the expression profile,
+position on the genome and secondary structure. Learn more http://seqcluster.readthedocs.org/more_outputs.html#report.
 
 .. _this: https://rawgit.com/lpantano/seqcluster/master/data/examples_report/html/index.html
 .. _description: https://rawgit.com/lpantano/seqcluster/master/data/examples_report/html/1/maps.html

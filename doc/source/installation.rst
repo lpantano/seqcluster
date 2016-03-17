@@ -23,7 +23,7 @@ install conda if you want an isolate env::
 
 You can install directly from binstar (only for linux)::
 
-    ~/install/seqcluster/anaconda/conda install seqcluster bcbio-nextgen -c bioconda -c bcbio
+    ~/install/seqcluster/anaconda/conda install seqcluster bcbio-nextgen -c bioconda
 
 With that you will have everything you need for the python package. 
 The last step is to add seqcluster to your PATH (see below).
@@ -34,8 +34,7 @@ Go to Tools dependecies below to continue with the installation.
 
 If you want to install step by step from a new conda environment::    
 
-    ~/install/seqcluster/anaconda/bin/conda install pip
-    ~/install/seqcluster/anaconda/bin/conda install -c bcbio bcbio-nextgen
+    ~/install/seqcluster/anaconda/bin/conda install -c bioconda bcbio-nextgen
 
 Link binary to any folder is already in your path::
 
@@ -52,12 +51,13 @@ For seqcluster command:
 
 * bedtools
 * samtools
+* rnafold (for HTML report)
 
 For some steps of a typical small RNA-seq pipeline (recommended to use directly `bcbio`_ ):
 
 * STAR, bowtie
 * fastqc
-* cutadapt (install with ``pip`` using the same ``python`` env than seqcluster. 
+* cutadapt (install with ``bioconda`` using the same ``python`` env than seqcluster. 
 You will need to link the ``cutadapt`` binary to your ``PATH``)
     
 **easy installation**
@@ -102,31 +102,4 @@ To install all packages used by the Rmd report::
     Rscript -e 'source(https://raw.githubusercontent.com/lpantano/seqcluster/master/scripts/install_libraries.R)'
 
 
-seqcluster-helper
----------
-
-**Note: be aware that we moved to `bcbio`_ and seqcluster-helper is deprecated.**
-
-`seqcluster-helper`_ provides 
-a python framework to run a whole pipeline for small RNA (miRNA + others).
-
-Assuming you installed seqcluster as mentioned before, clone this repository and type::
-
-    python setup.py install
-    ln -s ~/install/seqcluster/anaconda/bin/seqcluster-helper.py ~/install/seqcluster/linuxbrew/bin/.
-    ln -s ~/install/seqcluster/anaconda/bin/seqcluster-installer.py ~/install/seqcluster/linuxbrew/bin/.
-
-if you get problem with pythonpy: `pip install pythonpy`
-
-**check installation**
-
-::
-    
-    seqcluster-installer.py --check 
-
-will tell you if all dependencies are installed and ready to use the framework
-
-    
-    
-.. _seqcluster-helper: https://github.com/lpantano/seqcluster-helper/blob/master/README.md
 .. _bcbio: https://github.com/chapmanb/bcbio-nextgen
