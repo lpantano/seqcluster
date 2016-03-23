@@ -1,4 +1,7 @@
 - development
+
+- 1.2.0
+
   * Add function to map SNPs to genome coordinate
   * Add RNAfold to report for html vis.
   * Adapt C code to macosx
