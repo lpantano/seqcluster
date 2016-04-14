@@ -460,7 +460,7 @@ print_out = function(dss, rlog=NULL, res=NULL, prefix="standard_"){
 
 ## Analysis for miRNA
 
-```{r de, results='asis'}
+```{r de, results='asis', eval=ismirbase}
 
 counts = counts(obj)
 dss = DESeqDataSetFromMatrix(countData = counts[rowSums(counts>0)>3,],
@@ -479,7 +479,7 @@ DESeq2::plotCounts(dds, put_gene_name_here)
 
 ## Analysis for novel miRNA
 
-```{r de-mirdeep2, results='asis'}
+```{r de-mirdeep2, results='asis',  eval=ismirdeep2}
 
 counts = counts(obj_mirdeep)
 dss_mirdeep2 = DESeqDataSetFromMatrix(countData = counts[rowSums(counts>0)>3,],
@@ -493,7 +493,7 @@ all_results = handle_deseq2(ddss_mirdeep2, design, condition, "mirdeep2_")
 
 ## Analysis for isomiRs
 
-```{r de-iso, results='asis'}
+```{r de-iso, results='asis',  eval=ismirbase}
 
 counts_iso = counts(isoCounts(obj, ref=T, iso5=T, iso3=T, add=T, subs =T))
 dss_iso = DESeqDataSetFromMatrix(countData = counts_iso[rowSums(counts_iso>0)>3,],
