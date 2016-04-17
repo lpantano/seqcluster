@@ -95,10 +95,9 @@ def _convert_to_df(in_file, freq, raw_file):
     if isinstance(in_file, (str, unicode)):
         with open(in_file) as in_handle:
             for line in in_handle:
-                cols = line.strip().split(" ")
-                name = cols[1].replace("cx", "")
-                counts = freq[name]
-                dat = _expand(dat, counts, int(cols[4]), int(cols[5]))
+                cols = line.strip().split("\t")
+                counts = freq[cols[3]]
+                dat = _expand(dat, counts, int(cols[1]), int(cols[2]))
     else:
         if raw_file:
             out_handle = open(raw_file, "w")

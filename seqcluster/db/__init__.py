@@ -51,9 +51,8 @@ def _get_closer(dat, pos):
         return pos
     else:
         closest_pos = _take_closest(pos, dat.keys())
-        if abs(closest_pos - pos) < 5:
+        if abs(closest_pos - pos) < 3:
             return closest_pos
-        return 0
 
 def _set_format(profile):
     """
@@ -70,7 +69,10 @@ def _set_format(profile):
     for pos in x:
         for sample in profile:
             y = _get_closer(profile[sample], pos)
-            scaled_profile[sample].append(profile[sample][y])
+            if y:
+                scaled_profile[sample].append(profile[sample][y])
+            else:
+                scaled_profile[sample].append(0)
     return {'x': list(x), 'y': scaled_profile, 'names': scaled_profile.keys()}
 
 def _insert_data(con, data):
