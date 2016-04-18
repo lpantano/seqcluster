@@ -244,11 +244,13 @@ def peak_calling(clus_obj):
         bigger = cluster.locimaxid
         if bigger in clus_obj.loci:
             s, e = min(clus_obj.loci[bigger].counts.keys()), max(clus_obj.loci[bigger].counts.keys())
-            scale = min(s, e)
+            scale = s
+            if clus_obj.loci[bigger].strand == "-":
+                scale = e
             logger.debug("bigger %s at %s-%s" % (bigger, s, e))
-            dt = np.array([0] * (e - s + 12))
+            dt = np.array([0] * (abs(e - s) + 12))
             for pos in clus_obj.loci[bigger].counts:
-                ss = int(pos) - scale + 5
+                ss = abs(int(pos) - scale) + 5
                 dt[ss] += clus_obj.loci[bigger].counts[pos]
         x = np.array(range(0, len(dt)))
         logger.debug("x %s and y %s" % (x, dt))
