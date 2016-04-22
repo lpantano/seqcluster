@@ -39,7 +39,7 @@ dir.create(root_file, showWarnings = FALSE)
 
 metadata_fn =  list.files(file.path(root_path), pattern = "summary.csv",recursive = T, full.names = T)
 metadata = read.csv(metadata_fn, row.names="sample_id")
-metadata = metadata[2:nrow(metadata), ]
+metadata = metadata[2:nrow(metadata), ,drop=FALSE]
 condition = names(metadata)[1]
 design = metadata
 formula = ~ condition # modify this to get your own formula
@@ -107,7 +107,7 @@ names(files) = sapply(files, function(x){
   gsub("-mirbase-ready.counts", "", basename(x))
 })
 
-obj <- IsomirDataSeqFromFiles(files = files[rownames(design)], design = design , header = T)
+obj <- IsomirDataSeqFromFiles(files = files[rownames(design)], design = design , header = T, skip=0)
 ```
 
 
