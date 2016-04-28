@@ -1,4 +1,6 @@
 - development
+
+- 1.2.1
   * Fix expression profile when no sequence at that position
   * Fix reading from profile file to avoid calculation
 
