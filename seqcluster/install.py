@@ -160,8 +160,8 @@ def _upgrade():
     pip_bin = os.path.join(conda_dir, "pip")
     subprocess.check_call([pip_bin, "install", "--upgrade", "--no-deps",
                            "git+%s#egg=seqcluster" % REMOTES["gitrepo"]])
-    subprocess.check_call([pip_bin, "install", "--upgrade", "--no-deps",
-                           "git+%s#egg=bcbio-nextgen" % REMOTES["gitrepo-bcbio"]])
+    #subprocess.check_call([pip_bin, "install", "--upgrade", "--no-deps",
+    #                       "git+%s#egg=bcbio-nextgen" % REMOTES["gitrepo-bcbio"]])
 
 def actions(args):
     if args.upgrade:
