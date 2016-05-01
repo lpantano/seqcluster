@@ -40,12 +40,13 @@ install.github = function(package,  branch="master") {
 cran_packages = c("devtools", "ggplot2", "reshape", "dplyr", "knitr", "gplots", "gridExtra", "pheatmap", "gtools")
 install.cran(cran_packages)
 
-bioconductor_packages = c("edgeR", "HTSFilter", "DESeq2")
+bioconductor_packages = c("edgeR", "HTSFilter", "DESeq2", "DEGreport)
 source("http://bioconductor.org/biocLite.R")
 install.bioconductor(bioconductor_packages)
+
+# novel packages
 install.github("hbc/CHBUtils")
-install.github("lpantano/isomiRs", "develop")
+install.github("lpantano/isomiRs", "master")
 install_github('rstudio/rmarkdown')
-install_github('jimhester/knitrBootstrap')
 
 
