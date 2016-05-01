@@ -79,11 +79,11 @@ Easy way to install your small RNA seq data with `cloudbiolinux <https://github.
 Seqcluster has snipped code to do that for you. Recommended to use `bcbio`_ for the pipeline since will install
 everything you need in a single step ``bcbio_nextgen.py upgrade -u development --tools --genomes hg19 --aligners bowtie``.
 
-But If you want to run ``seqcluster`` step by step an exmaple of hg19 human version it will be (another well annotated supported genome is mm10):
+But If you want to run ``seqcluster`` step by step an example of hg19 human version it will be (another well annotated supported genome is mm10):
 
 Download genome data::
 
-    seqcluster_install --data $PATH_TO_DATA --genomes hg19 --aligners bowtie2
+    seqcluster_install --data $PATH_TO_DATA --genomes hg19 --aligners bowtie2 --datatarget smallrna
 
 If you want to install STAR indexes since gets kind of better results than bowtie2 (warning, 40GB memory RAM needed)::
 
