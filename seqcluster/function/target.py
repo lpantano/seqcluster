@@ -49,7 +49,8 @@ def targets_enrichment(args):
                 print >>ma_handle, "%s\t%s\t%s" % (name, mir, sorted_targets[e]['score'])
 
     with open(op.join(args.out, "pairs.tsv"), 'w') as out_handle:
-       for gene, field in res:
+        print >>out_handle, "mirs\tcounts\tgene\ttranscript\tgene\tsites\tcontext_score\tAggr_PCT"
+        for gene, field in res:
             if field == "info":
                 counts = len(res[(gene, 'mirs')])
                 mirs = ",".join(list(set(res[(gene, 'mirs')])))

@@ -1,4 +1,6 @@
 - development
+  * Only update seqcluster code when upgrading
+  * Add beter logging to prepare sub-command
 
 - 1.2.1
   * Fix expression profile when no sequence at that position
