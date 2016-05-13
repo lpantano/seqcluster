@@ -217,7 +217,7 @@ def _realign(seq, precursor, start):
             break
     if not add and error_add:
         for e in error_add:
-            subs.append([e, seq[e]])
+            subs.append([e, seq[e], precursor[start + e]])
 
     return subs, add
 
@@ -295,6 +295,8 @@ def _read_pyMatch(fn, precursors):
             iso.start = reference_start
             iso.subs, iso.add = _realign(reads[query_name].sequence, precursors[chrom], reference_start)
             logger.debug("%s %s %s %s %s" % (query_name, reference_start, chrom, iso.subs, iso.add))
+            if len(iso.subs) > 1:
+                continue
             reads[query_name].set_precursor(chrom, iso)
 
         reads = _clean_hits(reads)
@@ -374,6 +376,8 @@ def _tab_output(reads, out_file, sample):
                         chrom = p
                     count = _get_freq(r)
                     seq = reads[r].sequence
+                    if iso.get_score(len(seq)) < 1:
+                        continue
                     if iso.subs:
                         iso.subs = [] if "N" in iso.subs[0] else iso.subs
                     annotation = "%s:%s" % (chrom, iso.format(":"))
@@ -472,7 +476,7 @@ def miraligner(args):
                 logger.warning(e.__doc__)
                 logger.warning(e.message)
         except Exception as e:
-            # traceback.print_exc()
+            traceback.print_exc()
             logger.warning(e.__doc__)
             logger.warning(e.message)
         if isinstance(dt, pd.DataFrame):
