@@ -53,6 +53,8 @@ parser.add_option("-s", "--species", dest="species",
                                 help="", metavar="FILE")
 parser.add_option("-e", "--exp", dest="exp", action="store_true",
                                 help="give expression", default=False)
+parser.add_option("-p", "--prefix", help="output name")
+
 
 if len(sys.argv)<4:
     parser.print_help()
@@ -60,6 +62,8 @@ if len(sys.argv)<4:
 
 (options, args) = parser.parse_args()
 species=options.species
+out_fa = "%s.fa" % options.prefix
+out_fq = "%s.fq" % options.prefix
 
 pos_mirna=open(options.strfile,'r')
 listmirna={}
@@ -73,6 +77,8 @@ pos_mirna.close()
 
 data = {}
 fas = open(options.fasta, 'r')
+fout = open(out_fa, 'w')
+fqout = open(out_fq, 'w')
 name = ""
 seq = ""
 nt = ['A', 'T', 'G', 'C']
@@ -123,8 +129,11 @@ for line in fas:
                                                 trial =random.randint(1, 100)
                                                 p = random.randint(1, 50) / 50.0
                                                 exp = "_x%s" % numpy.random.negative_binomial(trial, p, 1)[0]
-                                            print ">%s%s" % (randName, exp)
-                                            print randSeq
+                                            print >>fqout, "@%s%s" % (randName, exp)
+                                            print >>fqout, "%s" % randSeq
+                                            print >>fqout, "+\n%s" % "".join(["I"] * len(randSeq))
+                                            print >>fout, ">%s%s" % (randName, exp)
+                                            print >>fout, "%s" % randSeq
                                             data[randSeq]=1
                 name = line.split(" ")
                 name = name[0].replace(">","")
