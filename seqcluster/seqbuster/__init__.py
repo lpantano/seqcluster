@@ -476,7 +476,7 @@ def miraligner(args):
                 logger.warning(e.__doc__)
                 logger.warning(e.message)
         except Exception as e:
-            traceback.print_exc()
+            # traceback.print_exc()
             logger.warning(e.__doc__)
             logger.warning(e.message)
         if isinstance(dt, pd.DataFrame):

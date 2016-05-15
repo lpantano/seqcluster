@@ -27,10 +27,12 @@ def _get_reference_position(isomir):
     nt, pos = _parse_mut(mut)
     trim5 = isomir.split(":")[-2]
     off = -1 * len(trim5)
-    if trim5.isupper():
+    if trim5.islower():
         off = len(trim5)
     if trim5 == "NA" or trim5 == "0":
         off = 0
+    # print isomir
+    # print [mut, pos, off, nt]
     return "%s%s" % (pos + off, nt)
 
 def _get_pct(isomirs, mirna):
@@ -100,7 +102,8 @@ def liftover(pass_pos, matures):
         mir = pos["mature"]
         db_pos = matures[pos["chrom"]]
         mut = _parse_mut(pos["sv"])
-        pos['pre_pos'] = db_pos[mir][0] + mut[1]
+        print [db_pos[mir], mut, pos["sv"]]
+        pos['pre_pos'] = db_pos[mir][0] + mut[1] - 1
         pos['nt'] = list(mut[0])
         fixed_pos.append(pos)
         print_vcf(pos)
@@ -134,12 +137,15 @@ def liftover_to_genome(pass_pos, gtf):
 
     fixed_pos = []
     for pos in pass_pos:
+        if pos["chrom"] not in gtf:
+            continue
         db_pos = gtf[pos["chrom"]][0]
         mut = _parse_mut(pos["sv"])
+        print [db_pos, pos]
         if db_pos[3] == "+":
             pos['pre_pos'] = db_pos[1] + pos["pre_pos"] + 1
         else:
-            pos['pre_pos'] = db_pos[2] - pos["pre_pos"] + 1
+            pos['pre_pos'] = db_pos[2] - (pos["pre_pos"] - 1)
         pos['chrom'] = db_pos[0]
         pos['nt'] = list(mut[0])
         fixed_pos.append(pos)
