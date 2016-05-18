@@ -1,12 +1,9 @@
 ---
 output:
-  knitrBootstrap::bootstrap_document:
-    theme: readable
-    highlight: zenburn
-    theme.chooser: TRUE
-    highlight.chooser: TRUE
   html_document:
     toc: true
+    toc_depth: 2
+    theme: readable
     highlight: zenburn
 ---
 
@@ -39,15 +36,14 @@ dir.create(root_file, showWarnings = FALSE)
 
 metadata_fn =  list.files(file.path(root_path), pattern = "summary.csv$",recursive = T, full.names = T)
 metadata = read.csv(metadata_fn, row.names="sample_id")
-metadata = metadata[2:nrow(metadata), ,drop=FALSE]
 condition = names(metadata)[1]
 design = metadata
-formula = ~ condition # modify this to get your own formula
+formula = ~ condition # modify this to get your own formula, it should be a column in your metadata
+isde=FALSE # turn this true to make DE ananlysis
 ```
 
 ```{r render,eval=FALSE, echo=FALSE}
 library(rmarkdown)
-library(knitrBootstrap)
 render("report.rmd")
 ```
 
@@ -60,9 +56,12 @@ reads with adapter, reads mapped to miRNAs, reads mapped to other small RNAs.
 
 After adapter removal, we can plot the size distribution of the small RNAs.
 
-```{r adapter,fig.width=10}
+```{r adapter-check,fig.width=10}
 files = list.files(file.path(root_path),pattern = "trimming_stats",recursive = T)
+isadapter = length(files)>0
+```
 
+```{r adapter,fig.width=10,eval=isadapter}
 names(files) = sapply(files, function(x){
   gsub("-ready.trimming_stats", "", basename(x))
 })
@@ -253,6 +252,7 @@ of the genome without reads.
 fn_json = list.files(file.path(root_path),pattern = "seqcluster.json",recursive = T,full.names = T)
 seq_dir = dirname(fn_json)
 
+isseqcluster = length(fn_json)>0
 #cov_stats <- read.table(file.path(root_path, "..", "align", "seqs_rmlw.bam_cov.tsv"),sep="\t",check.names = F)
 
 #kable(cov_stats[cov_stats$V1=="genome",] %>%  dplyr::select(coverage=V2,ratio_genome=V5), row.names = FALSE)
@@ -270,7 +270,7 @@ Number of reads in the data after each step:
 * cluster: after cluster detection
 * multimap: after meta-cluster detection
 
-```{r reads-track}
+```{r reads-track,eval=isseqcluster}
 reads_stats <- read.table(file.path(seq_dir, "read_stats.tsv"),sep="\t",check.names = F)
 ggplot(reads_stats, aes(x=V2, y=V1, fill=V3)) + 
     geom_bar(stat = 'identity', position = 'dodge') +
@@ -280,7 +280,7 @@ ggplot(reads_stats, aes(x=V2, y=V1, fill=V3)) +
 ```
 
 
-```{r cluster}
+```{r cluster,eval=isseqcluster}
 
 clus <- read.table(file.path(seq_dir, "counts.tsv"),header=T,sep="\t",row.names=1, check.names = FALSE)
 ann <- clus[,2]
@@ -297,7 +297,7 @@ If any meta-cluster is > 40% of the total data, maybe it is worth to add some fi
 like: minimum number of counts `-e` or `--min--shared` in `seqcluster prepare`
 
 
-```{r complex-meta-clusters}
+```{r complex-meta-clusters,eval=isseqcluster}
 library(edgeR)
 clus_ma_norm = cpm(DGEList(clus_ma),normalized.lib.sizes = TRUE)
 head(clus_ma_norm[toomany>0,])
@@ -307,7 +307,7 @@ head(clus_ma_norm[toomany>0,])
 
 Number of miRNAs with > 10 counts.
 
-```{r complexity-clus}
+```{r complexity-clus,eval=isseqcluster}
 
 kable(as.data.frame(colSums(clus_ma>10)))
 
@@ -315,7 +315,7 @@ kable(as.data.frame(colSums(clus_ma>10)))
 
 ### Contribution by class
 
-```{r cluster_type}
+```{r cluster_type,eval=isseqcluster}
 rRNA <- colSums(clus_ma[grepl("rRNA",ann) & grepl("miRNA",ann)==F,])
 miRNA <- colSums(clus_ma[grepl("miRNA",ann),])
 tRNA <- colSums(clus_ma[grepl("tRNA",ann) & grepl("rRNA",ann)==F & grepl("ncRNA",ann)==F & grepl("miRNA",ann)==F,])
@@ -354,6 +354,7 @@ ggplot(melt(dd_norm[,1:5])) +
 # Differential expression
 
 [DESeq2](http://bioconductor.org/packages/release/bioc/html/DESeq2.html) is used for this analysis.
+
 
 ```{r de-setup}
 library(DESeq2)
@@ -460,7 +461,7 @@ print_out = function(dss, rlog=NULL, res=NULL, prefix="standard_"){
 
 ## Analysis for miRNA
 
-```{r de, results='asis', eval=ismirbase}
+```{r de, results='asis', eval=(ismirbase & isde)}
 
 counts = counts(obj)
 dss = DESeqDataSetFromMatrix(countData = counts[rowSums(counts>0)>3,],
@@ -479,7 +480,7 @@ DESeq2::plotCounts(dds, put_gene_name_here)
 
 ## Analysis for novel miRNA
 
-```{r de-mirdeep2, results='asis',  eval=ismirdeep2}
+```{r de-mirdeep2, results='asis',  eval=(ismirdeep2 & isde)}
 
 counts = counts(obj_mirdeep)
 dss_mirdeep2 = DESeqDataSetFromMatrix(countData = counts[rowSums(counts>0)>3,],
@@ -493,7 +494,7 @@ all_results = handle_deseq2(dss_mirdeep2, design, condition, "mirdeep2_")
 
 ## Analysis for isomiRs
 
-```{r de-iso, results='asis',  eval=ismirbase}
+```{r de-iso, results='asis',  eval=(ismirbase & isde)}
 
 counts_iso = counts(isoCounts(obj, ref=T, iso5=T, iso3=T, add=T, subs =T))
 dss_iso = DESeqDataSetFromMatrix(countData = counts_iso[rowSums(counts_iso>0)>3,],
@@ -513,7 +514,7 @@ DESeq2::plotCounts(dds, put_gene_name_here)
 
 ## Analysis for clusters
 
-```{r de-c, results='asis'}
+```{r de-c, results='asis', eval=(isde & isseqcluster)}
 
 dss_clus = DESeqDataSetFromMatrix(countData = clus_ma[rowSums(clus_ma>0)>3,],
                                  colData = design,
