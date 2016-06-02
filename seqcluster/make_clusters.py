@@ -1,4 +1,5 @@
 import os
+import sys
 import os.path as op
 from collections import Counter, namedtuple
 from operator import itemgetter
@@ -11,6 +12,7 @@ import pybedtools
 
 from seqcluster.libs.utils import file_exists
 import libs.logger as mylog
+from libs import do
 from libs.read import load_data
 from libs.mystats import up_threshold
 from detect.cluster import detect_clusters, clean_bam_file, peak_calling, detect_complexity
@@ -243,24 +245,24 @@ def _create_clusters(seqL, bam_file, args):
     create metaclusters with multi-mappers.
     """
     clus_obj = []
-    logger.info("Parsing aligned file")
     cluster_file = op.join(args.out, "cluster.bed")
-    if not os.path.exists(args.out + '/list_obj.pk'):
-        logger.info("Merging position")
+    if not os.path.exists(op.join(args.out, 'list_obj.pk')):
         if not file_exists(cluster_file):
-            aligned_bed = parse_align_file(bam_file)
-            a = pybedtools.BedTool(aligned_bed, from_string=True)
-            c = a.cluster(s=True, d=20)
-            c.saveas(cluster_file)
-        else:
-            c = pybedtools.BedTool(cluster_file)
+            logger.info("Parsing aligned file")
+            logger.info("Merging sequences")
+            bedtools = os.path.join(os.path.dirname(sys.executable), "bedtools")
+            bedtools = bedtools if os.path.exists(bedtools) else "bedtools"
+            parse_cmd = "awk '{i=i+1;print $1\"\\t\"$2\"\\t\"$3\"\\t\"$4\"\\t\"i\"\\t\"$6}'"
+            cmd = "{bedtools} bamtobed -i {bam_file} | {parse_cmd} | {bedtools} cluster -s -d 20 -i - > {cluster_file}"
+            do.run(cmd.format(**locals()))
+        c = pybedtools.BedTool(cluster_file)
         logger.info("Creating clusters")
         clus_obj = detect_clusters(c, seqL, args.min_seqs, args.non_un_gl)
-        with open(args.out + '/list_obj.pk', 'wb') as output:
+        with open(op.join(args.out, 'list_obj.pk'), 'wb') as output:
             pickle.dump(clus_obj, output, pickle.HIGHEST_PROTOCOL)
     else:
         logger.info("Loading previous clusters")
-        with open(args.out + '/list_obj.pk', 'rb') as input:
+        with open(op.join(args.out, 'list_obj.pk'), 'rb') as input:
             clus_obj = pickle.load(input)
     # bedfile = pybedtools.BedTool(generate_position_bed(clus_obj), from_string=True)
     # seqs_2_loci = bedfile.intersect(pybedtools.BedTool(aligned_bed, from_string=True), wo=True, s=True)
