@@ -1,8 +1,13 @@
 - development
+
+- 1.2.2
+
+  * Use bedtools for bamtobed and clustering
   * Only update seqcluster code when upgrading
   * Add beter logging to prepare sub-command
 
 - 1.2.1
+
   * Fix expression profile when no sequence at that position
   * Fix reading from profile file to avoid calculation
 
