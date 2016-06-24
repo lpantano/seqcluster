@@ -29,6 +29,6 @@ setup(name='seqcluster',
       entry_points={
           'console_scripts': ['seqcluster=seqcluster.command_line:main', 'seqcluster_install=seqcluster.install:main'],
       },
-      package_data={'seqclsuter.templates': ['*']},
+      package_data={'seqcluster.templates': ['*']},
       include_package_data=True,
       zip_safe=False)
