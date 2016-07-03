@@ -31,7 +31,7 @@ General
 
 `A novel piRNA mechanism <http://nar.oxfordjournals.org/content/early/2015/09/23/nar.gkv954.short?rss=1>`_ in regulating gene expression in highly differentiated somatic cells.
 
-`Differential and coherent processing patterns from small RNAs.<http://www.ncbi.nlm.nih.gov/pubmed/26166713>`_ to detect changes in profiles of processing small RNAs.
+`Differential and coherent processing patterns from small RNAs <http://www.ncbi.nlm.nih.gov/pubmed/26166713>`_ to detect changes in profiles of processing small RNAs.
 
 Targets
 -------
@@ -41,7 +41,7 @@ Targets
 Techonolgy
 -----------
 
-`miRQC <http://www.nature.com.ezp-prod1.hul.harvard.edu/nmeth/journal/v11/n8/full/nmeth.3014.html>`_: work studying the accuracy and specificity of different technologies to detect miRNAs.
+`miRQC <http://www.nature.com/nmeth/journal/v11/n8/full/nmeth.3014.html>`_: work studying the accuracy and specificity of different technologies to detect miRNAs.
 
 `Important features affecting the detection of small RNA biomarkers <http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4487992/>`_: How the sample can affect the detection of biomarkers (like RIN value, concentration, ...)
 
