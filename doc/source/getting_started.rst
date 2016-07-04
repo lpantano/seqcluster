@@ -155,7 +155,7 @@ where `$GENOME_FASTA_PATH` is the path to the genome fasta file used in the alig
 
 An example of the output is below:
 
-.. image:: https://rawgit.com/lpantano/seqcluster/master/doc/slides/seqclusterViz.gif
+.. image:: http://i.makeagif.com/media/7-03-2016/M0GjW2.gif
 
 Easy start with bcbio-nextgen.py
 ------------------------------------
