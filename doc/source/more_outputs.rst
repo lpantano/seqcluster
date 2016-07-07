@@ -2,11 +2,22 @@
 
 
 ***************
-More outputs
+Outputs
 ***************
 
+seqcluster
+==========
+
+* ``counts.tsv``: count matrix that can be input of downstream analyses. `nloci` will be 0 always that the meta-cluster has been resolved successfully. For instance, it can happen that you got sequences you have a bunch of sequences mapping to hundreds of different places on the genome, then seqcluster doesn’t resolve that, and put everything under the larger region covered by those sequences. So, mainly, 0 all are good rows. The `ann` column is just where the meta-clusters overlap with. It can happen that one name appears many times if different locations of the meta-cluster map to different copies of that feature. OR if the annotation file used had multiple lines for that. 
+* ``read_stats.tsv``: number of reads for each sample after each step in the analysis. Meant to give a hint if we lose a lot of information or not.
+* ``size_counts.tsv``: size distribution of the small RNA by annotation group. (position, reads, cluster)
+* ``seqcluster.json``: json file containing all information. This file is used as the input of the report suit.
+* ``log/run.log``: all messages at debug level
+* ``log/trace.log``: to keep trace of algorithm decisions
+
+
 Report
-========
+======
 
 Beside the static HTML report that you can get using ``report`` `subcommand <http://seqcluster.readthedocs.org/getting_started.html#report>`_, you can download `this <https://github.com/lpantano/seqclusterViz/archive/master.zip>`_ HTML. (watch the repository to get notifications of new releases.)
 
@@ -18,9 +29,3 @@ Beside the static HTML report that you can get using ``report`` `subcommand <htt
 An example of the HTML code:
 
 .. image:: seqclusterViz_example.png
-
-
-Stats
-========
-
-Deprecated (this stats are part of the cluster subcommand now.) 
