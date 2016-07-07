@@ -21,11 +21,11 @@ Contents:
    
    getting_started.rst
    
+   outputs.rst
+
    example_pipeline.rst 
 
    mirna_annotation.rst
-   
-   more_outputs.rst
 
    collapse.rst
 
