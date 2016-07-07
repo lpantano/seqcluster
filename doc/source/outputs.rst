@@ -28,4 +28,5 @@ Beside the static HTML report that you can get using ``report`` `subcommand <htt
 
 An example of the HTML code:
 
-.. image:: seqclusterViz_example.png
+.. image:: http://i.makeagif.com/media/7-03-2016/M0GjW2.gif
+  :target: https://youtu.be/Zjzte8n2-Sg
