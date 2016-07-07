@@ -1,4 +1,4 @@
-.. _more_output:
+.. _outputs:
 
 
 ***************
