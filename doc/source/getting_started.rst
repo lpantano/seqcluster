@@ -125,7 +125,7 @@ the value after `gene name` attribute is the specific annotation):
     chr1    source  miRNA      1       11503   .       +       .       gene name 'mir-102' ;
 
 
-hint: scripts to generate human and mouse annotation are inside `seqcluster/scripts` folder. 
+hint: scripts to generate human and mouse annotation are inside `seqcluster/scripts <https://github.com/lpantano/seqcluster/blob/master/scripts>`_ folder. 
 
 **OUTPUTS**
 
