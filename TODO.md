@@ -1,3 +1,6 @@
+# General pipeline
+
+- [ ] normalized using median of gene expression ratio, same idea than DESeq2, for viz purpose  
 - [X] add length enrichment function
 - [X] implement bayes function to decide which sequences go where
 - [X] sequence in the cluster - text
@@ -12,7 +15,7 @@
 - [X] implement tRNA-scan
 - [ ] NOW implement small rna prediction: CoRaL is an option for everything http://wanglab.pcbi.upenn.edu/coral/  or
 - [X] change to python alignment tool
-- [ ] implement mirna prediction http://evryrna.ibisc.univ-evry.fr/miRBoost/index.html
+- [-] implement mirna prediction http://evryrna.ibisc.univ-evry.fr/miRBoost/index.html (move inside bcbio)
 - [ ] implement submire target prediction module http://research.nhgri.nih.gov/software/SubmiRine/user_guide.shtml
 - [X] Add to report: https://github.com/pkerpedjiev/forna/
 
@@ -26,6 +29,8 @@
 
 
 # miraligner
+
+Future implementation at http://mirtop.github.io
 
 inputs will be fastq or bam file. Will need to download the mirbase annotation (and hairpin.fa) if not given (need version). Species is required (for now).
 
@@ -47,6 +52,6 @@ inputs will be fastq or bam file. Will need to download the mirbase annotation (
 
 - [X] add install subcommand for mirbase installation/genomes
 - [X] add html report link to documentation
-- [ ] figure showing general pipeline steps: bcbio-nextgen
+- [X] figure showing general pipeline steps: bcbio-nextgen
 - [X] add documentation for seqclusterViz html reader
 
