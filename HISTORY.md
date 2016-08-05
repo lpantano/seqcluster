@@ -1,5 +1,8 @@
 - development
 
+  * Add gene_id as a 2nd option to add GTF annotation
+  * Only do rnafold for precursors shorter than 200nt
+
 - 1.2.2
 
   * Use bedtools for bamtobed and clustering
