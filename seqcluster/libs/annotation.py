@@ -8,13 +8,15 @@ logger = mylog.getLogger("run")
 
 def read_gtf_line(cols, field="name"):
     """parse gtf line to get class/name information"""
+    field = field.lower()
     try:
         group = cols[2]
         attrs = cols[8].split(";")
         name = [attr.strip().split(" ")[1] for attr in attrs if attr.strip().split(" ")[0].lower().endswith(field)]
         if not name:
             name = [attr.strip().split(" ")[1] for attr in attrs if attr.strip().split(" ")[0].lower().endswith("gene_id")]
-
+        if not name:
+            name = ["None"]
         biotype = [attr.strip().split(" ")[1] for attr in attrs if attr.strip().split(" ")[0].lower().endswith("biotype")]
         if biotype:
             group = biotype[0]
