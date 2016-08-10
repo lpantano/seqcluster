@@ -6,12 +6,12 @@ from seqcluster.libs.classes import annotation, dbannotation
 logger = mylog.getLogger("run")
 
 
-def read_gtf_line(cols):
+def read_gtf_line(cols, field="name"):
     """parse gtf line to get class/name information"""
     try:
         group = cols[2]
         attrs = cols[8].split(";")
-        name = [attr.strip().split(" ")[1] for attr in attrs if attr.strip().split(" ")[0].lower().endswith("name")]
+        name = [attr.strip().split(" ")[1] for attr in attrs if attr.strip().split(" ")[0].lower().endswith(field)]
         if not name:
             name = [attr.strip().split(" ")[1] for attr in attrs if attr.strip().split(" ")[0].lower().endswith("gene_id")]
 
@@ -57,7 +57,7 @@ def _position_in_feature(pos_a, pos_b):
     return lento5, lento3, strd
 
 
-def anncluster(c, clus_obj, db, type_ann):
+def anncluster(c, clus_obj, db, type_ann, feature_id="name"):
     """intersect transcription position with annotation files"""
     id_sa, id_ea, id_id, id_idl, id_sta = 1, 2, 3, 4, 5
     if type_ann == "bed":
@@ -72,7 +72,7 @@ def anncluster(c, clus_obj, db, type_ann):
     logger.debug("Type:%s\n" % type_ann)
     for cols in c.features():
         if type_ann == "gtf":
-            cb, sb, eb, stb, db, tag = read_gtf_line(cols[6:])
+            cb, sb, eb, stb, db, tag = read_gtf_line(cols[6:], feature_id)
         else:
             sb = int(cols[id_sb])
             eb = int(cols[id_eb])

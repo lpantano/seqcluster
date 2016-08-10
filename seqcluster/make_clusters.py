@@ -224,7 +224,7 @@ def _annotate(args, setclus):
             db = os.path.basename(filebed)
             b = pybedtools.BedTool(filebed)
             c = a.intersect(b, wo=True)
-            setclus = anncluster(c, setclus, db, args.type_ann)
+            setclus = anncluster(c, setclus, db, args.type_ann, args.feature_id)
     return setclus
 
 

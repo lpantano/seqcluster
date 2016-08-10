@@ -1,5 +1,7 @@
 - development
 
+  * Add --feature_id as an option to specify the attribute
+    to use in the GTF file for annotation
   * Add gene_id as a 2nd option to add GTF annotation
   * Only do rnafold for precursors shorter than 200nt
 
