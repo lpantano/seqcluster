@@ -145,7 +145,7 @@ def _create_matrix_uniq_seq(sample_l, seq_l, maout, out, min_shared):
     :returns: Null
     """
     skip = 0
-    if min_shared > len(sample_l):
+    if int(min_shared) > len(sample_l):
         min_shared = len(sample_l)
     maout.write("id\tseq")
     for g in sample_l:
