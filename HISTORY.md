@@ -1,4 +1,6 @@
 - development
+  * Fix bug in prepare sample that will setup min-shared
+    to samples size always.
 
 - 1.2.3
 
