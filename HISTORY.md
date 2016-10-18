@@ -1,4 +1,5 @@
 - development
+  * Add conflict to output
   * Fix bug in prepare sample that will setup min-shared
     to samples size always.
 

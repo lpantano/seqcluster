@@ -21,6 +21,7 @@ from seqcluster.libs.bayes import decide_by_bayes
 logger = mylog.getLogger(__name__)
 
 REMOVED = 0
+CONFLICT = 0
 
 
 def _get_seqs_from_cluster(seqs, seen):
@@ -84,6 +85,7 @@ def reduceloci(clus_obj,  path):
 
     logger.info("Clusters too long to be analized: %s" % large)
     logger.info("Number of clusters removed because low number of reads: %s" % REMOVED)
+    logger.info("Number of clusters with conflicts: %s" % CONFLICT)
     return clus_obj
 
 
@@ -128,6 +130,7 @@ def _iter_loci(meta, clusters, s2p, filtered, n_cluster):
         * filtered: dict of cluster objects
         * n_cluster: int cluster id
     """
+    global CONFLICT
     loci = dict(zip(meta, [clusters[idc] for idc in meta]))
 
     n_loci = len(meta)
@@ -154,6 +157,7 @@ def _iter_loci(meta, clusters, s2p, filtered, n_cluster):
 
     if n_loci > 1:
         n_internal_cluster = sorted(internal_cluster.keys(), reverse=True)[0]
+        CONFLICT += 1
         internal_cluster = _solve_conflict(internal_cluster, s2p, n_internal_cluster)
 
     internal_cluster = _clean_cluster(internal_cluster)

@@ -47,7 +47,7 @@ def cluster(args):
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
 
     if len(seqL.keys()) < 10:
-        logger.error("It seems you have so low coverage. Please check your fastq files have enough sequences.")
+        logger.error("It seems you have low coverage. Please check your fastq files have enough sequences.")
         raise ValueError("So few sequences.")
 
     logger.info("Cleaning bam file")
