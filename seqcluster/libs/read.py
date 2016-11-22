@@ -80,7 +80,7 @@ def precursor_sequence(loci, reference):
 
 def map_to_precursors_on_fly(seqs, names, loci, args):
     """map sequences to precursors with franpr algorithm to avoid writting on disk"""
-    precursor = precursor_sequence(loci, args.ref)
+    precursor = precursor_sequence(loci, args.ref).upper()
     dat = dict()
     for s, n in itertools.izip(seqs, names):
         res = pyMatch.Match(precursor, str(s), 1, 3)
