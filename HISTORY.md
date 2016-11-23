@@ -1,4 +1,6 @@
 - development
+  * Allow size parameter during collapsing reads
+  * Fix reporting DB when precursor is masked
   * Add conflict to output
   * Fix bug in prepare sample that will setup min-shared
     to samples size always.
