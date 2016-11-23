@@ -59,13 +59,13 @@ def splitext_plus(f):
     return base, ext
 
 
-def write_output(out_file, seqs, minimum=1):
+def write_output(out_file, seqs, minimum=1, size=15):
     idx =0
     with open(out_file, 'w') as handle:
         for seq in seqs:
             idx += 1
             qual = "".join(seqs[seq].get())
             counts = seqs[seq].times
-            if int(counts) > minimum:
+            if int(counts) > minimum and len(seq) > size:
                 handle.write(("@seq_{idx}_x{counts}\n{seq}\n+\n{qual}\n").format(**locals()))
     return out_file
