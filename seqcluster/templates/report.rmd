@@ -459,7 +459,7 @@ print_out = function(dss, rlog=NULL, res=NULL, prefix="standard_"){
 
 ```
 
-## Analysis for miRNA
+## Analysis for miRNA {.tabset}
 
 ```{r de, results='asis', eval=(ismirbase & isde)}
 
@@ -478,7 +478,7 @@ DESeq2::plotCounts(dds, put_gene_name_here)
 
 ```
 
-## Analysis for novel miRNA
+## Analysis for novel miRNA {.tabset}
 
 ```{r de-mirdeep2, results='asis',  eval=(ismirdeep2 & isde)}
 
@@ -487,12 +487,12 @@ dss_mirdeep2 = DESeqDataSetFromMatrix(countData = counts[rowSums(counts>0)>3,],
                              colData = design,
                              design = formula)
 
-dss = DESeq(dss)
+dss_mirdeep2 = DESeq(dss_mirdeep2)
 all_results = handle_deseq2(dss_mirdeep2, design, condition, "mirdeep2_")
 
 ```
 
-## Analysis for isomiRs
+## Analysis for isomiRs {.tabset}
 
 ```{r de-iso, results='asis',  eval=(ismirbase & isde)}
 
@@ -501,7 +501,7 @@ dss_iso = DESeqDataSetFromMatrix(countData = counts_iso[rowSums(counts_iso>0)>3,
                              colData = design,
                              design = formula)
 
-dss = DESeq(dss)
+dss_iso = DESeq(dss_iso)
 all_results = handle_deseq2(dss_iso, design, condition, "isomirs_")
 
 ```
@@ -512,7 +512,7 @@ DESeq2::plotCounts(dds, put_gene_name_here)
 
 ```
 
-## Analysis for clusters
+## Analysis for clusters {.tabset}
 
 ```{r de-c, results='asis', eval=(isde & isseqcluster)}
 
@@ -520,7 +520,7 @@ dss_clus = DESeqDataSetFromMatrix(countData = clus_ma[rowSums(clus_ma>0)>3,],
                                  colData = design,
                                  design = formula)
 
-dss = DESeq(dss)
+dss_clus = DESeq(dsdss_cluss)
 all_results = handle_deseq2(dss_clus, design, condition, "clusters_")
 
 ```
@@ -528,7 +528,11 @@ all_results = handle_deseq2(dss_clus, design, condition, "clusters_")
 
 # Files
 
-Files generated contains raw count, normalized counts, log2 normalized counts and DESeq2 results.
+Files description:
+
+* `mirna__*` files contain information about miRNA from miRBase, `clusters__*` about general small RNA clusters, and `mirdeep2__*` about novel miRNA discovery.
+
+* `*log_matrix.txt` is log2 normalized counts, `*norm_matrix,txt` is normalized count data, `*raw_matrix.txt` is raw count data, and `*.tsv` contains the DE analysis results with the log2FC, pvalue and padjust information.
 
 #R Session Info
 
