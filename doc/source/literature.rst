@@ -20,10 +20,13 @@ A challenge for miRNA: multiple isomiRs in `miRNAomics. <http://www.ncbi.nlm.nih
 
 `A comprehensive survey of 3' animal miRNA modification <http://www.ncbi.nlm.nih.gov/pubmed/20719920>`_ events and a possible role for 3' adenylation in modulating miRNA targeting effectiveness.
 
-
 PAPD5-mediated 3′ adenylation and subsequent degradation of `miR-21 <http://www.pnas.org/content/111/31/11467.abstract>`_ is disrupted in proliferative disease. 
 
 High-resolution analysis of the human retina miRNome reveals `isomiR <http://www.ncbi.nlm.nih.gov/pubmed/26819412>`_ variations and novel microRNAs.
+
+Sequence features of Drosha and Dicer cleavage sites affect the `complexity of isomiRs <https://www.ncbi.nlm.nih.gov/pubmed/25867481>`_.
+
+Knowledge about the presence or absence of miRNA isoforms (isomiRs) can successfully discriminate amongst 32 `TCGA cancer types <https://academic.oup.com/nar/article/2999732/Knowledge?platform=hootsuite#60218417>`_
 
 
 General
@@ -32,6 +35,8 @@ General
 `A novel piRNA mechanism <http://nar.oxfordjournals.org/content/early/2015/09/23/nar.gkv954.short?rss=1>`_ in regulating gene expression in highly differentiated somatic cells.
 
 `Differential and coherent processing patterns from small RNAs <http://www.ncbi.nlm.nih.gov/pubmed/26166713>`_ to detect changes in profiles of processing small RNAs.
+
+Survey of 800+ datasets from human tissue and body fluid reveals `XenomiRs are likely artifacts <http://rnajournal.cshlp.org/content/early/2017/01/06/rna.059725.116.abstract>`_
 
 Targets
 -------
@@ -50,3 +55,5 @@ Techonolgy
 `review of tools for detect miRNA-disease network <http://bib.oxfordjournals.org.ezp-prod1.hul.harvard.edu/content/early/2015/06/08/bib.bbv033.full>`_.
 
 `review of tools <http://nar.oxfordjournals.org/content/early/2015/11/16/nar.gkv1221.full>`_  for miRNA de-novo and interaction analysis
+
+`Evaluation of microRNA alignment techniques <http://rnajournal.cshlp.org/content/early/2016/06/09/rna.055509.115>`_
