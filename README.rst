@@ -9,17 +9,20 @@ Ask questions in the repo's Gitter: Join the chat at:
 small RNA analysis from NGS data
 
 .. image:: https://travis-ci.org/lpantano/seqcluster.png?branch=master
-    :target: https://travis-ci.org/lpantano/seqcluster
+   :target: https://travis-ci.org/lpantano/seqcluster
 
 .. image:: https://badge.fury.io/py/seqcluster.svg
-    :target: http://badge.fury.io/py/seqcluster
+   :target: http://badge.fury.io/py/seqcluster
 
 .. image:: https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square
-    :target: http://bioconda.github.io
+   :target: http://bioconda.github.io
 
 .. image:: https://img.shields.io/pypi/l/seqcluster.svg
-    :target: https://github.com/lpantano/seqcluster/blob/master/LICENSE
-
+   :target: https://github.com/lpantano/seqcluster/blob/master/LICENSE
+    
+.. image:: http://www.repostatus.org/badges/latest/active.svg
+   :alt: Project Status: Active - The project has reached a stable, usable state and is being actively developed.
+   :target: http://www.repostatus.org/#active
 
 Cite
 ---------
