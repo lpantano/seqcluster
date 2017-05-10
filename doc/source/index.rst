@@ -6,8 +6,8 @@
 .. image:: logo.png
    :alt: seqcluster banner
    :align: left
-   :height: 50px
-   :width: 50px
+   :height: 100px
+   :width: 100px
 
 Welcome to seqbuster's documentation!
 =====================================
