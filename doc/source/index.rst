@@ -9,7 +9,8 @@
    :height: 100px
    :width: 100px
 
-Welcome to seqbuster's documentation!
+
+Welcome to seqbuster/seqcluster's documentation!
 =====================================
 
 Analysis of small RNA sequencing data. It detect unit of transcription over the genome,
