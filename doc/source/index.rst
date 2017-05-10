@@ -3,6 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. image:: logo.png
+   :alt: seqcluster banner
+   :align: left
+   :height: 20px
+   :width: 20px
+
 Welcome to seqbuster's documentation!
 =====================================
 
