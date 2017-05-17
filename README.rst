@@ -24,6 +24,9 @@ small RNA analysis from NGS data
    :alt: Project Status: Active - The project has reached a stable, usable state and is being actively developed.
    :target: http://www.repostatus.org/#active
 
+.. image:: https://img.shields.io/badge/DOI-10.1093%2Fbioinformatics%2Fbtv632-lightgrey.svg?style=flat-square 
+   :target: https://doi.org/10.1093/bioinformatics/btv632
+
 Cite
 ---------
 
