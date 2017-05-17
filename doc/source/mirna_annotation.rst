@@ -52,7 +52,7 @@ Here I am only using sequences that had the adapter, meaning that for sure are s
 Prepare databases
 -----------------
 
-For human or mouse, follows `this instruction <http://seqcluster.readthedocs.org/installation.html#data>`_ to download easily miRBase files. In general you only need hairpin.fa and miRNA.str from miRBase site. _`mirGeneDB <http://mirgenedb.org>` is also supported, download the needed files _`here <https://github.com/lpantano/small_rna_annotation/tree/master/mirgenedb>`. 
+For human or mouse, follows `this instruction <http://seqcluster.readthedocs.org/installation.html#data>`_ to download easily miRBase files. In general you only need hairpin.fa and miRNA.str from miRBase site. `mirGeneDB <http://mirgenedb.org>`_ is also supported, download the needed files `here <https://github.com/lpantano/small_rna_annotation/tree/master/mirgenedb>`_. 
 
 **Highly recommended to filter hairpin.fa to contain only the desired species.**
 
