@@ -16,6 +16,9 @@ small RNA analysis from NGS data
 
 .. image:: https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square
    :target: http://bioconda.github.io
+  
+.. image:: https://anaconda.org/bioconda/seqcluster/badges/downloads.svg
+   :target: https://anaconda.org/bioconda/seqcluster
 
 .. image:: https://img.shields.io/pypi/l/seqcluster.svg
    :target: https://github.com/lpantano/seqcluster/blob/master/LICENSE
