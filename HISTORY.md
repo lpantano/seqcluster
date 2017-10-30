@@ -1,4 +1,5 @@
 - development
+  * Remove HTML report
   * Allow size parameter during collapsing reads
   * Fix reporting DB when precursor is masked
   * Add conflict to output
