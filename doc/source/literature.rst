@@ -9,6 +9,8 @@ Relevant papers about isomiRs and other novel small RNAs with functional relevan
 IsomiRs
 -----------
 
+`Naturally existing isoforms of miR-222 have distinct functions<https://www.ncbi.nlm.nih.gov/pubmed/28981911?dopt=Abstract>_`: this work demonstrates the capacity for 3' isomiRs to mediate differential functions, we contend more attention needs to be given to 3' variance given the prevalence of this class of isomiR.
+
 `miR-142-3p isomiR <http://rnajournal.cshlp.org/content/early/2015/07/02/rna.048876.114>`_:  "We furthermore demonstrate that miRNA 5′-end variation 
 leads to differential targeting and can thus broaden the target range of miRNAs." 
 
