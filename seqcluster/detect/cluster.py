@@ -16,14 +16,14 @@ from seqcluster.libs.do import run
 logger = mylog.getLogger(__name__)
 
 
-def detect_complexity(bam_in, genome):
+def detect_complexity(bam_in, genome, out):
     """
     genome coverage of small RNA
     """
     if not genome:
         logger.info("No genome given. skipping.")
         return None
-    out_file = bam_in + "_cov.tsv"
+    out_file = op.join(out, op.basename(bam_in) + "_cov.tsv")
     if file_exists(out_file):
         return None
     fai = genome + ".fai"
