@@ -33,4 +33,4 @@ def report(args):
     logger.info("create database")
     make_database(data, "seqcluster.db", args.out)
 
-   logger.info("Done. Download https://github.com/lpantano/seqclusterViz/archive/master.zip to browse the output.")
+    logger.info("Done. Download https://github.com/lpantano/seqclusterViz/archive/master.zip to browse the output.")
