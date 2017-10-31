@@ -2,9 +2,6 @@ import logging
 import string
 import os
 
-from matplotlib import pyplot as plt
-plt.ioff()
-AXIS_FONT = {'fontname': 'Arial', 'size': '14'}
 from math import log as mlog2
 from collections import Counter, defaultdict
 
