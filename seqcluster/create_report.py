@@ -25,8 +25,6 @@ def report(args):
     """
     logger.info("reading sequeces")
     data = load_data(args.json)
-    # out_dir = os.path.join(args.out, "html")
-    safe_dirs(out_dir)
 
     logger.info("create profile")
     data = make_profile(data, out_dir, args)
