@@ -27,7 +27,7 @@ def report(args):
     data = load_data(args.json)
 
     logger.info("create profile")
-    data = make_profile(data, out_dir, args)
+    data = make_profile(data, args.out, args)
     logger.info("create database")
     make_database(data, "seqcluster.db", args.out)
 
