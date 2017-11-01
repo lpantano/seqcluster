@@ -235,7 +235,7 @@ def _clean_alignment(args):
     logger.info("Clean bam file with highly repetitive reads with low counts. sum(counts)/n_hits > 1%")
     bam_file, seq_obj = clean_bam_file(args.afile, args.mask)
     logger.info("Using %s file" % bam_file)
-    detect_complexity(bam_file, args.ref)
+    detect_complexity(bam_file, args.ref, args.out)
     return bam_file, seq_obj
 
 
