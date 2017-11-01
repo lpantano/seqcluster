@@ -10,7 +10,7 @@ before_install:
   # - echo "127.0.1.1 "`hostname` | sudo tee /etc/hosts
   - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
   - bash Miniconda-latest-Linux-x86_64.sh -b -p ~/install
-  - export PATH = ~/install/bin/:$PATH
+  - export PATH=~/install/bin/:$PATH
   - conda config --add channels r
   - conda install --yes ncurses -c r
   - conda install --yes -c bioconda seqcluster bedtools samtools pip nose numpy scipy pandas pyvcf -q
