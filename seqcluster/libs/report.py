@@ -17,11 +17,6 @@ from seqcluster import templates
 logger = logging.getLogger('html')
 
 
-def _get_link(c):
-    """Gives html link tag for cluster link information"""
-    return "<a href=%s/maps.html>%s</a>" % (c, c)
-
-
 def _get_ann(dbs, features):
     """
     Gives format to annotation for html table output

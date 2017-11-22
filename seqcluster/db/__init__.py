@@ -35,12 +35,12 @@ def _get_sequences(cluster):
     data = []
     total_freq = {}
     for s, f in zip(seqs, freqs):
-        f = dict(zip(f.keys(), map(int, f.values())))
-        data.append({'name': s, 'freq': f})
-        total_freq[s] = sum(f.values())
-    if len(total_freq) > 50:
-        counts_50 = sorted(total_freq.values())[-50]
-        data = [e for e in data if sum(e['freq'].values()) > counts_50]
+        fix = dict(zip(f.keys(), map(int, f.values())))
+        data.append({'name': s, 'freq': fix})
+        total_freq[s] = 1.0 * sum(fix.values()) / len(fix.values())
+    if len(total_freq) > 100:
+        counts_50 = sorted(total_freq.values())[-100]
+        data = [e for e in data if 1.0 * sum(e['freq'].values()) / len(e['freq'].values()) > counts_50]
     return data
 
 def _take_closest(num,collection):
