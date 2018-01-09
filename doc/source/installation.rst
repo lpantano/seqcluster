@@ -13,7 +13,11 @@ If you already have `bcbio`_, seqcluster comes with it. If you want the last dev
 
 /bcbio_anaconda_bin_path/seqcluster_install.py --upgrade
 
-**Binstar binary**
+**Docker**::
+
+    docker pull lpantano/smallsrna
+
+**Bioconda binary**
 
 install conda if you want an isolate env::
 
@@ -23,28 +27,29 @@ install conda if you want an isolate env::
 
 You can install directly from binstar (only for linux)::
 
-    ~/install/seqcluster/anaconda/conda install seqcluster bcbio-nextgen -c bioconda
+    ~/install/seqcluster/anaconda/conda install seqcluster seqbuster bedtools samtools pip nose numpy scipy pandas pyvcf -c bioconda
 
 With that you will have everything you need for the python package. 
-The last step is to add seqcluster to your PATH (see below).
+The last step is to add seqcluster to your PATH if conda is not already there.
 
 Go to Tools dependecies below to continue with the installation.
-
-**Step by step**
-
-If you want to install step by step from a new conda environment::    
-
-    ~/install/seqcluster/anaconda/bin/conda install -c bioconda bcbio-nextgen
-
-Link binary to any folder is already in your path::
-
-    ln -s ~/install/seqcluster/anaconda/bin/seqcluster* ~/install/seqcluster/linuxbrew/bin/.
 
 **Note**: After installation is highly recommended to get the last updated version doing::
 
     seqcluster_install.py --upgrade
+   
+**automated installation**
 
-Tools dependecies
+Strongly recommended to use `bcbio <https://bcbio-nextgen.readthedocs.org/en/latest/contents/installation.html>`_ installation if you work with sequencing data. But if you want a minimal installation::
+
+    pip install fabric
+    seqcluster_install --upgrade
+    mkdir -p $PATH_TO_TOOLS/bin
+    seqcluster_install --tools $PATH_TO_TOOLS
+
+After that you will need to add to your path: ``export PATH=$PATH_TO_TOOLS/bin:$PATH``
+
+Tools dependecies for a full small RNA pipeline
 ---------
 
 For seqcluster command:
@@ -59,19 +64,7 @@ For some steps of a typical small RNA-seq pipeline (recommended to use directly 
 * fastqc
 * cutadapt (install with ``bioconda`` using the same ``python`` env than seqcluster. 
 You will need to link the ``cutadapt`` binary to your ``PATH``)
-    
-**easy installation**
-
-Strongly recommended to use `bcbio <https://bcbio-nextgen.readthedocs.org/en/latest/contents/installation.html>`_ installation if you work with sequencing data. But if you want a minimal installation::
-
-    pip install fabric
-    seqcluster_install --upgrade
-    mkdir -p $PATH_TO_TOOLS/bin
-    seqcluster_install --tools $PATH_TO_TOOLS
-
-After that you will need to add to your path: ``export PATH=$PATH_TO_TOOLS/bin:$PATH``
-
-
+ 
 Data
 ---------
 
