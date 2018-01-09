@@ -11,7 +11,7 @@ small RNA analysis.
 For some comparison with other tools go `here <https://github.com/lpantano/mypubs/blob/master/mirna/mirannotation/stats.md>`_.
 
 You can run samples after processing the reads as shown below.
-Currently there are two version: JAVA and PYTHON/C. 
+Currently there are two version: JAVA 
 
 **Naming**
 
@@ -23,8 +23,6 @@ It is a working process, but since 10-21-2015 isomiR naming has changed to:
 * Changes at 3' end: ``0/NA`` means no modification. ``UPPER CASE LETTER`` means nucleotide insertions (sequence ends after miRBase mature position). ``LOWWER CASE LETTER`` means nucleotide deletions (sequence ends before miRBase mature position).
 * Additions at 3' end: ``0/NA`` means no modification. ``UPPER CASE LETTER`` means addition at the end. Note these nucleotides don't match the precursor. So they are post-transcriptional modification.
 * Nucleotide substitution: ``NUMBER|NUCLEOTIDE_ISOMIR|NUCLEOTIDE_REFERENCE`` means at the position giving by the number the nucleotide in the sequence has substituted the nucleotide in the reference. This, as well, is a post-transcriptional modification.
-
-There are two different outputs right now: 1) tab limited format, where each column will refer to the previous 4 points, or 2) a merged format, where these 4 points (mirna, substitution, addition, 5 trimming, 3 trimming) are separated by ``:``. For instance: ``hsa-let-7a-5p:0:0:GT:t`` means ``hsa-let-7a-5p`` has a 5' trimming event (starts 2 nts before the reference miRNA) and a 3' trimming event (ends 1 nt before the reference miRNA).
 
 Processing of reads
 -------------------
