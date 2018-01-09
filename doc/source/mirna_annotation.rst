@@ -81,22 +81,6 @@ You can map the miRNAs with.
 
 SeqBuster is a bioinformatic tool for the processing and analysis of small RNAs datasets, reveals ubiquitous miRNA modifications in human embryonic cells. Pantano L, Estivill X, Martí E. *Nucleic Acids Res. 2010 Mar;38(5):e34. Epub 2009 Dec 11.*
 
-miRNA/isomiRs annotation with python
-------------------------------------
-
-A new function to annotate miRNA/isomiR sequences using BAM files aligned to miRBase precursors or fastq files to align from scratch has been added to ``seqcluster``::
-
-	seqcluster seqbuster --out results --hairpin hairpin.fa --mirna miRNA.str --species hsa input_file.fastq ...
-
-If the input file is a BAM file, seqcluster will parse it to produce miRNA annotation, including isomiRs. If the input is FASTQ/FASTA
-file, seqcluster will map with the new C implementation of miraligner and annotate miRNAs and isomiRs as before. 
-
-Multiple files can be given to analyze all of them serially. Files inside the output folder are:
-
-* raw mirna annotation to all posible mirnas (``*.premirna``) 
-* count file for miRNAs (``counts_mirna.tsv``) 
-* count file for isomiRs (``counts.tsv``) 
-
 **NOTE:** `Check comparison of multiple tools <https://github.com/lpantano/mypubs/blob/master/mirna/mirannotation/stats.md>`_ for miRNA annotation.
 
 Post-analysis with R
