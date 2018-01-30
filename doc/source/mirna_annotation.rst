@@ -86,6 +86,8 @@ Post-analysis with R
 
 Use the outputs to do differential expression, clustering and descriptive analysis with this package: `isomiRs <https://github.com/lpantano/isomiRs>`_
 
+To load the data you can use `IsomirDataSeqFromFiles function  <http://lpantano.github.io/isomiRs/reference/IsomirDataSeqFromFiles.html>`_ and get the count data with `isoCounts <http://lpantano.github.io/isomiRs/reference/isoCounts.html>`_ to move to DESeq2 or similar packages.
+
 Manual of miraligner(JAVA)
 --------------------------
 
