@@ -1,4 +1,6 @@
-- development
+- 1.2.4a*
+
+  * Add count matrix for each sequence
   * Remove HTML report
   * Allow size parameter during collapsing reads
   * Fix reporting DB when precursor is masked

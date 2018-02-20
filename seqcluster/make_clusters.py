@@ -83,9 +83,10 @@ def cluster(args):
     clusLred = peak_calling(clusLred)
 
     clusLred = _annotate(args, clusLred)
-    logger.info("Creating json and count matrix")
 
+    logger.info("Creating json and count matrix")
     json_file = _create_json(clusLred, args)
+
     logger.info("Output file in: %s" % args.dir_out)
 
     if args.db:
@@ -294,11 +295,13 @@ def _create_json(clusL, args):
     loci = clusL.loci
     data_clus = {}
     out_count = os.path.join(args.dir_out, "counts.tsv")
+    out_single_count = os.path.join(args.dir_out, "counts_sequence.tsv")
     out_size = os.path.join(args.dir_out, "size_counts.tsv")
     out_bed = os.path.join(args.dir_out, "positions.bed")
     samples_order = list(seqs[seqs.keys()[1]].freq.keys())
-    with open(out_count, 'w') as matrix, open(out_size, 'w') as size_matrix, open(out_bed, 'w') as out_bed:
+    with open(out_count, 'w') as matrix, open(out_size, 'w') as size_matrix, open(out_bed, 'w') as out_bed, open(out_single_count, 'w') as matrix_single:
         matrix.write("id\tnloci\tann\t%s\n" % "\t".join(samples_order))
+        matrix_single.write("id\tnloci\tann\t%s\n" % "\t".join(samples_order))
         for cid in clus:
             seqList = []
             c = clus[cid]
@@ -321,6 +324,14 @@ def _create_json(clusL, args):
 
             data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
             data_valid_str = " ".join(valid_ann)
+
+            for s in seqList:
+                f = [seqs[s].freq[so] for so in samples_order]
+                if f.count(0) > 0.1 * len(f) and len(f) > 9:
+                    continue
+                f = map(str, f)
+                print >>matrix_single, "\t".join([str(cid), data_valid_str, seqs[s].seq, "\t".join(f)])
+
             matrix.write("%s\t%s\t%s|%s\t%s\n" % (cid, c.toomany, data_valid_str, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
             size_matrix.write(_write_size_table(data_freq, data_len, data_valid_str, cid))
 
