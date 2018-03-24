@@ -1,5 +1,6 @@
 - 1.2.4a*
 
+  * Support UMI tag when collapsing
   * Add count matrix for each sequence
   * Remove HTML report
   * Allow size parameter during collapsing reads

@@ -1,9 +1,13 @@
 import os
-from collections import Counter
-from classes import quality
+from collections import Counter, defaultdict
+from classes import quality, umi
 from itertools import product
 import gzip
+import re
+import logging
 
+
+logger = logging.getLogger('seqbuster')
 
 def collapse(in_file):
     """collapse identical sequences and keep Q"""
@@ -11,14 +15,37 @@ def collapse(in_file):
     with open_fastq(in_file) as handle:
         for line in handle:
             if line.startswith("@"):
-                line.strip()
+                if line.find("UMI") > -1:
+                    logger.info("Find UMI tags in read names, collapsing by UMI.")
+                    return collapse_umi(in_file)
                 seq = handle.next().strip()
-                handle.next().strip()
+                handle.next()
                 qual = handle.next().strip()
                 if seq in keep:
                     keep[seq].update(qual)
                 else:
                     keep[seq] = quality(qual)
+    logger.info("Sequences loaded: %s" % len(keep))
+    return keep
+
+
+def collapse_umi(in_file):
+    """collapse reads using UMI tags"""
+    keep = defaultdict(dict)
+    with open_fastq(in_file) as handle:
+        for line in handle:
+            if line.startswith("@"):
+                m = re.search('UMI_([ATGC]*)', line.strip())
+                umis = m.group(0)
+                seq = handle.next().strip()
+                handle.next()
+                qual = handle.next().strip()
+                if umis in keep:
+                    keep[umis][1].update(qual)
+                    keep[umis][0].update(seq)
+                else:
+                    keep[umis] = [umi(seq), quality(qual)]
+    logger.info("Sequences loaded: %s" % len(keep))
     return keep
 
 
@@ -61,11 +88,18 @@ def splitext_plus(f):
 
 def write_output(out_file, seqs, minimum=1, size=15):
     idx =0
+    logger.info("Writing sequences to %s" % out_file)
     with open(out_file, 'w') as handle:
-        for seq in seqs:
+        for s in seqs:
             idx += 1
-            qual = "".join(seqs[seq].get())
-            counts = seqs[seq].times
-            if int(counts) > minimum and len(seq) > size:
+            if isinstance(seqs[s], list):
+                seq = seqs[s][0].get()
+                qual = "".join(seqs[s][1].get())
+                counts = seqs[s][0].times
+            else:
+                seq = s
+                qual = "".join(seqs[s].get())
+                counts = seqs[s].times
+            if int(counts) >= minimum and len(seq) > size:
                 handle.write(("@seq_{idx}_x{counts}\n{seq}\n+\n{qual}\n").format(**locals()))
     return out_file

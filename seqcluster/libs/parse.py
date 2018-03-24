@@ -109,6 +109,7 @@ def add_subparser_collapse(subparsers):
                          help="Minimum number of counts required."
                               "Not recomended > 1. Could bias downstream"
                               "Analysis.")
+    parser.add_argument("--min_size", default = 16, help = "Minimum size to be included.")
     parser.add_argument("-o", "--out",
                          dest="out", help="output file", required=1)
     parser = _add_debug_option(parser)
