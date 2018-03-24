@@ -19,10 +19,10 @@ See always up to date information here in `mirtop open project <https://github.c
 
 It is a working process, but since 10-21-2015 isomiR naming has changed to:
 
+* Nucleotide substitution: ``NUMBER|NUCLEOTIDE_ISOMIR|NUCLEOTIDE_REFERENCE`` means at the position giving by the number the nucleotide in the sequence has substituted the nucleotide in the reference. This, as well, is a post-transcriptional modification.
+* Additions at 3' end: ``0/NA`` means no modification. ``UPPER CASE LETTER`` means addition at the end. Note these nucleotides don't match the precursor. So they are post-transcriptional modification.
 * Changes at 5' end: ``0/NA`` means no modification. ``UPPER CASE LETTER`` means nucleotide insertions (sequence starts before miRBase mature position). ``LOWWER CASE LETTER`` means nucleotide deletions (sequence starts after miRBase mature position).
 * Changes at 3' end: ``0/NA`` means no modification. ``UPPER CASE LETTER`` means nucleotide insertions (sequence ends after miRBase mature position). ``LOWWER CASE LETTER`` means nucleotide deletions (sequence ends before miRBase mature position).
-* Additions at 3' end: ``0/NA`` means no modification. ``UPPER CASE LETTER`` means addition at the end. Note these nucleotides don't match the precursor. So they are post-transcriptional modification.
-* Nucleotide substitution: ``NUMBER|NUCLEOTIDE_ISOMIR|NUCLEOTIDE_REFERENCE`` means at the position giving by the number the nucleotide in the sequence has substituted the nucleotide in the reference. This, as well, is a post-transcriptional modification.
 
 Processing of reads
 -------------------
