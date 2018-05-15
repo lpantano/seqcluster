@@ -61,7 +61,7 @@ miRNA/isomiR annotation with JAVA
 
 Download the tool from `miraligner`_ repository. 
 
-.. _miraligner: https://github.com/lpantano/seqbuster/blob/master/modules/miraligner/miraligner.jar
+.. _miraligner: https://github.com/lpantano/seqbuster/raw/miraligner/modules/miraligner/miraligner.jar
 
 Download the mirbase files (`hairpin`_ and `miRNA`_) from the ftp and save it to `DB` folder.
 
