@@ -12,11 +12,14 @@ RUN apt-get update && \
 RUN  wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh && \
      bash Miniconda-latest-Linux-x86_64.sh -b -p /usr/local/conda && \
      export PATH=/usr/local/conda/bin:$PATH && \
-     conda install --yes -c conda-forge -c bioconda seqcluster bedtools samtools pip nose numpy scipy pandas pyvcf pytz dateutil setuptools -q
+     conda install --yes -c conda-forge -c bioconda scipy seqcluster bedtools samtools pip nose setuptools -q && \
+     pip install pytz dateutils
 RUN wget https://github.com/lpantano/seqcluster/archive/master.zip && \
     unzip master.zip && \
-    cd seqcluster-master && \
-    /usr/local/conda/bin/python setup.py install
+    mv seqcluster-master seqcluster && \
+    cd seqcluster && \
+    /usr/local/conda/bin/python setup.py install && \
+    nosetest
 # setup paths
 ENV  PATH="/usr/local/conda/bin:${PATH}"
 

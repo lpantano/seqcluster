@@ -11,7 +11,9 @@ before_install:
   - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
   - bash Miniconda-latest-Linux-x86_64.sh -b -p ~/install
   - export PATH=~/install/bin/:$PATH
-  - conda install --yes -c conda-forge -c bioconda ncurses  seqcluster bedtools samtools pip nose numpy scipy pandas pyvcf dateutil -q
+  - conda install --yes -c conda-forge -c bioconda  seqcluster bedtools samtools pip nose scipy setuptools -q
+  - pip install pytz
+  - pip install dateutils
   - python setup.py develop
 script: 
   - nosetests
