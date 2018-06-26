@@ -11,6 +11,7 @@ data/test_cluster/predictions/*
 data/test_cluster/coral/*
 data/test_cluster/test*
 data/simulated/sim*
+rna.ps
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -64,6 +65,9 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+
+# MACOSX
+.DS_Store
 
 # vim
 .*swo

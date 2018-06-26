@@ -5,6 +5,7 @@ import shutil
 import inspect
 from seqcluster.prepare_data import _read_fastq_files, _create_matrix_uniq_seq
 import seqcluster
+from nose.plugins.attrib import attr
 
 
 class TestPreparedata(TestCase):
@@ -24,3 +25,8 @@ class TestPreparedata(TestCase):
         os.chdir(out_dir)
         self.assertTrue(os.path.exists("seqs.ma"))
         self.assertTrue(os.path.exists("seqs.fa"))
+
+    @attr(umis=True)
+    def test_umis(self):
+        from seqcluster.libs.fastq import collapse
+        collapse("data/examples/umis/sample.fastq")

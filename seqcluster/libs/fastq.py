@@ -41,10 +41,10 @@ def collapse_umi(in_file):
                 handle.next()
                 qual = handle.next().strip()
                 if umis in keep:
-                    keep[umis][1].update(qual)
-                    keep[umis][0].update(seq)
+                    keep[(umis, seq)][1].update(qual)
+                    keep[(umis, seq)][0].update(seq)
                 else:
-                    keep[umis] = [umi(seq), quality(qual)]
+                    keep[(umis, seq)] = [umi(seq), quality(qual)]
     logger.info("Sequences loaded: %s" % len(keep))
     return keep
 
