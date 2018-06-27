@@ -2,31 +2,31 @@ sudo: required
 dist: trusty
 language: python
 notifications:
-    email:
-        recipients:
-            - lorena.pantano@gmail.com
-        on_failure: always
+  email:
+    recipients:
+    - lorena.pantano@gmail.com
+    on_failure: always
 before_install:
-  # - echo "127.0.1.1 "`hostname` | sudo tee /etc/hosts
-  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
-  - bash Miniconda-latest-Linux-x86_64.sh -b -p ~/install
-  - export PATH=~/install/bin/:$PATH
-  - conda install --yes -c conda-forge -c bioconda  seqcluster bedtools samtools pip nose scipy setuptools -q
-  - pip install pytz
-  - pip install dateutils
-  - python setup.py develop
-script: 
-  - nosetests
+- wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
+- bash Miniconda-latest-Linux-x86_64.sh -b -p ~/install
+- export PATH=~/install/bin/:$PATH
+- conda install --yes -c conda-forge -c bioconda  seqcluster bedtools samtools pip
+  nose scipy setuptools -q
+- pip install pytz
+- pip install dateutils
+- python setup.py develop
+script:
+- nosetests
 branches:
-    only:
-        - master
-        - devel
+  only:
+  - master
+  - devel
 deploy:
   provider: pypi
   user: lpantano
-  password:
-    secure: cxfwBMREy+KIQl7Y2EeT8fBChASr6F7GvZxkwe7xXhwPS5Ezw51IX5ktHz8s8O6psseSP6GFLOzfc6wUTY2KM9i5syFtQUc8dQ8B4GmPbZKb+r8hcu4Q3VQqyrkMgyOV6DZ3jZ/Dowqd0005c5tW872RB3ABjflEq1xOr3ddOAp1UmjswYoM+cHE6gurT3z7XYyWS8O6jBee27Pf/tZkrc5tQaN6uVyEvEbYgtkomJ46CsKhgXACqQJiW6CKbzc03VypjEs+oUDNu6DsXmTuTXRyDHH/CA9M0zmQc9EOfZuBauwJ7/PgAS7LVICTq9cvq5RZ4sGEdZ1I1FDTMupp4Hybt6kbEU+Pntfj0nWWYhRZkeWN96Gar7p2BEQ9y68zVvyoM3S3fshLCYF1gonI4Dvy2XXjy+zyQuOSiNbqKwR/GjeDZV/U/TVhIVakQ7yQllyv2Fio8pwE28qpgfIhaddRC+Cp2KBhFBbpwM8Mxx5PeayTIQnhD3zDUt8ZdP1djvH4q/S+qLp77l2znD9CwaELYEzXvVbocsyed4jsXbMtD1z092JViA9/YzZPnuQ0PR7Ccs1bsdvMI0gOyoIroTEP+aPkXKyrL5O7O3sF8UX0ES0vxOC9cJwpEPH39sRxYxjJ4K1NpaGWlHiZG0hihLP6QkeBDthMYNEb0Veqcwc=
   skip_existing: true
   on:
     distributions: sdist bdist_wheel
     repo: lpantano/seqcluster
+  password:
+    secure: CcHxZZOvi2OeXgVhHZbF0cGZd3nuTJ9mZ2QO7LmqU/Ri7s0nsmn3WL02F7aG9sJD+yliR0S3CN6QR430CVwnkHwefDSQrgZ6yMzdViWzWnaycu+xOscIaRtczvkAvg3Ye4yljvbk+7ZohowVl+3GVP+fKmeds+7ET8Ul9JMbt+Q=
