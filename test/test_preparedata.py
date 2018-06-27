@@ -9,24 +9,24 @@ from nose.plugins.attrib import attr
 
 
 class TestPreparedata(TestCase):
+    @attr(collapse=True)
     def test_preparedata(self):
-        mod_dir = os.path.dirname(inspect.getfile(seqcluster)).replace("seqcluster/","")
-        os.chdir(os.path.join(mod_dir, "data/examples/collapse"))
-        out_dir = "test_out_prepare"
+        out_dir = "test/test_out_prepare"
         if os.path.exists(out_dir):
             shutil.rmtree(out_dir)
         os.mkdir(out_dir)
         arg = namedtuple('args', 'minl maxl minc out')
         args = arg(15, 40, 1, out_dir)
-        seq_l, list_s = _read_fastq_files(open("config"), args)
+        seq_l, list_s = _read_fastq_files(open("data/examples/collapse/config"), args)
         ma_out = open(os.path.join(out_dir, "seqs.ma"), 'w')
         seq_out = open(os.path.join(out_dir, "seqs.fa"), 'w')
         _create_matrix_uniq_seq(list_s, seq_l, ma_out, seq_out, 1)
-        os.chdir(out_dir)
-        self.assertTrue(os.path.exists("seqs.ma"))
-        self.assertTrue(os.path.exists("seqs.fa"))
+        self.assertTrue(os.path.exists(os.path.join(out_dir, "seqs.ma")))
+        self.assertTrue(os.path.exists(os.path.join(out_dir, "seqs.fa")))
+        if os.path.exists(out_dir):
+            shutil.rmtree(out_dir)
 
     @attr(umis=True)
     def test_umis(self):
         from seqcluster.libs.fastq import collapse
-        collapse("data/examples/umis/sample.fastq")
+        collapse(os.path.abspath("data/examples/umis/sample.fastq"))

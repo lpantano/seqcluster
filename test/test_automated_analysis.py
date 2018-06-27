@@ -48,7 +48,7 @@ class AutomatedAnalysisTest(unittest.TestCase):
     """Setup a full automated analysis and run the pipeline.
     """
     def setUp(self):
-        self.data_dir = os.path.join(os.path.dirname(__file__), "data", "automated")
+        self.data_dir = os.path.join(os.path.dirname(__file__), "data", "examples")
 
     def _install_test_files(self, data_dir):
         """Download required sequence and reference files.

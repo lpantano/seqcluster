@@ -1,5 +1,6 @@
 - 1.2.4a*
 
+  * Clean test examples
   * Fix UMI error when sequences have different sizes. Thanks to @mshadbolt
   * Support UMI tag when collapsing
   * Add count matrix for each sequence

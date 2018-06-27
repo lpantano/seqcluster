@@ -1,3 +1,3 @@
-collapse/Cell_S2_trimmed.fastq	Cell_S2
-collapse/Cell_S3_trimmed.fastq	Cell_S3
-collapse/Cell_S4_trimmed.fa	Cell_S4
+data/examples/collapse/collapse/Cell_S2_trimmed.fastq	Cell_S2
+data/examples/collapse/collapse/Cell_S3_trimmed.fastq	Cell_S3
+data/examples/collapse/collapse/Cell_S4_trimmed.fa	Cell_S4
