@@ -12,9 +12,9 @@ from seqcluster.detect.cluster import detect_clusters, peak_calling
 from seqcluster.libs.logger import initialize_logger
 from seqcluster.libs.inputs import parse_ma_file
 from seqcluster.make_clusters import _create_json
-from seqcluster.align import pyMatch
+from seqcluster.libs.read import _align
 
 
 class TestAlign(TestCase):
     def test_align(self):
-        pyMatch.Match("AAGAGTAAACAGCCTTCTCCCAGCTTTCTTACTTTCCACAGCTGAGAGTGTAGGATGTTTACA", "TGTAAACATCCTACACTCTTAGCT", 1, 3)
+        _align("AAGAGTAAACAGCCTTCTCCCAGCTTTCTTACTTTCCACAGCTGAGAGTGTAGGATGTTTACA", "TGTAAACATCCTACACTCTTAGCT")

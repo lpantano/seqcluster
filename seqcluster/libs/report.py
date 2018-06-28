@@ -5,7 +5,7 @@ import os
 from math import log as mlog2
 from collections import Counter, defaultdict
 
-from read import map_to_precursors, map_to_precursors_on_fly, precursor_sequence
+from read import map_to_precursors, map_to_precursors_on_fly, precursor_sequence, map_to_precursor_biopython
 from utils import safe_dirs
 from progressbar import ProgressBar
 
@@ -135,10 +135,10 @@ def _single_cluster(c, data, out_file, args):
             logger.debug("map with razer all sequences to all loci %s " % loci)
             map_to_precursors(seqs, names, {loci[0][0]: [loci[0][0:5]]}, out_file, args)
         else:
-            logger.debug("map with C fn all sequences to all loci %s " % loci)
+            logger.debug("map with biopython fn all sequences to all loci %s " % loci)
             if args.debug:
                 raw_file = out_file
-            out_file = map_to_precursors_on_fly(seqs, names, loci[0][0:5], args)
+            out_file = map_to_precursor_biopython(seqs, names, loci[0][0:5], args)
 
     logger.debug("plot sequences on loci")
     df = _convert_to_df(out_file, freq, raw_file)

@@ -15,6 +15,9 @@ try:
 except:
     pass
 
+from Bio import pairwise2
+from Bio.Seq import Seq
+
 logger = logging.getLogger('read')
 
 
@@ -88,6 +91,32 @@ def map_to_precursors_on_fly(seqs, names, loci, args):
             dat[n] = [res, res + len(s)]
     logger.debug("mapped in %s: %s out of %s" % (loci, len(dat), len(seqs)))
     return dat
+
+def _align(x, y, local = False):
+    """
+    https://medium.com/towards-data-science/pairwise-sequence-alignment-using-biopython-d1a9d0ba861f
+    """
+    if local:
+        aligned_x = pairwise2.align.localxx(x, y)[0]
+    else:
+        aligned_x =  pairwise2.align.globalms(x, y, 1, -1, -1, -0.5)[0]
+    sorted_alignments = sorted(aligned_x, key=operator.itemgetter(2))
+    if sorted_alignments:
+        e = enumerate(sorted_alignments[0][0])
+        nts = [i for i,c in e if c != "-"]
+        return [min(nts), max(nts)]
+
+def map_to_precursor_biopython(seqs, names, loci, args):
+    """map the sequences using biopython package"""
+    precursor = precursor_sequence(loci, args.ref).upper()
+    dat = dict()
+    for s, n in itertools.izip(seqs, names):
+        res = _align(str(s), precursor)
+        if res:
+            dat[n] = res
+    logger.debug("mapped in %s: %s out of %s" % (loci, len(dat), len(seqs)))
+    return dat
+
 
 def deprecated_map_to_precursors(seqs, names, loci, out_file, args):
     """map sequences to precursors with bowtie"""

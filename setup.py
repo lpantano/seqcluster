@@ -11,7 +11,7 @@ def readme():
 
 
 setup(name='seqcluster',
-      version='1.2.4a5',
+      version='1.2.4a6',
       description='Small RNA-seq pipeline',
       long_description=readme(),
       classifiers=[
@@ -22,7 +22,7 @@ setup(name='seqcluster',
       keywords='RNA-seq miRNA snoRNA NGS',
       url='http://github.com/lpantano/seqcluster',
       author='Lorena Pantano',
-      author_email='lpantano@iscb.org',
+      author_email='lorena.pantano@gmail.com',
       license='MIT',
       packages=find_packages(),
       test_suite='nose',
