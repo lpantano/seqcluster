@@ -3,6 +3,7 @@ from __future__ import print_function
 from collections import defaultdict
 import json, itertools
 import tempfile, os, contextlib, shutil
+import operator
 
 from sam2bed import makeBED
 import logging
@@ -10,10 +11,7 @@ from do import find_cmd, run
 
 import pysam
 import pybedtools
-try:
-    from seqcluster.align import pyMatch
-except:
-    pass
+
 
 from Bio import pairwise2
 from Bio.Seq import Seq
@@ -97,11 +95,12 @@ def _align(x, y, local = False):
     https://medium.com/towards-data-science/pairwise-sequence-alignment-using-biopython-d1a9d0ba861f
     """
     if local:
-        aligned_x = pairwise2.align.localxx(x, y)[0]
+        aligned_x = pairwise2.align.localxx(x, y)
     else:
-        aligned_x =  pairwise2.align.globalms(x, y, 1, -1, -1, -0.5)[0]
-    sorted_alignments = sorted(aligned_x, key=operator.itemgetter(2))
-    if sorted_alignments:
+        aligned_x =  pairwise2.align.globalms(x, y, 1, -1, -1, -0.5)
+    
+    if aligned_x:
+        sorted_alignments = sorted(aligned_x, key=operator.itemgetter(2))
         e = enumerate(sorted_alignments[0][0])
         nts = [i for i,c in e if c != "-"]
         return [min(nts), max(nts)]

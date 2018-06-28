@@ -5,7 +5,7 @@ import os
 from math import log as mlog2
 from collections import Counter, defaultdict
 
-from read import map_to_precursors, map_to_precursors_on_fly, precursor_sequence, map_to_precursor_biopython
+from read import map_to_precursors, precursor_sequence, map_to_precursor_biopython
 from utils import safe_dirs
 from progressbar import ProgressBar
 
