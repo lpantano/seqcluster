@@ -1,5 +1,7 @@
 - 1.2.4a*
 
+  * Fix UMIs detection to count using unique seq + umi. Thanks to @mshadbolt
+  * Remove Cpy code and use biopython
   * Clean test examples
   * Fix UMI error when sequences have different sizes. Thanks to @mshadbolt
   * Support UMI tag when collapsing

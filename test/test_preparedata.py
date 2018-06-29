@@ -28,5 +28,11 @@ class TestPreparedata(TestCase):
 
     @attr(umis=True)
     def test_umis(self):
-        from seqcluster.libs.fastq import collapse
-        collapse(os.path.abspath("data/examples/umis/sample.fastq"))
+        from seqcluster.libs.fastq import collapse, write_output
+        umis = collapse(os.path.abspath("data/examples/umis/sample.fastq"))
+        print umis.keys()
+        out_dir = "test/test_automated_output"
+        if os.path.exists(out_dir):
+            shutil.rmtree(out_dir)
+        os.mkdir(out_dir)
+        write_output(os.path.join(out_dir, "umis.fastq"), umis)

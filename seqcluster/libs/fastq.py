@@ -40,7 +40,7 @@ def collapse_umi(in_file):
                 seq = handle.next().strip()
                 handle.next()
                 qual = handle.next().strip()
-                if umis in keep:
+                if (umis, seq) in keep:
                     keep[(umis, seq)][1].update(qual)
                     keep[(umis, seq)][0].update(seq)
                 else:
