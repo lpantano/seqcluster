@@ -1,3 +1,4 @@
+from __future__ import print_function
 #import sys
 import os
 import os.path as op
@@ -128,8 +129,8 @@ def _read_fastq_files(f, args):
                                 seq_l[seq] = sequence_unique(idx, seq)
                             seq_l[seq].add_exp(cols[1], counts)
                             seq_l[seq].quality = keep[seq].get()
-                print >>out_handle, "total\t%s\t%s" % (idx, cols[1])
-                print >>out_handle, "added\t%s\t%s" % (len(seq_l), cols[1])
+                print("total\t%s\t%s" % (idx, cols[1]), file=out_handle, end="")
+                print("added\t%s\t%s" % (len(seq_l), cols[1]), file=out_handle, end="")
                 logger.info("%s: Total read %s ; Total added %s" % (cols[1], idx, len(seq_l)))
     return seq_l, sample_l
 

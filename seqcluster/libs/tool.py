@@ -37,7 +37,7 @@ def calc_complexity(nl):
     total = 0.0
     for l in nl:
         total += 1.0/l
-        #print total
+        #print(total)
     total /= ns
     return (total)
 

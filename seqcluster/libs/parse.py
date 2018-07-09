@@ -1,9 +1,9 @@
+from __future__ import print_function
 import argparse
 import sys
 
-
 def parse_cl(in_args):
-    print in_args
+    print(in_args)
     sub_cmds = {"prepare": add_subparser_prepare,
                 "cluster": add_subparser_cluster,
                 "seqbuster": add_subparser_mirbuster,
@@ -21,7 +21,7 @@ def parse_cl(in_args):
         sub_cmds[in_args[0]](subparsers)
         sub_cmd = in_args[0]
     else:
-        print "use %s" % sub_cmds.keys()
+        print("use %s" % sub_cmds.keys())
         sys.exit(0)
     args = parser.parse_args()
 

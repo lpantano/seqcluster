@@ -330,7 +330,7 @@ def _create_json(clusL, args):
                 if f.count(0) > 0.1 * len(f) and len(f) > 9:
                     continue
                 f = map(str, f)
-                print >>matrix_single, "\t".join([str(cid), data_valid_str, seqs[s].seq, "\t".join(f)])
+                print("\t".join([str(cid), data_valid_str, seqs[s].seq, "\t".join(f)]), file=matrix_single, end="")
 
             matrix.write("%s\t%s\t%s|%s\t%s\n" % (cid, c.toomany, data_valid_str, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
             size_matrix.write(_write_size_table(data_freq, data_len, data_valid_str, cid))

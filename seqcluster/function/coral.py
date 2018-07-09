@@ -1,4 +1,5 @@
 """prepare data for CoRaL"""
+from __future__ import print_function
 import os.path as op
 from collections import Counter
 import pybedtools
@@ -47,7 +48,7 @@ def _reorder_columns(bed_file):
                 cols = line.strip().split("\t")
                 cols[3] = _select_anno(cols[3]) + "_" + cols[4]
                 cols[4] = "0"
-                print >>out_handle, "\t".join(cols)
+                print("\t".join(cols), file=out_handle, end="")
     return new_bed
 
 
@@ -61,7 +62,7 @@ def _fix_score_column(cov_file):
             for line in in_handle:
                 cols = line.strip().split("\t")
                 cols[4] = cols[6]
-                print >>out_handle, "\t".join(cols[0:6])
+                print("\t".join(cols[0:6]), file=out_handle, end="")
     return new_cov
 
 
@@ -87,11 +88,11 @@ def _order_antisense_column(cov_file, min_reads):
     new_cov = op.join(op.dirname(cov_file), 'feat_antisense.txt')
     with open(cov_file) as in_handle:
         with open(new_cov, 'w') as out_handle:
-            print >>out_handle, "name\tantisense"
+            print("name\tantisense", file=out_handle, end="")
             for line in in_handle:
                 cols = line.strip().split("\t")
                 cols[6] = 0 if cols[6] < min_reads else cols[6]
-                print >>out_handle, "%s\t%s" % (cols[3], cols[6])
+                print("%s\t%s" % (cols[3], cols[6]), file=out_handle, end="")
     return new_cov
 
 
@@ -114,7 +115,7 @@ def _reads_per_position(bam_in, loci_file, out_dir):
     counts_reads = op.join(out_dir, 'locus_readpos.counts')
     with open(counts_reads, 'w') as out_handle:
         for k in data:
-            print >>out_handle, k
+            print(k, file=out_handle, end="")
 
     return counts_reads
 
