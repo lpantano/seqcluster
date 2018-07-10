@@ -60,8 +60,8 @@ def _filter_seqs(fn):
                         counts = _get_freq(fixed_name)
                         if len(seq) < 26 and (counts > 1 or counts == 0):
                             idx += 1
-                            print(fixed_name, file=out_handle, end="")
-                            print(seq, file=out_handle, end="")
+                            print(fixed_name, file=out_handle, end="\n")
+                            print(seq, file=out_handle, end="\n")
                         if line.startswith("@"):
                             in_handle.next()
                             in_handle.next()
