@@ -1,4 +1,5 @@
 """Get enrichment of targets doing permutations for significance"""
+from __future__ import print_function
 import os.path as op
 from collections import defaultdict
 import gzip
@@ -46,15 +47,15 @@ def targets_enrichment(args):
                 name = cols[0].split(".")[0]
                 res[(name, 'info')] = line.strip()
                 res[(name, 'mirs')].append(mir)
-                print >>ma_handle, "%s\t%s\t%s" % (name, mir, sorted_targets[e]['score'])
+                print("%s\t%s\t%s" % (name, mir, sorted_targets[e]['score']), file=ma_handle, end="")
 
     with open(op.join(args.out, "pairs.tsv"), 'w') as out_handle:
-        print >>out_handle, "mirs\tcounts\tgene\ttranscript\tgene\tsites\tcontext_score\tAggr_PCT"
+        print("mirs\tcounts\tgene\ttranscript\tgene\tsites\tcontext_score\tAggr_PCT",file=out_handle, end="")
         for gene, field in res:
             if field == "info":
                 counts = len(res[(gene, 'mirs')])
                 mirs = ",".join(list(set(res[(gene, 'mirs')])))
-                print >>out_handle, "%s\t%s\t%s\t%s" %  (mirs, counts,  gene, res[(gene, 'info')])
+                print("%s\t%s\t%s\t%s" %  (mirs, counts,  gene, res[(gene, 'info')]), file=out_handle, end="")
 
 
 def _get_mirna_input(fn):

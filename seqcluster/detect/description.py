@@ -15,7 +15,10 @@ def sort_precursor(c, loci):
     """
     Sort loci according to number of sequences mapped there.
     """
-    data_loci = map(lambda (x): [x, loci[x].chr, int(loci[x].start), int(loci[x].end), loci[x].strand, len(c.loci2seq[x])], c.loci2seq.keys())
+    # Original Py 2.7 code
+    #data_loci = map(lambda (x): [x, loci[x].chr, int(loci[x].start), int(loci[x].end), loci[x].strand, len(c.loci2seq[x])], c.loci2seq.keys())
+    # 2to3 suggested Py 3 rewrite
+    data_loci = [[x, loci[x].chr, int(loci[x].start), int(loci[x].end), loci[x].strand, len(c.loci2seq[x])] for x in list(c.loci2seq.keys())]
     data_loci = sorted(data_loci, key=itemgetter(5), reverse=True)
     return data_loci
 
