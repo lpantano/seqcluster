@@ -9,6 +9,8 @@ import subprocess
 import contextlib
 import yaml
 
+from seqcluster.libs import do, utils
+
 try:
     import bcbio
 except:
@@ -46,18 +48,24 @@ def chdir(new_dir):
         os.chdir(cur_dir)
 
 def _get_miraligner():
+    opts = "-Xms750m -Xmx4g"
     try:
-        tool = bcbio.pipeline.config_utils.get_program("miraligner", {}, "cmd")
-    except ImportError:
+        tool = "miraligner"
+        ret = os.system(tool)
+        if ret != 0:
+            raise SystemExit("%s not installed." % tool)
+    except SystemExit:
         tool = None
         pass
     if not tool:
-        url = "https://github.com/lpantano/seqbuster/raw/master/modules/miraligner/miraligner.jar"
-        subprocess.check_call(["wget", "-O", "miraligner.jar", "--no-check-certificate", url])
+        if not utils.file_exists(op.abspath("miraligner.jar")):
+            url = "https://raw.githubusercontent.com/lpantano/seqbuster/miraligner/modules/miraligner/miraligner.jar"
+            cmd = ["wget", "-O miraligner.jar", "--no-check-certificate", url]
+            do.run(" ".join(cmd), "Download miraligner.")
         tool = "java -jar {opts} %s" % op.abspath("miraligner.jar")
     else:
         tool = "%s {opts}" % tool
-    return tool
+    return tool.format(**locals())
 
 def _get_flavor():
     """
@@ -151,15 +159,18 @@ def _install_mirbase():
     return "mirbase/hairpin.fa", "mirbase/miRNA.str"
 
 def _upgrade():
-    conda_dir = os.path.join(os.path.dirname(sys.executable))
+    conda_dir = os.path.join(os.path.dirname(os.path.realpath(sys.executable)))
     try:
         import bcbio.install as install
         install._set_pip_ssl(conda_dir)
     except ImportError:
+        print "bcbio was not found, this may error."
         pass
     pip_bin = os.path.join(conda_dir, "pip")
-    subprocess.check_call([pip_bin, "install", "--upgrade", "--no-deps",
-                           "git+%s#egg=seqcluster" % REMOTES["gitrepo"]])
+    cmd = [pip_bin, "install", "--upgrade", "--no-deps",
+           "git+%s#egg=seqcluster" % REMOTES["gitrepo"]]
+    print " ".join(cmd)
+    subprocess.check_call(cmd)
     #subprocess.check_call([pip_bin, "install", "--upgrade", "--no-deps",
     #                       "git+%s#egg=bcbio-nextgen" % REMOTES["gitrepo-bcbio"]])
 

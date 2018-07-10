@@ -22,6 +22,7 @@ def collapse_fastq(args):
         raise "Can not read file"
     out_file = os.path.join(args.out, out_file)
     write_output(out_file, seqs, args.minimum)
+    return out_file
 
 def _is_umi(fn):
     with open(fn) as inh:

@@ -11,7 +11,7 @@ def readme():
 
 
 setup(name='seqcluster',
-      version='1.2.4a7',
+      version='1.2.4a8',
       description='Small RNA-seq pipeline',
       long_description=readme(),
       classifiers=[

@@ -17,7 +17,7 @@ import yaml
 
 @contextlib.contextmanager
 def make_workdir():
-    remove_old_dir = True
+    remove_old_dir = False
     dirname = os.path.join(os.path.dirname(__file__), "test_automated_output")
     if remove_old_dir:
         if os.path.exists(dirname):
@@ -98,25 +98,9 @@ class AutomatedAnalysisTest(unittest.TestCase):
                   "--sps", "hsa",
                   "--hairpin", "../../data/examples/miraligner/hairpin.fa",
                   "--mirna", "../../data/examples/miraligner/miRNA.str",
+                  "--gtf", "../../data/examples/miraligner/hsa.gff3",
                   "-o", "test_out_mirs_fasta",
+                  "--miraligner",
                   "../../data/examples/miraligner/sim_isomir.fa"]
             print " ".join(cl)
             subprocess.check_call(cl)
-
-
-    @attr(complete=True)
-    @attr(miraligner=True)
-    def test_srnaseq_miraligner(self):
-        """Run miraligner analysis
-        """
-        with make_workdir() as workdir:
-            cl = ["seqcluster",
-                  "seqbuster",
-                  "--sps", "hsa",
-                  "--hairpin", "../../data/examples/miraligner/hairpin.fa",
-                  "--mirna", "../../data/examples/miraligner/miRNA.str",
-                  "-o", "test_out_mirs_fasta",
-                  "../../data/examples/miraligner/sim_isomir.fa"]
-            print " ".join(cl)
-            subprocess.check_call(cl)
-

@@ -1,5 +1,7 @@
 - 1.2.4a*
 
+  * Include mirtop annotation.
+  * Fix upgrade command.
   * Fix UMIs detection to count using unique seq + umi. Thanks to @mshadbolt
   * Remove Cpy code and use biopython
   * Clean test examples

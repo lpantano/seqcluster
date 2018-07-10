@@ -30,7 +30,8 @@ class TestPreparedata(TestCase):
     def test_umis(self):
         from seqcluster.libs.fastq import collapse, write_output
         umis = collapse(os.path.abspath("data/examples/umis/sample.fastq"))
-        print umis.keys()
+        if length(umis.keys()) != 2:
+            raise ValueError("umis didn't detect two unique sequences")
         out_dir = "test/test_automated_output"
         if os.path.exists(out_dir):
             shutil.rmtree(out_dir)

@@ -1,20 +1,22 @@
 # Re-aligner small RNA sequence from SAM/BAM file (miRBase annotation)
-import traceback
 import os.path as op
 import re
 import shutil
 import pandas as pd
 import pysam
+import argparse
 
 from seqcluster.libs import do
 from seqcluster.libs.utils import file_exists
-from seqcluster.libs import do
 import seqcluster.libs.logger as mylog
 from seqcluster.install import _get_miraligner
 from seqcluster.seqbuster.snps import create_vcf
+from seqcluster.collapse import collapse_fastq
+from mirtop.gff import reader
 from realign import *
 
 logger = mylog.getLogger(__name__)
+
 
 def _download_mirbase(args, version="CURRENT"):
     """
@@ -33,6 +35,7 @@ def _download_mirbase(args, version="CURRENT"):
     else:
         return args.hairpin, args.mirna
 
+
 def _make_unique(name, idx):
     """Make name unique in case only counts there"""
     p = re.compile(".[aA-zZ]+_x[0-9]+")
@@ -40,6 +43,7 @@ def _make_unique(name, idx):
         tags = name[1:].split("_x")
         return ">%s_%s_x%s" % (tags[0], idx, tags[1])
     return name.replace("@", ">")
+
 
 def _filter_seqs(fn):
     """Convert names of sequences to unique ids"""
@@ -57,14 +61,11 @@ def _filter_seqs(fn):
                             idx += 1
                             print >>out_handle, fixed_name
                             print >>out_handle, seq
-                        try:
-                            if line.startswith("@"):
-                                in_handle.next()
-                                in_handle.next()
-                        except:
-                            pass
-
+                        if line.startswith("@"):
+                            in_handle.next()
+                            in_handle.next()
     return out_file
+
 
 def _convert_to_fasta(fn):
     out_file = op.splitext(fn)[0] + ".fa"
@@ -85,10 +86,12 @@ def _convert_to_fasta(fn):
                     print >>out_handle, seq.strip()
     return out_file
 
+
 def _get_pos(string):
     name = string.split(":")[0][1:]
     pos = string.split(":")[1][:-1].split("-")
     return name, map(int, pos)
+
 
 def _read_mature(matures, sps):
     mature = defaultdict(dict)
@@ -102,6 +105,7 @@ def _read_mature(matures, sps):
                     mir3p = _get_pos(name[3])
                     mature[name[0]].update({mir3p[0]: mir3p[1]})
     return mature
+
 
 def _read_precursor(precursor, sps):
     """
@@ -120,6 +124,7 @@ def _read_precursor(precursor, sps):
         hairpin[name] = hairpin[name] + "NNNNNNNNNNNN"
     return hairpin
 
+
 def _read_gtf(gtf):
     """
     Load GTF file with precursor positions on genome
@@ -137,6 +142,7 @@ def _read_gtf(gtf):
             if cols[2] == "miRNA_primary_transcript":
                 db[name[0]].append([chrom, int(start), int(end), strand])
     return db
+
 
 def _coord(sequence, start, mirna, precursor, iso):
     """
@@ -171,6 +177,7 @@ def _coord(sequence, start, mirna, precursor, iso):
     logger.debug("%s %s %s %s %s %s" % (start, len(sequence), end, dif, mirna, iso.format()))
     return True
 
+
 def _annotate(reads, mirbase_ref, precursors):
     """
     Using SAM/BAM coordinates, mismatches and realign to annotate isomiRs
@@ -187,6 +194,7 @@ def _annotate(reads, mirbase_ref, precursors):
                     reads[r].precursors[p].mirna = mature
                     break
     return reads
+
 
 def _realign(seq, precursor, start):
     """
@@ -220,6 +228,7 @@ def _realign(seq, precursor, start):
 
     return subs, add
 
+
 def _clean_hits(reads):
     """
     Select only best matches
@@ -241,10 +250,12 @@ def _clean_hits(reads):
 
     return new_reads
 
+
 def _sort_by_name(bam_fn):
     """
     sort bam file by name sequence
     """
+
 
 def _sam_to_bam(bam_fn):
     if bam_fn.endswith("bam"):
@@ -253,6 +264,7 @@ def _sam_to_bam(bam_fn):
         do.run(cmd)
         return bam_out
     return bam_fn
+
 
 def _read_bam(bam_fn, precursors):
     """
@@ -275,6 +287,18 @@ def _read_bam(bam_fn, precursors):
 
     reads = _clean_hits(reads)
     return reads
+
+
+def _collapse_fastq(in_fn):
+    """
+    collapse reads into unique sequences
+    """
+    args = argparse.Namespace()
+    args.fastq = in_fn
+    args.minimum = 1
+    args.out = op.dirname(in_fn)
+    return collapse_fastq(args)
+
 
 def _read_pyMatch(fn, precursors):
     """
@@ -301,6 +325,7 @@ def _read_pyMatch(fn, precursors):
         reads = _clean_hits(reads)
     return reads
 
+
 def _parse_mut(subs):
     """
     Parse mutation tag from miraligner output
@@ -308,6 +333,7 @@ def _parse_mut(subs):
     if subs!="0":
         subs = [[subs.replace(subs[-2:], ""),subs[-2], subs[-1]]]
     return subs
+
 
 def _read_miraligner(fn):
     """Read ouput of miraligner and create compatible output."""
@@ -330,18 +356,36 @@ def _read_miraligner(fn):
             reads[query_name].set_precursor(chrom, iso)
     return reads
 
-def _cmd_miraligner(fn, out_file, species, hairpin):
+
+def _cmd_miraligner(fn, out_file, species, hairpin, out):
     """
     Run miraligner for miRNA annotation
     """
     tool = _get_miraligner()
     path_db = op.dirname(op.abspath(hairpin))
-    opts = "-Xms750m -Xmx4g"
     cmd = "{tool} -freq -i {fn} -o {out_file} -s {species} -db {path_db} -sub 1 -trim 3 -add 3"
     if not file_exists(out_file):
+        logger.info("Running miraligner with %s" % fn)
         do.run(cmd.format(**locals()), "miraligner with %s" % fn)
         shutil.move(out_file + ".mirna", out_file)
     return out_file
+
+
+def _mirtop(out_files, hairpin, gff3, species, out):
+    """
+    Convert miraligner to mirtop format
+    """
+    args = argparse.Namespace()
+    args.hairpin = hairpin
+    args.sps = species
+    args.gtf = gff3
+    args.add_extra = True
+    args.files = out_files
+    args.format = "seqbuster"
+    args.out_format = "gff"
+    args.out = out
+    reader(args)
+
 
 def _get_freq(name):
     """
@@ -352,6 +396,7 @@ def _get_freq(name):
     except:
         return 0
     return counts
+
 
 def _tab_output(reads, out_file, sample):
     seen = set()
@@ -403,11 +448,12 @@ def _tab_output(reads, out_file, sample):
         return out_file, dt, dt_pre
     return None
 
+
 def _merge(dts):
     """
     merge multiple samples in one matrix
     """
-    df= pd.concat(dts)
+    df = pd.concat(dts)
 
     ma = df.pivot(index='isomir', columns='sample', values='counts')
     ma_mirna = ma
@@ -416,6 +462,7 @@ def _merge(dts):
     ma_mirna = ma_mirna.groupby(['mirna']).sum()
     ma_mirna = ma_mirna.fillna(0)
     return ma, ma_mirna
+
 
 def _create_counts(out_dts, out_dir):
     """Summarize results into single files."""
@@ -426,6 +473,7 @@ def _create_counts(out_dts, out_dir):
     ma_mirna.to_csv(out_ma_mirna, sep="\t")
     return out_ma_mirna, out_ma
 
+
 def miraligner(args):
     """
     Realign BAM hits to miRBAse to get better accuracy and annotation
@@ -435,38 +483,40 @@ def miraligner(args):
     matures = _read_mature(args.mirna, args.sps)
     gtf = _read_gtf(args.gtf)
     out_dts = []
+    out_files = []
     for bam_fn in args.files:
         sample = op.splitext(op.basename(bam_fn))[0]
+        logger.info("Reading %s" % bam_fn)
         if bam_fn.endswith("bam") or bam_fn.endswith("sam"):
-            logger.info("Reading %s" % bam_fn)
             bam_fn = _sam_to_bam(bam_fn)
             bam_sort_by_n = op.splitext(bam_fn)[0] + "_sort"
             pysam.sort("-n", bam_fn, bam_sort_by_n)
             reads = _read_bam(bam_sort_by_n + ".bam", precursors)
-        elif bam_fn.endswith("fasta") or bam_fn.endswith("fa") or bam_fn.endswith("fastq"):
+        elif bam_fn.endswith("fasta") or bam_fn.endswith("fa") or \
+                bam_fn.endswith("fastq"):
+            if args.collapse:
+                bam_fn = _collapse_fastq(bam_fn)
             out_file = op.join(args.out, sample + ".premirna")
             bam_fn = _filter_seqs(bam_fn)
             if args.miraligner:
-                _cmd_miraligner(bam_fn, out_file, args.sps, args.hairpin)
+                _cmd_miraligner(bam_fn, out_file, args.sps, args.hairpin, args.out)
                 reads = _read_miraligner(out_file)
-            else:
-                if bam_fn.endswith("fastq"):
-                    bam_fn = _convert_to_fasta(bam_fn)
-                logger.info("Aligning %s" % bam_fn)
-                if not file_exists(out_file):
-                    pyMatch.Miraligner(hairpin, bam_fn, out_file, 1, 4)
-                reads = _read_pyMatch(out_file, precursors)
+                out_files.append(out_file)
         else:
             raise ValueError("Format not recognized.")
 
+        if args.miraligner:
+            _mirtop(out_files, args.hairpin, args.gtf, args.sps, args.out)
+
         if not args.miraligner:
             reads = _annotate(reads, matures, precursors)
+
         out_file = op.join(args.out, sample + ".mirna")
-        out_file, dt, dt_pre= _tab_output(reads, out_file, sample)
+        out_file, dt, dt_pre = _tab_output(reads, out_file, sample)
         try:
             vcf_file = op.join(args.out, sample + ".vcf")
             if not file_exists(vcf_file):
-            # if True:
+                # if True:
                 create_vcf(dt_pre, matures, gtf, vcf_file)
             try:
                 import vcf
@@ -483,6 +533,5 @@ def miraligner(args):
 
     if out_dts:
         _create_counts(out_dts, args.out)
-        # _summarize(out_dts)
     else:
         print "No files analyzed!"

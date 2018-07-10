@@ -81,6 +81,19 @@ SeqBuster is a bioinformatic tool for the processing and analysis of small RNAs 
 
 **NOTE:** `Check comparison of multiple tools <https://github.com/lpantano/mypubs/blob/master/mirna/mirannotation/stats.md>`_ for miRNA annotation.
 
+Convert to GFF3-srna
+---------------------
+
+Use mirtop to convert to GFF3-srna format. This is the desired format to share the isomiR information and can be used to join multiple projects together easily.
+
+See _`this <http://mirtop.readthedocs.io/en/dev/quick_start.html#from-seqbuster-miraligner-files-to-gff3>` to know how to convert all the output into a single file and share easily with collaborators::
+
+    mirtop gff --format seqbuster --sps hsa --hairpin database/hairpin.fa --gtf database/hsa.gff3 -o test_out out_folder/*/*.mirna
+
+
+.. _miRNAgff: ftp://mirbase.org/pub/mirbase/CURRENT/genomes/hsa.gff3
+
+
 Post-analysis with R
 --------------------
 

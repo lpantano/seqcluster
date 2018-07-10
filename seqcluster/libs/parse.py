@@ -63,7 +63,10 @@ def add_subparser_mirbuster(subparsers):
     parser.add_argument("--gtf", help="gtf file with precursor position to genome.")
     parser.add_argument("--mirna", help="miRNA.str")
     parser.add_argument("--miraligner", action="store_true",
-                        help="align with JAVA version.", default=False)
+                        help="align with JAVA version.", default=True)
+    parser.add_argument("--collapse", action="store_true",
+                        help="collapse reads into unique sequences.",
+                        default=False)
     parser = _add_debug_option(parser)
     return parser
 
