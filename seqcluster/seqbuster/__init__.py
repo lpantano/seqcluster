@@ -1,4 +1,5 @@
 # Re-aligner small RNA sequence from SAM/BAM file (miRBase annotation)
+from __future__ import print_function
 import traceback
 import os.path as op
 import re
