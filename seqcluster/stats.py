@@ -38,8 +38,12 @@ def _read_json(fn_json):
     is_db = {}
     with open(fn_json) as handle:
         data = json.load(handle)
-        for item in data[0].values():
-            seqs_name = map(lambda (x): x.keys(), item['seqs'])
+        # original Py 2.y core
+        #for item in data[0].values():
+        #    seqs_name = map(lambda (x): x.keys(), item['seqs'])
+        # rewrite by 2to3
+        for item in list(data[0].values()):
+            seqs_name = [list(x.keys()) for x in item['seqs']]
             db_name = item['valid'] if "valid" in item else None
             [is_json.add(name[0]) for name in seqs_name]
             if db_name:
