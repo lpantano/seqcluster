@@ -1,4 +1,5 @@
 """simulate cluster over the genome"""
+from __future__ import print_function
 import random
 from read import get_fasta
 
@@ -74,14 +75,14 @@ def _write_reads(reads, prefix):
     out_fasta = prefix + ".fasta"
     out_real = prefix + ".txt"
     with open(out_ma, 'w') as ma_handle:
-        print >>ma_handle, "id\tseq\tsample"
+        print("id\tseq\tsample", file=ma_handle, end="")
         with open(out_fasta, 'w') as fa_handle:
             with open(out_real, 'w') as read_handle:
                 for idx, r in enumerate(reads):
                     info = r.split("_")
-                    print >>ma_handle, "seq_%s\t%s\t%s" % (idx, reads[r][0], reads[r][1])
-                    print >>fa_handle, ">seq_%s\n%s" % (idx, reads[r][0])
-                    print >>read_handle, "%s\t%s\t%s\t%s\t%s\t%s\t%s" % (idx, r, reads[r][0], reads[r][1], info[1], info[2], info[3])
+                    print("seq_%s\t%s\t%s" % (idx, reads[r][0], reads[r][1]), file=ma_handle, end="")
+                    print(">seq_%s\n%s" % (idx, reads[r][0]), file=fa_handle, end="")
+                    print("%s\t%s\t%s\t%s\t%s\t%s\t%s" % (idx, r, reads[r][0], reads[r][1], info[1], info[2], info[3]), file=read_handle, end="")
 
 
 def _get_precursor(bed_file, reference, out_fa):

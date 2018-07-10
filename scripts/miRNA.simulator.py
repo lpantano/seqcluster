@@ -1,3 +1,4 @@
+from __future__ import print_function
 from optparse import OptionParser
 import sys
 import os
@@ -34,9 +35,9 @@ class mirna:
 		self.p5=0
 		self.p3=0
 	def addp5(self,n,s,e):
-		#print "adding p5"
+		#print("adding p5")
 		self.p5=pos(n,s,e)
-		#print self.p5
+		#print(self.p5)
 	def addp3(self,n,s,e):
 		self.p3=pos(n,s,e)
 
@@ -129,11 +130,11 @@ for line in fas:
                                                 trial =random.randint(1, 100)
                                                 p = random.randint(1, 50) / 50.0
                                                 exp = "_x%s" % numpy.random.negative_binomial(trial, p, 1)[0]
-                                            print >>fqout, "@%s%s" % (randName, exp)
-                                            print >>fqout, "%s" % randSeq
-                                            print >>fqout, "+\n%s" % "".join(["I"] * len(randSeq))
-                                            print >>fout, ">%s%s" % (randName, exp)
-                                            print >>fout, "%s" % randSeq
+                                            print("@%s%s" % (randName, exp), file=fqout, end="")
+                                            print("%s" % randSeq, file=fqout, end="")
+                                            print("+\n%s" % "".join(["I"] * len(randSeq)), file=fqout, end="")
+                                            print(">%s%s" % (randName, exp), file=fout, end="")
+                                            print("%s" % randSeq, file=fout, end="")
                                             data[randSeq]=1
                 name = line.split(" ")
                 name = name[0].replace(">","")

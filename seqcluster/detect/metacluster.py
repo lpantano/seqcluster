@@ -1,3 +1,4 @@
+from __future__ import print_function
 from collections import defaultdict
 import operator
 import os
@@ -99,7 +100,7 @@ def _write_cluster(metacluster, cluster, loci, idx, path):
             for idc in metacluster:
                 for idl in cluster[idc].loci2seq:
                     pos = loci[idl].list()
-                    print >>out_handle, "\t".join(pos[:4] + [str(len(cluster[idc].loci2seq[idl]))] + [pos[-1]])
+                    print("\t".join(pos[:4] + [str(len(cluster[idc].loci2seq[idl]))] + [pos[-1]]), file=out_handle, end="")
 
 
 def _add_complete_cluster(idx, meta, clusters):

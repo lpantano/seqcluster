@@ -25,7 +25,7 @@ def read_gtf_line(cols, field="name"):
         e = int(cols[4])
         st = cols[6]
         return [c, s, e, st, group, name[0]]
-    except Exception, e:
+    except(Exception, e):
         logger.error(cols)
         logger.error("File is not in correct format")
         logger.error("Expect chr source feature start end . strand attributes")

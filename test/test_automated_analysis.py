@@ -2,6 +2,7 @@
 
 Inspired in bcbio-nextgen code
 """
+from __future__ import print_function
 import os
 import subprocess
 import unittest
@@ -56,7 +57,7 @@ class AutomatedAnalysisTest(unittest.TestCase):
         #       self._download_to_dir(url, dirname)
 
     def _download_to_dir(self, url, dirname):
-        print dirname
+        print(dirname)
         cl = ["wget", url]
         subprocess.check_call(cl)
         cl = ["tar", "-xzvpf", os.path.basename(url)]
@@ -77,14 +78,14 @@ class AutomatedAnalysisTest(unittest.TestCase):
                   "--gtf", "../../data/examples/cluster/ann_reduced.gtf",
                   "-r", "../../data/genomes/genome.fa",
                   "-o", "test_out_res"]
-            print " ".join(cl)
+            print(" ".join(cl))
             subprocess.check_call(cl)
             cl = ["seqcluster",
                   "report",
                   "-j", "test_out_res/seqcluster.json",
                   "-r", "../../data/genomes/genome.fa",
                   "-o", "test_out_report"]
-            print " ".join(cl)
+            print(" ".join(cl))
             subprocess.check_call(cl)
 
     @attr(complete=True)
@@ -102,5 +103,5 @@ class AutomatedAnalysisTest(unittest.TestCase):
                   "-o", "test_out_mirs_fasta",
                   "--miraligner",
                   "../../data/examples/miraligner/sim_isomir.fa"]
-            print " ".join(cl)
+            print(" ".join(cl))
             subprocess.check_call(cl)

@@ -1,3 +1,4 @@
+from __future__ import print_function
 from argparse import ArgumentParser
 import os
 import gzip
@@ -59,7 +60,7 @@ def select_snps(mirna, snp, out):
     Use bedtools to intersect coordinates
     """
     with open(out, 'w') as out_handle:
-        print >>out_handle, _create_header(mirna, snp, out)
+        print(_create_header(mirna, snp, out), file=out_handle, end="")
         snp_in_mirna = pybedtools.BedTool(snp).intersect(pybedtools.BedTool(mirna), wo=True)
         for single in snp_in_mirna:
             if single[10] == "miRNA" and len(single[3]) + len(single[4]) == 2:
@@ -73,7 +74,7 @@ def select_snps(mirna, snp, out):
                 line.append(single[5])
                 line.append(single[6])
                 line.append(single[7])
-                print >>out_handle, "\t".join(line)
+                print("\t".join(line), file=out_handle, end="")
     return out
 
 if __name__ == "__main__":
@@ -84,4 +85,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     mirna_snp = select_snps(args.gtf, args.vcf, args.out)
-    print "%s mapped to %s: %s" % (args.vcf, args.gtf, mirna_snp)
+    print("%s mapped to %s: %s" % (args.vcf, args.gtf, mirna_snp))

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import logging
 import string
 import os
@@ -87,7 +88,7 @@ def _convert_to_df(in_file, freq, raw_file):
         for name in in_file:
             counts = freq[name]
             if raw_file:
-                print >>out_handle, "%s\t%s\t%s\t%s\t%s\t%s" % ("chr", in_file[name][0], in_file[name][1], name, sum(counts.values()), "+")
+                print("%s\t%s\t%s\t%s\t%s\t%s" % ("chr", in_file[name][0], in_file[name][1], name, sum(counts.values()), "+"), file=out_handle, end="")
             dat = _expand(dat, counts, in_file[name][0], in_file[name][1])
 
     for s in dat:

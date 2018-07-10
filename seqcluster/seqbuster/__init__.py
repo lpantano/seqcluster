@@ -1,4 +1,5 @@
 # Re-aligner small RNA sequence from SAM/BAM file (miRBase annotation)
+from __future__ import print_function
 import os.path as op
 import re
 import shutil
@@ -59,8 +60,8 @@ def _filter_seqs(fn):
                         counts = _get_freq(fixed_name)
                         if len(seq) < 26 and (counts > 1 or counts == 0):
                             idx += 1
-                            print >>out_handle, fixed_name
-                            print >>out_handle, seq
+                            print(fixed_name, file=out_handle, end="")
+                            print(seq, file=out_handle, end="")
                         if line.startswith("@"):
                             in_handle.next()
                             in_handle.next()
@@ -82,8 +83,8 @@ def _convert_to_fasta(fn):
                 if line.find("_x"):
                     count = int(line.strip().split("_x")[1])
                 if count > 1:
-                    print >>out_handle, ">%s" % line.strip()[1:]
-                    print >>out_handle, seq.strip()
+                    print(">%s" % line.strip()[1:], file=out_handle, end="")
+                    print(seq.strip(), file=out_handle, end="")
     return out_file
 
 
@@ -275,7 +276,7 @@ def _read_bam(bam_fn, precursors):
     reads = defaultdict(realign)
     for line in handle:
         chrom = handle.getrname(line.reference_id)
-        # print "%s %s %s %s" % (line.query_name, line.reference_start, line.query_sequence, chrom)
+        # print("%s %s %s %s" % (line.query_name, line.reference_start, line.query_sequence, chrom))
         query_name = line.query_name
         if query_name not in reads:
             reads[query_name].sequence = line.query_sequence
@@ -310,7 +311,7 @@ def _read_pyMatch(fn, precursors):
             query_name, seq, chrom, reference_start, end, mism, add = line.split()
             reference_start = int(reference_start)
             # chrom = handle.getrname(cols[1])
-            # print "%s %s %s %s" % (line.query_name, line.reference_start, line.query_sequence, chrom)
+            # print("%s %s %s %s" % (line.query_name, line.reference_start, line.query_sequence, chrom))
             if query_name not in reads:
                 reads[query_name].sequence = seq
             iso = isomir()
@@ -405,7 +406,7 @@ def _tab_output(reads, out_file, sample):
     seen_ann = {}
     dt = None
     with open(out_file, 'w') as out_handle:
-        print >>out_handle, "name\tseq\tfreq\tchrom\tstart\tend\tsubs\tadd\tt5\tt3\ts5\ts3\tDB\tprecursor\thits"
+        print("name\tseq\tfreq\tchrom\tstart\tend\tsubs\tadd\tt5\tt3\ts5\ts3\tDB\tprecursor\thits", file=out_handle, end="")
         for r, read in reads.iteritems():
             hits = set()
             [hits.add(mature.mirna) for mature in read.precursors.values() if mature.mirna]
@@ -431,7 +432,7 @@ def _tab_output(reads, out_file, sample):
                     seen_ann[annotation] = res
                     lines.append([annotation, chrom, count, sample, hits])
                     lines_pre.append([annotation, chrom, p, count, sample, hits])
-                    print >>out_handle, res
+                    print(res, file=out_handle, end="")
 
     if lines:
         dt = pd.DataFrame(lines)
@@ -534,4 +535,4 @@ def miraligner(args):
     if out_dts:
         _create_counts(out_dts, args.out)
     else:
-        print "No files analyzed!"
+        print("No files analyzed!")

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 import sys
 import os.path as op
@@ -165,18 +166,24 @@ def _write_size_table(data_freq, data_len, ann_valid, cluster_id):
         table += "%s\t%s\t%s\t%s\n" % (l, dd[l], ann_valid, cluster_id)
     return table
 
-
 def _get_annotation(c, loci):
     """get annotation of transcriptional units"""
     data_ann_temp = {}
     data_ann = []
     counts = Counter()
     for lid in c.loci2seq:
-        for dbi in loci[lid].db_ann.keys():
-            data_ann_temp[dbi] = {dbi: map(lambda (x): loci[lid].db_ann[dbi].ann[x].name, loci[lid].db_ann[dbi].ann.keys())}
+        # original Py 2.7 code
+        #for dbi in loci[lid].db_ann.keys():
+        #    data_ann_temp[dbi] = {dbi: map(lambda (x): loci[lid].db_ann[dbi].ann[x].name, loci[lid].db_ann[dbi].ann.keys())}
+        # suggestion by 2to3
+        for dbi in list(loci[lid].db_ann.keys()):
+            data_ann_temp[dbi] = {dbi: [loci[lid].db_ann[dbi].ann[x].name for x in list(loci[lid].db_ann[dbi].ann.keys())]}
             logger.debug("_json_: data_ann_temp %s %s" % (dbi, data_ann_temp[dbi]))
             counts[dbi] += 1
-        data_ann = data_ann + map(lambda (x): data_ann_temp[x], data_ann_temp.keys())
+        # original Py 2.7 code
+        #data_ann = data_ann + map(lambda (x): data_ann_temp[x], data_ann_temp.keys())
+        # suggestion by 2to3
+        data_ann = data_ann + [data_ann_temp[x] for x in list(data_ann_temp.keys())]
         logger.debug("_json_: data_ann %s" % data_ann)
     counts = {k: v for k, v in counts.iteritems()}
     total_loci = sum([counts[db] for db in counts])
@@ -315,11 +322,20 @@ def _create_json(clusL, args):
             bed_line = "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (chrom, s, e, annotation, cid, st, len(seqList))
             out_bed.write(bed_line)
 
-            data_seqs = map(lambda (x): {x: seqs[x].seq}, seqList)
+            # original Py 2.7 code
+            #data_seqs = map(lambda (x): {x: seqs[x].seq}, seqList)
+            # proposal by 2to3
+            data_seqs = [{x: seqs[x].seq} for x in seqList]
             scaled_seqs = _get_counts(seqList, seqs, c.idmembers)
-            data_freq = map(lambda (x): scaled_seqs[x].freq, seqList)
-            data_freq_w_id = map(lambda (x): {x: scaled_seqs[x].norm_freq}, seqList)
-            data_len = map(lambda (x): seqs[x].len, seqList)
+            # original Py 2.7 code
+            #data_freq = map(lambda (x): scaled_seqs[x].freq, seqList)
+            #data_freq_w_id = map(lambda (x): {x: scaled_seqs[x].norm_freq}, seqList)
+            #data_len = map(lambda (x): seqs[x].len, seqList)
+            # proposal by 2to3
+            data_freq = [scaled_seqs[x].freq for x in seqList]
+            data_freq_w_id = [{x: scaled_seqs[x].norm_freq} for x in seqList]
+            data_len = [seqs[x].len for x in seqList]
+
             sum_freq = _sum_by_samples(scaled_seqs, samples_order)
 
             data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
@@ -330,7 +346,7 @@ def _create_json(clusL, args):
                 if f.count(0) > 0.1 * len(f) and len(f) > 9:
                     continue
                 f = map(str, f)
-                print >>matrix_single, "\t".join([str(cid), data_valid_str, seqs[s].seq, "\t".join(f)])
+                print("\t".join([str(cid), data_valid_str, seqs[s].seq, "\t".join(f)]), file=matrix_single, end="")
 
             matrix.write("%s\t%s\t%s|%s\t%s\n" % (cid, c.toomany, data_valid_str, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
             size_matrix.write(_write_size_table(data_freq, data_len, data_valid_str, cid))
