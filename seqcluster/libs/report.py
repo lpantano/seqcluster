@@ -13,7 +13,7 @@ from progressbar import ProgressBar
 from seqcluster.libs.utils import file_exists
 from seqcluster.function.rnafold import run_rnafold
 from seqcluster.html import HTML
-from seqcluster import templates
+from seqcluster.import templates
 
 logger = logging.getLogger('html')
 

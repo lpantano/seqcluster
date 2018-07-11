@@ -4,8 +4,8 @@ import os
 import inspect
 import contextlib
 import shutil
-import seqcluster.libs.parameters
-import seqcluster.libs.logger as mylog
+import seqcluster.seqcluster.libs.parameters
+import seqcluster.seqcluster.libs.logger as mylog
 
 from seqcluster.libs.do import find_cmd
 from seqcluster.libs.read import load_data

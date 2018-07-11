@@ -4,8 +4,8 @@ import os
 import os.path as op
 import inspect
 import pybedtools
-import seqcluster.libs.parameters
-import seqcluster.libs.logger as mylog
+import seqcluster.seqcluster.libs.parameters
+import seqcluster.seqcluster.libs.logger as mylog
 
 from seqcluster.detect.metacluster import reduceloci
 from seqcluster.detect.cluster import detect_clusters, peak_calling

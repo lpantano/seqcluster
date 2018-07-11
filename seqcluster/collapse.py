@@ -1,5 +1,5 @@
 import os
-from libs.fastq import collapse, splitext_plus, write_output
+from seqcluster.libs.fastq import collapse, splitext_plus, write_output
 import logging
 
 

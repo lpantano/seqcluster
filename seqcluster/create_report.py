@@ -10,10 +10,10 @@ import logging
 #import matplotlib
 #matplotlib.use('Agg', force=True)
 
-from libs.read import load_data
-from libs.report import make_profile
-from libs.utils import safe_dirs
-from db import make_database
+from seqcluster.libs.read import load_data
+from seqcluster.libs.report import make_profile
+from seqcluster.libs.utils import safe_dirs
+from seqcluster.db.import make_database
 import templates
 
 logger = logging.getLogger('report')

@@ -9,7 +9,7 @@ import argparse
 
 from seqcluster.libs import do
 from seqcluster.libs.utils import file_exists
-import seqcluster.libs.logger as mylog
+import seqcluster.seqcluster.libs.logger as mylog
 from seqcluster.install import _get_miraligner
 from seqcluster.seqbuster.snps import create_vcf
 from seqcluster.collapse import collapse_fastq

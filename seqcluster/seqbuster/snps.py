@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import sys
 
-import seqcluster.libs.logger as mylog
+import seqcluster.seqcluster.libs.logger as mylog
 
 STDOUT = sys.stdout
 logger = mylog.getLogger(__name__)

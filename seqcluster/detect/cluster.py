@@ -7,7 +7,7 @@ from  seqcluster.libs import pysen
 import numpy as np
 
 from seqcluster.libs.utils import file_exists
-import seqcluster.libs.logger as mylog
+import seqcluster.seqcluster.libs.logger as mylog
 from seqcluster.libs.classes import *
 from seqcluster.detect.metacluster import _get_seqs_from_cluster
 from seqcluster.libs.do import run
