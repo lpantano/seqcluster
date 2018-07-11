@@ -12,7 +12,7 @@ import math
 # import pybedtools
 
 
-import seqcluster.seqcluster.libs.logger as mylog
+import seqcluster.libs.logger as mylog
 from seqcluster.libs import utils
 from seqcluster.libs import parameters
 from seqcluster.libs.classes import *

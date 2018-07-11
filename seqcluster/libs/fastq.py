@@ -1,6 +1,6 @@
 import os
 from collections import Counter, defaultdict
-from classes import quality, umi
+from seqcluster.libs.classes import quality, umi
 from itertools import product
 import gzip
 import re

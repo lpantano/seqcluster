@@ -1,7 +1,7 @@
 """simulate cluster over the genome"""
 from __future__ import print_function
 import random
-from read import get_fasta
+from seqcluster.libs.read import get_fasta
 
 
 def simulate(args):

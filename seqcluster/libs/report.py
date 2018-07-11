@@ -6,14 +6,14 @@ import os
 from math import log as mlog2
 from collections import Counter, defaultdict
 
-from read import map_to_precursors, precursor_sequence, map_to_precursor_biopython
-from utils import safe_dirs
+from seqcluster.libs.read import map_to_precursors, precursor_sequence, map_to_precursor_biopython
+from seqcluster.libs.utils import safe_dirs
 from progressbar import ProgressBar
 
 from seqcluster.libs.utils import file_exists
 from seqcluster.function.rnafold import run_rnafold
 from seqcluster.html import HTML
-from seqcluster.import templates
+from seqcluster import templates
 
 logger = logging.getLogger('html')
 

@@ -1,16 +1,16 @@
 from seqcluster.libs.logger import initialize_logger
 import sys
 from seqcluster.libs.parse import parse_cl
-from seqcluster.prepare_data.import prepare
-from seqcluster.make_cluster. import cluster
-from seqcluster.create_report.import report
-from seqcluster.make_predictions.import predictions
-from seqcluster.explore_cluster.import explore
-from seqcluster.collapse.import collapse_fastq
-from seqcluster.seqbuster.import miraligner
+from seqcluster.prepare_data import prepare
+from seqcluster.make_clusters import cluster
+from seqcluster.create_report import report
+from seqcluster.make_predictions import predictions
+from seqcluster.explore_cluster import explore
+from seqcluster.collapse import collapse_fastq
+from seqcluster.seqbuster import miraligner
 from seqcluster.libs.simulator import simulate
 from seqcluster.function.target import targets_enrichment
-from seqcluster.stats.import stats
+from seqcluster.stats import stats
 import seqcluster.libs.logger as mylog
 import time
 

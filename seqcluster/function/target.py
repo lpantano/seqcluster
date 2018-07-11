@@ -4,7 +4,7 @@ import os.path as op
 from collections import defaultdict
 import gzip
 
-import seqcluster.seqcluster.libs.logger as mylog
+import seqcluster.libs.logger as mylog
 
 logger = mylog.getLogger(__name__)
 

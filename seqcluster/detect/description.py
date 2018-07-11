@@ -3,7 +3,7 @@ from operator import itemgetter
 from  seqcluster.libs import pysen
 import numpy as np
 
-import seqcluster.seqcluster.libs.logger as mylog
+import seqcluster.libs.logger as mylog
 from seqcluster.libs.classes import *
 # from seqcluster.function.peakdetect import peakdetect as peakdetect
 

@@ -13,8 +13,8 @@ import logging
 from seqcluster.libs.read import load_data
 from seqcluster.libs.report import make_profile
 from seqcluster.libs.utils import safe_dirs
-from seqcluster.db.import make_database
-import templates
+from seqcluster.db import make_database
+from seqcluster import templates
 
 logger = logging.getLogger('report')
 
