@@ -5,7 +5,7 @@ Copyright 2012 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """
 from collections import defaultdict
-from thinkbayes import Pmf
+from seqcluster.libs.thinkbayes import Pmf
 import numpy as np
 
 

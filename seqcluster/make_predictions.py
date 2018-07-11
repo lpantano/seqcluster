@@ -1,9 +1,9 @@
 import os
 import logging
 
-from libs.read import load_data, write_data
-from function.predictions import is_tRNA, run_coral
-from libs.utils import safe_dirs
+from seqcluster.libs.read import load_data, write_data
+from seqcluster.function.predictions import is_tRNA, run_coral
+from seqcluster.libs.utils import safe_dirs
 
 logger = logging.getLogger('predictions')
 

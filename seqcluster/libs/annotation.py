@@ -1,4 +1,4 @@
-import logger as mylog
+import seqcluster.libs.logger as mylog
 import os
 
 from seqcluster.libs.classes import annotation, dbannotation

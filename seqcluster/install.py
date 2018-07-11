@@ -1,6 +1,7 @@
 """
 Some commands to install common databases like mirbase and some human/mouse annotation
 """
+from __future__ import print_function
 import os.path as op
 import os
 import sys
@@ -14,8 +15,7 @@ from seqcluster.libs import do, utils
 try:
     import bcbio
 except:
-    print ("Probably this will fail, you need bcbio-nextgen "
-           "for many installation functions.")
+    print ("Probably this will fail, you need bcbio-nextgen for many installation functions.")
     pass
 
 REMOTES = {
@@ -164,12 +164,12 @@ def _upgrade():
         import bcbio.install as install
         install._set_pip_ssl(conda_dir)
     except ImportError:
-        print "bcbio was not found, this may error."
+        print("bcbio was not found, this may error.")
         pass
     pip_bin = os.path.join(conda_dir, "pip")
     cmd = [pip_bin, "install", "--upgrade", "--no-deps",
            "git+%s#egg=seqcluster" % REMOTES["gitrepo"]]
-    print " ".join(cmd)
+    print(" ".join(cmd))
     subprocess.check_call(cmd)
     #subprocess.check_call([pip_bin, "install", "--upgrade", "--no-deps",
     #                       "git+%s#egg=bcbio-nextgen" % REMOTES["gitrepo-bcbio"]])

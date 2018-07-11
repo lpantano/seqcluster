@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import os
 import sys
 import os.path as op
@@ -12,25 +13,29 @@ import pandas as pd
 import pybedtools
 
 from seqcluster.libs.utils import file_exists
-import libs.logger as mylog
-from libs import do
-from libs.read import load_data
-from libs.mystats import up_threshold
-from detect.cluster import detect_clusters, clean_bam_file, peak_calling, detect_complexity
-from detect.description import best_precursor, sort_precursor
-from libs.annotation import anncluster
-from libs.inputs import parse_ma_file, parse_align_file
-from detect.metacluster import reduceloci,_get_seqs
-from libs.tool import generate_position_bed
-from libs.classes import *
-import libs.parameters as param
-from db import make_database
+import seqcluster.libs.logger as mylog
+from seqcluster.libs import do
+from seqcluster.libs.read import load_data
+from seqcluster.libs.mystats import up_threshold
+from seqcluster.detect.cluster import detect_clusters, clean_bam_file, peak_calling, detect_complexity
+from seqcluster.detect.description import best_precursor, sort_precursor
+from seqcluster.libs.annotation import anncluster
+from seqcluster.libs.inputs import parse_ma_file, parse_align_file
+from seqcluster.detect.metacluster import reduceloci,_get_seqs
+from seqcluster.libs.tool import generate_position_bed
+from seqcluster.libs.classes import *
+import seqcluster.libs.parameters as param
+from seqcluster.db import make_database
 
 
 logger = mylog.getLogger(__name__)
 
 
 def cluster(args):
+    """
+    Creating clusters
+    """
+
     args = _check_args(args)
     read_stats_file = op.join(args.dir_out, "read_stats.tsv")
     if file_exists(read_stats_file):
