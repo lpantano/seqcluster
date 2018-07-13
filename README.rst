@@ -5,7 +5,7 @@ Ask questions in the repo's Gitter: Join the chat at:
 
 .. image:: https://badges.gitter.im/Join%20Chat.svg
     :target: https://gitter.im/lpantano/seqcluster
-    
+
 small RNA analysis from NGS data
 
 .. image:: https://travis-ci.org/lpantano/seqcluster.png?branch=master
@@ -16,18 +16,18 @@ small RNA analysis from NGS data
 
 .. image:: https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square
    :target: http://bioconda.github.io
-  
+
 .. image:: https://anaconda.org/bioconda/seqcluster/badges/downloads.svg
    :target: https://anaconda.org/bioconda/seqcluster
 
 .. image:: https://img.shields.io/pypi/l/seqcluster.svg
    :target: https://github.com/lpantano/seqcluster/blob/master/LICENSE
-    
+
 .. image:: http://www.repostatus.org/badges/latest/active.svg
    :alt: Project Status: Active - The project has reached a stable, usable state and is being actively developed.
    :target: http://www.repostatus.org/#active
 
-.. image:: https://img.shields.io/badge/DOI-10.1093%2Fbioinformatics%2Fbtv632-lightgrey.svg?style=flat-square 
+.. image:: https://img.shields.io/badge/DOI-10.1093%2Fbioinformatics%2Fbtv632-lightgrey.svg?style=flat-square
    :target: https://doi.org/10.1093/bioinformatics/btv632
 
 Cite
@@ -46,7 +46,7 @@ Quick start links
 
 See installation at http://seqcluster.readthedocs.org/installation.html
 
-Moreover `bcbio-nextgen`_ provides 
+Moreover `bcbio-nextgen`_ provides
 a python framework to run a whole pipeline for small RNA (miRNA + tRNA + piRNA + others).
 
 .. _bcbio-nextgen: https://bcbio-nextgen.readthedocs.org/en/latest/
@@ -58,7 +58,7 @@ In case you want to use seqcluster alone, a complete tutorial is here: http://se
 Report
 ---------
 
-Seqcluster creates html report that looks like `this`_. That is a table of all cluster detected, and you 
+Seqcluster creates html report that looks like `this`_. That is a table of all cluster detected, and you
 can go into each of them and get a complete `description`_ with profile expression figures, annotation details and
 sequences counts for each sample. An interactive report is as well available to explore the expression profile,
 position on the genome and secondary structure. Learn more http://seqcluster.readthedocs.org/more_outputs.html#report.
@@ -73,8 +73,8 @@ Contributors
 * `Judith Flo Gaya <http://www.seas.harvard.edu/directory/jflo>`_ (School of Engineer and Aplied Science- Harvard University, Boston, USA)
 * `Eulalia Marti Puig <http://www.crg.eu/en/group-members/eul%C3%A0lia-mart%C3%AD-puig>`_ (Genomics and Disease, Center of Genomic Regulation, Barcelona, Spain)
 * Francisco Pantano Rubino: Architect
+* `Steffen Möller <https://github.com/smoe>`_ (University of Rostock)
 
 .. image:: https://d2weczhvl823v0.cloudfront.net/lpantano/seqcluster/trend.png
    :alt: Bitdeli badge
    :target: https://bitdeli.com/free
-
