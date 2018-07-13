@@ -5,7 +5,7 @@ Created by Aaron Quinlan on 2009-08-27.
 Copyright (c) 2009 Aaron R. Quinlan. All rights reserved.
 """
 
-from classes import bedaligned
+from seqcluster.libs.classes import bedaligned
 
 
 def processSAM(line):

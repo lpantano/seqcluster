@@ -4,7 +4,7 @@ import os
 #from os import listdir
 #from os.path import isfile, join
 import logging
-from libs.read import load_data, get_sequences_from_cluster, map_to_precursors, get_precursors_from_cluster
+from seqcluster.libs.read import load_data, get_sequences_from_cluster, map_to_precursors, get_precursors_from_cluster
 
 
 logger = logging.getLogger('explore')

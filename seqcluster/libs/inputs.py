@@ -1,9 +1,9 @@
 from collections import defaultdict
 import pybedtools
 
-import logger as mylog
-from classes import sequence
-from tool import _normalize_seqs
+import seqcluster.libs.logger as mylog
+from seqcluster.libs.classes import sequence
+from seqcluster.libs.tool import _normalize_seqs
 
 
 logger = mylog.getLogger(__name__)

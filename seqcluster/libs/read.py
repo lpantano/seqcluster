@@ -5,9 +5,9 @@ import json, itertools
 import tempfile, os, contextlib, shutil
 import operator
 
-from sam2bed import makeBED
+from seqcluster.libs.sam2bed import makeBED
 import logging
-from do import find_cmd, run
+from seqcluster.libs.do import find_cmd, run
 
 import pysam
 import pybedtools

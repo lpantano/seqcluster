@@ -6,10 +6,10 @@ import shutil
 
 from seqcluster.libs.utils import chdir, safe_dirs
 from seqcluster.libs import utils, logger as mylog
-# import logger as mylog
+# import seqcluster.libs.logger as mylog
 from seqcluster.libs.read import get_loci_fasta, make_temp_directory
 from seqcluster.libs.do import run
-import coral
+from seqcluster.function import coral
 
 logger = mylog.getLogger(__name__)
 

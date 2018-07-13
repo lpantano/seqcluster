@@ -14,8 +14,8 @@ import seqcluster.libs.logger as mylog
 from seqcluster.install import _get_miraligner
 from seqcluster.seqbuster.snps import create_vcf
 from seqcluster.collapse import collapse_fastq
+from seqcluster.seqbuster.realign import *
 from mirtop.gff import reader
-from realign import *
 
 logger = mylog.getLogger(__name__)
 

@@ -7,9 +7,9 @@ import traceback
 #from os.path import isfile, join
 import re
 import logging
-from libs.classes import sequence_unique
-from libs.classes import quality
-from libs.fastq import is_fastq, open_fastq
+from seqcluster.libs.classes import sequence_unique
+from seqcluster.libs.classes import quality
+from seqcluster.libs.fastq import is_fastq, open_fastq
 
 
 logger = logging.getLogger('prepare')
