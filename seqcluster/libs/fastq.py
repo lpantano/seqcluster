@@ -18,9 +18,9 @@ def collapse(in_file):
                 if line.find("UMI") > -1:
                     logger.info("Find UMI tags in read names, collapsing by UMI.")
                     return collapse_umi(in_file)
-                seq = handle.next().strip()
-                handle.next()
-                qual = handle.next().strip()
+                seq = handle.readline().strip()
+                handle.readline()
+                qual = handle.readline().strip()
                 if seq in keep:
                     keep[seq].update(qual)
                 else:
@@ -37,9 +37,9 @@ def collapse_umi(in_file):
             if line.startswith("@"):
                 m = re.search('UMI_([ATGC]*)', line.strip())
                 umis = m.group(0)
-                seq = handle.next().strip()
-                handle.next()
-                qual = handle.next().strip()
+                seq = handle.readline().strip()
+                handle.readline()
+                qual = handle.readline().strip()
                 if (umis, seq) in keep:
                     keep[(umis, seq)][1].update(qual)
                     keep[(umis, seq)][0].update(seq)

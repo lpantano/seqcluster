@@ -105,7 +105,7 @@ def _read_fastq_files(f, args):
                 total = added = 0
                 for line in handle:
                     if line.startswith("@") or line.startswith(">"):
-                        seq = handle.next().strip()
+                        seq = handle.readline().strip()
                         if not p.match(seq):
                             continue
                         idx += 1
@@ -113,8 +113,8 @@ def _read_fastq_files(f, args):
                         keep = {}
                         counts = int(re.search("x([0-9]+)", line.strip()).group(1))
                         if is_fastq(cols[0]):
-                            handle.next().strip()
-                            qual = handle.next().strip()
+                            handle.readline().strip()
+                            qual = handle.readline().strip()
                         else:
                             qual = "I" * len(seq)
                         qual = qual[0:int(args.maxl)] if len(qual) > int(args.maxl) else qual

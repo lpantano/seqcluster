@@ -57,15 +57,15 @@ def _filter_seqs(fn):
                 for line in in_handle:
                     if line.startswith("@") or line.startswith(">"):
                         fixed_name = _make_unique(line.strip(), idx)
-                        seq = in_handle.next().strip()
+                        seq = in_handle.readline().strip()
                         counts = _get_freq(fixed_name)
                         if len(seq) < 26 and (counts > 1 or counts == 0):
                             idx += 1
                             print(fixed_name, file=out_handle, end="\n")
                             print(seq, file=out_handle, end="\n")
                         if line.startswith("@"):
-                            in_handle.next()
-                            in_handle.next()
+                            in_handle.readline()
+                            in_handle.readline()
     return out_file
 
 
@@ -75,11 +75,11 @@ def _convert_to_fasta(fn):
         with open(fn) as in_handle:
             for line in in_handle:
                 if line.startswith("@"):
-                    seq = in_handle.next()
-                    _ = in_handle.next()
-                    qual = in_handle.next()
+                    seq = in_handle.readline()
+                    _ = in_handle.readline()
+                    qual = in_handle.readline()
                 elif line.startswith(">"):
-                    seq = in_handle.next()
+                    seq = in_handle.readline()
                 count = 2
                 if line.find("_x"):
                     count = int(line.strip().split("_x")[1])
@@ -341,7 +341,7 @@ def _read_miraligner(fn):
     """Read ouput of miraligner and create compatible output."""
     reads = defaultdict(realign)
     with open(fn) as in_handle:
-        in_handle.next()
+        in_handle.readline()
         for line in in_handle:
             cols = line.strip().split("\t")
             iso = isomir()

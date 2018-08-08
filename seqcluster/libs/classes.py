@@ -7,6 +7,10 @@ import numpy as np
 from operator import add
 from collections import Counter, defaultdict
 
+try:
+    unichr
+except NameError:
+    unichr = chr
 
 class sequence_unique:
     """
