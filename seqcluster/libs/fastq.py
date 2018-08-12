@@ -13,7 +13,8 @@ def collapse(in_file):
     """collapse identical sequences and keep Q"""
     keep = Counter()
     with open_fastq(in_file) as handle:
-        for line in handle:
+        line = handle.readline();
+        while line:
             if line.startswith("@"):
                 if line.find("UMI") > -1:
                     logger.info("Find UMI tags in read names, collapsing by UMI.")
@@ -25,6 +26,7 @@ def collapse(in_file):
                     keep[seq].update(qual)
                 else:
                     keep[seq] = quality(qual)
+            line = handle.readline();
     logger.info("Sequences loaded: %s" % len(keep))
     return keep
 
@@ -33,7 +35,8 @@ def collapse_umi(in_file):
     """collapse reads using UMI tags"""
     keep = defaultdict(dict)
     with open_fastq(in_file) as handle:
-        for line in handle:
+        line = handle.readline();
+        while line:
             if line.startswith("@"):
                 m = re.search('UMI_([ATGC]*)', line.strip())
                 umis = m.group(0)
@@ -45,6 +48,7 @@ def collapse_umi(in_file):
                     keep[(umis, seq)][0].update(seq)
                 else:
                     keep[(umis, seq)] = [umi(seq), quality(qual)]
+            line = handle.readline();
     logger.info("Sequences loaded: %s" % len(keep))
     return keep
 

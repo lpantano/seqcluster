@@ -103,7 +103,8 @@ def _read_fastq_files(f, args):
             with open_fastq(cols[0]) as handle:
                 sample_l.append(cols[1])
                 total = added = 0
-                for line in handle:
+                line=handle.readline()
+                while line:
                     if line.startswith("@") or line.startswith(">"):
                         seq = handle.readline().strip()
                         if not p.match(seq):
@@ -129,6 +130,7 @@ def _read_fastq_files(f, args):
                                 seq_l[seq] = sequence_unique(idx, seq)
                             seq_l[seq].add_exp(cols[1], counts)
                             seq_l[seq].quality = keep[seq].get()
+                    line=handle.readline()
                 print("total\t%s\t%s" % (idx, cols[1]), file=out_handle, end="")
                 print("added\t%s\t%s" % (len(seq_l), cols[1]), file=out_handle, end="")
                 logger.info("%s: Total read %s ; Total added %s" % (cols[1], idx, len(seq_l)))
