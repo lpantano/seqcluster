@@ -54,7 +54,8 @@ def _filter_seqs(fn):
     if not file_exists(out_file):
         with open(out_file, 'w') as out_handle:
             with open(fn) as in_handle:
-                for line in in_handle:
+                line = in_handle.readline()
+                while line:
                     if line.startswith("@") or line.startswith(">"):
                         fixed_name = _make_unique(line.strip(), idx)
                         seq = in_handle.readline().strip()
@@ -66,6 +67,7 @@ def _filter_seqs(fn):
                         if line.startswith("@"):
                             in_handle.readline()
                             in_handle.readline()
+                    line = in_handle.readline()
     return out_file
 
 
@@ -73,7 +75,8 @@ def _convert_to_fasta(fn):
     out_file = op.splitext(fn)[0] + ".fa"
     with open(out_file, 'w') as out_handle:
         with open(fn) as in_handle:
-            for line in in_handle:
+            line = in_handle.readline()
+            while line:
                 if line.startswith("@"):
                     seq = in_handle.readline()
                     _ = in_handle.readline()
@@ -86,6 +89,7 @@ def _convert_to_fasta(fn):
                 if count > 1:
                     print(">%s" % line.strip()[1:], file=out_handle, end="")
                     print(seq.strip(), file=out_handle, end="")
+                line = in_handle.readline()
     return out_file
 
 
