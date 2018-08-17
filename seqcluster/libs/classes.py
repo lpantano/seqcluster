@@ -72,7 +72,7 @@ class quality:
 
 class cluster_info_obj:
     """
-    Object containing information about clusters(:code:`clus_obj`), 
+    Object containing information about clusters(:code:`clus_obj`),
     positions(:code:`positions`) and sequences(:code:`sequences`)
     """
     def __init__(self, clus_obj, clus_id, loci_obj, seq_obj):
@@ -114,7 +114,7 @@ class sequence:
 class position:
     """
     Object with information about position: chr,start,end,strand
-    as well, with annotation information throuhg :code:`dbannotation` object 
+    as well, with annotation information throuhg :code:`dbannotation` object
     """
     def __init__(self, idl, chr, start, end, strand):
         self.idl = idl
@@ -148,7 +148,7 @@ class annotation:
 
 class dbannotation:
     """
-    Object with information about annotation: containg one dict that 
+    Object with information about annotation: containg one dict that
     store all features for each database type
     """
     def __init__(self,na):
@@ -164,7 +164,7 @@ class cluster:
     def __init__(self, id):
         self.id = id
         self.idmembers = defaultdict(int)
-        self.locimax = None
+        self.locimax = 0
         self.locimaxid = None
         self.locilen = {}
         self.loci2seq = {}
@@ -204,7 +204,7 @@ class cluster:
         seen = set()
         self.locimax = 0
         for idl in self.loci2seq:
-            l = len(self.loci2seq[idl])
+            l = len(list(self.loci2seq[idl]))
             # self.idmembers.update(dict(zip(self.loci2seq[idl], [1] * l)))
             seen = seen.union(set(self.loci2seq[idl]))
             if l > self.locimax:
@@ -222,7 +222,7 @@ class cluster:
                 self.loci2seq[idl] = []
             self.loci2seq[idl].append(s)
         self.loci2seq[idl] = list(set(self.loci2seq[idl]))
-        lenid = len(self.loci2seq[idl])
+        lenid = len(list(self.loci2seq[idl]))
         self.locilen[idl] = lenid
         if lenid > self.locimax:
             self.locimax = lenid

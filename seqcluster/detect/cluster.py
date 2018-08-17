@@ -95,6 +95,7 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
     previous_id = 0
     for line in c.features():
         c, start, end, name, score, strand, c_id = line
+        c_id = int(c_id)
         name = int(name.replace('seq_', ''))
         pos = int(start) if strand == "+" else int(end)
         if name not in current_seq:
@@ -127,7 +128,7 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
         previous_id = c_id
         sequence2clusters[name].add(eindex)
     logger.info("%s Clusters read" % eindex)
-    # merge cluster with shared sequences  
+    # merge cluster with shared sequences
     metacluster_obj, cluster_id = _find_metaclusters(current_clus, sequence2clusters, current_seq, MIN_SEQ)
 
     return cluster_info_obj(current_clus, metacluster_obj, current_loci, current_seq)

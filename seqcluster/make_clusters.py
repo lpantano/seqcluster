@@ -57,7 +57,7 @@ def cluster(args):
         raise ValueError("So few sequences.")
 
     logger.info("Cleaning bam file")
-    y, l = _total_counts(seqL.keys(), seqL)
+    y, l = _total_counts(list(seqL.keys()), seqL)
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
@@ -65,7 +65,7 @@ def cluster(args):
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
 
     clusL = _create_clusters(seqL, bam_file, args)
-    y, l = _total_counts(clusL.seq.keys(), clusL.seq, aligned=True)
+    y, l = _total_counts(list(clusL.seq.keys()), clusL.seq, aligned=True)
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
@@ -150,15 +150,16 @@ def _total_counts(seqs, seqL, aligned=False):
     Counts total seqs after each step
     """
     total = Counter()
+    nseqs = 0
     if isinstance(seqs, list):
         if not aligned:
-            l = len([total.update(seqL[s].freq) for s in seqs])
+            nseqs = len([total.update(seqL[s].freq) for s in seqs])
         else:
-            l = len([total.update(seqL[s].freq) for s in seqs if seqL[s].align > 0])
+            nseqs = len([total.update(seqL[s].freq) for s in seqs if seqL[s].align > 0])
     elif isinstance(seqs, dict):
         [total.update(seqs[s].get_freq(seqL)) for s in seqs]
-        l = sum(len(seqs[s].idmembers) for s in seqs)
-    return total, l
+        nseqs = sum(len(seqs[s].idmembers) for s in seqs)
+    return total, nseqs
 
 
 def _write_size_table(data_freq, data_len, ann_valid, cluster_id):
@@ -310,7 +311,7 @@ def _create_json(clusL, args):
     out_single_count = os.path.join(args.dir_out, "counts_sequence.tsv")
     out_size = os.path.join(args.dir_out, "size_counts.tsv")
     out_bed = os.path.join(args.dir_out, "positions.bed")
-    samples_order = list(seqs[seqs.keys()[1]].freq.keys())
+    samples_order = list(seqs[list(seqs.keys())[1]].freq.keys())
     with open(out_count, 'w') as matrix, open(out_size, 'w') as size_matrix, open(out_bed, 'w') as out_bed, open(out_single_count, 'w') as matrix_single:
         matrix.write("id\tnloci\tann\t%s\n" % "\t".join(samples_order))
         matrix_single.write("id\tnloci\tann\t%s\n" % "\t".join(samples_order))

@@ -13,7 +13,7 @@ with open("requirements.txt", "r") as f:
 
 
 setup(name='seqcluster',
-      version='1.2.4a8',
+      version='1.2.4a10',
       description='Small RNA-seq pipeline',
       long_description=readme(),
       classifiers=[
