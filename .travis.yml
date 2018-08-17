@@ -7,8 +7,9 @@ notifications:
     - lorena.pantano@gmail.com
     on_failure: always
 before_install:
-- wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
-- bash Miniconda-latest-Linux-x86_64.sh -b -p ~/install
+- echo $TRAVIS_PYTHON_VERSION
+- wget -O miniconda.sh http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
+- bash miniconda.sh -b -p ~/install
 - export PATH=~/install/bin/:$PATH
 - conda install --yes -c conda-forge -c bioconda openjdk pyyaml pysam scipy pandas pybedtools progressbar bedtools samtools pip biopython nose scipy setuptools -q
 - pip install mirtop
