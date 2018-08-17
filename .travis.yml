@@ -11,7 +11,9 @@ notifications:
     on_failure: always
 before_install:
 - echo $TRAVIS_PYTHON_VERSION
-- wget -O miniconda.sh http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
+- miniconda="Miniconda3-latest-Linux-x86_64.sh"
+- if [[ $TRAVIS_PYTHON_VERSION == "2.7" ]] ; then miniconda="Miniconda2-latest-Linux-x86_64.sh"; fi
+- wget -O miniconda.sh http://repo.continuum.io/miniconda/${miniconda}
 - bash miniconda.sh -b -p ~/install
 - export PATH=~/install/bin/:$PATH
 - conda install --yes -c conda-forge -c bioconda openjdk pyyaml pysam scipy pandas pybedtools progressbar bedtools samtools pip biopython nose scipy setuptools -q
