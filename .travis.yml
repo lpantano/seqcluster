@@ -16,10 +16,9 @@ before_install:
 - wget -O miniconda.sh http://repo.continuum.io/miniconda/${miniconda}
 - bash miniconda.sh -b -p ~/install
 - export PATH=~/install/bin/:$PATH
-- conda install --yes -c conda-forge -c bioconda openjdk pyyaml pysam scipy pandas pybedtools progressbar bedtools samtools pip biopython nose scipy setuptools -q
-- pip install mirtop
-- pip install pytz
-- pip install dateutils
+- conda install --yes -c conda-forge -c bioconda openjdk pysam bedtools samtools -q
+- pip install -r requirements.txt
+# scipy pandas pybedtools progressbar pip biopython nose scipy setuptools pyyaml -q
 - python setup.py install
 script:
 - nosetests

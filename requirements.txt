@@ -1,4 +1,5 @@
 pysam>=0.8.2.1
+biopython
 pybedtools>=0.6.8
 scipy>=0.15.1
 numpy
@@ -7,3 +8,6 @@ progressbar>=2.3.0
 pandas>=0.14.1
 colorlog
 mirtop
+pyyaml
+pytz
+dateutils
