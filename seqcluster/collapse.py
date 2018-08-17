@@ -26,6 +26,6 @@ def collapse_fastq(args):
 
 def _is_umi(fn):
     with open(fn) as inh:
-        if inh.next().find("UMI_") > -1:
+        if inh.readline().find("UMI_") > -1:
             return True
     return False
