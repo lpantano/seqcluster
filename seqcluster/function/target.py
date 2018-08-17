@@ -19,7 +19,7 @@ def targets_enrichment(args):
     res = defaultdict(list)
     collect = defaultdict(list)
     with open(target) as in_handle:
-        in_handle.next()
+        in_handle.readline()
         for line in in_handle:
             cols = line.split()
             mit_id = mirna_map_dict[cols[2]]

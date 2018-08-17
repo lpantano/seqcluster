@@ -5,6 +5,11 @@ import os
 import subprocess
 import logging
 
+try:
+    basestring
+except NameError:
+    basestring = str
+
 logger = logging.getLogger("run")
 
 
