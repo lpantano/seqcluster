@@ -1,5 +1,5 @@
 seqcluster
----------
+----------
 
 Ask questions in the repo's Gitter: Join the chat at:
 

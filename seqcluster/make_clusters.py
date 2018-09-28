@@ -314,7 +314,7 @@ def _create_json(clusL, args):
     samples_order = list(seqs[list(seqs.keys())[1]].freq.keys())
     with open(out_count, 'w') as matrix, open(out_size, 'w') as size_matrix, open(out_bed, 'w') as out_bed, open(out_single_count, 'w') as matrix_single:
         matrix.write("id\tnloci\tann\t%s\n" % "\t".join(samples_order))
-        matrix_single.write("id\tnloci\tann\t%s\n" % "\t".join(samples_order))
+        matrix_single.write("id\tann\tsequence\t%s\n" % "\t".join(samples_order))
         for cid in clus:
             seqList = []
             c = clus[cid]
@@ -341,7 +341,7 @@ def _create_json(clusL, args):
             data_freq = [scaled_seqs[x].freq for x in seqList]
             data_freq_w_id = [{x: scaled_seqs[x].norm_freq} for x in seqList]
             data_len = [seqs[x].len for x in seqList]
-
+            
             sum_freq = _sum_by_samples(scaled_seqs, samples_order)
 
             data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]

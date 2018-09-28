@@ -1,6 +1,7 @@
 - 1.2.4a*
 
-  * Inititate migration to py3*. Thanks to @smoe.
+  * Fix header bug
+  * Initiate migration to py3*. Thanks to @smoe.
   * Include mirtop annotation.
   * Fix upgrade command.
   * Fix UMIs detection to count using unique seq + umi. Thanks to @mshadbolt
