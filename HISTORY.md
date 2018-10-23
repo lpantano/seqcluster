@@ -1,5 +1,6 @@
 - 1.2.4a*
 
+  * Use DESeq2 normalization strategy.
   * Fix more errors in python3 env.
   * Fix UMI checking when the input file is a gzip file. Thanks to @rbatorsky-claritas.
   * Fix header bug

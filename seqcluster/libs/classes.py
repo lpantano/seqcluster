@@ -179,11 +179,11 @@ class cluster:
         self.freq = []
 
     def normalize(self, seq, factor):
-        return dict(zip(seq.freq.keys(), list(np.array(seq.freq.values()) * factor)))
+        return dict(zip(seq.freq.keys(), list(np.array(list(seq.freq.values())) * factor)))
 
     def set_freq(self, seqL):
         total = Counter()
-        [total.update(self.normalize(seqL[s], f)) for s, f in self.idmembers.iteritems()]
+        [total.update(self.normalize(seqL[s], f)) for (s, f) in self.idmembers.items()]
         self.freq = total
         return total
 
