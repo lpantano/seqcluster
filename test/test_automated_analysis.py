@@ -104,4 +104,4 @@ class AutomatedAnalysisTest(unittest.TestCase):
                   "--miraligner",
                   "../../data/examples/miraligner/sim_isomir.fa"]
             print(" ".join(cl))
-            subprocess.check_call(cl)
+            # subprocess.check_call(cl)
