@@ -341,7 +341,7 @@ def _create_json(clusL, args):
             data_freq = [scaled_seqs[x].freq for x in seqList]
             data_freq_w_id = [{x: scaled_seqs[x].norm_freq} for x in seqList]
             data_len = [seqs[x].len for x in seqList]
-            
+
             sum_freq = _sum_by_samples(scaled_seqs, samples_order)
 
             data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
