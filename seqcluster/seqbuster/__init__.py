@@ -412,11 +412,11 @@ def _tab_output(reads, out_file, sample):
     dt = None
     with open(out_file, 'w') as out_handle:
         print("name\tseq\tfreq\tchrom\tstart\tend\tsubs\tadd\tt5\tt3\ts5\ts3\tDB\tprecursor\thits", file=out_handle, end="")
-        for r, read in reads.iteritems():
+        for (r, read) in reads.items():
             hits = set()
             [hits.add(mature.mirna) for mature in read.precursors.values() if mature.mirna]
             hits = len(hits)
-            for p, iso in read.precursors.iteritems():
+            for (p, iso) in read.precursors.items():
                 if len(iso.subs) > 3 or not iso.mirna:
                     continue
                 if (r, iso.mirna) not in seen:
@@ -529,11 +529,11 @@ def miraligner(args):
                 vcf.Reader(filename=vcf_file)
             except Exception as e:
                 logger.warning(e.__doc__)
-                logger.warning(e.message)
+                logger.warning(e)
         except Exception as e:
             # traceback.print_exc()
             logger.warning(e.__doc__)
-            logger.warning(e.message)
+            logger.warning(e)
         if isinstance(dt, pd.DataFrame):
             out_dts.append(dt)
 
