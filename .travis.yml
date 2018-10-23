@@ -31,6 +31,8 @@ deploy:
   user: lpantano
   skip_existing: true
   on:
+    all_branches: true
+    condition: $TRAVIS_BRANCH =~ ^master|devel$
     distributions: sdist bdist_wheel
     repo: lpantano/seqcluster
   password:
