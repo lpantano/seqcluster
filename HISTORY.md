@@ -1,5 +1,6 @@
 - 1.2.4a*
 
+  * Fix UMI checking when the input file is a gzip file. Thanks to @rbatorsky-claritas.
   * Fix header bug
   * Initiate migration to py3*. Thanks to @smoe.
   * Include mirtop annotation.

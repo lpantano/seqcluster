@@ -1,5 +1,5 @@
 import os
-from seqcluster.libs.fastq import collapse, splitext_plus, write_output
+from seqcluster.libs.fastq import collapse, splitext_plus, write_output, open_fastq
 import logging
 
 
@@ -24,8 +24,9 @@ def collapse_fastq(args):
     write_output(out_file, seqs, args.minimum)
     return out_file
 
+
 def _is_umi(fn):
-    with open(fn) as inh:
+    with open_fastq(fn) as inh:
         if inh.readline().find("UMI_") > -1:
             return True
     return False
