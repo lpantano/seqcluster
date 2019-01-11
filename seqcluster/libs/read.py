@@ -109,7 +109,7 @@ def map_to_precursor_biopython(seqs, names, loci, args):
     """map the sequences using biopython package"""
     precursor = precursor_sequence(loci, args.ref).upper()
     dat = dict()
-    for s, n in itertools.izip(seqs, names):
+    for s, n in zip(seqs, names):
         res = _align(str(s), precursor)
         if res:
             dat[n] = res
@@ -153,7 +153,7 @@ def get_loci_fasta(loci, out_fa, ref):
         raise ValueError("Not bedtools installed")
     with make_temp_directory() as temp:
         bed_file = os.path.join(temp, "file.bed")
-        for nc, loci in loci.iteritems():
+        for nc, loci in loci.items():
             for l in loci:
                 with open(bed_file, 'w') as bed_handle:
                     logger.debug("get_fasta: loci %s" % l)
@@ -176,7 +176,7 @@ def read_alignment(out_sam, loci, seqs, out_file):
                     continue
                 ref, locus = get_loci(samfile.getrname(int(a.chr)), loci)
                 hits[a.name].append((nm, "%s %s %s %s %s %s" % (a.name, a.name.split("-")[0], locus, ref, a.start, a.end)))
-        for hit in hits.values():
+        for hit in list(hits.values()):
             nm = hit[0][0]
             for l in hit:
                 if nm == l[0]:

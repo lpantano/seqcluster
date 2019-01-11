@@ -61,7 +61,7 @@ def peak_calling(clus_obj):
             for pos in clus_obj.loci[bigger].counts:
                 ss = int(pos) - scale + 5
                 dt[ss] += clus_obj.loci[bigger].counts[pos]
-        x = np.array(range(0, len(dt)))
+        x = np.array(list(range(0, len(dt))))
         logger.debug("x %s and y %s" % (x, dt))
         # tab = pd.DataFrame({'x': x, 'y': dt})
         # tab.to_csv( str(cid) + "peaks.csv", mode='w', header=False, index=False)

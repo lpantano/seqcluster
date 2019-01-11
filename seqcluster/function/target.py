@@ -27,7 +27,7 @@ def targets_enrichment(args):
                 if mit in mirna_id_dict:
                     mirbase_id = mirna_id_dict[mit]
                     if mirbase_id in mirna_list:
-                        info = map(str, [cols[0], cols[1], cols[4], cols[-3], cols[-1]])
+                        info = list(map(str, [cols[0], cols[1], cols[4], cols[-3], cols[-1]]))
                         keep = "\t".join(info)
                         if cols[-3] == "NULL":
                             cols[-3] = 0

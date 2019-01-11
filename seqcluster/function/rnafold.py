@@ -11,7 +11,7 @@ def run_rnafold(seqs):
     cmd = ("echo {seqs} | RNAfold").format(**locals())
     if len(seqs) < 150:
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        for line in iter(process.stdout.readline, ''):
+        for line in str(process.stdout.read()).split(r"\n"):
             if line.find(" ") > -1:
                 out = "".join(line.split(" ")[1:]).strip()[1:-1].replace(" ", "")
                 structure = line.split(" ")[0]

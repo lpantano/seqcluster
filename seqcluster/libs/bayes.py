@@ -54,13 +54,13 @@ def _dict_seq_locus(list_c, loci_obj, seq_obj):
     """
     seqs = defaultdict(set)
     # n = len(list_c.keys())
-    for c in list_c.values():
+    for c in list(list_c.values()):
         for l in c.loci2seq:
             [seqs[s].add(c.id) for s in c.loci2seq[l]]
 
     common = [s for s in seqs if len(seqs[s]) > 1]
     seqs_in_c = defaultdict(float)
-    for c in list_c.values():
+    for c in list(list_c.values()):
         for l in c.loci2seq:
             # total = sum([v for v in loci_obj[l].coverage.values()])
             for s in c.loci2seq[l]:
@@ -76,7 +76,7 @@ def _dict_seq_locus(list_c, loci_obj, seq_obj):
 
 def _bayes(loci):
     data = defaultdict(dict)
-    hypos = loci.keys()
+    hypos = list(loci.keys())
     for hypo in hypos:
         data[hypo] = dict(position=loci[hypo])
     pmf = _update(hypos, data)
@@ -90,8 +90,8 @@ def decide_by_bayes(list_c, s2p):
     seqs_in_c = _dict_seq_locus(list_c, loci_obj, seq_obj)
     for s in seqs_in_c:
         total = sum(seqs_in_c[s].values())
-        norm_values = 1.0 * np.array(seqs_in_c[s].values()) / total
-        prob = _bayes(dict(zip(seqs_in_c[s].keys(), norm_values)))
+        norm_values = 1.0 * np.array(list(seqs_in_c[s].values())) / total
+        prob = _bayes(dict(list(zip(list(seqs_in_c[s].keys()), norm_values))))
         for clus in prob:
             list_c[clus].idmembers[s] = prob.loci[clus]["position"]
             # print "%s %s %s" % (s, clus, list_c[clus].idmembers[s])

@@ -21,7 +21,7 @@ def parse_cl(in_args):
         sub_cmds[in_args[0]](subparsers)
         sub_cmd = in_args[0]
     else:
-        print("use %s" % sub_cmds.keys())
+        print("use %s" % list(sub_cmds.keys()))
         sys.exit(0)
     args = parser.parse_args()
 

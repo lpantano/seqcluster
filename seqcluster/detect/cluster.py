@@ -95,6 +95,7 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
     previous_id = 0
     for line in c.features():
         c, start, end, name, score, strand, c_id = line
+        c_id = int(c_id)
         name = int(name.replace('seq_', ''))
         pos = int(start) if strand == "+" else int(end)
         if name not in current_seq:
@@ -118,8 +119,8 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
         # update locus, sequences in each line
         current_loci[lindex].end = int(end)
         current_loci[lindex].coverage[pos] += 1
-        size = range(pos, pos + current_seq[name].len)
-        current_loci[lindex].counts.update(dict(zip(size, [current_seq[name].total()] * current_seq[name].len)))
+        size = list(range(pos, pos + current_seq[name].len))
+        current_loci[lindex].counts.update(dict(list(zip(size, [current_seq[name].total()] * current_seq[name].len))))
         current_clus[eindex].idmembers[name] = 1
         current_clus[eindex].add_id_member([name], lindex)
         current_seq[name].add_pos(lindex, pos)
@@ -133,11 +134,11 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
     return cluster_info_obj(current_clus, metacluster_obj, current_loci, current_seq)
 
 def _common(items, seen):
-    intersect = map(seen.get, items)
-    return filter(None, intersect)
+    intersect = list(map(seen.get, items))
+    return [_f for _f in intersect if _f]
 
 def _update(clusters, idx, hash):
-    return hash.update(dict(zip(clusters, [idx] * len(clusters))))
+    return hash.update(dict(list(zip(clusters, [idx] * len(clusters)))))
 
 def _find_metaclusters(clus_obj, sequence2clusters, current_seq, min_seqs):
     """
@@ -152,28 +153,27 @@ def _find_metaclusters(clus_obj, sequence2clusters, current_seq, min_seqs):
     c_index = len(sequence2clusters)
     logger.info("Creating meta-clusters based on shared sequences: %s" % c_index)
     meta_idx = 1
-    bar = ProgressBar(maxval=c_index)
-    bar.start()
-    bar.update()
-    for itern, name in enumerate(sequence2clusters):
-        clusters = sequence2clusters[name]
-        if len(clusters) == 0:
-            c_index -= 1
-            continue
-        current_seq[name].align = 1
-        meta_idx += 1
-        bar.update(itern)
-        already_in = _common(clusters, seen)
-        _update(clusters, meta_idx, seen)
-        metacluster[meta_idx] = metacluster[meta_idx].union(clusters)
+    with ProgressBar(maxval=c_index) as bar:
+        bar.update()
+        for itern, name in enumerate(sequence2clusters):
+            clusters = sequence2clusters[name]
+            if len(clusters) == 0:
+                c_index -= 1
+                continue
+            current_seq[name].align = 1
+            meta_idx += 1
+            bar.update(itern)
+            already_in = _common(clusters, seen)
+            _update(clusters, meta_idx, seen)
+            metacluster[meta_idx] = metacluster[meta_idx].union(clusters)
 
-        if already_in:
-            for seen_metacluster in already_in:
-                clusters2merge = metacluster[seen_metacluster]
-                metacluster[meta_idx] = metacluster[meta_idx].union(clusters2merge)
-                _update(clusters2merge, meta_idx, seen)
-                # metacluster[seen_metacluster] = 0
-                del metacluster[seen_metacluster]
+            if already_in:
+                for seen_metacluster in already_in:
+                    clusters2merge = metacluster[seen_metacluster]
+                    metacluster[meta_idx] = metacluster[meta_idx].union(clusters2merge)
+                    _update(clusters2merge, meta_idx, seen)
+                    # metacluster[seen_metacluster] = 0
+                    del metacluster[seen_metacluster]
     logger.info("%s metaclusters from %s sequences" % (len(metacluster), c_index))
 
     return metacluster, seen
@@ -189,22 +189,22 @@ def _find_families_deprecated(clus_obj, min_seqs):
     logger.info("Creating meta-clusters based on shared sequences.")
     seen = defaultdict()
     metacluster = defaultdict(list)
-    c_index = clus_obj.keys()
+    c_index = list(clus_obj.keys())
     meta_idx = 0
     with ProgressBar(maxval=len(c_index), redirect_stdout=True) as p:
         for itern, c in enumerate(c_index):
             p.update(itern)
             clus = clus_obj[c]
-            if len(clus.idmembers.keys()) < min_seqs:
+            if len(list(clus.idmembers.keys())) < min_seqs:
                 del clus_obj[c]
                 continue
             logger.debug("reading cluster %s" % c)
             logger.debug("loci2seq  %s" % clus.loci2seq)
-            already_in, not_in = _get_seqs_from_cluster(clus.idmembers.keys(), seen)
+            already_in, not_in = _get_seqs_from_cluster(list(clus.idmembers.keys()), seen)
             logger.debug("seen %s news %s" % (already_in, not_in))
             meta_idx += 1
             metacluster[meta_idx].append(c)
-            seen.update(dict(zip(not_in, [meta_idx] * len(not_in))))
+            seen.update(dict(list(zip(not_in, [meta_idx] * len(not_in)))))
             if len(already_in) > 0:
                 logger.debug("seen in %s" % already_in)
                 for eindex in already_in:
@@ -213,8 +213,8 @@ def _find_families_deprecated(clus_obj, min_seqs):
                         prev_clus = clus_obj[cluster]
                         logger.debug("_find_families: prev %s current %s" % (eindex, clus.id))
                         # add current seqs to seen cluster
-                        seqs_in = prev_clus.idmembers.keys()
-                        seen.update(dict(zip(seqs_in, [meta_idx] * len(seqs_in))))
+                        seqs_in = list(prev_clus.idmembers.keys())
+                        seen.update(dict(list(zip(seqs_in, [meta_idx] * len(seqs_in)))))
                         # for s_in_clus in prev_clus.idmembers:
                         #    seen[s_in_clus] = meta_idx
                     #    clus.idmembers[s_in_clus] = 1
@@ -252,7 +252,7 @@ def peak_calling(clus_obj):
             for pos in clus_obj.loci[bigger].counts:
                 ss = abs(int(pos) - scale) + 5
                 dt[ss] += clus_obj.loci[bigger].counts[pos]
-        x = np.array(range(0, len(dt)))
+        x = np.array(list(range(0, len(dt))))
         logger.debug("x %s and y %s" % (x, dt))
         # tab = pd.DataFrame({'x': x, 'y': dt})
         # tab.to_csv( str(cid) + "peaks.csv", mode='w', header=False, index=False)

@@ -5,6 +5,9 @@ import os
 import subprocess
 import logging
 
+import six
+
+
 logger = logging.getLogger("run")
 
 
@@ -13,7 +16,7 @@ def run(cmd, data=None, checks=None, region=None, log_error=True,
     """Run the provided command, logging details and checking for errors.
     """
     try:
-        logger.debug(" ".join(str(x) for x in cmd) if not isinstance(cmd, basestring) else cmd)
+        logger.debug(" ".join(str(x) for x in cmd) if not isinstance(cmd, six.string_types) else cmd)
         _do_run(cmd, checks, log_stdout)
     except:
         if log_error:
@@ -37,7 +40,7 @@ def _normalize_cmd_args(cmd):
     Piped commands set pipefail and require use of bash to help with debugging
     intermediate errors.
     """
-    if isinstance(cmd, basestring):
+    if isinstance(cmd, six.string_types):
         # check for standard or anonymous named pipes
         if cmd.find(" | ") > 0 or cmd.find(">(") or cmd.find("<("):
             return "set -o pipefail; " + cmd, True, find_bash()
@@ -67,7 +70,7 @@ def _do_run(cmd, checks, log_stdout=False):
             for line in s.stdout:
                 debug_stdout.append(line)
             if exitcode is not None and exitcode != 0:
-                error_msg = " ".join(cmd) if not isinstance(cmd, basestring) else cmd
+                error_msg = " ".join(cmd) if not isinstance(cmd, six.string_types) else cmd
                 error_msg += "\n"
                 error_msg += "".join(debug_stdout)
                 s.communicate()

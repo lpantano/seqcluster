@@ -58,12 +58,12 @@ class quality:
 
     def update(self, q, counts = 1):
         now = self.qual
-        self.qual = map(add, now, [ord(value) for value in q])
+        self.qual = list(map(add, now, [ord(value) for value in q]))
         self.times += counts
 
     def get(self):
-        average = map(lambda x: int(round(x/self.times)), self.qual)
-        return [str(unichr(char)) for char in average]
+        average = [int(round(x/self.times)) for x in self.qual]
+        return [str(chr(char)) for char in average]
 
 
 class cluster_info_obj:
@@ -123,7 +123,7 @@ class position:
         self.db_ann = {}
 
     def list(self):
-        return map(str, [self.chr, self. start, self.end, self.idl, self.strand])
+        return list(map(str, [self.chr, self. start, self.end, self.idl, self.strand]))
 
     def add_db(self, db, ndb):
         self.db_ann[db] = ndb
@@ -175,11 +175,11 @@ class cluster:
         self.freq = []
 
     def normalize(self, seq, factor):
-        return dict(zip(seq.freq.keys(), list(np.array(seq.freq.values()) * factor)))
+        return dict(list(zip(list(seq.freq.keys()), list(np.array(list(seq.freq.values())) * factor))))
 
     def set_freq(self, seqL):
         total = Counter()
-        [total.update(self.normalize(seqL[s], f)) for s, f in self.idmembers.iteritems()]
+        [total.update(self.normalize(seqL[s], f)) for s, f in self.idmembers.items()]
         self.freq = total
         return total
 
@@ -208,8 +208,8 @@ class cluster:
                 self.locimaxid = idl
         remove = set(self.idmembers.keys()) - seen
         add = seen - set(self.idmembers.keys())
-        self.idmembers.update(dict(zip(add, [1] * len(add))))
-        map(self.idmembers.__delitem__, remove)
+        self.idmembers.update(dict(list(zip(add, [1] * len(add)))))
+        list(map(self.idmembers.__delitem__, remove))
 
     def add_id_member(self, ids, idl):
         for s in ids:
@@ -220,7 +220,7 @@ class cluster:
         self.loci2seq[idl] = list(set(self.loci2seq[idl]))
         lenid = len(self.loci2seq[idl])
         self.locilen[idl] = lenid
-        if lenid > self.locimax:
+        if self.locimax is None or lenid > self.locimax:
             self.locimax = lenid
             self.locimaxid = idl
 

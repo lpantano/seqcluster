@@ -101,7 +101,7 @@ def createdata(info):
 		infodb=db
 		#print "%s %s \n" % (infodb["DB"],infodb["uni"])
 		jsdb="{"
-		for k in infodb.keys():
+		for k in list(infodb.keys()):
 			jsdb+='"%s":"%s",' % (k,infodb[k])
 		#jsdb='{"args":%s, "uni":%s , "mul":%s, "nocon":%s\n},' % (infodb["DB"],infodb["uni"],infodb["mul"],infodb["nocon"])
 		chartData+=jsdb[:-1]+"},"

@@ -20,7 +20,7 @@ def find_mature(x, y, win=10):
     """
     previous = min(y)
     peaks = []
-    intervals = range(x, y, win)
+    intervals = list(range(x, y, win))
     for pos in intervals:
         if y[pos] > previous * 10:
             previous = y[pos]

@@ -151,7 +151,7 @@ def _create_matrix_uniq_seq(sample_l, seq_l, maout, out, min_shared):
     maout.write("id\tseq")
     for g in sample_l:
         maout.write("\t%s" % g)
-    for s in seq_l.keys():
+    for s in list(seq_l.keys()):
         seen = sum([1 for g in seq_l[s].group if seq_l[s].group[g] > 0])
         if seen < int(min_shared):
             skip += 1

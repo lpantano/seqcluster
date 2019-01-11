@@ -39,9 +39,9 @@ def _get_seqs_from_cluster(seqs, seen):
     already_in = set()
     not_in = []
 
-    already_in = map(seen.get, seqs)
+    already_in = list(map(seen.get, seqs))
     # if isinstance(already_in, list):
-    already_in = filter(None, already_in)
+    already_in = [_f for _f in already_in if _f]
     not_in = set(seqs) - set(seen.keys())
     # for s in seqs:
     #    if s in seen:
@@ -60,23 +60,22 @@ def reduceloci(clus_obj,  path):
     n_cluster = 0
     large = 0
     current = clus_obj.clusid
-    logger.info("Number of loci: %s" % len(clus_obj.loci.keys()))
-    bar = ProgressBar(maxval=len(current))
-    bar.start()
-    bar.update(0)
-    for itern, idmc in enumerate(current):
-        bar.update(itern)
-        logger.debug("_reduceloci: cluster %s" % idmc)
-        c = copy.deepcopy(list(current[idmc]))
+    logger.info("Number of loci: %s" % len(list(clus_obj.loci.keys())))
+    with ProgressBar(maxval=len(current)) as bar:
+        bar.update(0)
+        for itern, idmc in enumerate(current):
+            bar.update(itern)
+            logger.debug("_reduceloci: cluster %s" % idmc)
+            c = copy.deepcopy(list(current[idmc]))
 
-        n_loci = len(c)
-        if n_loci < 1000:
-            filtered, n_cluster = _iter_loci(c, clus_obj.clus, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
-        else:
-            large += 1
-            n_cluster += 1
-            _write_cluster(c, clus_obj.clus, clus_obj.loci, n_cluster, path)
-            filtered[n_cluster] = _add_complete_cluster(n_cluster, c, clus_obj.clus)
+            n_loci = len(c)
+            if n_loci < 1000:
+                filtered, n_cluster = _iter_loci(c, clus_obj.clus, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
+            else:
+                large += 1
+                n_cluster += 1
+                _write_cluster(c, clus_obj.clus, clus_obj.loci, n_cluster, path)
+                filtered[n_cluster] = _add_complete_cluster(n_cluster, c, clus_obj.clus)
     clus_obj.clus = filtered
 
     seqs = 0
@@ -107,11 +106,11 @@ def _add_complete_cluster(idx, meta, clusters):
     logger.debug("Not resolving cluster %s, too many loci" % (idx))
     clus = {}
     [clus.update(clusters[idc].locilen) for idc in meta]
-    locilen_sorted = sorted(clus.iteritems(), key=operator.itemgetter(1), reverse=True)
+    locilen_sorted = sorted(iter(clus.items()), key=operator.itemgetter(1), reverse=True)
     maxidl = locilen_sorted[0][0]
     c = cluster(idx)
     for idc in meta:
-        c.add_id_member(clusters[idc].idmembers.keys(), maxidl)
+        c.add_id_member(list(clusters[idc].idmembers.keys()), maxidl)
     c.id = idx
     c.toomany = len(meta)
     return c
@@ -132,7 +131,7 @@ def _iter_loci(meta, clusters, s2p, filtered, n_cluster):
         * n_cluster: int cluster id
     """
     global CONFLICT
-    loci = dict(zip(meta, [clusters[idc] for idc in meta]))
+    loci = dict(list(zip(meta, [clusters[idc] for idc in meta])))
 
     n_loci = len(meta)
     n_loci_prev = n_loci + 1
@@ -157,7 +156,7 @@ def _iter_loci(meta, clusters, s2p, filtered, n_cluster):
         logger.debug("_iter_loci: n_loci %s" % n_loci)
 
     if n_loci > 1:
-        n_internal_cluster = sorted(internal_cluster.keys(), reverse=True)[0]
+        n_internal_cluster = sorted(list(internal_cluster.keys()), reverse=True)[0]
         CONFLICT += 1
         internal_cluster = _solve_conflict(internal_cluster, s2p, n_internal_cluster)
 
@@ -170,7 +169,7 @@ def _iter_loci(meta, clusters, s2p, filtered, n_cluster):
         filtered[n_cluster].id = n_cluster
         filtered[n_cluster].update(id=n_cluster)
         filtered[n_cluster].set_freq(s2p[1])
-    logger.debug("_iter_loci: filtered %s" % filtered.keys())
+    logger.debug("_iter_loci: filtered %s" % list(filtered.keys()))
 
     # for new_c in internal_cluster.values():
     #    [logger.note("%s %s %s %s" % (meta, new_c.id, idl, len(new_c.loci2seq[idl]))) for idl in new_c.loci2seq]
@@ -188,14 +187,14 @@ def _convert_to_clusters(c):
     """Return 1 cluster per loci"""
     new_dict = {}
     n_cluster = 0
-    logger.debug("_convert_to_cluster: loci %s" % c.loci2seq.keys())
+    logger.debug("_convert_to_cluster: loci %s" % list(c.loci2seq.keys()))
     for idl in c.loci2seq:
         n_cluster += 1
         new_c = cluster(n_cluster)
         #new_c.id_prev = c.id
         new_c.loci2seq[idl] = c.loci2seq[idl]
         new_dict[n_cluster] = new_c
-    logger.debug("_convert_to_cluster: new ids %s" % new_dict.keys())
+    logger.debug("_convert_to_cluster: new ids %s" % list(new_dict.keys()))
     return new_dict
 
 
@@ -259,7 +258,7 @@ def _merge_similar(loci, loci_similarity):
     n_cluster = 0
     internal_cluster = {}
     clus_seen = {}
-    loci_sorted = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
+    loci_sorted = sorted(iter(loci_similarity.items()), key=operator.itemgetter(1), reverse=True)
     for pairs, sim in loci_sorted:
         common = sim > parameters.similar
         n_cluster += 1
@@ -293,14 +292,14 @@ def _merge_similar(loci, loci_similarity):
             continue
     internal_cluster.update(_add_unseen(loci, clus_seen, n_cluster))
     logger.debug("_merge_similar: total clus %s" %
-                 len(internal_cluster.keys()))
+                 len(list(internal_cluster.keys())))
     return internal_cluster
 
 
 def _merge_cluster(old, new):
     """merge one cluster to another"""
     logger.debug("_merge_cluster: %s to %s" % (old.id, new.id))
-    logger.debug("_merge_cluster: add idls %s" % old.loci2seq.keys())
+    logger.debug("_merge_cluster: add idls %s" % list(old.loci2seq.keys()))
     for idl in old.loci2seq:
         # if idl in new.loci2seq:
         #    new.loci2seq[idl] = list(set(new.loci2seq[idl] + old.loci2seq[idl]))
@@ -324,7 +323,7 @@ def _solve_conflict(list_c, s2p, n_cluster):
     if parameters.decision_cluster == "bayes":
         return decide_by_bayes(list_c, s2p)
     loci_similarity = _calculate_similarity(list_c)
-    loci_similarity = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
+    loci_similarity = sorted(iter(loci_similarity.items()), key=operator.itemgetter(1), reverse=True)
     common = sum([score for p, score in loci_similarity])
     while common > 0:
         n_cluster += 1
@@ -336,12 +335,12 @@ def _solve_conflict(list_c, s2p, n_cluster):
             list_c = _split_cluster_by_most_vote(list_c, pairs)
         else:
             list_c = _split_cluster(list_c, pairs, n_cluster)
-        list_c = {k: v for k, v in list_c.iteritems() if len(v.loci2seq) > 0}
+        list_c = {k: v for k, v in list_c.items() if len(v.loci2seq) > 0}
         loci_similarity = _calculate_similarity(list_c)
-        loci_similarity = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
+        loci_similarity = sorted(iter(loci_similarity.items()), key=operator.itemgetter(1), reverse=True)
         #logger.note("%s %s" % (pairs, loci_similarity[0][1]))
         common = sum([score for p, score in loci_similarity])
-        logger.debug("_solve_conflict: solved clusters %s" % len(list_c.keys()))
+        logger.debug("_solve_conflict: solved clusters %s" % len(list(list_c.keys())))
     return list_c
 
 
@@ -367,8 +366,8 @@ def _split_cluster(c, pairs, n):
             logger.debug("_split_cluster: len old %s with pair 2" % (len(new.loci2seq)))
     old.update()
     new.update()
-    old.loci2seq = {k: v for k, v in old.loci2seq.iteritems() if len(v) > 0}
-    new.loci2seq = {k: v for k, v in new.loci2seq.iteritems() if len(v) > 0}
+    old.loci2seq = {k: v for k, v in old.loci2seq.items() if len(v) > 0}
+    new.loci2seq = {k: v for k, v in new.loci2seq.items() if len(v) > 0}
     c[n] = new
     c[p[0]] = old
     c[p[1]] = new
@@ -390,8 +389,8 @@ def _split_cluster_by_most_vote(c, p):
     for idl in remove.loci2seq:
         if len(common) > 0:
             remove.loci2seq[idl] = list(set(remove.loci2seq[idl]) - set(common))
-    keep.loci2seq = {k: v for k, v in keep.loci2seq.iteritems() if len(v) > 0}
-    remove.loci2seq = {k: v for k, v in remove.loci2seq.iteritems() if len(v) > 0}
+    keep.loci2seq = {k: v for k, v in keep.loci2seq.items() if len(v) > 0}
+    remove.loci2seq = {k: v for k, v in remove.loci2seq.items() if len(v) > 0}
     keep.update()
     remove.update()
     c[keep.id] = keep
@@ -418,9 +417,9 @@ def _clean_cluster(list_c):
     """
     global REMOVED
     init = len(list_c)
-    list_c = {k: v for k, v in list_c.iteritems() if len(_get_seqs(v)) > parameters.min_seqs}
-    logger.debug("_clean_cluster: number of clusters %s " % len(list_c.keys()))
-    list_c = {k: _select_loci(v) for k, v in list_c.iteritems()}
+    list_c = {k: v for k, v in list_c.items() if len(_get_seqs(v)) > parameters.min_seqs}
+    logger.debug("_clean_cluster: number of clusters %s " % len(list(list_c.keys())))
+    list_c = {k: _select_loci(v) for k, v in list_c.items()}
     end = len(list_c)
     REMOVED += init - end
     return list_c
@@ -428,16 +427,16 @@ def _clean_cluster(list_c):
 
 def _select_loci(c):
     """Select only loci with most abundant sequences"""
-    loci_len = {k: len(v) for k, v in c.loci2seq.iteritems()}
-    logger.debug("_select_loci: number of loci %s" % len(c.loci2seq.keys()))
-    loci_len_sort = sorted(loci_len.iteritems(), key=operator.itemgetter(1), reverse=True)
+    loci_len = {k: len(v) for k, v in c.loci2seq.items()}
+    logger.debug("_select_loci: number of loci %s" % len(list(c.loci2seq.keys())))
+    loci_len_sort = sorted(iter(loci_len.items()), key=operator.itemgetter(1), reverse=True)
     max_size = loci_len_sort[0][1]
     logger.debug("_select_loci: max size %s" % max_size)
     loci_clean = {locus: c.loci2seq[locus] for locus, size in loci_len_sort if size > 0.8 * max_size}
     c.loci2seq = loci_clean
     removed = list(set(c.idmembers.keys()) - set(_get_seqs(c)))
     c.add_id_member(removed, loci_len_sort[0][0])
-    logger.debug("_select_loci: number of loci %s after cleaning" % len(c.loci2seq.keys()))
+    logger.debug("_select_loci: number of loci %s after cleaning" % len(list(c.loci2seq.keys())))
     return c
 
 

@@ -30,17 +30,17 @@ def _get_description(string):
     return "annotated as: %s ..." % ",".join(list(ann)[:3])
 
 def _get_sequences(cluster):
-    seqs = [s.values()[0] for s in cluster['seqs']]
-    freqs = [f.values()[0] for f in cluster['freq']]
+    seqs = [list(s.values())[0] for s in cluster['seqs']]
+    freqs = [list(f.values())[0] for f in cluster['freq']]
     data = []
     total_freq = {}
     for s, f in zip(seqs, freqs):
-        fix = dict(zip(f.keys(), map(int, f.values())))
+        fix = dict(list(zip(list(f.keys()), list(map(int, list(f.values()))))))
         data.append({'name': s, 'freq': fix})
-        total_freq[s] = 1.0 * sum(fix.values()) / len(fix.values())
+        total_freq[s] = 1.0 * sum(fix.values()) / len(list(fix.values()))
     if len(total_freq) > 100:
         counts_50 = sorted(total_freq.values())[-100]
-        data = [e for e in data if 1.0 * sum(e['freq'].values()) / len(e['freq'].values()) > counts_50]
+        data = [e for e in data if 1.0 * sum(e['freq'].values()) / len(list(e['freq'].values())) > counts_50]
     return data
 
 def _take_closest(num,collection):
@@ -50,7 +50,7 @@ def _get_closer(dat, pos):
     if pos in dat:
         return pos
     else:
-        closest_pos = _take_closest(pos, dat.keys())
+        closest_pos = _take_closest(pos, list(dat.keys()))
         if abs(closest_pos - pos) < 3:
             return closest_pos
 
@@ -64,7 +64,7 @@ def _set_format(profile):
     if not x:
         return ''
     end, start = max(x), min(x)
-    x = range(start, end, 4)
+    x = list(range(start, end, 4))
     scaled_profile = defaultdict(list)
     for pos in x:
         for sample in profile:
@@ -73,7 +73,7 @@ def _set_format(profile):
                 scaled_profile[sample].append(profile[sample][y])
             else:
                 scaled_profile[sample].append(0)
-    return {'x': list(x), 'y': scaled_profile, 'names': scaled_profile.keys()}
+    return {'x': list(x), 'y': scaled_profile, 'names': list(scaled_profile.keys())}
 
 def _insert_data(con, data):
     """
@@ -88,7 +88,7 @@ def _insert_data(con, data):
             annotation = json.dumps(data[0][c]['ann'])
             description = _get_description(data[0][c]['ann'])
             sequences = json.dumps(_get_sequences(data[0][c]))
-            keys = data[0][c]['freq'][0].values()[0].keys()
+            keys = list(data[0][c]['freq'][0].values())[0].keys()
             profile = "Not available."
             if 'profile' in data[0][c]:
                 profile = json.dumps(_set_format(data[0][c]['profile']))

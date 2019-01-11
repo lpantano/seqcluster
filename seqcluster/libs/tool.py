@@ -46,8 +46,8 @@ def calculate_size(vector):
     maxfreq = 0
     zeros = 0
     counts = 0
-    total = len(vector.keys())
-    for s in vector.keys():
+    total = len(list(vector.keys()))
+    for s in list(vector.keys()):
         maxfreq = max(vector[s], maxfreq)
         counts += int(vector[s])
         if vector[s] == 0:
@@ -63,12 +63,12 @@ def show_seq(clus_obj, index):
     clus_locit = clus_obj.loci
 
     itern = 0
-    for idc in current.keys():
+    for idc in list(current.keys()):
         itern += 1
         timestamp = str(idc)
         seqListTemp = ()
         f = open("/tmp/"+timestamp+".fa","w")
-        for idl in current[idc].loci2seq.keys():
+        for idl in list(current[idc].loci2seq.keys()):
             seqListTemp = list(set(seqListTemp).union(current[idc].loci2seq[idl]))
         maxscore = 0
         for s in seqListTemp:
@@ -79,7 +79,7 @@ def show_seq(clus_obj, index):
             f.write(">"+s+"\n"+seq.seq+"\n")
         f.close()
 
-        locilen_sorted = sorted(current[idc].locilen.iteritems(), key = operator.itemgetter(1),reverse = True)
+        locilen_sorted = sorted(iter(current[idc].locilen.items()), key = operator.itemgetter(1),reverse = True)
         lmax = clus_locit[locilen_sorted[0][0]]
         f = open("/tmp/"+timestamp+".bed","w")
         f.write("%s\t%s\t%s\t.\t.\t%s\n" % (lmax.chr,lmax.start,lmax.end,lmax.strand))
@@ -97,7 +97,7 @@ def show_seq(clus_obj, index):
             if minv>int(cols[3]):
                 minv = int(cols[3])
         f.close()
-        seqpos_sorted = sorted(seqpos.iteritems(), key = operator.itemgetter(1),reverse = False)
+        seqpos_sorted = sorted(iter(seqpos.items()), key = operator.itemgetter(1),reverse = False)
         showseq = ""
         showseq_plain = ""
         for (s,pos) in seqpos_sorted:
@@ -121,9 +121,9 @@ def generate_position_bed(clus_obj):
     ##generate file with positions in bed format
     bedaligned = ""
     clus_id = clus_obj.clus
-    for idc in clus_id.keys():
+    for idc in list(clus_id.keys()):
         clus = clus_id[idc]
-        for idl in clus.loci2seq.keys():
+        for idl in list(clus.loci2seq.keys()):
             pos = clus_obj.loci[idl]
             bedaligned +=  "%s\t%s\t%s\t%s\t%s\t%s\n" % (pos.chr,pos.start,pos.end,idc,idl,pos.strand)
     return bedaligned

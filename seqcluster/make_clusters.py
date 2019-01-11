@@ -48,27 +48,27 @@ def cluster(args):
     # y, l = _total_counts(seqL.keys(), seqL)
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
-    dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
+    dt = pd.DataFrame({'sample': list(y.keys()), 'counts': list(y.values())})
     dt['step'] = 'aligned'
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
 
-    if len(seqL.keys()) < 10:
+    if len(list(seqL.keys())) < 10:
         logger.error("It seems you have low coverage. Please check your fastq files have enough sequences.")
         raise ValueError("So few sequences.")
 
     logger.info("Cleaning bam file")
-    y, l = _total_counts(seqL.keys(), seqL)
+    y, l = _total_counts(list(seqL.keys()), seqL)
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
-    dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
+    dt = pd.DataFrame({'sample': list(y.keys()), 'counts': list(y.values())})
     dt['step'] = 'cleaned'
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
 
     clusL = _create_clusters(seqL, bam_file, args)
-    y, l = _total_counts(clusL.seq.keys(), clusL.seq, aligned=True)
+    y, l = _total_counts(list(clusL.seq.keys()), clusL.seq, aligned=True)
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
-    dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
+    dt = pd.DataFrame({'sample': list(y.keys()), 'counts': list(y.values())})
     dt['step'] = 'clusters'
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
 
@@ -77,10 +77,10 @@ def cluster(args):
     y, l = _total_counts(clusLred.clus, seqL)
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
-    dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
+    dt = pd.DataFrame({'sample': list(y.keys()), 'counts': list(y.values())})
     dt['step'] = 'meta-cluster'
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
-    logger.info("Clusters up to %s" % (len(clusLred.clus.keys())))
+    logger.info("Clusters up to %s" % (len(list(clusLred.clus.keys()))))
 
     if args.show:
         logger.info("Creating sequences alignment to precursor")
@@ -164,7 +164,7 @@ def _total_counts(seqs, seqL, aligned=False):
 def _write_size_table(data_freq, data_len, ann_valid, cluster_id):
     dd = Counter()
     for f, l in zip(data_freq, data_len):
-        dd[l] += np.mean(f.values())
+        dd[l] += np.mean(list(f.values()))
 
     table = ""
     for l in sorted(dd):
@@ -190,9 +190,9 @@ def _get_annotation(c, loci):
         # suggestion by 2to3
         data_ann = data_ann + [data_ann_temp[x] for x in list(data_ann_temp.keys())]
         logger.debug("_json_: data_ann %s" % data_ann)
-    counts = {k: v for k, v in counts.iteritems()}
+    counts = {k: v for k, v in counts.items()}
     total_loci = sum([counts[db] for db in counts])
-    valid_ann = [k for k, v in counts.iteritems() if up_threshold(v, total_loci, 0.7)]
+    valid_ann = [k for k, v in counts.items() if up_threshold(v, total_loci, 0.7)]
     return data_ann, valid_ann
 
 
@@ -202,10 +202,10 @@ def _get_counts(list_seqs, seqs_obj, factor):
     for s in list_seqs:
         if s not in factor:
             factor[s] = 1
-        samples = seqs_obj[s].norm_freq.keys()
-        corrected_norm = np.array(seqs_obj[s].norm_freq.values()) * factor[s]
-        corrected_raw = np.array(seqs_obj[s].freq.values()) * factor[s]
-        scaled[s] = seq(dict(zip(samples, corrected_raw)), dict(zip(samples, corrected_norm)))
+        samples = list(seqs_obj[s].norm_freq.keys())
+        corrected_norm = np.array(list(seqs_obj[s].norm_freq.values())) * factor[s]
+        corrected_raw = np.array(list(seqs_obj[s].freq.values())) * factor[s]
+        scaled[s] = seq(dict(list(zip(samples, corrected_raw))), dict(list(zip(samples, corrected_norm))))
     return scaled
 
 
@@ -213,7 +213,7 @@ def _sum_by_samples(seqs_freq, samples_order):
     """
     Sum sequences of a metacluster by samples.
     """
-    n = len(seqs_freq[seqs_freq.keys()[0]].freq.keys())
+    n = len(list(seqs_freq[list(seqs_freq.keys())[0]].freq.keys()))
     y = np.array([0] * n)
     for s in seqs_freq:
         x = seqs_freq[s].freq
@@ -310,7 +310,7 @@ def _create_json(clusL, args):
     out_single_count = os.path.join(args.dir_out, "counts_sequence.tsv")
     out_size = os.path.join(args.dir_out, "size_counts.tsv")
     out_bed = os.path.join(args.dir_out, "positions.bed")
-    samples_order = list(seqs[seqs.keys()[1]].freq.keys())
+    samples_order = list(seqs[list(seqs.keys())[1]].freq.keys())
     with open(out_count, 'w') as matrix, open(out_size, 'w') as size_matrix, open(out_bed, 'w') as out_bed, open(out_single_count, 'w') as matrix_single:
         matrix.write("id\tnloci\tann\t%s\n" % "\t".join(samples_order))
         matrix_single.write("id\tnloci\tann\t%s\n" % "\t".join(samples_order))
@@ -343,14 +343,14 @@ def _create_json(clusL, args):
 
             sum_freq = _sum_by_samples(scaled_seqs, samples_order)
 
-            data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
+            data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.items()] for k in data_ann]
             data_valid_str = " ".join(valid_ann)
 
             for s in seqList:
                 f = [seqs[s].freq[so] for so in samples_order]
                 if f.count(0) > 0.1 * len(f) and len(f) > 9:
                     continue
-                f = map(str, f)
+                f = list(map(str, f))
                 print("\t".join([str(cid), data_valid_str, seqs[s].seq, "\t".join(f)]), file=matrix_single, end="")
 
             matrix.write("%s\t%s\t%s|%s\t%s\n" % (cid, c.toomany, data_valid_str, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
@@ -362,6 +362,15 @@ def _create_json(clusL, args):
 
     out_file = os.path.join(args.dir_out, "seqcluster.json")
     with open(out_file, 'w') as handle_out:
-        handle_out.write(json.dumps([data_clus], skipkeys=True, indent=2))
-
+        class NumpyEncoder(json.JSONEncoder):
+            """Avoid numpy objects in output serialization.
+            Thanks to: https://stackoverflow.com/questions/26646362/numpy-array-is-not-json-serializable
+            """
+            def default(self, obj):
+                if isinstance(obj, np.ndarray):
+                    return obj.tolist()
+                if isinstance(obj, np.int64):
+                    return int(obj)
+                return json.JSONEncoder.default(self, obj)
+        handle_out.write(json.dumps([data_clus], skipkeys=True, indent=2, cls=NumpyEncoder))
     return out_file

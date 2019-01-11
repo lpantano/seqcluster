@@ -8,6 +8,8 @@ import pandas as pd
 import pysam
 import argparse
 
+import six
+
 from seqcluster.libs import do
 from seqcluster.libs.utils import file_exists
 import seqcluster.libs.logger as mylog
@@ -92,7 +94,7 @@ def _convert_to_fasta(fn):
 def _get_pos(string):
     name = string.split(":")[0][1:]
     pos = string.split(":")[1][:-1].split("-")
-    return name, map(int, pos)
+    return name, list(map(int, pos))
 
 
 def _read_mature(matures, sps):
@@ -341,7 +343,7 @@ def _read_miraligner(fn):
     """Read ouput of miraligner and create compatible output."""
     reads = defaultdict(realign)
     with open(fn) as in_handle:
-        in_handle.next()
+        six.next(in_handle)
         for line in in_handle:
             cols = line.strip().split("\t")
             iso = isomir()
@@ -408,11 +410,11 @@ def _tab_output(reads, out_file, sample):
     dt = None
     with open(out_file, 'w') as out_handle:
         print("name\tseq\tfreq\tchrom\tstart\tend\tsubs\tadd\tt5\tt3\ts5\ts3\tDB\tprecursor\thits", file=out_handle, end="")
-        for r, read in reads.iteritems():
+        for r, read in reads.items():
             hits = set()
-            [hits.add(mature.mirna) for mature in read.precursors.values() if mature.mirna]
+            [hits.add(mature.mirna) for mature in list(read.precursors.values()) if mature.mirna]
             hits = len(hits)
-            for p, iso in read.precursors.iteritems():
+            for p, iso in read.precursors.items():
                 if len(iso.subs) > 3 or not iso.mirna:
                     continue
                 if (r, iso.mirna) not in seen:
@@ -525,11 +527,11 @@ def miraligner(args):
                 vcf.Reader(filename=vcf_file)
             except Exception as e:
                 logger.warning(e.__doc__)
-                logger.warning(e.message)
+                logger.warning(str(e))
         except Exception as e:
             # traceback.print_exc()
             logger.warning(e.__doc__)
-            logger.warning(e.message)
+            logger.warning(str(e))
         if isinstance(dt, pd.DataFrame):
             out_dts.append(dt)
 

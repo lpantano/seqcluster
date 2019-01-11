@@ -55,7 +55,7 @@ def _summarise_sam(counts, is_align, is_json, is_db):
     summary_align = defaultdict(Counter)
     summary_json = defaultdict(Counter)
     summary_db = defaultdict(Counter)
-    for s, o in counts.iteritems():
+    for s, o in counts.items():
         l = len(o.seq)
         if s in is_align:
             summary_align[l].update(o.freq)
@@ -68,12 +68,12 @@ def _summarise_sam(counts, is_align, is_json, is_db):
 
 def _write_suma(d, fn):
     with open(fn, 'w') as handle:
-        for l, counts in d[0].iteritems():
-            for e, freq in counts.iteritems():
+        for l, counts in d[0].items():
+            for e, freq in counts.items():
                 handle.write("%s %s %s align\n" % (l, e, freq))
-        for l, counts in d[1].iteritems():
-            for e, freq in counts.iteritems():
+        for l, counts in d[1].items():
+            for e, freq in counts.items():
                 handle.write("%s %s %s json\n" % (l, e, freq))
-        for l, counts in d[2].iteritems():
-            for e, freq in counts.iteritems():
+        for l, counts in d[2].items():
+            for e, freq in counts.items():
                 handle.write("%s %s %s %s\n" % (l[0], e, freq, l[1]))

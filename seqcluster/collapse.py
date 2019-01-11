@@ -19,7 +19,7 @@ def collapse_fastq(args):
         out_file = splitext_plus(os.path.basename(args.fastq))[0] + "_trimmed.fastq"
     except IOError as e:
         logger.error("I/O error({0}): {1}".format(e.errno, e.strerror))
-        raise "Can not read file"
+        raise IOError("Can not read file")
     out_file = os.path.join(args.out, out_file)
     write_output(out_file, seqs, args.minimum)
     return out_file
