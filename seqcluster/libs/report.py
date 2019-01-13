@@ -44,19 +44,18 @@ def make_profile(data, out_dir, args):
     main_table = []
     header = ['id', 'ann']
     n = len(data[0])
-    bar = ProgressBar(maxval=n)
-    bar.start()
-    bar.update(0)
-    for itern, c in enumerate(data[0]):
-        bar.update(itern)
-        logger.debug("creating cluser: {}".format(c))
-        safe_dirs(os.path.join(out_dir, c))
-        valid, ann, pos_structure = _single_cluster(c, data, os.path.join(out_dir, c, "maps.tsv"), args)
-        data[0][c].update({'profile': pos_structure})
-        loci = data[0][c]['loci']
-        data[0][c]['precursor'] = {"seq": precursor_sequence(loci[0][0:5], args.ref)}
-        data[0][c]['precursor']["colors"] = _parse(data[0][c]['profile'], data[0][c]['precursor']["seq"])
-        data[0][c]['precursor'].update(run_rnafold(data[0][c]['precursor']['seq']))
+    with ProgressBar(maxval=n) as bar:
+        bar.update(0)
+        for itern, c in enumerate(data[0]):
+            bar.update(itern)
+            logger.debug("creating cluser: {}".format(c))
+            safe_dirs(os.path.join(out_dir, c))
+            valid, ann, pos_structure = _single_cluster(c, data, os.path.join(out_dir, c, "maps.tsv"), args)
+            data[0][c].update({'profile': pos_structure})
+            loci = data[0][c]['loci']
+            data[0][c]['precursor'] = {"seq": precursor_sequence(loci[0][0:5], args.ref)}
+            data[0][c]['precursor']["colors"] = _parse(data[0][c]['profile'], data[0][c]['precursor']["seq"])
+            data[0][c]['precursor'].update(run_rnafold(data[0][c]['precursor']['seq']))
 
     return data
 
@@ -123,9 +122,9 @@ def _single_cluster(c, data, out_file, args):
     valid, ann = 0, 0
     raw_file = None
     freq = defaultdict()
-    [freq.update({s.keys()[0]: s.values()[0]}) for s in data[0][c]['freq']]
-    names = [s.keys()[0] for s in data[0][c]['seqs']]
-    seqs = [s.values()[0] for s in data[0][c]['seqs']]
+    [freq.update({list(s.keys())[0]: list(s.values())[0]}) for s in data[0][c]['freq']]
+    names = [list(s.keys())[0] for s in data[0][c]['seqs']]
+    seqs = [list(s.values())[0] for s in data[0][c]['seqs']]
     loci = data[0][c]['loci']
 
     if loci[0][3] - loci[0][2] > 500:

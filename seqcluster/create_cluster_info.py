@@ -27,7 +27,7 @@ for line in f:
                 out.close()
                 outfa.close()
                 isin = 0
-            if clus.has_key(line):
+            if line in clus:
                 out = open(options.out+"/"+line, 'w')
                 outfa = open(options.out+"/"+line+".fa", 'w')
                 out.write(line+"\n")
