@@ -153,28 +153,27 @@ def _find_metaclusters(clus_obj, sequence2clusters, current_seq, min_seqs):
     c_index = len(sequence2clusters)
     logger.info("Creating meta-clusters based on shared sequences: %s" % c_index)
     meta_idx = 1
-    bar = ProgressBar(maxval=c_index)
-    bar.start()
-    bar.update()
-    for itern, name in enumerate(sequence2clusters):
-        clusters = sequence2clusters[name]
-        if len(clusters) == 0:
-            c_index -= 1
-            continue
-        current_seq[name].align = 1
-        meta_idx += 1
-        bar.update(itern)
-        already_in = _common(clusters, seen)
-        _update(clusters, meta_idx, seen)
-        metacluster[meta_idx] = metacluster[meta_idx].union(clusters)
+    with ProgressBar(maxval=c_index) as bar:
+        bar.update()
+        for itern, name in enumerate(sequence2clusters):
+            clusters = sequence2clusters[name]
+            if len(clusters) == 0:
+                c_index -= 1
+                continue
+            current_seq[name].align = 1
+            meta_idx += 1
+            bar.update(itern)
+            already_in = _common(clusters, seen)
+            _update(clusters, meta_idx, seen)
+            metacluster[meta_idx] = metacluster[meta_idx].union(clusters)
 
-        if already_in:
-            for seen_metacluster in already_in:
-                clusters2merge = metacluster[seen_metacluster]
-                metacluster[meta_idx] = metacluster[meta_idx].union(clusters2merge)
-                _update(clusters2merge, meta_idx, seen)
-                # metacluster[seen_metacluster] = 0
-                del metacluster[seen_metacluster]
+            if already_in:
+                for seen_metacluster in already_in:
+                    clusters2merge = metacluster[seen_metacluster]
+                    metacluster[meta_idx] = metacluster[meta_idx].union(clusters2merge)
+                    _update(clusters2merge, meta_idx, seen)
+                    # metacluster[seen_metacluster] = 0
+                    del metacluster[seen_metacluster]
     logger.info("%s metaclusters from %s sequences" % (len(metacluster), c_index))
 
     return metacluster, seen

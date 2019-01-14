@@ -214,7 +214,7 @@ def _sum_by_samples(seqs_freq, samples_order):
     """
     Sum sequences of a metacluster by samples.
     """
-    n = len(seqs_freq[seqs_freq.keys()[0]].freq.keys())
+    n = len(seqs_freq[list(seqs_freq.keys())[0]].freq.keys())
     y = np.array([0] * n)
     for s in seqs_freq:
         x = seqs_freq[s].freq
