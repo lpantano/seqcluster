@@ -36,6 +36,8 @@ Like removing sequences that appear only once.
 
 Here I am only using sequences that had the adapter, meaning that for sure are small fragments.
 
+This is compatible with UMI barcodes. If you have in the read name ``UMI_ATCGAT ``, then the tool will remove PCR dupiclates as well. To confirm this happened, the tool should output this sentence during the processing of the file: ``Find UMI tags in read names, collapsing by UMI``.
+
 **PREPARE SAMPLES**
 
 ::
