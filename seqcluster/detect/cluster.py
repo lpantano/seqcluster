@@ -153,27 +153,27 @@ def _find_metaclusters(clus_obj, sequence2clusters, current_seq, min_seqs):
     c_index = len(sequence2clusters)
     logger.info("Creating meta-clusters based on shared sequences: %s" % c_index)
     meta_idx = 1
-    with ProgressBar(maxval=c_index) as bar:
-        bar.update()
-        for itern, name in enumerate(sequence2clusters):
-            clusters = sequence2clusters[name]
-            if len(clusters) == 0:
-                c_index -= 1
-                continue
-            current_seq[name].align = 1
-            meta_idx += 1
-            bar.update(itern)
-            already_in = _common(clusters, seen)
-            _update(clusters, meta_idx, seen)
-            metacluster[meta_idx] = metacluster[meta_idx].union(clusters)
+    bar = ProgressBar(maxval=c_index).start()
+    bar.update()
+    for itern, name in enumerate(sequence2clusters):
+        clusters = sequence2clusters[name]
+        if len(clusters) == 0:
+            c_index -= 1
+            continue
+        current_seq[name].align = 1
+        meta_idx += 1
+        bar.update(itern)
+        already_in = _common(clusters, seen)
+        _update(clusters, meta_idx, seen)
+        metacluster[meta_idx] = metacluster[meta_idx].union(clusters)
 
-            if already_in:
-                for seen_metacluster in already_in:
-                    clusters2merge = metacluster[seen_metacluster]
-                    metacluster[meta_idx] = metacluster[meta_idx].union(clusters2merge)
-                    _update(clusters2merge, meta_idx, seen)
-                    # metacluster[seen_metacluster] = 0
-                    del metacluster[seen_metacluster]
+        if already_in:
+            for seen_metacluster in already_in:
+                clusters2merge = metacluster[seen_metacluster]
+                metacluster[meta_idx] = metacluster[meta_idx].union(clusters2merge)
+                _update(clusters2merge, meta_idx, seen)
+                # metacluster[seen_metacluster] = 0
+                del metacluster[seen_metacluster]
     logger.info("%s metaclusters from %s sequences" % (len(metacluster), c_index))
 
     return metacluster, seen
@@ -191,43 +191,43 @@ def _find_families_deprecated(clus_obj, min_seqs):
     metacluster = defaultdict(list)
     c_index = clus_obj.keys()
     meta_idx = 0
-    with ProgressBar(maxval=len(c_index), redirect_stdout=True) as p:
-        for itern, c in enumerate(c_index):
-            p.update(itern)
-            clus = clus_obj[c]
-            if len(clus.idmembers.keys()) < min_seqs:
-                del clus_obj[c]
-                continue
-            logger.debug("reading cluster %s" % c)
-            logger.debug("loci2seq  %s" % clus.loci2seq)
-            already_in, not_in = _get_seqs_from_cluster(clus.idmembers.keys(), seen)
-            logger.debug("seen %s news %s" % (already_in, not_in))
-            meta_idx += 1
-            metacluster[meta_idx].append(c)
-            seen.update(dict(zip(not_in, [meta_idx] * len(not_in))))
-            if len(already_in) > 0:
-                logger.debug("seen in %s" % already_in)
-                for eindex in already_in:
-                    for cluster in metacluster[eindex]:
-                        metacluster[meta_idx].append(cluster)
-                        prev_clus = clus_obj[cluster]
-                        logger.debug("_find_families: prev %s current %s" % (eindex, clus.id))
-                        # add current seqs to seen cluster
-                        seqs_in = prev_clus.idmembers.keys()
-                        seen.update(dict(zip(seqs_in, [meta_idx] * len(seqs_in))))
-                        # for s_in_clus in prev_clus.idmembers:
-                        #    seen[s_in_clus] = meta_idx
-                    #    clus.idmembers[s_in_clus] = 1
-                    # add current locus to seen cluster
-                    # for loci in prev_clus.loci2seq:
-                    #    logger.debug("adding %s" % loci)
-                        # if not loci_old in current_clus[eindex].loci2seq:
-                    #    clus.add_id_member(list(prev_clus.loci2seq[loci]), loci)
-                    # logger.debug("loci %s" % clus.loci2seq.keys())
-                    del metacluster[eindex]
-                # clus_obj[c] = clus
+    p = ProgressBar(maxval=len(c_index), redirect_stdout=True).start()
+    for itern, c in enumerate(c_index):
+        p.update(itern)
+        clus = clus_obj[c]
+        if len(clus.idmembers.keys()) < min_seqs:
+            del clus_obj[c]
+            continue
+        logger.debug("reading cluster %s" % c)
+        logger.debug("loci2seq  %s" % clus.loci2seq)
+        already_in, not_in = _get_seqs_from_cluster(clus.idmembers.keys(), seen)
+        logger.debug("seen %s news %s" % (already_in, not_in))
+        meta_idx += 1
+        metacluster[meta_idx].append(c)
+        seen.update(dict(zip(not_in, [meta_idx] * len(not_in))))
+        if len(already_in) > 0:
+            logger.debug("seen in %s" % already_in)
+            for eindex in already_in:
+                for cluster in metacluster[eindex]:
+                    metacluster[meta_idx].append(cluster)
+                    prev_clus = clus_obj[cluster]
+                    logger.debug("_find_families: prev %s current %s" % (eindex, clus.id))
+                    # add current seqs to seen cluster
+                    seqs_in = prev_clus.idmembers.keys()
+                    seen.update(dict(zip(seqs_in, [meta_idx] * len(seqs_in))))
+                    # for s_in_clus in prev_clus.idmembers:
+                    #    seen[s_in_clus] = meta_idx
+                #    clus.idmembers[s_in_clus] = 1
+                # add current locus to seen cluster
+                # for loci in prev_clus.loci2seq:
+                #    logger.debug("adding %s" % loci)
+                    # if not loci_old in current_clus[eindex].loci2seq:
+                #    clus.add_id_member(list(prev_clus.loci2seq[loci]), loci)
+                # logger.debug("loci %s" % clus.loci2seq.keys())
+                del metacluster[eindex]
+            # clus_obj[c] = clus
 
-                # logger.debug("num cluster %s" % len(clus_obj.keys()))
+            # logger.debug("num cluster %s" % len(clus_obj.keys()))
     logger.info("%s clusters merged" % len(metacluster))
 
     return metacluster, seen
