@@ -74,7 +74,7 @@ def _do_run(cmd, checks, log_stdout=False):
             if exitcode is not None and exitcode != 0:
                 error_msg = " ".join(cmd) if not isinstance(cmd, basestring) else cmd
                 error_msg += "\n"
-                error_msg += "".join(debug_stdout)
+                error_msg += "".join(bytes_out.decode('utf-8') for bytes_out in debug_stdout)
                 s.communicate()
                 s.stdout.close()
                 raise subprocess.CalledProcessError(exitcode, error_msg)

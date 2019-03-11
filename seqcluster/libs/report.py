@@ -44,18 +44,18 @@ def make_profile(data, out_dir, args):
     main_table = []
     header = ['id', 'ann']
     n = len(data[0])
-    with ProgressBar(maxval=n) as bar:
-        bar.update(0)
-        for itern, c in enumerate(data[0]):
-            bar.update(itern)
-            logger.debug("creating cluser: {}".format(c))
-            safe_dirs(os.path.join(out_dir, c))
-            valid, ann, pos_structure = _single_cluster(c, data, os.path.join(out_dir, c, "maps.tsv"), args)
-            data[0][c].update({'profile': pos_structure})
-            loci = data[0][c]['loci']
-            data[0][c]['precursor'] = {"seq": precursor_sequence(loci[0][0:5], args.ref)}
-            data[0][c]['precursor']["colors"] = _parse(data[0][c]['profile'], data[0][c]['precursor']["seq"])
-            data[0][c]['precursor'].update(run_rnafold(data[0][c]['precursor']['seq']))
+    bar = ProgressBar(maxval=n).start()
+    bar.update(0)
+    for itern, c in enumerate(data[0]):
+        bar.update(itern)
+        logger.debug("creating cluser: {}".format(c))
+        safe_dirs(os.path.join(out_dir, c))
+        valid, ann, pos_structure = _single_cluster(c, data, os.path.join(out_dir, c, "maps.tsv"), args)
+        data[0][c].update({'profile': pos_structure})
+        loci = data[0][c]['loci']
+        data[0][c]['precursor'] = {"seq": precursor_sequence(loci[0][0:5], args.ref)}
+        data[0][c]['precursor']["colors"] = _parse(data[0][c]['profile'], data[0][c]['precursor']["seq"])
+        data[0][c]['precursor'].update(run_rnafold(data[0][c]['precursor']['seq']))
 
     return data
 
