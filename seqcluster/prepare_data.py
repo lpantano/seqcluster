@@ -103,7 +103,7 @@ def _read_fastq_files(f, args):
             with open_fastq(cols[0]) as handle:
                 sample_l.append(cols[1])
                 total = added = 0
-                line=handle.readline()
+                line = handle.readline()
                 while line:
                     if line.startswith("@") or line.startswith(">"):
                         seq = handle.readline().strip()
