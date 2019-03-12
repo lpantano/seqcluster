@@ -59,7 +59,7 @@ def open_fastq(in_file):
     """
     _, ext = os.path.splitext(in_file)
     if ext == ".gz":
-        return gzip.open(in_file, 'rb')
+        return gzip.open(in_file, 'rt')
     if ext in [".fastq", ".fq", ".fasta", ".fa"]:
         return open(in_file, 'r')
     return ValueError("File needs to be fastq|fasta|fq|fa [.gz]")
