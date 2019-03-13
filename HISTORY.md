@@ -1,5 +1,6 @@
 - 1.2.4a*
 
+  * Remove `map` function from quality class in collapse function to avoid seg.fault in python3.
   * Use DESeq2 normalization strategy.
   * Fix more errors in python3 env.
   * Fix UMI checking when the input file is a gzip file. Thanks to @rbatorsky-claritas.
@@ -66,3 +67,4 @@
   * fix indexing bam file error when running under python
   * remove colorlog dependency
   * create light package in conda for bcbio installation
+

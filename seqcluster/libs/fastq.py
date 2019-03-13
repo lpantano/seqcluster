@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 from collections import Counter, defaultdict
 from seqcluster.libs.classes import quality, umi
@@ -92,7 +93,7 @@ def splitext_plus(f):
 
 def write_output(out_file, seqs, minimum=1, size=15):
     idx =0
-    logger.info("Writing sequences to %s" % out_file)
+    logger.info("Writing %s sequences to %s" % (len(seqs.keys()), out_file))
     with open(out_file, 'w') as handle:
         for s in seqs:
             idx += 1

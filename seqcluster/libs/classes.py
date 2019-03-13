@@ -62,12 +62,14 @@ class quality:
 
     def update(self, q, counts = 1):
         now = self.qual
-        self.qual = map(add, now, [ord(value) for value in q])
+        q = [ord(value) for value in q]
+        self.qual = [x + y for x, y in zip(now, q)]
         self.times += counts
 
     def get(self):
-        average = map(lambda x: int(round(x/self.times)), self.qual)
-        return [str(unichr(char)) for char in average]
+        average = np.array(self.qual)/self.times
+        return [str(unichr(int(char))) for char in average]
+
 
 
 class cluster_info_obj:
