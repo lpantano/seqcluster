@@ -1,5 +1,6 @@
 - 1.2.4a*
 
+  * Fix end of line character for counts_sequence.tsv.
   * Remove `map` function from quality class in collapse function to avoid seg.fault in python3.
   * Use DESeq2 normalization strategy.
   * Fix more errors in python3 env.
@@ -67,4 +68,3 @@
   * fix indexing bam file error when running under python
   * remove colorlog dependency
   * create light package in conda for bcbio installation
-
