@@ -14,7 +14,7 @@ def collapse(in_file):
     """collapse identical sequences and keep Q"""
     keep = Counter()
     with open_fastq(in_file) as handle:
-        line = handle.readline();
+        line = handle.readline()
         while line:
             if line.startswith("@"):
                 if line.find("UMI") > -1:
@@ -27,7 +27,13 @@ def collapse(in_file):
                     keep[seq].update(qual)
                 else:
                     keep[seq] = quality(qual)
-            line = handle.readline();
+            if line.startswith(">"):
+                seq = handle.readline().strip()
+                if seq not in keep:
+                    keep[seq] = quality("".join(["I"] * len(seq)))
+                else:
+                    keep[seq].update("".join(["I"] * len(seq)))
+            line = handle.readline()
     logger.info("Sequences loaded: %s" % len(keep))
     return keep
 
