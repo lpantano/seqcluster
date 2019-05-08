@@ -4,7 +4,6 @@ import os
 import sys
 import os.path as op
 from collections import Counter, namedtuple
-from operator import itemgetter
 import pickle
 import json
 import numpy as np
@@ -18,10 +17,10 @@ from seqcluster.libs import do
 from seqcluster.libs.read import load_data
 from seqcluster.libs.mystats import up_threshold
 from seqcluster.detect.cluster import detect_clusters, clean_bam_file, peak_calling, detect_complexity
-from seqcluster.detect.description import best_precursor, sort_precursor
+from seqcluster.detect.description import best_precursor
 from seqcluster.libs.annotation import anncluster
-from seqcluster.libs.inputs import parse_ma_file, parse_align_file
-from seqcluster.detect.metacluster import reduceloci,_get_seqs
+from seqcluster.libs.inputs import parse_ma_file
+from seqcluster.detect.metacluster import reduceloci, _get_seqs
 from seqcluster.libs.tool import generate_position_bed
 from seqcluster.libs.classes import *
 import seqcluster.libs.parameters as param
@@ -65,6 +64,7 @@ def cluster(args):
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
 
     clusL = _create_clusters(seqL, bam_file, args)
+
     y, l = _total_counts(list(clusL.seq.keys()), clusL.seq, aligned=True)
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
@@ -165,7 +165,7 @@ def _total_counts(seqs, seqL, aligned=False):
 def _write_size_table(data_freq, data_len, ann_valid, cluster_id):
     dd = Counter()
     for f, l in zip(data_freq, data_len):
-        dd[l] += np.mean(f.values())
+        dd[l] += np.mean(list(f.values()))
 
     table = ""
     for l in sorted(dd):
@@ -191,9 +191,9 @@ def _get_annotation(c, loci):
         # suggestion by 2to3
         data_ann = data_ann + [data_ann_temp[x] for x in list(data_ann_temp.keys())]
         logger.debug("_json_: data_ann %s" % data_ann)
-    counts = {k: v for k, v in counts.iteritems()}
+    counts = {k: v for k, v in iter(counts.items())}
     total_loci = sum([counts[db] for db in counts])
-    valid_ann = [k for k, v in counts.iteritems() if up_threshold(v, total_loci, 0.7)]
+    valid_ann = [k for k, v in iter(counts.items()) if up_threshold(v, total_loci, 0.7)]
     return data_ann, valid_ann
 
 
@@ -204,8 +204,8 @@ def _get_counts(list_seqs, seqs_obj, factor):
         if s not in factor:
             factor[s] = 1
         samples = seqs_obj[s].norm_freq.keys()
-        corrected_norm = np.array(seqs_obj[s].norm_freq.values()) * factor[s]
-        corrected_raw = np.array(seqs_obj[s].freq.values()) * factor[s]
+        corrected_norm = np.array(list(seqs_obj[s].norm_freq.values())) * factor[s]
+        corrected_raw = np.array(list(seqs_obj[s].freq.values())) * factor[s]
         scaled[s] = seq(dict(zip(samples, corrected_raw)), dict(zip(samples, corrected_norm)))
     return scaled
 
@@ -344,7 +344,7 @@ def _create_json(clusL, args):
 
             sum_freq = _sum_by_samples(scaled_seqs, samples_order)
 
-            data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
+            data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in iter(k.items())] for k in data_ann]
             data_valid_str = " ".join(valid_ann)
 
             for s in seqList:
@@ -358,11 +358,17 @@ def _create_json(clusL, args):
             size_matrix.write(_write_size_table(data_freq, data_len, data_valid_str, cid))
 
             data_string = {'seqs': data_seqs, 'freq': data_freq_w_id,
-                    'loci': data_loci, 'ann': data_ann, 'valid': valid_ann, 'peaks': clus[cid].peaks}
+                           'loci': data_loci, 'ann': data_ann, 
+                           'valid': valid_ann, 'peaks': clus[cid].peaks}
             data_clus[cid] = data_string
 
     out_file = os.path.join(args.dir_out, "seqcluster.json")
+    # import pdb; pdb.set_trace()
     with open(out_file, 'w') as handle_out:
-        handle_out.write(json.dumps([data_clus], skipkeys=True, indent=2))
+        # https://stackoverflow.com/a/50577730/1772223
+        def default(o):
+            if isinstance(o, np.int64): return int(o)
+            raise TypeError
+        handle_out.write(json.dumps([data_clus], default=default, skipkeys=True, indent=2))
 
     return out_file

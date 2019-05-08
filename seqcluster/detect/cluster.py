@@ -134,8 +134,8 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
     return cluster_info_obj(current_clus, metacluster_obj, current_loci, current_seq)
 
 def _common(items, seen):
-    intersect = map(seen.get, items)
-    return filter(None, intersect)
+    intersect = [e for e in map(seen.get, items)]
+    return list(filter(None, intersect))
 
 def _update(clusters, idx, hash):
     return hash.update(dict(zip(clusters, [idx] * len(clusters))))
@@ -155,6 +155,7 @@ def _find_metaclusters(clus_obj, sequence2clusters, current_seq, min_seqs):
     meta_idx = 1
     bar = ProgressBar(maxval=c_index).start()
     bar.update()
+
     for itern, name in enumerate(sequence2clusters):
         clusters = sequence2clusters[name]
         if len(clusters) == 0:
@@ -163,6 +164,7 @@ def _find_metaclusters(clus_obj, sequence2clusters, current_seq, min_seqs):
         current_seq[name].align = 1
         meta_idx += 1
         bar.update(itern)
+        # import pdb; pdb.set_trace()
         already_in = _common(clusters, seen)
         _update(clusters, meta_idx, seen)
         metacluster[meta_idx] = metacluster[meta_idx].union(clusters)

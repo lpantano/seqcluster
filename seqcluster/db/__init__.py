@@ -3,12 +3,14 @@ Modules to support sqlite implementation
 """
 import os.path as op
 import sqlite3 as lite
+import logging
 import json
 
 from collections import defaultdict
 
 from seqcluster.libs.utils import safe_dirs
 
+logger = logging.getLogger('report')
 
 def _create_db(name):
     """
@@ -34,10 +36,12 @@ def _get_sequences(cluster):
     freqs = [list(f.values())[0] for f in cluster['freq']]
     data = []
     total_freq = {}
+
     for s, f in zip(seqs, freqs):
-        fix = dict(zip(list(f.keys()), map(int, list(f.values()))))
+        fix = dict(zip(list(f.keys()), list(f.values())))
         data.append({'name': s, 'freq': fix})
         total_freq[s] = 1.0 * sum(list(fix.values())) / len(list(fix.values()))
+
     if len(total_freq) > 100:
         counts_50 = sorted(list(total_freq.values()))[-100]
         data = [e for e in data if 1.0 * sum(e['freq'].values()) / len(list(e['freq'].values())) > counts_50]
@@ -79,21 +83,25 @@ def _insert_data(con, data):
     """
     insert line for each cluster
     """
+    n = 0
     with con:
         cur = con.cursor()
         cur.execute("DROP TABLE IF EXISTS clusters;")
         cur.execute("CREATE TABLE clusters(Id INT, Description TEXT, Locus TEXT, Annotation TEXT, Sequences TEXT, Profile TXT, Precursor TXT)")
         for c in data[0]:
+            n += 1
             locus = json.dumps(data[0][c]['loci'])
             annotation = json.dumps(data[0][c]['ann'])
             description = _get_description(data[0][c]['ann'])
             sequences = json.dumps(_get_sequences(data[0][c]))
-            keys = list(data[0][c]['freq'][0].values())[0].keys()
             profile = "Not available."
             if 'profile' in data[0][c]:
                 profile = json.dumps(_set_format(data[0][c]['profile']))
             precursor = json.dumps(data[0][c].get('precursor'))
-            cur.execute("INSERT INTO clusters VALUES(%s, '%s', '%s', '%s', '%s', '%s', '%s')" % (c, description, locus, annotation, sequences, profile, precursor))
+            statement = "INSERT INTO clusters VALUES (%s, '%s', '%s', '%s', '%s', '%s', '%s')" % (c, description, locus, annotation, sequences, profile, precursor)
+            cur.execute(statement)
+
+    logger.info("Clusters inserted: %s" % n)
 
 def _close(con):
     if con:

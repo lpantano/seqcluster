@@ -106,7 +106,7 @@ def _add_complete_cluster(idx, meta, clusters):
     logger.debug("Not resolving cluster %s, too many loci" % (idx))
     clus = {}
     [clus.update(clusters[idc].locilen) for idc in meta]
-    locilen_sorted = sorted(clus.iteritems(), key=operator.itemgetter(1), reverse=True)
+    locilen_sorted = sorted(iter(clus.items()), key=operator.itemgetter(1), reverse=True)
     maxidl = locilen_sorted[0][0]
     c = cluster(idx)
     for idc in meta:
@@ -258,7 +258,7 @@ def _merge_similar(loci, loci_similarity):
     n_cluster = 0
     internal_cluster = {}
     clus_seen = {}
-    loci_sorted = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
+    loci_sorted = sorted(iter(loci_similarity.items()), key=operator.itemgetter(1), reverse=True)
     for pairs, sim in loci_sorted:
         common = sim > parameters.similar
         n_cluster += 1
@@ -323,7 +323,7 @@ def _solve_conflict(list_c, s2p, n_cluster):
     if parameters.decision_cluster == "bayes":
         return decide_by_bayes(list_c, s2p)
     loci_similarity = _calculate_similarity(list_c)
-    loci_similarity = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
+    loci_similarity = sorted(iter(loci_similarity.items()), key=operator.itemgetter(1), reverse=True)
     common = sum([score for p, score in loci_similarity])
     while common > 0:
         n_cluster += 1
@@ -335,9 +335,9 @@ def _solve_conflict(list_c, s2p, n_cluster):
             list_c = _split_cluster_by_most_vote(list_c, pairs)
         else:
             list_c = _split_cluster(list_c, pairs, n_cluster)
-        list_c = {k: v for k, v in list_c.iteritems() if len(v.loci2seq) > 0}
+        list_c = {k: v for k, v in iter(list_c.items()) if len(v.loci2seq) > 0}
         loci_similarity = _calculate_similarity(list_c)
-        loci_similarity = sorted(loci_similarity.iteritems(), key=operator.itemgetter(1), reverse=True)
+        loci_similarity = sorted(iter(loci_similarity.items()), key=operator.itemgetter(1), reverse=True)
         #logger.note("%s %s" % (pairs, loci_similarity[0][1]))
         common = sum([score for p, score in loci_similarity])
         logger.debug("_solve_conflict: solved clusters %s" % len(list_c.keys()))
@@ -366,8 +366,8 @@ def _split_cluster(c, pairs, n):
             logger.debug("_split_cluster: len old %s with pair 2" % (len(new.loci2seq)))
     old.update()
     new.update()
-    old.loci2seq = {k: v for k, v in old.loci2seq.iteritems() if len(v) > 0}
-    new.loci2seq = {k: v for k, v in new.loci2seq.iteritems() if len(v) > 0}
+    old.loci2seq = {k: v for k, v in iter(old.loci2seq.items()) if len(v) > 0}
+    new.loci2seq = {k: v for k, v in iter(new.loci2seq.items()) if len(v) > 0}
     c[n] = new
     c[p[0]] = old
     c[p[1]] = new
@@ -389,8 +389,8 @@ def _split_cluster_by_most_vote(c, p):
     for idl in remove.loci2seq:
         if len(common) > 0:
             remove.loci2seq[idl] = list(set(remove.loci2seq[idl]) - set(common))
-    keep.loci2seq = {k: v for k, v in keep.loci2seq.iteritems() if len(v) > 0}
-    remove.loci2seq = {k: v for k, v in remove.loci2seq.iteritems() if len(v) > 0}
+    keep.loci2seq = {k: v for k, v in iter(keep.loci2seq.items()) if len(v) > 0}
+    remove.loci2seq = {k: v for k, v in iter(remove.loci2seq.items()) if len(v) > 0}
     keep.update()
     remove.update()
     c[keep.id] = keep
@@ -417,9 +417,9 @@ def _clean_cluster(list_c):
     """
     global REMOVED
     init = len(list_c)
-    list_c = {k: v for k, v in list_c.iteritems() if len(_get_seqs(v)) > parameters.min_seqs}
+    list_c = {k: v for k, v in iter(list_c.items()) if len(_get_seqs(v)) > parameters.min_seqs}
     logger.debug("_clean_cluster: number of clusters %s " % len(list_c.keys()))
-    list_c = {k: _select_loci(v) for k, v in list_c.iteritems()}
+    list_c = {k: _select_loci(v) for k, v in iter(list_c.items())}
     end = len(list_c)
     REMOVED += init - end
     return list_c
@@ -427,9 +427,9 @@ def _clean_cluster(list_c):
 
 def _select_loci(c):
     """Select only loci with most abundant sequences"""
-    loci_len = {k: len(v) for k, v in c.loci2seq.iteritems()}
+    loci_len = {k: len(v) for k, v in iter(c.loci2seq.items())}
     logger.debug("_select_loci: number of loci %s" % len(c.loci2seq.keys()))
-    loci_len_sort = sorted(loci_len.iteritems(), key=operator.itemgetter(1), reverse=True)
+    loci_len_sort = sorted(iter(loci_len.items()), key=operator.itemgetter(1), reverse=True)
     max_size = loci_len_sort[0][1]
     logger.debug("_select_loci: max size %s" % max_size)
     loci_clean = {locus: c.loci2seq[locus] for locus, size in loci_len_sort if size > 0.8 * max_size}

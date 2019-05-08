@@ -1,5 +1,6 @@
 - 1.2.4a*
   
+  * Fix multiple errors when running in python 3 due to map function.
   * Fix error in collapsing fasta files.
   * Fix end of line character for counts_sequence.tsv.
   * Remove `map` function from quality class in collapse function to avoid seg.fault in python3.

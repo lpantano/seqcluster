@@ -109,7 +109,7 @@ def map_to_precursor_biopython(seqs, names, loci, args):
     """map the sequences using biopython package"""
     precursor = precursor_sequence(loci, args.ref).upper()
     dat = dict()
-    for s, n in itertools.izip(seqs, names):
+    for s, n in zip(seqs, names):
         res = _align(str(s), precursor)
         if res:
             dat[n] = res
