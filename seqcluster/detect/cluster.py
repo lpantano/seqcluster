@@ -27,7 +27,7 @@ def detect_complexity(bam_in, genome, out):
     if file_exists(out_file):
         return None
     fai = genome + ".fai"
-    cov = pybedtools.BedTool(bam_in).genome_coverage(g=fai, max=1)
+    cov = pybedtools.BedTool(bam_in).genome_coverage(max=1)
     cov.saveas(out_file)
     total = 0
     for region in cov:

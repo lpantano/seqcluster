@@ -10,7 +10,7 @@ def run_rnafold(seqs):
     out = structure = 0
     cmd = ("echo {seqs} | RNAfold").format(**locals())
     if len(seqs) < 150:
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, close_fds=True)
         for line in iter(process.stdout.readline, ''):
             line = line.decode('utf-8')
             if line.find(" ") > -1:
