@@ -1,4 +1,4 @@
-- 1.2.4a*
+- 1.2.4
   
   * Fix multiple errors when running in python 3 due to map function.
   * Fix error in collapsing fasta files.
