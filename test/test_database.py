@@ -41,6 +41,6 @@ class TestDatabase(TestCase):
                 logger.info(args)
                 logger.info("Reading data")
                 data = load_data(args.json)
-                logger.info("Create databse")
+                logger.info("Create database")
                 make_database(data)
         # self.assertTrue()

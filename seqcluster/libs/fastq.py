@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os
 from collections import Counter, defaultdict
 from seqcluster.libs.classes import quality, umi
@@ -13,18 +14,26 @@ def collapse(in_file):
     """collapse identical sequences and keep Q"""
     keep = Counter()
     with open_fastq(in_file) as handle:
-        for line in handle:
+        line = handle.readline()
+        while line:
             if line.startswith("@"):
                 if line.find("UMI") > -1:
                     logger.info("Find UMI tags in read names, collapsing by UMI.")
                     return collapse_umi(in_file)
-                seq = handle.next().strip()
-                handle.next()
-                qual = handle.next().strip()
+                seq = handle.readline().strip()
+                handle.readline()
+                qual = handle.readline().strip()
                 if seq in keep:
                     keep[seq].update(qual)
                 else:
                     keep[seq] = quality(qual)
+            if line.startswith(">"):
+                seq = handle.readline().strip()
+                if seq not in keep:
+                    keep[seq] = quality("".join(["I"] * len(seq)))
+                else:
+                    keep[seq].update("".join(["I"] * len(seq)))
+            line = handle.readline()
     logger.info("Sequences loaded: %s" % len(keep))
     return keep
 
@@ -33,18 +42,20 @@ def collapse_umi(in_file):
     """collapse reads using UMI tags"""
     keep = defaultdict(dict)
     with open_fastq(in_file) as handle:
-        for line in handle:
+        line = handle.readline();
+        while line:
             if line.startswith("@"):
                 m = re.search('UMI_([ATGC]*)', line.strip())
                 umis = m.group(0)
-                seq = handle.next().strip()
-                handle.next()
-                qual = handle.next().strip()
+                seq = handle.readline().strip()
+                handle.readline()
+                qual = handle.readline().strip()
                 if (umis, seq) in keep:
                     keep[(umis, seq)][1].update(qual)
                     keep[(umis, seq)][0].update(seq)
                 else:
                     keep[(umis, seq)] = [umi(seq), quality(qual)]
+            line = handle.readline();
     logger.info("Sequences loaded: %s" % len(keep))
     return keep
 
@@ -55,7 +66,7 @@ def open_fastq(in_file):
     """
     _, ext = os.path.splitext(in_file)
     if ext == ".gz":
-        return gzip.open(in_file, 'rb')
+        return gzip.open(in_file, 'rt')
     if ext in [".fastq", ".fq", ".fasta", ".fa"]:
         return open(in_file, 'r')
     return ValueError("File needs to be fastq|fasta|fq|fa [.gz]")
@@ -88,7 +99,7 @@ def splitext_plus(f):
 
 def write_output(out_file, seqs, minimum=1, size=15):
     idx =0
-    logger.info("Writing sequences to %s" % out_file)
+    logger.info("Writing %s sequences to %s" % (len(seqs.keys()), out_file))
     with open(out_file, 'w') as handle:
         for s in seqs:
             idx += 1

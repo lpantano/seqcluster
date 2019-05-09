@@ -130,9 +130,9 @@ def generate_position_bed(clus_obj):
 
 
 def _normalize_seqs(s, t):
-    """Normalize to RPM"""
+    """Normalize to DESeq2"""
     for ids in s:
         obj = s[ids]
-        [obj.norm_freq.update({sample: 1.0 * obj.freq[sample] / (t[sample]+1) * 1000000}) for sample in obj.norm_freq]
+        [obj.norm_freq.update({sample: 1.0 * obj.freq[sample] / t[sample]}) for sample in obj.norm_freq]
         s[ids] = obj
     return s

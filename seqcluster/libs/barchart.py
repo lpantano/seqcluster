@@ -130,9 +130,9 @@ def createhtml(info,keys):
 #{"DB":"RNA","uni":15,"mul":4,"nocon":5}]
 #bar=["uni","mul","nocon"]
 
-#print createdata(info)
-#print addgraph("unique","uni","green")
-#print createchart(bar)
+#print(createdata(info))
+#print(addgraph("unique","uni","green"))
+#print(createchart(bar))
 
 
 

@@ -4,7 +4,6 @@ import os
 import sys
 import os.path as op
 from collections import Counter, namedtuple
-from operator import itemgetter
 import pickle
 import json
 import numpy as np
@@ -18,10 +17,10 @@ from seqcluster.libs import do
 from seqcluster.libs.read import load_data
 from seqcluster.libs.mystats import up_threshold
 from seqcluster.detect.cluster import detect_clusters, clean_bam_file, peak_calling, detect_complexity
-from seqcluster.detect.description import best_precursor, sort_precursor
+from seqcluster.detect.description import best_precursor
 from seqcluster.libs.annotation import anncluster
-from seqcluster.libs.inputs import parse_ma_file, parse_align_file
-from seqcluster.detect.metacluster import reduceloci,_get_seqs
+from seqcluster.libs.inputs import parse_ma_file
+from seqcluster.detect.metacluster import reduceloci, _get_seqs
 from seqcluster.libs.tool import generate_position_bed
 from seqcluster.libs.classes import *
 import seqcluster.libs.parameters as param
@@ -57,7 +56,7 @@ def cluster(args):
         raise ValueError("So few sequences.")
 
     logger.info("Cleaning bam file")
-    y, l = _total_counts(seqL.keys(), seqL)
+    y, l = _total_counts(list(seqL.keys()), seqL)
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
@@ -65,7 +64,8 @@ def cluster(args):
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
 
     clusL = _create_clusters(seqL, bam_file, args)
-    y, l = _total_counts(clusL.seq.keys(), clusL.seq, aligned=True)
+
+    y, l = _total_counts(list(clusL.seq.keys()), clusL.seq, aligned=True)
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
@@ -150,21 +150,22 @@ def _total_counts(seqs, seqL, aligned=False):
     Counts total seqs after each step
     """
     total = Counter()
+    nseqs = 0
     if isinstance(seqs, list):
         if not aligned:
-            l = len([total.update(seqL[s].freq) for s in seqs])
+            nseqs = len([total.update(seqL[s].freq) for s in seqs])
         else:
-            l = len([total.update(seqL[s].freq) for s in seqs if seqL[s].align > 0])
+            nseqs = len([total.update(seqL[s].freq) for s in seqs if seqL[s].align > 0])
     elif isinstance(seqs, dict):
         [total.update(seqs[s].get_freq(seqL)) for s in seqs]
-        l = sum(len(seqs[s].idmembers) for s in seqs)
-    return total, l
+        nseqs = sum(len(seqs[s].idmembers) for s in seqs)
+    return total, nseqs
 
 
 def _write_size_table(data_freq, data_len, ann_valid, cluster_id):
     dd = Counter()
     for f, l in zip(data_freq, data_len):
-        dd[l] += np.mean(f.values())
+        dd[l] += np.mean(list(f.values()))
 
     table = ""
     for l in sorted(dd):
@@ -190,9 +191,9 @@ def _get_annotation(c, loci):
         # suggestion by 2to3
         data_ann = data_ann + [data_ann_temp[x] for x in list(data_ann_temp.keys())]
         logger.debug("_json_: data_ann %s" % data_ann)
-    counts = {k: v for k, v in counts.iteritems()}
+    counts = {k: v for k, v in iter(counts.items())}
     total_loci = sum([counts[db] for db in counts])
-    valid_ann = [k for k, v in counts.iteritems() if up_threshold(v, total_loci, 0.7)]
+    valid_ann = [k for k, v in iter(counts.items()) if up_threshold(v, total_loci, 0.7)]
     return data_ann, valid_ann
 
 
@@ -203,8 +204,8 @@ def _get_counts(list_seqs, seqs_obj, factor):
         if s not in factor:
             factor[s] = 1
         samples = seqs_obj[s].norm_freq.keys()
-        corrected_norm = np.array(seqs_obj[s].norm_freq.values()) * factor[s]
-        corrected_raw = np.array(seqs_obj[s].freq.values()) * factor[s]
+        corrected_norm = np.array(list(seqs_obj[s].norm_freq.values())) * factor[s]
+        corrected_raw = np.array(list(seqs_obj[s].freq.values())) * factor[s]
         scaled[s] = seq(dict(zip(samples, corrected_raw)), dict(zip(samples, corrected_norm)))
     return scaled
 
@@ -213,7 +214,7 @@ def _sum_by_samples(seqs_freq, samples_order):
     """
     Sum sequences of a metacluster by samples.
     """
-    n = len(seqs_freq[seqs_freq.keys()[0]].freq.keys())
+    n = len(seqs_freq[list(seqs_freq.keys())[0]].freq.keys())
     y = np.array([0] * n)
     for s in seqs_freq:
         x = seqs_freq[s].freq
@@ -310,10 +311,10 @@ def _create_json(clusL, args):
     out_single_count = os.path.join(args.dir_out, "counts_sequence.tsv")
     out_size = os.path.join(args.dir_out, "size_counts.tsv")
     out_bed = os.path.join(args.dir_out, "positions.bed")
-    samples_order = list(seqs[seqs.keys()[1]].freq.keys())
+    samples_order = list(seqs[list(seqs.keys())[1]].freq.keys())
     with open(out_count, 'w') as matrix, open(out_size, 'w') as size_matrix, open(out_bed, 'w') as out_bed, open(out_single_count, 'w') as matrix_single:
         matrix.write("id\tnloci\tann\t%s\n" % "\t".join(samples_order))
-        matrix_single.write("id\tnloci\tann\t%s\n" % "\t".join(samples_order))
+        matrix_single.write("id\tann\tsequence\t%s\n" % "\t".join(samples_order))
         for cid in clus:
             seqList = []
             c = clus[cid]
@@ -343,7 +344,7 @@ def _create_json(clusL, args):
 
             sum_freq = _sum_by_samples(scaled_seqs, samples_order)
 
-            data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in k.iteritems()] for k in data_ann]
+            data_ann_str = [["%s::%s" % (name, ",".join(features)) for name, features in iter(k.items())] for k in data_ann]
             data_valid_str = " ".join(valid_ann)
 
             for s in seqList:
@@ -351,17 +352,23 @@ def _create_json(clusL, args):
                 if f.count(0) > 0.1 * len(f) and len(f) > 9:
                     continue
                 f = map(str, f)
-                print("\t".join([str(cid), data_valid_str, seqs[s].seq, "\t".join(f)]), file=matrix_single, end="")
+                print("\t".join([str(cid), data_valid_str, seqs[s].seq, "\t".join(f)]), file=matrix_single, end="\n")
 
             matrix.write("%s\t%s\t%s|%s\t%s\n" % (cid, c.toomany, data_valid_str, ";".join([";".join(d) for d in data_ann_str]), "\t".join(map(str, sum_freq))))
             size_matrix.write(_write_size_table(data_freq, data_len, data_valid_str, cid))
 
             data_string = {'seqs': data_seqs, 'freq': data_freq_w_id,
-                    'loci': data_loci, 'ann': data_ann, 'valid': valid_ann, 'peaks': clus[cid].peaks}
+                           'loci': data_loci, 'ann': data_ann, 
+                           'valid': valid_ann, 'peaks': clus[cid].peaks}
             data_clus[cid] = data_string
 
     out_file = os.path.join(args.dir_out, "seqcluster.json")
+    # import pdb; pdb.set_trace()
     with open(out_file, 'w') as handle_out:
-        handle_out.write(json.dumps([data_clus], skipkeys=True, indent=2))
+        # https://stackoverflow.com/a/50577730/1772223
+        def default(o):
+            if isinstance(o, np.int64): return int(o)
+            raise TypeError
+        handle_out.write(json.dumps([data_clus], default=default, skipkeys=True, indent=2))
 
     return out_file

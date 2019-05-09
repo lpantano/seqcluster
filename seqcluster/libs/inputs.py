@@ -1,5 +1,7 @@
 from collections import defaultdict
 import pybedtools
+import numpy as np
+import pandas as pd
 
 import seqcluster.libs.logger as mylog
 from seqcluster.libs.classes import sequence
@@ -32,6 +34,7 @@ def parse_ma_file(seq_obj, in_file):
     name = ""
     index = 1
     total = defaultdict(int)
+    ratio = list()
     with open(in_file) as handle_in:
         line = handle_in.readline().strip()
         cols = line.split("\t")
@@ -45,13 +48,17 @@ def parse_ma_file(seq_obj, in_file):
             for i in range(len(samples)):
                 exp[samples[i]] = int(cols[i+2])
                 total[samples[i]] += int(cols[i+2])
+            ratio.append(np.array(list(exp.values())) / np.mean(list(exp.values())))
             index = index+1
             if name in seq_obj:
                 seq_obj[name].set_freq(exp)
                 seq_obj[name].set_seq(seq)
             # new_s = sequence(seq, exp, index)
             # seq_l[name] = new_s
-    seq_obj = _normalize_seqs(seq_obj, total)
+    df = pd.DataFrame(ratio)
+    df = df[(df.T != 0).all()]
+    size_factor = dict(zip(samples, df.median(axis=0)))
+    seq_obj = _normalize_seqs(seq_obj, size_factor)
     return seq_obj, total, index
 
 
@@ -64,6 +71,7 @@ def parse_ma_file_raw(in_file):
     index = 1
     total = defaultdict(int)
     seq_obj = defaultdict(sequence)
+    ratio = list()
     with open(in_file) as handle_in:
         line = handle_in.readline().strip()
         cols = line.split("\t")
@@ -77,10 +85,14 @@ def parse_ma_file_raw(in_file):
             for i in range(len(samples)):
                 exp[samples[i]] = int(cols[i+2])
                 total[samples[i]] += int(cols[i+2])
+            ratio.append(np.array(list(exp.values())) / np.mean(list(exp.values())))
             index = index+1
             if name not in seq_obj:
                 seq_obj[name] = sequence(name)
             seq_obj[name].set_freq(exp)
             seq_obj[name].set_seq(seq)
-    seq_obj = _normalize_seqs(seq_obj, total)
+    df = pd.DataFrame(ratio)
+    df = df[(df.T != 0).all()]
+    size_factor = dict(zip(samples, df.median(axis=0)))
+    seq_obj = _normalize_seqs(seq_obj, size_factor)
     return seq_obj, total, index

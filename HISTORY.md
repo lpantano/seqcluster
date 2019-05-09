@@ -1,6 +1,14 @@
-- 1.2.4a*
-
-  * Inititate migration to py3*. Thanks to @smoe.
+- 1.2.4
+  
+  * Fix multiple errors when running in python 3 due to map function.
+  * Fix error in collapsing fasta files.
+  * Fix end of line character for counts_sequence.tsv.
+  * Remove `map` function from quality class in collapse function to avoid seg.fault in python3.
+  * Use DESeq2 normalization strategy.
+  * Fix more errors in python3 env.
+  * Fix UMI checking when the input file is a gzip file. Thanks to @rbatorsky-claritas.
+  * Fix header bug
+  * Initiate migration to py3*. Thanks to @smoe.
   * Include mirtop annotation.
   * Fix upgrade command.
   * Fix UMIs detection to count using unique seq + umi. Thanks to @mshadbolt

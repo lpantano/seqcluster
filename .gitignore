@@ -11,6 +11,9 @@ data/test_cluster/predictions/*
 data/test_cluster/coral/*
 data/test_cluster/test*
 data/simulated/sim*
+data/examples/miraligner/sim_isomir_unique.fa
+data/examples/cluster/seqs_map_*
+data/examples/cluster/seqs_map.bam.bai
 rna.ps
 # Byte-compiled / optimized / DLL files
 __pycache__/

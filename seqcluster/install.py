@@ -56,6 +56,7 @@ def _get_miraligner():
             raise SystemExit("%s not installed." % tool)
     except SystemExit:
         tool = None
+        print("miraligner not found. I'll try to download it.")
         pass
     if not tool:
         if not utils.file_exists(op.abspath("miraligner.jar")):

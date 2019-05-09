@@ -2,16 +2,18 @@
 
 from setuptools import setup, find_packages
 
+
 def readme():
     with open('README.rst') as f:
         return f.read()
 
-# with open("reqs.txt", "r") as f:
-#     install_requires = [x.strip() for x in f.readlines() if not x.startswith("#")]
+
+with open("requirements.txt", "r") as f:
+     install_requires = [x.strip() for x in f.readlines() if not x.startswith("#")]
 
 
 setup(name='seqcluster',
-      version='1.2.4a8',
+      version='1.2.4',
       description='Small RNA-seq pipeline',
       long_description=readme(),
       classifiers=[
