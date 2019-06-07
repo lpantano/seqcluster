@@ -1,3 +1,7 @@
+- 1.2.5
+
+  * Fix error when the precursor is too long to ignore RNAfold calculation. Thanks to @ZhuZhuoHSPH and @kthlnktng
+
 - 1.2.4
   
   * Fix multiple errors when running in python 3 due to map function.
