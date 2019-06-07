@@ -16,6 +16,7 @@ setup(name='seqcluster',
       version='1.2.5',
       description='Small RNA-seq pipeline',
       long_description=readme(),
+      long_description_content_type="text/markdown",
       classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2.7',
