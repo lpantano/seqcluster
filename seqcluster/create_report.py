@@ -23,12 +23,12 @@ def report(args):
     """
     Create report in html format
     """
-    logger.info("reading sequeces")
+    logger.info("Reading sequences")
     data = load_data(args.json)
 
-    logger.info("create profile")
+    logger.info("Create profile")
     data = make_profile(data, os.path.join(args.out, "profiles"), args)
-    logger.info("create database")
+    logger.info("Create database")
     make_database(data, "seqcluster.db", args.out)
 
     logger.info("Done. Download https://github.com/lpantano/seqclusterViz/archive/master.zip to browse the output.")

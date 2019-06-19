@@ -34,7 +34,7 @@ def prepare(args):
     except IOError as e:
         traceback.print_exc()
         raise IOError("Can not create output files: %s, %s or read %s" % (op.join(args.out, "seqs.ma"), op.join(args.out, "seqs.fastq"), args.config))
-    logger.info("Reading sequeces")
+    logger.info("Reading sequences")
     seq_l, sample_l = _read_fastq_files(f, args)
     logger.info("Creating matrix with unique sequences")
     logger.info("Filtering: min counts %s, min size %s, max size %s, min shared %s" % (args.minc, args.minl, args.maxl, args.min_shared))

@@ -81,9 +81,9 @@ def reduceloci(clus_obj,  path):
     seqs = 0
     for idc in filtered:
         seqs += len(filtered[idc].idmembers)
-    logger.info("seqs in clusters %s" % (seqs))
+    logger.info("Seqs in clusters %s" % (seqs))
 
-    logger.info("Clusters too long to be analized: %s" % large)
+    logger.info("Clusters too long to be analyzed: %s" % large)
     logger.info("Number of clusters removed because low number of reads: %s" % REMOVED)
     logger.info("Number of clusters with conflicts: %s" % CONFLICT)
     return clus_obj
