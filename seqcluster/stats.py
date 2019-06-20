@@ -12,7 +12,7 @@ logger = logging.getLogger('stats')
 def stats(args):
     """Create stats from the analysis
     """
-    logger.info("Reading sequeces")
+    logger.info("Reading sequences")
     data = parse_ma_file(args.ma)
     logger.info("Get sequences from sam")
     is_align = _read_sam(args.sam)
