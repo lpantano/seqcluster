@@ -26,9 +26,10 @@ def report(args):
     logger.info("Reading sequences")
     data = load_data(args.json)
 
-    logger.info("Create profile")
-    data = make_profile(data, os.path.join(args.out, "profiles"), args)
-    logger.info("Create database")
+    profilesDir=os.path.join(args.out, "profiles")
+    logger.info("Creating profile (%s)" % profilesDir)
+    data = make_profile(data, profilesDir, args)
+    logger.info("Creating database")
     make_database(data, "seqcluster.db", args.out)
 
     logger.info("Done. Download https://github.com/lpantano/seqclusterViz/archive/master.zip to browse the output.")
