@@ -2,7 +2,7 @@
 
 HEAD='''
 
-    <script src="../js/amcharts.js" type="text/javascript"></script>        
+    <script src="https://www.amcharts.com/lib/3/amcharts.js" type="text/javascript"></script>
     <script type="text/javascript">
             var chart;
 

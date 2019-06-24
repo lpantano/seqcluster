@@ -8,7 +8,7 @@ HEAD='''
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>DB summary</title>
         <link rel="stylesheet" href="css/style.css" type="text/css">
-        <script src="js/amcharts.js" type="text/javascript"></script>        
+        <script src="https://www.amcharts.com/lib/3/amcharts.js" type="text/javascript"></script>
         <script type="text/javascript">
             var chart;
 
@@ -41,7 +41,7 @@ INIFUNC='''
 '''
 
 ENDFUNC='''
-              // LEGEND                  
+              // LEGEND
                 var legend = new AmCharts.AmLegend();
                 legend.borderAlpha = 0.2;
                 legend.horizontalGap = 10;
