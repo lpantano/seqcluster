@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# bash script inspared from bcbio-nextgen: https://github.com/chapmanb/bcbio-nextgen/blob/master/tests/run_tests.sh
+# bash script inspired by bcbio-nextgen's https://github.com/chapmanb/bcbio-nextgen/blob/master/tests/run_tests.sh
 # It allows to run specific test using the name like
 # ./run_test.sh test_align
 set -o pipefail  # trace ERR through pipes
@@ -18,4 +18,8 @@ export PYTHONNOUSERSITE=1
 echo $SC_DIR
 
 echo "Run module test."
-"$SC_DIR/nosetests" -v -s -a "$@"
+NOSETESTS=$(which nosetests3)
+if [ -z "$NOSETESTS" ]; then
+   NOSETESTS="$SC_DIR/nosetests"
+fi
+$NOSETESTS -v -s -a "$@"
