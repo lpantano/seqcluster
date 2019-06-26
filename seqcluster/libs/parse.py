@@ -2,6 +2,8 @@ from __future__ import print_function
 import argparse
 import sys
 
+from seqcluster import __version__
+
 def parse_cl(in_args):
     print(in_args)
     sub_cmds = {"prepare": add_subparser_prepare,
@@ -15,16 +17,22 @@ def parse_cl(in_args):
                 "simulator": add_subparser_simulator,
                 "stats": add_subparser_stats}
     parser = argparse.ArgumentParser(description="small RNA analysis")
+    parser.add_argument("--version", action="store_true",help="show version.")
     sub_cmd = None
     if len(in_args) > 0 and in_args[0] in sub_cmds:
         subparsers = parser.add_subparsers(help="seqcluster supplemental commands")
         sub_cmds[in_args[0]](subparsers)
         sub_cmd = in_args[0]
+    elif (len(in_args) > 0):
+        args = parser.parse_args()
+        if args.version:
+            print("seqcluster %s" % __version__)
+            sys.exit(0)
     else:
         print("use %s" % sub_cmds.keys())
         sys.exit(0)
+        
     args = parser.parse_args()
-
     assert sub_cmd is not None
     kwargs = {"args": args, sub_cmd: True}
     return kwargs
