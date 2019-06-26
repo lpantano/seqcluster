@@ -30,6 +30,7 @@ def parse_cl(in_args):
             sys.exit(0)
     else:
         print("use %s" % sub_cmds.keys())
+        print("seqcluster %s" % __version__)
         sys.exit(0)
         
     args = parser.parse_args()

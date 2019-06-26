@@ -14,10 +14,18 @@ data/simulated/sim*
 data/examples/miraligner/sim_isomir_unique.fa
 data/examples/cluster/seqs_map_*
 data/examples/cluster/seqs_map.bam.bai
+data/examples/cluster/res_cluster*
+data/examples/miraligner/sim_mut_unique.fa
+database/seqcluster.db
 rna.ps
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+
+
+# docs
+
+doc/source/_*
 
 # C extensions
 *.so
