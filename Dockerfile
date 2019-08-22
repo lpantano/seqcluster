@@ -12,8 +12,7 @@ RUN apt-get update && \
 RUN  wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh && \
      bash Miniconda-latest-Linux-x86_64.sh -b -p /usr/local/conda && \
      export PATH=/usr/local/conda/bin:$PATH && \
-     conda install --yes -c conda-forge -c bioconda scipy seqcluster bedtools samtools pip nose setuptools -q && \
-     pip install pytz dateutils && \
+     conda install --yes -c conda-forge -c bioconda memory_profiler openjdk pysam pybedtools pandas numpy biopython progressbar2 pyyaml bedtools samtools mirtop viennarna pip nose setuptools -q && \
      wget https://github.com/lpantano/seqcluster/archive/master.zip && \
      unzip master.zip && \
      mv seqcluster-master seqcluster && \

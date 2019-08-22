@@ -10,4 +10,3 @@ colorlog
 mirtop
 pyyaml
 pytz
-dateutils
