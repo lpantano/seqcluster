@@ -115,7 +115,7 @@ def _check_args(args):
     global similar
     if not os.path.isdir(args.out):
         logger.warning("the output folder doens't exists")
-        os.mkdirs(args.out)
+        os.mkdir(args.out)
     if args.bed and args.gtf:
         logger.error("cannot provide -b and -g at the same time")
         raise SyntaxError

@@ -1,3 +1,10 @@
+- 1.2.7
+
+  * Fix bug when writing files for debug of big meta-clusters: 
+    https://github.com/lpantano/seqcluster/issues/47
+    https://github.com/bcbio/bcbio-nextgen/issues/2948
+  * Add version option
+  
 - 1.2.5
 
   * Fix error when the precursor is too long to ignore RNAfold calculation. Thanks to @ZhuZhuoHSPH and @kthlnktng

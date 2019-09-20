@@ -129,7 +129,7 @@ class position:
         self.db_ann = {}
 
     def list(self):
-        return map(str, [self.chr, self. start, self.end, self.idl, self.strand])
+        return [e for e in map(str, [self.chr, self. start, self.end, self.idl, self.strand])]
 
     def add_db(self, db, ndb):
         self.db_ann[db] = ndb

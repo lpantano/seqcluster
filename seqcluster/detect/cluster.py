@@ -43,7 +43,7 @@ def clean_bam_file(bam_in, mask=None):
     if mask:
         mask_file = op.splitext(bam_in)[0] + "_mask.bam"
         if not file_exists(mask_file):
-            pybedtools.BedTool(bam_file).intersect(b=mask, v=True).saveas(mask_file)
+            pybedtools.BedTool(bam_in).intersect(b=mask, v=True).saveas(mask_file)
         bam_in = mask_file
     out_file = op.splitext(bam_in)[0] + "_rmlw.bam"
     # bam.index(bam_in, {'algorithm':{}})

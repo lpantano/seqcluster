@@ -6,11 +6,7 @@ import os.path as op
 import copy
 from progressbar import ProgressBar
 
-# import time
 import math
-# import numpy as np
-# import pybedtools
-
 
 import seqcluster.libs.logger as mylog
 from seqcluster.libs import utils
@@ -39,15 +35,10 @@ def _get_seqs_from_cluster(seqs, seen):
     already_in = set()
     not_in = []
 
-    already_in = map(seen.get, seqs)
+    already_in = [e for e in map(seen.get, seqs)]
     # if isinstance(already_in, list):
     already_in = filter(None, already_in)
     not_in = set(seqs) - set(seen.keys())
-    # for s in seqs:
-    #    if s in seen:
-    #        already_in.add(seen[s])
-    #    else:
-    #        not_in.append(s)
     return list(set(already_in)), list(not_in)
 
 
@@ -61,15 +52,21 @@ def reduceloci(clus_obj,  path):
     large = 0
     current = clus_obj.clusid
     logger.info("Number of loci: %s" % len(clus_obj.loci.keys()))
+    avg_loci_cluster = len(clus_obj.loci.keys())/len(clus_obj.seq)
+    if avg_loci_cluster > 0.5:
+        logger.warning("The avg number of loci by sequences is close to 0.5: %s",
+                       avg_loci_cluster)
+        logger.warning("This could mean you have sequences over the genome, rare in "
+                       "a typical small RNA data. This can cause errors during the execution "
+                       "or long computing time.")
     bar = ProgressBar(maxval=len(current)).start()
     bar.update(0)
     for itern, idmc in enumerate(current):
         bar.update(itern)
         logger.debug("_reduceloci: cluster %s" % idmc)
         c = copy.deepcopy(list(current[idmc]))
-
         n_loci = len(c)
-        if n_loci < 1000:
+        if n_loci < 100:
             filtered, n_cluster = _iter_loci(c, clus_obj.clus, (clus_obj.loci, clus_obj.seq), filtered, n_cluster)
         else:
             large += 1
@@ -98,7 +95,7 @@ def _write_cluster(metacluster, cluster, loci, idx, path):
         with open(out_file, 'w') as out_handle:
             for idc in metacluster:
                 for idl in cluster[idc].loci2seq:
-                    pos = loci[idl].list()
+                    pos = [e for e in loci[idl].list()]
                     print("\t".join(pos[:4] + [str(len(cluster[idc].loci2seq[idl]))] + [pos[-1]]), file=out_handle, end="")
 
 
@@ -136,7 +133,6 @@ def _iter_loci(meta, clusters, s2p, filtered, n_cluster):
     n_loci = len(meta)
     n_loci_prev = n_loci + 1
     cicle = 0
-    # [logger.note("BEFORE %s %s %s" % (c.id, idl, len(c.loci2seq[idl]))) for idl in c.loci2seq]
     internal_cluster = {}
     if n_loci == 1:
         n_cluster += 1
@@ -176,11 +172,11 @@ def _iter_loci(meta, clusters, s2p, filtered, n_cluster):
     return filtered, n_cluster
 
 
-def _remove_loci(ci, idl):
-    for (idl, lenl) in locilen_sorted:
-        logger.debug("_remove_loci:remove locus %s with len %s:" % (idl, lenl))
-        c.loci2seq.pop(idl, "None")
-        c.locilen.pop(idl, "None")
+# def _remove_loci(ci, idl):
+#     for (idl, lenl) in locilen_sorted:
+#         logger.debug("_remove_loci:remove locus %s with len %s:" % (idl, lenl))
+#         c.loci2seq.pop(idl, "None")
+#         c.locilen.pop(idl, "None")
 
 
 def _convert_to_clusters(c):
@@ -512,7 +508,6 @@ def _merge_loci_in_cluster(c, new_c, idl, current_seqs):
 def _merge_with_first_loci(c, new_c, first_idl, idl, current_seqs):
     logger.debug("_merge_with_first_loci:join first")
     locus_seqs = c.loci2seq[idl]
-    common = len(set(locus_seqs).intersection(current_seqs))
     seen = list(set(locus_seqs).union(current_seqs))
     new_c.add_id_member(list(locus_seqs), first_idl)
     c.loci2seq.pop(idl, "None")
@@ -522,7 +517,6 @@ def _merge_with_first_loci(c, new_c, first_idl, idl, current_seqs):
 
 def _remove_seqs_from_loci(c, idl, current_seqs):
     current = c.loci2seq[idl]
-    common = len(set(current).intersection(current_seqs))
     seen = list(set(current).intersection(current_seqs))
     unseen = list(set(sorted(current)).difference(sorted(seen)))
     logger.debug("_remove_seqs_from_loci:seen %s unseen %s" % (len(seen), len(unseen)))
