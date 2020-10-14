@@ -103,7 +103,7 @@ def _align(x, y, local = False):
         sorted_alignments = sorted(aligned_x, key=operator.itemgetter(2))
         e = enumerate(sorted_alignments[0][0])
         nts = [i for i,c in e if c != "-"]
-        return [min(nts), max(nts)]
+        return [min(nts), min(nts)+len(x)]
 
 def map_to_precursor_biopython(seqs, names, loci, args):
     """map the sequences using biopython package"""

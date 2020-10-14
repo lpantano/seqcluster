@@ -1,3 +1,7 @@
+- 1.2.8a
+
+  * Fix bug when detecting the end of the cluster due to big gaps in biopython function
+
 - 1.2.7
 
   * Fix bug when writing files for debug of big meta-clusters: 
