@@ -1,4 +1,4 @@
-- 1.2.8a
+- 1.2.8
 
   * Fix bug when detecting the end of the cluster due to big gaps in biopython function
 
