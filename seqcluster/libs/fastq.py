@@ -17,7 +17,7 @@ def collapse(in_file):
         line = handle.readline()
         while line:
             if line.startswith("@"):
-                if line.find("UMI") > -1:
+                if line.find("UMI_") > -1:
                     logger.info("Find UMI tags in read names, collapsing by UMI.")
                     return collapse_umi(in_file)
                 seq = handle.readline().strip()
