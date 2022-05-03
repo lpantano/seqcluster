@@ -1,3 +1,7 @@
+- 1.2.9
+
+  * Fix bug where UMI is mistakenly detected in read names containing "ILLUMINA"
+
 - 1.2.8
 
   * Fix bug when detecting the end of the cluster due to big gaps in biopython function
