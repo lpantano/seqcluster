@@ -83,6 +83,7 @@ def reduceloci(clus_obj,  path):
     logger.info("Clusters too long to be analyzed: %s" % large)
     logger.info("Number of clusters removed because low number of reads: %s" % REMOVED)
     logger.info("Number of clusters with conflicts: %s" % CONFLICT)
+    #import pdb;pdb.set_trace()
     return clus_obj
 
 
