@@ -62,10 +62,10 @@ def cluster(args):
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
     dt['step'] = 'cleaned'
     dt.to_csv(read_stats_file, sep="\t", index=False, header=False, mode='a')
-
     clusL = _create_clusters(seqL, bam_file, args)
-
-    y, l = _total_counts(list(clusL.seq.keys()), clusL.seq, aligned=True)
+    # y, l = _total_counts(list(clusL.seq.keys()), clusL.seq, aligned=True)
+    y, l = _total_counts(clusL.clus, seqL)
+    # import pdb;pdb.set_trace()
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
@@ -75,6 +75,8 @@ def cluster(args):
     logger.info("Solving multi-mapping events in the network of clusters")
     clusLred = _cleaning(clusL, args.dir_out)
     y, l = _total_counts(clusLred.clus, seqL)
+    # import pdb;pdb.set_trace()
+    # y, l = _total_counts(list(clusLred.seq.keys()), clusLred.seq, aligned=True)
     logger.info("counts after: %s" % sum(y.values()))
     logger.info("# sequences after: %s" % l)
     dt = pd.DataFrame({'sample': y.keys(), 'counts': y.values()})
@@ -157,7 +159,12 @@ def _total_counts(seqs, seqL, aligned=False):
         else:
             nseqs = len([total.update(seqL[s].freq) for s in seqs if seqL[s].align > 0])
     elif isinstance(seqs, dict):
-        [total.update(seqs[s].get_freq(seqL)) for s in seqs]
+        #[total.update(seqs[s].get_freq(seqL)) for s in seqs]
+        # import pdb;pdb.set_trace()
+        # !import code; code.interact(local=vars())
+        seqs_in=[]
+        void=[seqs_in.extend(list(seqs[s].idmembers.keys())) for s in seqs]
+        len([total.update(seqL[s].freq) for s in set(seqs_in)])
         nseqs = sum(len(seqs[s].idmembers) for s in seqs)
     return total, nseqs
 

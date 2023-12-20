@@ -1,3 +1,7 @@
+- 1.2.10
+
+  * Fix bug counting sequences expression in stats file.
+
 - 1.2.9
 
   * Fix bug where UMI is mistakenly detected in read names containing "ILLUMINA"
