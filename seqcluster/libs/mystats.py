@@ -8,6 +8,6 @@ def up_threshold(x, s, p):
     below cutoff"""
     if 1.0 * x/s >= p:
         return True
-    elif stat.binom_test(x, s, p) > 0.01:
+    elif stat.binomtest(int(x), int(s), p).pvalue > 0.01:
         return True
     return False
