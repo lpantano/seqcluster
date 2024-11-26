@@ -130,7 +130,7 @@ def detect_clusters(c, current_seq, MIN_SEQ, non_un_gl=False):
     logger.info("%s Clusters read" % eindex)
     # merge cluster with shared sequences
     metacluster_obj, cluster_id = _find_metaclusters(current_clus, sequence2clusters, current_seq, MIN_SEQ)
-
+    # import pdb; pdb.set_trace()
     return cluster_info_obj(current_clus, metacluster_obj, current_loci, current_seq)
 
 def _common(items, seen):
@@ -158,7 +158,7 @@ def _find_metaclusters(clus_obj, sequence2clusters, current_seq, min_seqs):
 
     for itern, name in enumerate(sequence2clusters):
         clusters = sequence2clusters[name]
-        if len(clusters) == 0:
+        if len(clusters) == 0: # when sequence doesn't belong to a cluster
             c_index -= 1
             continue
         current_seq[name].align = 1
